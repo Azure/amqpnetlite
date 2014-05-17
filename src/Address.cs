@@ -19,6 +19,8 @@ namespace Amqp
 {
     using Amqp.Types;
 
+    using System;
+
     public sealed class Address
     {
         const string Amqp = "AMQP";
@@ -31,6 +33,17 @@ namespace Amqp
             this.Port = -1;
             this.Path = "/";
             this.Parse(address);
+            this.SetDefault();
+        }
+
+        public Address(string host, string scheme=Amqps, string path = "/", string user = null, string password = null, int port = -1)
+        {
+            this.Host = host;
+            this.Port = port;
+            this.Path = path;
+            this.Scheme = scheme;
+            this.User = user;
+            this.Password = password;
             this.SetDefault();
         }
 
@@ -184,6 +197,20 @@ namespace Amqp
             {
                 this.Port = int.Parse(address.Substring(startIndex));
             }
+
+            if (this.Password != null)
+            {
+                this.Password = Uri.UnescapeDataString(this.Password);
+            }
+            if (this.User != null)
+            {
+                this.User = Uri.UnescapeDataString(this.User);
+            }
+            if (this.Host != null)
+            {
+                this.Host = Uri.UnescapeDataString(this.Host);
+            }
+
         }
 
         void SetDefault()

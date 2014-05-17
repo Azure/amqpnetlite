@@ -31,6 +31,7 @@ namespace Test.Amqp
             Connection.DisableServerCertValidation = true;
 
             new LinkTests().TestMethod_BasicSendReceive();
+            new UtilityTests().TestMethod_Address();
             //RunTests();
         }
 

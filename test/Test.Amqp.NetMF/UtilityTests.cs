@@ -15,11 +15,20 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 using Amqp;
+#if !NETMF
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
 
 namespace Test.Amqp
 {
+#if !NETMF
+    [TestClass]
+#endif
     public class UtilityTests
     {
+#if !NETMF
+        [TestMethod]
+#endif
         public void TestMethod_Address()
         {
             Address address = new Address("amqp://me:secret@my.contoso.com:1234/foo/bar");
@@ -53,10 +62,28 @@ namespace Test.Amqp
             Assert.AreEqual("amqps", address.Scheme);
             Assert.AreEqual(true, address.UseSsl);
             Assert.AreEqual("me", address.User);
-            Assert.AreEqual(string.Empty, address.Password);
+            Assert.AreEqual(null, address.Password);
             Assert.AreEqual("broker1", address.Host);
             Assert.AreEqual(5671, address.Port);
             Assert.AreEqual("/foo", address.Path);
+
+            address = new Address("amqps://m%2fe%2f:s%21e%25c%26r%2ae%2bt%2f@my.contoso.com:1234/foo/bar");
+            Assert.AreEqual("amqps", address.Scheme);
+            Assert.AreEqual(true, address.UseSsl);
+            Assert.AreEqual("m/e/", address.User);
+            Assert.AreEqual("s!e%c&r*e+t/", address.Password);
+            Assert.AreEqual("my.contoso.com", address.Host);
+            Assert.AreEqual(1234, address.Port);
+            Assert.AreEqual("/foo/bar", address.Path);
+
+            address = new Address("myhost", "amqps", "/foo/bar", "myuser/", "secret/", 1234);
+            Assert.AreEqual("amqps", address.Scheme);
+            Assert.AreEqual(true, address.UseSsl);
+            Assert.AreEqual("myuser/", address.User);
+            Assert.AreEqual("secret/", address.Password);
+            Assert.AreEqual("myhost", address.Host);
+            Assert.AreEqual(1234, address.Port);
+            Assert.AreEqual("/foo/bar", address.Path);          
         }
     }
 }

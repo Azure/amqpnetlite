@@ -22,6 +22,7 @@ namespace Amqp
     using System.Diagnostics;
     using System.Text;
     using System.Threading;
+    using System;
 
     // Framework specific routines
     public static class Fx
@@ -110,4 +111,73 @@ namespace Amqp
             new Thread(threadStart).Start();
         }
     }
+
+
+    class Uri
+    {
+        public static string UnescapeDataString(string url)
+        {
+            var data = Encoding.UTF8.GetBytes(url);
+            return new string(Encoding.UTF8.GetChars(UrlDecodeBytesToBytes(data, 0, data.Length)));
+        }
+
+        static byte[] UrlDecodeBytesToBytes(byte[] bytes, int offset, int count)
+        {
+            var length = 0;
+            var sourceArray = new byte[count];
+            for (var i = 0; i < count; i++)
+            {
+                var index = offset + i;
+                var num4 = bytes[index];
+                if (num4 == 0x2b)
+                {
+                    num4 = 0x20;
+                }
+                else if ((num4 == 0x25) &&
+                         (i < (count - 2)))
+                {
+                    var num5 = HexToInt((char)bytes[index + 1]);
+                    var num6 = HexToInt((char)bytes[index + 2]);
+                    if ((num5 >= 0) &&
+                        (num6 >= 0))
+                    {
+                        num4 = (byte)((num5 << 4) | num6);
+                        i += 2;
+                    }
+                }
+                sourceArray[length++] = num4;
+            }
+            if (length < sourceArray.Length)
+            {
+                var destinationArray = new byte[length];
+                Array.Copy(sourceArray, destinationArray, length);
+                sourceArray = destinationArray;
+            }
+            return sourceArray;
+        }
+
+        static int HexToInt(char h)
+        {
+            if ((h >= '0') &&
+                (h <= '9'))
+            {
+                return (h - '0');
+            }
+            if ((h >= 'a') &&
+                (h <= 'f'))
+            {
+                return ((h - 'a') + 10);
+            }
+            if ((h >= 'A') &&
+                (h <= 'F'))
+            {
+                return ((h - 'A') + 10);
+            }
+            return -1;
+        }
+
+    }
+
+
+
 }
