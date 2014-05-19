@@ -30,9 +30,8 @@ namespace Test.Amqp
             AmqpTrace.TraceListener = Program.WriteTrace;
             Connection.DisableServerCertValidation = true;
 
-            new LinkTests().TestMethod_BasicSendReceive();
-            new UtilityTests().TestMethod_Address();
-            //RunTests();
+            RunTests();
+            //new UtilityTests().TestMethod_Address();
         }
 
         static void WriteTrace(string format, params object[] args)

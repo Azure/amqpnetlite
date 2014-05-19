@@ -1,3 +1,4 @@
+using System;
 using Microsoft.SPOT;
 
 namespace Test.Amqp
@@ -6,13 +7,18 @@ namespace Test.Amqp
     {
         public static void IsTrue(bool condition, string message = null)
         {
-            Debug.Assert(condition, message ?? "Condition is not true.");
+            if(!condition)
+            {
+                throw new Exception(message ?? "Condition is not true.");
+            }
         }
 
         public static void AreEqual(object expected, object actual, string message = null)
         {
-            Debug.Assert((expected == null && actual == null) || expected.Equals(actual),
-                message ?? "Not equal. Expected: " + expected + ", Actual: " + (actual ?? "<NULL>"));
+            if (!((expected == null && actual == null) || expected.Equals(actual)))
+            {
+                throw new Exception(message ?? "Not equal. Expected: " + expected + ", Actual: " + (actual ?? "<NULL>"));
+            }
         }
     }
 }

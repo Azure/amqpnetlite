@@ -30,7 +30,7 @@ namespace Amqp
         int credit;
 
         // received messages queue
-        LinkedList deliveryList;
+        LinkedList receivedMessages;
         Delivery deliveryCurrent;
 
         // pending receivers
@@ -40,7 +40,7 @@ namespace Amqp
         public ReceiverLink(Session session, string name, string adderss)
             : base(session, name)
         {
-            this.deliveryList = new LinkedList();
+            this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(adderss);
         }
@@ -69,10 +69,10 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                Delivery first = (Delivery)this.deliveryList.First;
+                MessageNode first = (MessageNode)this.receivedMessages.First;
                 if (first != null)
                 {
-                    this.deliveryList.Remove(first);
+                    this.receivedMessages.Remove(first);
                     return first.Message;
                 }
 
@@ -141,7 +141,7 @@ namespace Amqp
 
                     if (waiter == null && callback == null)
                     {
-                        this.deliveryList.Add(delivery);
+                        this.receivedMessages.Add(new MessageNode() { Message = delivery.Message });
                     }
                 }
 
@@ -208,6 +208,15 @@ namespace Amqp
 
             this.deliveryCount++;
             this.credit--;
+        }
+
+        sealed class MessageNode : INode
+        {
+            public Message Message { get; set; }
+
+            public INode Previous { get; set; }
+
+            public INode Next { get; set; }
         }
 
         sealed class Waiter : INode

@@ -31,7 +31,61 @@ namespace Test.Amqp
 #endif
         public void TestMethod_Address()
         {
-            Address address = new Address("amqp://me:secret@my.contoso.com:1234/foo/bar");
+            Address address = new Address("amqps://broker1");
+            Assert.AreEqual("amqps", address.Scheme);
+            Assert.AreEqual(true, address.UseSsl);
+            Assert.AreEqual(null, address.User);
+            Assert.AreEqual(null, address.Password);
+            Assert.AreEqual("broker1", address.Host);
+            Assert.AreEqual(5671, address.Port);
+            Assert.AreEqual("/", address.Path);
+
+            address = new Address("amqp://broker1:12345");
+            Assert.AreEqual("amqp", address.Scheme);
+            Assert.AreEqual(false, address.UseSsl);
+            Assert.AreEqual(null, address.User);
+            Assert.AreEqual(null, address.Password);
+            Assert.AreEqual("broker1", address.Host);
+            Assert.AreEqual(12345, address.Port);
+            Assert.AreEqual("/", address.Path);
+
+            address = new Address("amqp://guest:@broker1");
+            Assert.AreEqual("amqp", address.Scheme);
+            Assert.AreEqual(false, address.UseSsl);
+            Assert.AreEqual("guest", address.User);
+            Assert.AreEqual(string.Empty, address.Password);
+            Assert.AreEqual("broker1", address.Host);
+            Assert.AreEqual(5672, address.Port);
+            Assert.AreEqual("/", address.Path);
+
+            address = new Address("amqp://:abc@broker1");
+            Assert.AreEqual("amqp", address.Scheme);
+            Assert.AreEqual(false, address.UseSsl);
+            Assert.AreEqual(string.Empty, address.User);
+            Assert.AreEqual("abc", address.Password);
+            Assert.AreEqual("broker1", address.Host);
+            Assert.AreEqual(5672, address.Port);
+            Assert.AreEqual("/", address.Path);
+
+            address = new Address("amqps://:@broker1");
+            Assert.AreEqual("amqps", address.Scheme);
+            Assert.AreEqual(true, address.UseSsl);
+            Assert.AreEqual(string.Empty, address.User);
+            Assert.AreEqual(string.Empty, address.Password);
+            Assert.AreEqual("broker1", address.Host);
+            Assert.AreEqual(5671, address.Port);
+            Assert.AreEqual("/", address.Path);
+
+            address = new Address("amqps://guest:pass1@broker1");
+            Assert.AreEqual("amqps", address.Scheme);
+            Assert.AreEqual(true, address.UseSsl);
+            Assert.AreEqual("guest", address.User);
+            Assert.AreEqual("pass1", address.Password);
+            Assert.AreEqual("broker1", address.Host);
+            Assert.AreEqual(5671, address.Port);
+            Assert.AreEqual("/", address.Path);
+
+            address = new Address("amqp://me:secret@my.contoso.com:1234/foo/bar");
             Assert.AreEqual("amqp", address.Scheme);
             Assert.AreEqual(false, address.UseSsl);
             Assert.AreEqual("me", address.User);
@@ -62,7 +116,7 @@ namespace Test.Amqp
             Assert.AreEqual("amqps", address.Scheme);
             Assert.AreEqual(true, address.UseSsl);
             Assert.AreEqual("me", address.User);
-            Assert.AreEqual(null, address.Password);
+            Assert.AreEqual(string.Empty, address.Password);
             Assert.AreEqual("broker1", address.Host);
             Assert.AreEqual(5671, address.Port);
             Assert.AreEqual("/foo", address.Path);

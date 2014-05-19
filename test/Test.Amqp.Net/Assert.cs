@@ -14,7 +14,7 @@
 //  See the Apache Version 2.0 License for specific language governing permissions and 
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using VSAssert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Test.Amqp
 {
@@ -22,12 +22,12 @@ namespace Test.Amqp
     {
         public static void IsTrue(bool condition, string message = null)
         {
-            Assert.IsTrue(condition, message ?? "Condition is not true.");
+            VSAssert.IsTrue(condition, message ?? "Condition is not true.");
         }
 
         public static void AreEqual(object expected, object actual, string message = null)
         {
-            Assert.AreEqual(expected, actual, message ?? "Objects are not equal.");
+            VSAssert.AreEqual(expected, actual, message ?? "Objects are not equal.");
         }
     }
 }

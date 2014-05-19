@@ -31,7 +31,6 @@ namespace Amqp
         public Address(string address)
         {
             this.Port = -1;
-            this.Path = "/";
             this.Parse(address);
             this.SetDefault();
         }
@@ -189,28 +188,39 @@ namespace Amqp
                 }
             }
 
+            // check state in case of no trailing slash
             if (state == ParseState.User || state == ParseState.Host)
             {
                 this.Host = address.Substring(startIndex);
+            }
+            else if (state == ParseState.Password)
+            {
+                this.Host = this.User;
+                this.User = null;
+                if (startIndex < address.Length - 1)
+                {
+                    this.Port = int.Parse(address.Substring(startIndex));
+                }
             }
             else if (state == ParseState.Port)
             {
                 this.Port = int.Parse(address.Substring(startIndex));
             }
 
-            if (this.Password != null)
+            if (this.Password != null && this.Password.Length > 0)
             {
                 this.Password = Uri.UnescapeDataString(this.Password);
             }
-            if (this.User != null)
+
+            if (this.User != null && this.User.Length > 0)
             {
                 this.User = Uri.UnescapeDataString(this.User);
             }
+
             if (this.Host != null)
             {
                 this.Host = Uri.UnescapeDataString(this.Host);
             }
-
         }
 
         void SetDefault()
@@ -228,6 +238,11 @@ namespace Amqp
             if (this.Port == -1)
             {
                 this.Port = this.UseSsl ? AmqpsPort : AmqpPort;
+            }
+
+            if (this.Path == null)
+            {
+                this.Path = "/";
             }
         }
     }
