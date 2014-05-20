@@ -72,7 +72,7 @@ namespace Amqp.Framing
         {
 #if DEBUG
             return this.GetDebugString(
-                "source",
+                "target",
                 new object[] { "address", "durable", "expiry-policy", "timeout", "dynamic", "dynamic-node-properties", "capabilities" },
                 this.Fields);
 #else
