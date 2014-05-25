@@ -101,6 +101,7 @@ namespace Amqp
         {
             ((Target)attach.Target).Address = address;
             attach.Role = false;
+            attach.InitialDeliveryCount = this.deliveryCount;
         }
 
         internal override void HandleAttach(Attach attach)
