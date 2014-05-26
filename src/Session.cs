@@ -109,7 +109,7 @@ namespace Amqp
             }
         }
 
-        internal void DisposeDelivery(bool role, Delivery delivery, Outcome outcome, bool settled)
+        internal void DisposeDelivery(bool role, Delivery delivery, DeliveryState state, bool settled)
         {
             Delivery current = null;
             lock (this.ThisLock)
@@ -135,13 +135,13 @@ namespace Amqp
             if (current != null)
             {
                 current.Settled = settled;
-                current.State = outcome;
+                current.State = state;
                 Dispose dispose = new Dispose()
                 {
                     Role = role,
                     First = current.DeliveryId,
                     Settled = settled,
-                    State = outcome
+                    State = state
                 };
 
                 this.SendCommand(dispose);
@@ -390,22 +390,21 @@ namespace Amqp
             lock (this.ThisLock)
             {
                 Delivery delivery = (Delivery)this.outgoingList.First;
-                while (delivery != null)
+                while (delivery != null && delivery.DeliveryId <= last)
                 {
-                    if (delivery.DeliveryId >= first && delivery.DeliveryId <= last)
+                    Delivery next = (Delivery)delivery.Next;
+
+                    if (delivery.DeliveryId >= first)
                     {
                         delivery.Settled = dispose.Settled;
                         delivery.OnStateChange(dispose.State);
                         if (delivery.Settled)
                         {
-                            Delivery next = (Delivery)delivery.Next;
                             this.outgoingList.Remove(delivery);
-                            delivery = next;
-                            continue;
                         }
                     }
 
-                    delivery = (Delivery)delivery.Next;
+                    delivery = next;
                 }
             }
         }

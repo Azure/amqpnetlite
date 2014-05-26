@@ -186,6 +186,10 @@ namespace Amqp
             this.deliveryCount = attach.InitialDeliveryCount;
         }
 
+        internal override void OnDeliveryStateChanged(Delivery delivery)
+        {
+        }
+
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;

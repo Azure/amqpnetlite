@@ -123,6 +123,8 @@ namespace Amqp
 
         internal abstract void HandleAttach(Attach attach);
 
+        internal abstract void OnDeliveryStateChanged(Delivery delivery);
+
         protected override bool OnClose(Error error)
         {
             lock (this.ThisLock)

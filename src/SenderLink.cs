@@ -48,6 +48,7 @@ namespace Amqp
             {
                 Message = message,
                 Buffer = message.Encode(),
+                Link = this,
                 OnOutcome = callback,
                 UserToken = state,
                 Settled = callback == null
@@ -106,6 +107,20 @@ namespace Amqp
 
         internal override void HandleAttach(Attach attach)
         {
+        }
+
+        internal override void OnDeliveryStateChanged(Delivery delivery)
+        {
+            // some broker may not settle the message when sending dispositions
+            if (!delivery.Settled)
+            {
+                this.Session.DisposeDelivery(false, delivery, new Accepted(), true);
+            }
+
+            if (delivery.OnOutcome != null)
+            {
+                delivery.OnOutcome(delivery.Message, delivery.State as Outcome, delivery.UserToken);
+            }
         }
 
         protected override bool OnClose(Error error)

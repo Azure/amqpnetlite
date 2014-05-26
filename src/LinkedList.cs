@@ -50,24 +50,25 @@ namespace Amqp
 
         public void Remove(INode node)
         {
-            if (node.Previous == null && node.Next == null)
+            Fx.Assert(node != null, "node cannot be null");
+            if (node == this.head)
             {
-                // remove single item
-                this.head = this.tail = null;
-            }
-            else if (node.Previous == null)
-            {
-                // remove head
                 this.head = node.Next;
-                this.head.Previous = null;
+                if (this.head == null)
+                {
+                    this.tail = null;
+                }
+                else
+                {
+                    this.head.Previous = null;
+                }
             }
-            else if (node.Next == null)
+            else if (node == this.tail)
             {
-                // remove tail
                 this.tail = node.Previous;
                 this.tail.Next = null;
             }
-            else
+            else if (node.Previous != null && node.Next != null)
             {
                 // remove middle
                 node.Previous.Next = node.Next;

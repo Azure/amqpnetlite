@@ -17,7 +17,6 @@
 
 namespace Amqp
 {
-    using System;
     using Amqp.Framing;
 
     class Delivery : INode
@@ -42,6 +41,8 @@ namespace Amqp
 
         public bool Settled;
 
+        public Link Link;
+
         public INode Previous { get; set; }
 
         public INode Next { get; set; }
@@ -55,10 +56,7 @@ namespace Amqp
         public void OnStateChange(DeliveryState state)
         {
             this.State = state;
-            if (this.OnOutcome != null)
-            {
-                this.OnOutcome(this.Message, state as Outcome, this.UserToken);
-            }
+            this.Link.OnDeliveryStateChanged(this);
         }
     }
 }
