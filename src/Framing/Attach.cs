@@ -47,13 +47,13 @@ namespace Amqp.Framing
         public SenderSettleMode SndSettleMode
         {
             get { return this.Fields[3] == null ? SenderSettleMode.Unsettled : (SenderSettleMode)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            set { this.Fields[3] = (byte)value; }
         }
 
         public ReceiverSettleMode RcvSettleMode
         {
             get { return this.Fields[4] == null ? ReceiverSettleMode.First : (ReceiverSettleMode)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            set { this.Fields[4] = (byte)value; }
         }
 
         public object Source

@@ -123,6 +123,7 @@ namespace Amqp
                         if (settled)
                         {
                             deliveryList.Remove(current);
+                            this.incomingWindow++;
                         }
 
                         break;

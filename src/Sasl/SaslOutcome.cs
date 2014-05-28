@@ -30,7 +30,7 @@ namespace Amqp.Sasl
         public SaslCode Code
         {
             get { return (SaslCode)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            set { this.Fields[0] = (byte)value; }
         }
 
         public byte[] AdditionalData
