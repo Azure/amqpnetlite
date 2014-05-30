@@ -74,12 +74,14 @@ namespace Amqp.Types
             object[] list = value as object[];
             if (list != null)
             {
-                StringBuilder sb = new StringBuilder(list.Length * 2);
+                StringBuilder sb = new StringBuilder();
+                sb.Append('[');
                 for (int i = 0; i < list.Length; ++i)
                 {
                     if (i > 0) sb.Append(',');
                     sb.Append(list[i]);
                 }
+                sb.Append(']');
 
                 return sb.ToString();
             }

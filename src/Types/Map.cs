@@ -70,6 +70,7 @@ namespace Amqp.Types
                 sb.Append(':');
                 sb.Append(this[key]);
             }
+            sb.Append(']');
 
             return sb.ToString();
         }
