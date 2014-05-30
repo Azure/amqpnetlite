@@ -56,5 +56,23 @@ namespace Amqp.Types
                     Fx.Format(SRAmqp.InvalidMapKeyType, key.GetType().Name, this.keyType.Name));
             }
         }
+
+#if DEBUG
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder(64);
+            sb.Append('[');
+            int i = 0;
+            foreach (var key in this.Keys)
+            {
+                if (i++ > 0) sb.Append(',');
+                sb.Append(key);
+                sb.Append(':');
+                sb.Append(this[key]);
+            }
+
+            return sb.ToString();
+        }
+#endif
     }
 }

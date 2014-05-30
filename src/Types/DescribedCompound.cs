@@ -57,10 +57,10 @@ namespace Amqp.Types
 
         object GetStringObject(object value)
         {
-            string hexChars = "0123456789ABCDEF"; 
             byte[] binary = value as byte[];
             if (binary != null)
             {
+                string hexChars = "0123456789ABCDEF";
                 StringBuilder sb = new StringBuilder(binary.Length * 2);
                 for (int i = 0; i < binary.Length; ++i)
                 {
@@ -70,10 +70,21 @@ namespace Amqp.Types
 
                 return sb.ToString();
             }
-            else
+
+            object[] list = value as object[];
+            if (list != null)
             {
-                return value;
+                StringBuilder sb = new StringBuilder(list.Length * 2);
+                for (int i = 0; i < list.Length; ++i)
+                {
+                    if (i > 0) sb.Append(',');
+                    sb.Append(list[i]);
+                }
+
+                return sb.ToString();
             }
+
+            return value;
         }
 #endif
     }

@@ -53,6 +53,7 @@ namespace Amqp.Types
             }
         }
 
+#if DEBUG
         public override string ToString()
         {
             if (this.Count == 1)
@@ -76,5 +77,6 @@ namespace Amqp.Types
                 return sb.ToString();
             }
         }
+#endif
     }
 }

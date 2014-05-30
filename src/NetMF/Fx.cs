@@ -112,7 +112,6 @@ namespace Amqp
         }
     }
 
-
     class Uri
     {
         public static string UnescapeDataString(string url)
@@ -175,9 +174,5 @@ namespace Amqp
             }
             return -1;
         }
-
     }
-
-
-
 }
