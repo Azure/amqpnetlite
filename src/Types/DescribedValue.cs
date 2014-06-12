@@ -23,7 +23,7 @@ namespace Amqp.Types
     {
         object value;
 
-        protected DescribedValue(Descriptor descriptor)
+        public DescribedValue(Descriptor descriptor)
             : base(descriptor)
         {
         }
@@ -42,6 +42,11 @@ namespace Amqp.Types
         protected override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteObject(buffer, this.value);
+        }
+
+        public override string ToString()
+        {
+            return this.value == null ? null : this.value.ToString();
         }
     }
 }

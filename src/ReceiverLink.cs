@@ -38,11 +38,16 @@ namespace Amqp
         MessageCallback onMessage;
 
         public ReceiverLink(Session session, string name, string adderss)
+            : this(session, name, new Source() { Address = adderss })
+        {
+        }
+
+        public ReceiverLink(Session session, string name, Source source)
             : base(session, name)
         {
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
-            this.SendAttach(adderss);
+            this.SendAttach(true, 0, new Target(), source);
         }
 
         public void Start(int credit, MessageCallback onMessage = null)
@@ -173,12 +178,6 @@ namespace Amqp
                     }
                 }
             }
-        }
-
-        internal override void UpdateAttach(Attach attach, string address)
-        {
-            ((Source)attach.Source).Address = address;
-            attach.Role = true;
         }
 
         internal override void HandleAttach(Attach attach)

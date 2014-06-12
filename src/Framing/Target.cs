@@ -19,7 +19,7 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Target : DescribedList
+    public sealed class Target : DescribedList
     {
         public Target()
             : base(Codec.Target, 7)

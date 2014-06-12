@@ -36,10 +36,15 @@ namespace Amqp
         bool writing;
 
         public SenderLink(Session session, string name, string adderss)
+            : this(session, name, new Target() { Address = adderss })
+        {
+        }
+
+        public SenderLink(Session session, string name, Target target)
             : base(session, name)
         {
             this.outgoingList = new LinkedList();
-            this.SendAttach(adderss);
+            this.SendAttach(false, this.deliveryCount, target, new Source());
         }
 
         public void Send(Message message, OutcomeCallback callback, object state)
@@ -96,13 +101,6 @@ namespace Amqp
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
         {
             throw new InvalidOperationException();
-        }
-
-        internal override void UpdateAttach(Attach attach, string address)
-        {
-            ((Target)attach.Target).Address = address;
-            attach.Role = false;
-            attach.InitialDeliveryCount = this.deliveryCount;
         }
 
         internal override void HandleAttach(Attach attach)

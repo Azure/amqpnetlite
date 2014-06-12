@@ -16,6 +16,8 @@
 //  ------------------------------------------------------------------------------------
 using Amqp;
 using Amqp.Framing;
+using Amqp.Types;
+using System;
 using System.Threading;
 #if !NETMF
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -31,6 +33,14 @@ namespace Test.Amqp
         Address address = new Address("amqp://guest:guest@localhost:5672");
 
 #if !NETMF
+        [TestInitialize]
+        public void Initialize()
+        {
+            // uncomment the following to write frame traces
+            //Trace.TraceLevel = TraceLevel.Frame;
+            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+        }
+
         [TestMethod]
 #endif
         public void TestMethod_BasicSendReceive()
@@ -170,6 +180,35 @@ namespace Test.Amqp
             sender.Send(msg, null, null);
 
             t.Join(10000);
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !NETMF
+        [TestMethod]
+#endif
+        public void TestMethod_ReceiveWithFilterTest()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            Message message = new Message("I can match a filter");
+            message.Properties = new Properties() { GroupId = "abcdefg" };
+            message.ApplicationProperties = new ApplicationProperties();
+            message.ApplicationProperties["sn"] = 100;
+
+            SenderLink sender = new SenderLink(session, "send-link", "q1");
+            sender.Send(message, null, null);
+
+            // update the filter descriptor and expression according to the broker
+            Map filters = new Map();
+            filters.Add(new Symbol("f1"), new DescribedValue(new Descriptor(0x0000468C00000004L, "apache.org:selector-filter:string")) { Value = "sn = 100" });
+            ReceiverLink receiver = new ReceiverLink(session, "receive-link", new Source() { Address = "q1", FilterSet = filters });
+            receiver.SetCredit(10);
+            Message message2 = receiver.Receive();
 
             sender.Close();
             receiver.Close();

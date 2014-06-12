@@ -475,16 +475,20 @@ namespace Amqp.Types
             }
             else if (formatCode == FormatCode.Described)
             {
+                Described described;
                 object descriptor = Encoder.ReadObject(buffer);
                 CreateDescribed create = (CreateDescribed)knownDescrided[descriptor];
                 if (create == null)
                 {
-                    throw new AmqpException(ErrorCode.DecodeError,
-                        Fx.Format(SRAmqp.AmqpUnknownDescriptor, descriptor));
+                    object value = Encoder.ReadObject(buffer);
+                    Descriptor des = new Descriptor(descriptor is ulong ? (ulong)descriptor : 0, descriptor as string);
+                    described = new DescribedValue(des) { Value = value };
                 }
-
-                Described described = create();
-                described.DecodeValue(buffer);
+                else
+                {
+                    described = create();
+                    described.DecodeValue(buffer);
+                }
 
                 return described;
             }

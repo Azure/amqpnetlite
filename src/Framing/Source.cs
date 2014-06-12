@@ -19,7 +19,7 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Source : DescribedList
+    public sealed class Source : DescribedList
     {
         public Source()
             : base(Codec.Source, 11)
@@ -68,9 +68,9 @@ namespace Amqp.Framing
             set { this.Fields[6] = value; }
         }
 
-        public object FilterSet
+        public Map FilterSet
         {
-            get { return this.Fields[7]; }
+            get { return (Map)this.Fields[7]; }
             set { this.Fields[7] = value; }
         }
 

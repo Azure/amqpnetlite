@@ -50,10 +50,15 @@ namespace Amqp
 
         public void Close(int waitUntilEnded = DefaultCloseTimeout, Error error = null)
         {
+            // initialize event first to avoid the race with NotifyClosed
+            this.endEvent = new ManualResetEvent(false);
             if (!this.OnClose(error) && waitUntilEnded > 0)
             {
-                this.endEvent = new ManualResetEvent(false);
                 this.endEvent.WaitOne(waitUntilEnded, false);
+            }
+            else
+            {
+                this.endEvent.Set();
             }
         }
 

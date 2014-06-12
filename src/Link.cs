@@ -119,8 +119,6 @@ namespace Amqp
 
         internal abstract void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer);
 
-        internal abstract void UpdateAttach(Attach attach, string address);
-
         internal abstract void HandleAttach(Attach attach);
 
         internal abstract void OnDeliveryStateChanged(Delivery delivery);
@@ -162,7 +160,7 @@ namespace Amqp
             this.session.SendFlow(flow);
         }
 
-        protected void SendAttach(string adderss)
+        protected void SendAttach(bool role, uint initialDeliveryCount, Target target, Source source)
         {
             Fx.Assert(this.state == State.Start, "state must be Start");
             this.state = State.AttachSent;
@@ -170,11 +168,16 @@ namespace Amqp
             {
                 LinkName = this.name,
                 Handle = this.handle,
-                Source = new Source(),
-                Target = new Target()
+                Role = role,
+                Source = source,
+                Target = target
             };
 
-            this.UpdateAttach(attach, adderss);
+            if (!role)
+            {
+                attach.InitialDeliveryCount = initialDeliveryCount;
+            }
+
             this.session.SendCommand(attach);
         }
 
