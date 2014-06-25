@@ -75,12 +75,7 @@ namespace Amqp
             lock (this.ThisLock)
             {
                 this.ThrowIfClosed("AddSession");
-                if (this.state == State.Start)
-                {
-                    this.SendHeader();
-                    this.SendOpen();
-                    this.state = State.OpenPipe;
-                }
+                this.StartIfNeeded();
 
                 for (int i = 0; i < this.localSessions.Length; ++i)
                 {
@@ -121,7 +116,11 @@ namespace Amqp
             lock (this.ThisLock)
             {
                 State newState = State.Start;
-                if (this.state == State.OpenPipe || state == State.OpenSent)
+                if (this.state == State.OpenPipe )
+                {
+                    newState = State.OpenClosePipe;
+                }
+                else if (state == State.OpenSent)
                 {
                     newState = State.ClosePipe;
                 }
@@ -149,7 +148,7 @@ namespace Amqp
             }
         }
 
-        public void Connect()
+        void Connect()
         {
             TcpTransport tcpTransport = new TcpTransport();
             if (!tcpTransport.ConnectAsync(
@@ -209,7 +208,10 @@ namespace Amqp
             }
 
             thisPtr.transport = transport;
-            thisPtr.writer.ResumeWrite();
+            lock (thisPtr.ThisLock)
+            {
+                thisPtr.StartIfNeeded();
+            }
 
             thisPtr.reader = new Pump(thisPtr);
             thisPtr.reader.Start();
@@ -221,6 +223,17 @@ namespace Amqp
             {
                 throw new AmqpException(ErrorCode.IllegalState,
                     Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state));
+            }
+        }
+
+        void StartIfNeeded()
+        {
+            // need to be called with lock held
+            if (this.state == State.Start)
+            {
+                this.SendHeader();
+                this.SendOpen();
+                this.state = State.OpenPipe;
             }
         }
 
@@ -280,18 +293,19 @@ namespace Amqp
             {
                 if (this.state == State.Opened)
                 {
-                    this.state = State.CloseReceived;
+                    this.SendClose(null);
                 }
                 else if (this.state == State.CloseSent)
                 {
-                    this.state = State.End;
-                    this.OnEnded(close.Error);
                 }
                 else
                 {
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnClose", this.state));
                 }
+
+                this.state = State.End;
+                this.OnEnded(close.Error);
             }
         }
 
@@ -351,6 +365,10 @@ namespace Amqp
                 if (this.state == State.OpenPipe)
                 {
                     this.state = State.OpenSent;
+                }
+                else if (this.state == State.OpenClosePipe)
+                {
+                    this.state = State.ClosePipe;
                 }
                 else
                 {
@@ -472,20 +490,6 @@ namespace Amqp
                 }
 
                 if (shouldWrite)
-                {
-                    this.WriteCore(buffer);
-                }
-            }
-
-            public void ResumeWrite()
-            {
-                ByteBuffer buffer;
-                lock (this)
-                {
-                    buffer = this.outgoingQueue[this.head];
-                }
-
-                if (buffer != null)
                 {
                     this.WriteCore(buffer);
                 }
