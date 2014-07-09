@@ -107,7 +107,7 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                return base.Receive(buffer, offset, count, SocketFlags.Partial);
+                return base.Receive(buffer, offset, count, SocketFlags.None);
             }
 
             void ITransport.Close()
