@@ -19,20 +19,20 @@ using Amqp.Framing;
 using Amqp.Types;
 using System;
 using System.Threading;
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
 namespace Test.Amqp
 {
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
     [TestClass]
 #endif
     public class LinkTests
     {
         Address address = new Address("amqp://guest:guest@localhost:5672");
 
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestInitialize]
         public void Initialize()
         {
@@ -73,7 +73,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
         public void TestMethod_OnMessage()
@@ -103,7 +103,11 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
+#if !COMPACT_FRAMEWORK
             done.WaitOne(10000, true);
+#else
+            done.WaitOne(10000, false);
+#endif
 
             sender.Close();
             receiver.Close();
@@ -111,7 +115,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
         public void TestMethod_SendAck()
@@ -139,7 +143,11 @@ namespace Test.Amqp
                 sender.Send(message, callback, null);
             }
 
+#if !COMPACT_FRAMEWORK
             done.WaitOne(10000, true);
+#else
+            done.WaitOne(10000, false);
+#endif
 
             ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
             for (int i = 0; i < 200; ++i)
@@ -149,14 +157,14 @@ namespace Test.Amqp
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
             }
-            
+
             sender.Close();
             receiver.Close();
             session.Close();
             connection.Close();
         }
 
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWaiter()
@@ -187,7 +195,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWithFilterTest()

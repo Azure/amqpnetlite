@@ -1,5 +1,7 @@
 using System;
+#if NETMF
 using Microsoft.SPOT;
+#endif
 
 namespace Test.Amqp
 {

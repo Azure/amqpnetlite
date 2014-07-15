@@ -15,7 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 using Amqp;
+#if NETMF
 using Microsoft.SPOT;
+#endif
+#if COMPACT_FRAMEWORK
+using System.Diagnostics;
+#endif
 using System;
 using System.Reflection;
 using AmqpTrace = Amqp.Trace;
@@ -36,7 +41,11 @@ namespace Test.Amqp
 
         static void WriteTrace(string format, params object[] args)
         {
+#if NETMF
             Debug.Print(Fx.Format(format, args));
+#elif COMPACT_FRAMEWORK
+            Debug.WriteLine(Fx.Format(format, args));
+#endif
         }
 
         static void OnMessage(ReceiverLink receiver, Message message)
@@ -46,7 +55,11 @@ namespace Test.Amqp
 
         static void RunTests()
         {
+#if NETMF
             Debug.Print("Running all unit tests");
+#elif COMPACT_FRAMEWORK
+            Debug.WriteLine("Running all unit tests");
+#endif
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             int passed = 0;
             int failed = 0;
@@ -77,43 +90,71 @@ namespace Test.Amqp
 
                 if (count > 0)
                 {
+#if NETMF
                     Debug.Print("Running tests of " + type.Name);
+#elif COMPACT_FRAMEWORK
+                    Debug.WriteLine("Running tests of " + type.Name);
+#endif
 
                     object instance = type.GetConstructor(new Type[0]).Invoke(new object[0]);
                     if (testInitialize != null)
                     {
+#if NETMF
                         Debug.Print("Running TestInitialize");
+#elif COMPACT_FRAMEWORK
+                        Debug.WriteLine("Running TestInitialize");
+#endif
                         testInitialize.Invoke(instance, null);
                     }
 
                     for (int i = 0; i < count; i++)
                     {
                         string testName = testMethods[i].Name.Substring(11);
+#if NETMF
                         Debug.Print("Running test " + testName);
+#elif COMPACT_FRAMEWORK
+                        Debug.WriteLine("Running test " + testName);
+#endif
 
                         try
                         {
                             testMethods[i].Invoke(instance, null);
                             ++passed;
+#if NETMF
                             Debug.Print("Test " + testName + " passed.");
+#elif COMPACT_FRAMEWORK
+                            Debug.WriteLine("Test " + testName + " passed.");
+#endif
                         }
                         catch (Exception exception)
                         {
                             ++failed;
+#if NETMF
                             Debug.Print("Test " + testName + " failed.");
                             Debug.Print(exception.ToString());
+#elif COMPACT_FRAMEWORK
+                            Debug.WriteLine("Test " + testName + " failed.");
+                            Debug.WriteLine(exception.ToString());
+#endif
                         }
                     }
 
                     if (testCleanup != null)
                     {
+#if NETMF
                         Debug.Print("Running TestCleanup");
+#elif COMPACT_FRAMEWORK
+                        Debug.WriteLine("Running TestCleanup");
+#endif
                         testCleanup.Invoke(instance, null);
                     }
                 }
             }
-
+#if NETMF
             Debug.Print("Test result: passed: " + passed + ", failed: " + failed);
+#elif COMPACT_FRAMEWORK
+            Debug.WriteLine("Test result: passed: " + passed + ", failed: " + failed);
+#endif
         }
     }
 }
