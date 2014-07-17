@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "src\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF", "src\Amqp.NetMF.csproj", "{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.WP", "src\Amqp.WP.csproj", "{CD477EDC-5779-44CD-ABE9-330F1C6531D9}"
@@ -19,6 +17,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Store", "test\Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net", "test\Test.Amqp.Net\Test.Amqp.Net.csproj", "{06CAA70A-20A7-4334-AF03-D6228039C178}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
+	ProjectSection(SolutionItems) = preProject
+		Amqp.Net.nuspec = Amqp.Net.nuspec
+		build.cmd = build.cmd
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "src\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,16 +37,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Release|ARM.ActiveCfg = Release|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Release|x64.ActiveCfg = Release|Any CPU
-		{92153715-1D99-43B1-B291-470CF91A156D}.Release|x86.ActiveCfg = Release|Any CPU
 		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -159,6 +155,16 @@ Global
 		{06CAA70A-20A7-4334-AF03-D6228039C178}.Release|ARM.ActiveCfg = Release|Any CPU
 		{06CAA70A-20A7-4334-AF03-D6228039C178}.Release|x64.ActiveCfg = Release|Any CPU
 		{06CAA70A-20A7-4334-AF03-D6228039C178}.Release|x86.ActiveCfg = Release|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Release|x64.ActiveCfg = Release|Any CPU
+		{92153715-1D99-43B1-B291-470CF91A156D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -125,7 +125,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.SPOT.Graphics" />
     <Reference Include="Microsoft.SPOT.Native" />
     <Reference Include="Microsoft.SPOT.Net.Security" />
     <Reference Include="System" />

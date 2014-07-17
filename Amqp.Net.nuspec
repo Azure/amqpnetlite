@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AMQPNetLite</id>
+    <title>AMQP.Net Lite</title>
+    <version>1.0.0-alpha</version>
+    <authors>Microsoft</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>http://amqpnetlite.codeplex.com/license</licenseUrl>
+    <projectUrl>http://amqpnetlite.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>AMQP.Net Lite is a lightweight AMQP client library for use on a broad range of .Net Framework platforms, including .Net Micro Framework, WinRT, Windows Phone.</description>
+    <releaseNotes>This initial release is of Alpha quality: use at your own risk; support is community-based and provided on a best effort basis. The library has been tested against Azure Service Bus on .NET Micro Framework 4.2 and 4.3, Windows 8 and Windows Phone 8. Please report any issues or provide any feedback through this site.</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>Azure ServiceBus Messaging AMQP MicroFramework WindowsPhone</tags>
+    <dependencies>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="src\bin\Release\*.*" target="lib\net40-client" />
+    <file src="src\bin\NetMF\Release\*.*" target="lib\netmf" />
+    <file src="src\bin\NetMF\Release\le\*.p*" target="lib\netmf\le" />
+    <file src="src\bin\NetMF\Release\be\*.p*" target="lib\netmf\be" />
+    <file src="src\bin\WP\Release\*.*" target="lib\windowsphone8" />
+    <file src="src\bin\Store\Release\*.*" target="lib\windows8" />
+  </files>
+</package>
