@@ -137,7 +137,7 @@ namespace Amqp
             return true;
 #else
             // return verification result or add your logic here to validate certificate
-            return (sslPolicyErrors == SslPolicyErrors.SslErrOkay)
+            return (sslPolicyErrors == SslPolicyErrors.SslErrOkay);
 #endif      
         }
     }
