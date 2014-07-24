@@ -15,7 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 using Amqp;
+#if NETMF
 using Microsoft.SPOT;
+#endif
+#if COMPACT_FRAMEWORK
+using System.Diagnostics;
+#endif
 using System;
 using System.Reflection;
 using AmqpTrace = Amqp.Trace;
@@ -36,7 +41,12 @@ namespace Test.Amqp
 
         static void WriteTrace(string format, params object[] args)
         {
-            Debug.Print(Fx.Format(format, args));
+            string message = args == null ? format : Fx.Format(format, args);
+#if NETMF
+            Debug.Print(message);
+#elif COMPACT_FRAMEWORK
+            Debug.WriteLine(message);
+#endif
         }
 
         static void OnMessage(ReceiverLink receiver, Message message)
@@ -46,7 +56,7 @@ namespace Test.Amqp
 
         static void RunTests()
         {
-            Debug.Print("Running all unit tests");
+            WriteTrace("Running all unit tests");
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             int passed = 0;
             int failed = 0;
@@ -77,43 +87,43 @@ namespace Test.Amqp
 
                 if (count > 0)
                 {
-                    Debug.Print("Running tests of " + type.Name);
+                    WriteTrace("Running tests of " + type.Name);
 
                     object instance = type.GetConstructor(new Type[0]).Invoke(new object[0]);
                     if (testInitialize != null)
                     {
-                        Debug.Print("Running TestInitialize");
+                        WriteTrace("Running TestInitialize");
                         testInitialize.Invoke(instance, null);
                     }
 
                     for (int i = 0; i < count; i++)
                     {
                         string testName = testMethods[i].Name.Substring(11);
-                        Debug.Print("Running test " + testName);
+                        WriteTrace("Running test " + testName);
 
                         try
                         {
                             testMethods[i].Invoke(instance, null);
                             ++passed;
-                            Debug.Print("Test " + testName + " passed.");
+                            WriteTrace("Test " + testName + " passed.");
                         }
                         catch (Exception exception)
                         {
                             ++failed;
-                            Debug.Print("Test " + testName + " failed.");
-                            Debug.Print(exception.ToString());
+                            WriteTrace("Test " + testName + " failed.");
+                            WriteTrace(exception.ToString());
                         }
                     }
 
                     if (testCleanup != null)
                     {
-                        Debug.Print("Running TestCleanup");
+                        WriteTrace("Running TestCleanup");
                         testCleanup.Invoke(instance, null);
                     }
                 }
             }
 
-            Debug.Print("Test result: passed: " + passed + ", failed: " + failed);
+            WriteTrace("Test result: passed: " + passed + ", failed: " + failed);
         }
     }
 }

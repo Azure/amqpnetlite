@@ -15,18 +15,18 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 using Amqp;
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
 namespace Test.Amqp
 {
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
     [TestClass]
 #endif
     public class UtilityTests
     {
-#if !NETMF
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
         public void TestMethod_Address()
