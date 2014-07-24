@@ -25,8 +25,6 @@ namespace Amqp
 
     public sealed class SenderLink : Link
     {
-        bool closeIssued;
-
         // flow control
         SequenceNumber deliveryCount;
         int credit;
@@ -49,6 +47,8 @@ namespace Amqp
 
         public void Send(Message message, OutcomeCallback callback, object state)
         {
+            this.ThrowIfDetaching("Send");
+
             Delivery delivery = new Delivery()
             {
                 Message = message,
@@ -123,14 +123,24 @@ namespace Amqp
 
         protected override bool OnClose(Error error)
         {
-            lock (this.ThisLock)
+            Delivery toRelease = null;
+            while (true)
             {
-                if (this.writing)
+                lock (this.ThisLock)
                 {
-                    this.closeIssued = true;
-                    return false;
+                    if (this.writing)
+                    {
+                        // wait until write finishes (either all deliveries are handed over to session or no credit is available)
+                    }
+                    else
+                    {
+                        toRelease = (Delivery)this.outgoingList.Clear();
+                        break;
+                    }
                 }
             }
+
+            Delivery.ReleaseAll(toRelease, error);
 
             return base.OnClose(error);
         }
@@ -155,10 +165,6 @@ namespace Amqp
                     if (delivery == null)
                     {
                         this.writing = false;
-                        if (this.closeIssued)
-                        {
-                            base.OnClose(null);
-                        }
                     }
                     else if (this.credit > 0)
                     {

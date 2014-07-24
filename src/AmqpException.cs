@@ -20,7 +20,7 @@ namespace Amqp
     using System;
     using Amqp.Framing;
 
-    sealed class AmqpException : Exception
+    public sealed class AmqpException : Exception
     {
         public AmqpException(Error error)
         {

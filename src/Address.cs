@@ -35,7 +35,7 @@ namespace Amqp
             this.SetDefault();
         }
 
-        public Address(string host, string user = null, string password = null, string path = "/", string scheme = Amqps, int port = -1)
+        public Address(string host, int port, string user = null, string password = null, string path = "/", string scheme = Amqps)
         {
             this.Host = host;
             this.Port = port;

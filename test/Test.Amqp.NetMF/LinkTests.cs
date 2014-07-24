@@ -215,5 +215,36 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
         }
+
+#if !NETMF
+        [TestMethod]
+#endif
+        public void TestMethod_LinkCloseWithPendingSendTest()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "send-link", "q1");
+
+            bool cancelled = false;
+            Message message = new Message("released");
+            sender.Send(message, (m, o, s) => cancelled = true, null);
+            // assume that Close is called before connection/link is open so message is still queued in link
+            sender.Close(0);
+            Assert.IsTrue(cancelled, "pending message should be canceled");
+
+            try
+            {
+                message = new Message("failed");
+                sender.Send(message, (m, o, s) => cancelled = true, null);
+                Assert.IsTrue(false, "Send should fail after link is closed");
+            }
+            catch (AmqpException exception)
+            {
+                Trace.WriteLine(TraceLevel.Information, "Caught exception: ", exception.Error);
+            }
+
+            session.Close();
+            connection.Close();
+        }
     }
 }

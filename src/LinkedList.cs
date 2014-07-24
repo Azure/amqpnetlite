@@ -77,5 +77,12 @@ namespace Amqp
 
             node.Previous = node.Next = null;
         }
+
+        public INode Clear()
+        {
+            INode first = this.head;
+            this.head = this.tail = null;
+            return first;
+        }
     }
 }

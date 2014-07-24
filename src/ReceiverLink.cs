@@ -58,6 +58,8 @@ namespace Amqp
 
         public void SetCredit(int credit)
         {
+            this.ThrowIfDetaching("SetCredit");
+
             uint dc;
             lock (this.ThisLock)
             {
@@ -70,6 +72,8 @@ namespace Amqp
 
         public Message Receive(int timeout = 60000)
         {
+            this.ThrowIfDetaching("Receive");
+
             Waiter waiter = null;
 
             lock (this.ThisLock)
@@ -95,16 +99,19 @@ namespace Amqp
 
         public void Accept(Message message)
         {
+            this.ThrowIfDetaching("Accept");
             this.DisposeMessage(message, new Accepted());
         }
 
         public void Release(Message message)
         {
+            this.ThrowIfDetaching("Release");
             this.DisposeMessage(message, new Released());
         }
 
         public void Reject(Message message, Error error = null)
         {
+            this.ThrowIfDetaching("Reject");
             this.DisposeMessage(message, new Rejected() { Error = error });
         }
 
@@ -187,6 +194,23 @@ namespace Amqp
 
         internal override void OnDeliveryStateChanged(Delivery delivery)
         {
+        }
+
+        protected override bool OnClose(Error error)
+        {
+            Waiter waiter;
+            lock (this.ThisLock)
+            {
+                waiter = (Waiter)this.waiterList.Clear();
+            }
+
+            while (waiter != null)
+            {
+                waiter.Signal(null);
+                waiter = (Waiter)waiter.Next;
+            }
+
+            return base.OnClose(error);
         }
 
         void DisposeMessage(Message message, Outcome outcome)

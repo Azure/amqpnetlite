@@ -110,6 +110,7 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnDetach", this.state));
                 }
 
+                this.OnClose(detach.Error);
                 this.NotifyClosed(detach.Error);
                 return true;
             }
@@ -179,6 +180,15 @@ namespace Amqp
             }
 
             this.session.SendCommand(attach);
+        }
+
+        protected void ThrowIfDetaching(string operation)
+        {
+            if (this.state >= State.DetachPipe)
+            {
+                throw new AmqpException(ErrorCode.IllegalState,
+                    Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state));
+            }
         }
 
         void SendDetach()

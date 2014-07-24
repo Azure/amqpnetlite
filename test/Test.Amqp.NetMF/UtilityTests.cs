@@ -130,7 +130,7 @@ namespace Test.Amqp
             Assert.AreEqual(1234, address.Port);
             Assert.AreEqual("/foo/bar", address.Path);
 
-            address = new Address("myhost", "myuser/", "secret/", "/foo/bar", "amqps", 1234);
+            address = new Address("myhost", 1234, "myuser/", "secret/", "/foo/bar", "amqps");
             Assert.AreEqual("amqps", address.Scheme);
             Assert.AreEqual(true, address.UseSsl);
             Assert.AreEqual("myuser/", address.User);

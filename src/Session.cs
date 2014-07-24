@@ -206,6 +206,7 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnEnd", this.state));
                 }
 
+                this.OnClose(end.Error);
                 this.NotifyClosed(end.Error);
                 return true;
             }
@@ -243,6 +244,14 @@ namespace Amqp
 
         protected override bool OnClose(Error error)
         {
+            Delivery toRealse;
+            lock (this.ThisLock)
+            {
+                toRealse = (Delivery)this.outgoingList.Clear();
+            }
+
+            Delivery.ReleaseAll(toRealse, error);
+
             lock (this.ThisLock)
             {
                 if (this.state == State.End)

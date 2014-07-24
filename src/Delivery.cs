@@ -53,6 +53,29 @@ namespace Amqp
             set { this.message = value; value.Delivery = this; }
         }
 
+        public static void ReleaseAll(Delivery delivery, Error error)
+        {
+            Outcome outcome;
+            if (error == null)
+            {
+                outcome = new Released();
+            }
+            else
+            {
+                outcome = new Rejected() { Error = error };
+            }
+
+            while (delivery != null)
+            {
+                if (delivery.OnOutcome != null)
+                {
+                    delivery.OnOutcome(delivery.Message, outcome, delivery.State);
+                }
+
+                delivery = (Delivery)delivery.Next;
+            }
+        }
+
         public void OnStateChange(DeliveryState state)
         {
             this.State = state;
