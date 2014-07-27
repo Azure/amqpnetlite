@@ -81,7 +81,7 @@ namespace Amqp.Framing
                 int bytes = transport.Receive(buffer, offset, count);
                 offset += bytes;
                 count -= bytes;
-                if (bytes == 0 || bytes == count)
+                if (bytes == 0)
                 {
                     break;
                 }
