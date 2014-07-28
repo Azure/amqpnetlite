@@ -1,22 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AssemblyName>MFWindowApplication1</AssemblyName>
+    <AssemblyName>Test.Amqp.NetMF</AssemblyName>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MFWindowApplication1</RootNamespace>
+    <RootNamespace>Test.Amqp</RootNamespace>
     <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{3ADB32B4-2F37-492E-8EBA-38B0C5A69838}</ProjectGuid>
-    <TargetFrameworkVersion>v4.3</TargetFrameworkVersion>
+    <ProjectGuid>{E0B13B0F-C739-4788-BC47-A6BEAF6FB5A6}</ProjectGuid>
+    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETMF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -24,45 +25,31 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NETMF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="GPIOButtonInputProvider.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Assert.cs" />
+    <Compile Include="LinkTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="UtilityTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.SPOT.Graphics">
-    </Reference>
-    <Reference Include="Microsoft.SPOT.Hardware">
-    </Reference>
     <Reference Include="Microsoft.SPOT.Native">
     </Reference>
-    <Reference Include="Microsoft.SPOT.TinyCore">
-    </Reference>
+    <Reference Include="Microsoft.SPOT.Net.Security" />
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\small.tinyfnt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Amqp.NetMF43.csproj">
-      <Project>{5D8F78FC-0719-495F-9AD0-1EDD7EC9AA19}</Project>
-      <Name>Amqp.NetMF43</Name>
+    <ProjectReference Include="..\..\src\Amqp.NetMF42.csproj">
+      <Project>{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}</Project>
+      <Name>Amqp.NetMF42</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

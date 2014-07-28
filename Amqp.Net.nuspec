@@ -18,9 +18,12 @@
   </metadata>
   <files>
     <file src="src\bin\Release\*.*" target="lib\net40-client" />
-    <file src="src\bin\NetMF\Release\*.*" target="lib\netmf" />
-    <file src="src\bin\NetMF\Release\le\*.p*" target="lib\netmf\le" />
-    <file src="src\bin\NetMF\Release\be\*.p*" target="lib\netmf\be" />
+    <file src="src\bin\NetMF42\Release\*.*" target="lib\netmf42" />
+    <file src="src\bin\NetMF42\Release\le\*.p*" target="lib\netmf42\le" />
+    <file src="src\bin\NetMF42\Release\be\*.p*" target="lib\netmf42\be" />
+	<file src="src\bin\NetMF43\Release\*.*" target="lib\netmf43" />
+    <file src="src\bin\NetMF43\Release\le\*.p*" target="lib\netmf43\le" />
+    <file src="src\bin\NetMF43\Release\be\*.p*" target="lib\netmf43\be" />
     <file src="src\bin\WP\Release\*.*" target="lib\windowsphone8" />
     <file src="src\bin\Store\Release\*.*" target="lib\windows8" />
   </files>
