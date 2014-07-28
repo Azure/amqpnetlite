@@ -99,7 +99,7 @@ namespace Amqp.Framing
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "flow",
                 new object[] { "next-in-id", "in-window", "next-out-id", "out-window", "handle", "delivery-count", "link-credit", "available", "drain", "echo", "properties" },

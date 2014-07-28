@@ -57,7 +57,7 @@ namespace Amqp.Types
             }
         }
 
-#if DEBUG
+#if TRACE
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder(64);

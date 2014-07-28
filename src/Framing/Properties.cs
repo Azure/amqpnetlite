@@ -107,7 +107,7 @@ namespace Amqp.Framing
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "properties",
                 new object[] { "message-id", "user-id", "to", "subject", "reply-to", "correlation-id", "content-type", "content-encoding", "absolute-expiry-time", "creation-time", "group-id", "group-sequence", "reply-to-group-id" },

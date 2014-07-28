@@ -112,7 +112,7 @@ namespace Amqp.Framing
         
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "attach",
                 new object[] { "name", "handle", "role", "snd-settle-mode", "rcv-settle-mode", "source", "target", "unsettled", "incomplete-unsettled", "initial-delivery-count", "max-message-size", "offered-capabilities", "desired-capabilities", "properties" },

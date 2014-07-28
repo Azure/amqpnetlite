@@ -35,7 +35,7 @@ namespace Amqp.Sasl
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "sasl-mechanisms",
                 new object[] { "sasl-server-mechanisms" },

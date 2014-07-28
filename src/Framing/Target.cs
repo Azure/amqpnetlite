@@ -70,7 +70,7 @@ namespace Amqp.Framing
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "target",
                 new object[] { "address", "durable", "expiry-policy", "timeout", "dynamic", "dynamic-node-properties", "capabilities" },

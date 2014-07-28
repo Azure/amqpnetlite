@@ -28,7 +28,7 @@ namespace Amqp.Framing
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "accepted",
                 new object[0],

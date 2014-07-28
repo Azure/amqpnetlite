@@ -28,7 +28,7 @@ namespace Amqp.Types
         {
         }
 
-#if DEBUG
+#if TRACE
         protected string GetDebugString(string name, object[] fieldNames, object[] fieldValues)
         {
             StringBuilder sb = new StringBuilder();

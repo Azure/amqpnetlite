@@ -64,7 +64,7 @@ namespace Amqp.Framing
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "disposition",
                 new object[] { "role", "first", "last", "settled", "state", "batchable" },

@@ -46,7 +46,7 @@ namespace Amqp.Framing
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "modified",
                 new object[] { "delivery-failed", "undeliverable-here", "message-annotations" },

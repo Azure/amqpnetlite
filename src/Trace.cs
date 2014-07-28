@@ -44,6 +44,7 @@ namespace Amqp
             }
         }
 
+        [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format)
         {
             if (TraceListener != null && (level & TraceLevel) > 0)
@@ -52,6 +53,7 @@ namespace Amqp
             }
         }
 
+        [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format, object arg1)
         {
             if (TraceListener != null && (level & TraceLevel) > 0)
@@ -60,6 +62,7 @@ namespace Amqp
             }
         }
 
+        [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format, object arg1, object arg2)
         {
             if (TraceListener != null && (level & TraceLevel) > 0)
@@ -68,6 +71,7 @@ namespace Amqp
             }
         }
 
+        [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format, object arg1, object arg2, object arg3)
         {
             if (TraceListener != null && (level & TraceLevel) > 0)

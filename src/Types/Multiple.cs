@@ -53,7 +53,7 @@ namespace Amqp.Types
             }
         }
 
-#if DEBUG
+#if TRACE
         public override string ToString()
         {
             if (this.Count == 1)

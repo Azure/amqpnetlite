@@ -47,7 +47,7 @@ namespace Amqp.Sasl
 
         public override string ToString()
         {
-#if DEBUG
+#if TRACE
             return this.GetDebugString(
                 "sasl-init",
                 new object[] { "mechanism", "initial-response", "hostname" },
