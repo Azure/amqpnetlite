@@ -58,7 +58,7 @@ namespace Amqp.Framing
 
         public Fields DynamicNodeProperties
         {
-            get { return (Fields)this.Fields[5]; }
+            get { return Amqp.Framing.Fields.From(this.Fields, 5); }
             set { this.Fields[5] = value; }
         }
 

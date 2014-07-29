@@ -40,7 +40,7 @@ namespace Amqp.Framing
 
         public Fields Info
         {
-            get { return (Fields)this.Fields[2]; }
+            get { return Amqp.Framing.Fields.From(this.Fields, 2); }
             set { this.Fields[2] = value; }
         }
 

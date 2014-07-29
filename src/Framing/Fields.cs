@@ -25,5 +25,31 @@ namespace Amqp.Framing
             : base(typeof(Symbol))
         {
         }
+
+        public static Fields From(object[] array, int index)
+        {
+            object obj = array[index];
+            if (obj != null)
+            {
+                Fields fields = array[index] as Fields;
+                if (fields == null)
+                {
+                    fields = new Fields();
+                    Map map = (Map)obj;
+                    foreach (var key in map.Keys)
+                    {
+                        fields.Add(key, map[key]);
+                    }
+
+                    array[index] = fields;
+                }
+
+                return fields;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

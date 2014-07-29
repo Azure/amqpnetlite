@@ -93,7 +93,7 @@ namespace Amqp.Framing
 
         public Fields Properties
         {
-            get { return (Fields)this.Fields[10]; }
+            get { return Amqp.Framing.Fields.From(this.Fields, 10); }
             set { this.Fields[10] = value; }
         }
 
