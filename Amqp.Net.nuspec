@@ -21,7 +21,7 @@
     <file src="src\bin\NetMF42\Release\*.*" target="lib\netmf42" />
     <file src="src\bin\NetMF42\Release\le\*.p*" target="lib\netmf42\le" />
     <file src="src\bin\NetMF42\Release\be\*.p*" target="lib\netmf42\be" />
-	<file src="src\bin\NetMF43\Release\*.*" target="lib\netmf43" />
+    <file src="src\bin\NetMF43\Release\*.*" target="lib\netmf43" />
     <file src="src\bin\NetMF43\Release\le\*.p*" target="lib\netmf43\le" />
     <file src="src\bin\NetMF43\Release\be\*.p*" target="lib\netmf43\be" />
     <file src="src\bin\WP\Release\*.*" target="lib\windowsphone8" />

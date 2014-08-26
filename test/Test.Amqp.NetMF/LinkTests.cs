@@ -257,5 +257,127 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
         }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_SynchronousSendTest()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sync-send-link", "q1");
+            Message message = new Message("hello");
+            sender.Send(message, 60000);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            receiver.SetCredit(10);
+            message = receiver.Receive();
+            Assert.IsTrue(message != null, "no message was received.");
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_DynamicSenderLinkTest()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            Target remoteTarget = null;
+            SenderLink sender = new SenderLink(session, "sync-send-link", new Target() { Dynamic = true }, (l, t, s) => remoteTarget = t);
+            Message message = new Message("hello");
+            sender.Send(message, 60000);
+
+            Assert.IsTrue(remoteTarget != null, "dynamic target not attached");
+            ReceiverLink receiver = new ReceiverLink(session, "receive-link", remoteTarget.Address);
+            receiver.SetCredit(10);
+            message = receiver.Receive();
+            Assert.IsTrue(message != null, "no message was received.");
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_DynamicReceiverLinkTest()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            Source remoteSource = null;
+            ManualResetEvent attached = new ManualResetEvent(false);
+            OnAttached onAttached = (l, t, s) => { remoteSource = s; attached.Set(); };
+            ReceiverLink receiver = new ReceiverLink(session, "dynamic-receive-link", new Source() { Dynamic = true }, onAttached);
+#if !COMPACT_FRAMEWORK
+            attached.WaitOne(10000, true);
+#else
+            attached.WaitOne(10000, false);
+#endif
+
+            Assert.IsTrue(remoteSource != null, "dynamic source not attached");
+
+            SenderLink sender = new SenderLink(session, "send-link", remoteSource.Address);
+            Message message = new Message("hello");
+            sender.Send(message, 60000);
+
+            receiver.SetCredit(10);
+            message = receiver.Receive();
+            Assert.IsTrue(message != null, "no message was received.");
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_RequestResponseTest()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            // server app: the request handler
+            ReceiverLink requestLink = new ReceiverLink(session, "server-request-link", "q1");
+            requestLink.Start(10, (l, m) =>
+                {
+                    l.Accept(m);
+
+                    // got a request, send back a reply
+                    SenderLink sender = new SenderLink(session, "server-reply-link", m.Properties.ReplyTo);
+                    Message reply = new Message("received");
+                    reply.Properties = new Properties() { CorrelationId = m.Properties.MessageId };
+                    sender.Send(reply, (a, b, c) => ((Link)c).Close(0), sender);
+                });
+
+            // client: setup a temp queue and waits for responses
+            OnAttached onAttached = (l, t, s) =>
+                {
+                    // client: sends a request to the request queue, specifies the temp queue as the reply queue
+                    SenderLink sender = new SenderLink(session, "client-request-link", "q1");
+                    Message request = new Message("hello");
+                    request.Properties = new Properties() { MessageId = "request1", ReplyTo = s.Address };
+                    sender.Send(request, (a, b, c) => ((Link)c).Close(0), sender);
+                };
+            ReceiverLink responseLink = new ReceiverLink(session, "dynamic-response-link", new Source() { Dynamic = true }, onAttached);
+            responseLink.SetCredit(10);
+            Message response = responseLink.Receive();
+            Assert.IsTrue(response != null, "no response was received");
+
+            requestLink.Close();
+            responseLink.Close();
+            session.Close();
+            connection.Close();
+        }
     }
 }
