@@ -43,7 +43,12 @@ namespace Amqp
         }
 
         public ReceiverLink(Session session, string name, Source source)
-            : base(session, name)
+            : this(session, name, source, null)
+        {
+        }
+
+        public ReceiverLink(Session session, string name, Source source, OnAttached onAttached)
+            : base(session, name, onAttached)
         {
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();

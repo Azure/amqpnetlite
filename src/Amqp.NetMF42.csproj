@@ -47,6 +47,7 @@
     <Compile Include="Framing\AmqpSequence.cs" />
     <Compile Include="Framing\AmqpValue.cs" />
     <Compile Include="Framing\Data.cs" />
+    <Compile Include="NETMF\TimeoutException.cs" />
     <Compile Include="NETMF\List.cs" />
     <Compile Include="NETMF\Map.cs" />
     <Compile Include="NETMF\Fx.cs" />

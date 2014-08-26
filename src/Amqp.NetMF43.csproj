@@ -87,6 +87,7 @@
       <DependentUpon>SRAmqp.cs</DependentUpon>
     </Compile>
     <Compile Include="NetMF\TcpTransport.cs" />
+    <Compile Include="NetMF\TimeoutException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiverLink.cs" />
     <Compile Include="Sasl\SaslChallenge.cs" />

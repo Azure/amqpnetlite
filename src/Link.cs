@@ -22,6 +22,8 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Types;
 
+    public delegate void OnAttached(Link link, Target target, Source source);
+
     public abstract class Link : AmqpObject
     {
         enum State
@@ -39,12 +41,14 @@ namespace Amqp
         readonly Session session;
         readonly string name;
         readonly uint handle;
+        readonly OnAttached onAttached;
         State state;
 
-        protected Link(Session session, string name)
+        protected Link(Session session, string name, OnAttached onAttached)
         {
             this.session = session;
             this.name = name;
+            this.onAttached = onAttached;
             this.handle = session.AddLink(this);
             this.state = State.Start;
         }
@@ -88,6 +92,11 @@ namespace Amqp
                 }
 
                 this.HandleAttach(attach);
+            }
+
+            if (this.onAttached != null && attach.Target != null && attach.Source != null)
+            {
+                this.onAttached(this, (Target)attach.Target, (Source)attach.Source);
             }
         }
 

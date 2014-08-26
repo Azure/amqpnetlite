@@ -32,9 +32,9 @@ namespace Amqp
             Debug.Assert(condition, message);
         }
 
-        public static void WaitOne(this WaitHandle waithandle, int msTimeout, bool unused)
+        public static bool WaitOne(this WaitHandle waithandle, int msTimeout, bool unused)
         {
-            waithandle.WaitOne(msTimeout);
+            return waithandle.WaitOne(msTimeout);
         }
 
         public static uint ExtractValueFromArray(byte[] data, int pos, int size)

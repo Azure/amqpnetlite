@@ -20,6 +20,7 @@ namespace Amqp
     using System;
     using Amqp.Framing;
     using Amqp.Types;
+    using System.Threading;
 
     public delegate void OutcomeCallback(Message message, Outcome outcome, object state);
 
@@ -39,10 +40,32 @@ namespace Amqp
         }
 
         public SenderLink(Session session, string name, Target target)
-            : base(session, name)
+            : this(session, name, target, null)
+        {
+        }
+
+        public SenderLink(Session session, string name, Target target, OnAttached onAttached)
+            : base(session, name, onAttached)
         {
             this.outgoingList = new LinkedList();
             this.SendAttach(false, this.deliveryCount, target, new Source());
+        }
+
+        public void Send(Message message, int millisecondsTimeout = 60000)
+        {
+            ManualResetEvent acked = new ManualResetEvent(false);
+            OutcomeCallback callback = (m, o, s) => ((ManualResetEvent)s).Set();
+            this.Send(message, callback, acked);
+
+#if !COMPACT_FRAMEWORK
+            bool signaled = acked.WaitOne(millisecondsTimeout, true);
+#else
+            bool signaled = acked.WaitOne(millisecondsTimeout, false);
+#endif
+            if (!signaled)
+            {
+                throw new TimeoutException();
+            }
         }
 
         public void Send(Message message, OutcomeCallback callback, object state)
