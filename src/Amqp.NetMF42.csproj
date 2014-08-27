@@ -3,7 +3,6 @@
   <PropertyGroup>
     <AssemblyName>Amqp.NetMF</AssemblyName>
     <OutputType>Library</OutputType>
-    <ReleaseTarget>NetMF</ReleaseTarget>
     <RootNamespace>Amqp</RootNamespace>
     <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProductVersion>9.0.21022</ProductVersion>
@@ -12,12 +11,13 @@
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
     <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
+    <BaseIntermediateOutputPath>..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\NetMF42\Debug\</OutputPath>
+    <OutputPath>..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;NETMF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\NetMF42\Release\</OutputPath>
+    <OutputPath>..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
     <DefineConstants>TRACE;NETMF</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -134,7 +134,7 @@
   <ItemGroup>
     <EmbeddedResource Include="SRAmqp.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>$(ReleaseTarget)\SRAmqp.Designer.cs</LastGenOutput>
+      <LastGenOutput>NETMF\SRAmqp.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

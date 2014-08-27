@@ -241,6 +241,8 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
             // NETMF may be slow
             Assert.IsTrue(cancelled, "pending message should be canceled");
+#else
+            Trace.WriteLine(TraceLevel.Information, "cancelled: " + cancelled);
 #endif
 
             try
