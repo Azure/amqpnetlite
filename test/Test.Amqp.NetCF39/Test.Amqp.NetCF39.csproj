@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;DEBUG;COMPACT_FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;COMPACT_FRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

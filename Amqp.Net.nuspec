@@ -17,15 +17,15 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Amqp.Net\Release\*.*" target="lib\net" />
-    <file src="bin\Amqp.NetCF39\Release\*.*" target="lib\netcf39" />
-    <file src="bin\Amqp.NetMF42\Release\*.*" target="lib\netmf42" />
-    <file src="bin\Amqp.NetMF42\Release\le\*.p*" target="lib\netmf42\le" />
-    <file src="bin\Amqp.NetMF42\Release\be\*.p*" target="lib\netmf42\be" />
-    <file src="bin\Amqp.NetMF43\Release\*.*" target="lib\netmf43" />
-    <file src="bin\Amqp.NetMF43\Release\le\*.p*" target="lib\netmf43\le" />
-    <file src="bin\Amqp.NetMF43\Release\be\*.p*" target="lib\netmf43\be" />
-    <file src="bin\Amqp.Store\Release\*.*" target="lib\windows8" />
-    <file src="bin\Amqp.WP\Release\*.*" target="lib\windowsphone8" />
+    <file src="bin\Release\Amqp.Net\*.*" target="lib\net" />
+    <file src="bin\Release\Amqp.NetCF39\*.*" target="lib\netcf39" />
+    <file src="bin\Release\Amqp.NetMF42\*.*" target="lib\netmf42" />
+    <file src="bin\Release\Amqp.NetMF42\le\*.p*" target="lib\netmf42\le" />
+    <file src="bin\Release\Amqp.NetMF42\be\*.p*" target="lib\netmf42\be" />
+    <file src="bin\Release\Amqp.NetMF43\*.*" target="lib\netmf43" />
+    <file src="bin\Release\Amqp.NetMF43\le\*.p*" target="lib\netmf43\le" />
+    <file src="bin\Release\Amqp.NetMF43\be\*.p*" target="lib\netmf43\be" />
+    <file src="bin\Release\Amqp.Store\*.*" target="lib\windows8" />
+    <file src="bin\Release\Amqp.WP\*.*" target="lib\windowsphone8" />
   </files>
 </package>

@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,15 +29,15 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\ARM\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\ARM\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
@@ -47,8 +47,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\ARM\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\ARM\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
@@ -60,8 +60,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\x64\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\x64\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
@@ -71,8 +71,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\x64\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\x64\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
@@ -84,8 +84,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\x86\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\x86\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
@@ -95,8 +95,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\x86\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\x86\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>

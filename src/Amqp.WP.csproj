@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -35,7 +35,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\$(Configuration)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -46,8 +46,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\x86\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\x86\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -57,8 +57,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\x86\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\x86\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -69,8 +69,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\ARM\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\ARM\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -80,8 +80,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|ARM' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\ARM\$(Configuration)\</IntermediateOutputPath>
-    <OutputPath>..\bin\$(MSBuildProjectName)\ARM\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>..\obj\$(MSBuildProjectName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
