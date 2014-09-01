@@ -3,7 +3,7 @@
   <metadata>
     <id>AMQPNetLite</id>
     <title>AMQP.Net Lite</title>
-    <version>1.0.0-alpha</version>
+    <version>0.1.0-alpha</version>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <licenseUrl>http://amqpnetlite.codeplex.com/license</licenseUrl>
