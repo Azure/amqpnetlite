@@ -19,11 +19,27 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    public sealed class AmqpValue : DescribedValue
+    public sealed class AmqpValue : RestrictedDescribed
     {
         public AmqpValue()
             : base(Codec.AmqpValue)
         {
+        }
+
+        public object Value
+        {
+            get;
+            set;
+        }
+
+        internal override void EncodeValue(ByteBuffer buffer)
+        {
+            Encoder.WriteObject(buffer, this.Value);
+        }
+
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            this.Value = Encoder.ReadObject(buffer);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Amqp
         public Properties Properties;
         public ApplicationProperties ApplicationProperties;
         public Footer Footer;
-        public DescribedValue Body; // support single Data or AmqpSequence section only
+        public RestrictedDescribed Body; // support single Data or AmqpSequence section only
 
         public Message()
         {
@@ -78,7 +78,7 @@ namespace Amqp
         {
             while (buffer.Length > 0)
             {
-                Described described = Codec.Decode(buffer);
+                RestrictedDescribed described = Codec.Decode(buffer);
                 if (described.Descriptor.Code == Codec.Header.Code)
                 {
                     this.Header = (Header)described;
@@ -103,7 +103,7 @@ namespace Amqp
                     described.Descriptor.Code == Codec.Data.Code ||
                     described.Descriptor.Code == Codec.AmqpSequence.Code)
                 {
-                    this.Body = (DescribedValue)described;
+                    this.Body = described;
                 }
                 else if (described.Descriptor.Code == Codec.Footer.Code)
                 {

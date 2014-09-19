@@ -240,7 +240,7 @@ namespace Amqp
         void SendHeader()
         {
             byte[] header = new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
-            this.writer.Write(new ByteBuffer(header, 0, header.Length));
+            this.writer.Write(new ByteBuffer(header, 0, header.Length, header.Length));
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP 0 1.0.0");
         }
 

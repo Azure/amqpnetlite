@@ -19,7 +19,7 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    public sealed class AmqpSequence : DescribedValue
+    public sealed class AmqpSequence : RestrictedDescribed
     {
         public AmqpSequence()
             : base(Codec.AmqpSequence)
@@ -28,7 +28,18 @@ namespace Amqp.Framing
 
         public object[] List
         {
-            get { return (object[])this.Value; }
+            get;
+            set;
+        }
+
+        internal override void EncodeValue(ByteBuffer buffer)
+        {
+            Encoder.WriteArray(buffer, this.List);
+        }
+
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            this.List = Encoder.ReadArray(buffer, FormatCode.Unknown);
         }
     }
 }

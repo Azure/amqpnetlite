@@ -19,7 +19,7 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    public sealed class Data : DescribedValue
+    public sealed class Data : RestrictedDescribed
     {
         public Data()
             : base(Codec.Data)
@@ -28,7 +28,18 @@ namespace Amqp.Framing
 
         public byte[] Binary
         {
-            get { return (byte[])this.Value; }
+            get;
+            set;
+        }
+
+        internal override void EncodeValue(ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(buffer, this.Binary);
+        }
+
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            this.Binary = Encoder.ReadBinary(buffer, FormatCode.Unknown);
         }
     }
 }

@@ -15,28 +15,30 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp
+namespace Amqp.Types
 {
-    using System;
-    using Amqp.Framing;
-
-    public sealed class AmqpException : Exception
+    public abstract class RestrictedDescribed : Described
     {
-        public AmqpException(Error error)
-            : base(error.Description ?? error.Condition)
+        readonly Descriptor descriptor;
+
+        protected RestrictedDescribed(Descriptor descriptor)
         {
-            this.Error = error;
+            this.descriptor = descriptor;
         }
 
-        public AmqpException(string condition, string description)
-            : this(new Error() { Condition = condition, Description = description })
+        public Descriptor Descriptor
         {
+            get { return this.descriptor; }
         }
 
-        public Error Error
+        internal override void EncodeDescriptor(ByteBuffer buffer)
         {
-            get;
-            private set;
+            Encoder.WriteULong(buffer, this.descriptor.Code);
+        }
+
+        internal override void DecodeDescriptor(ByteBuffer buffer)
+        {
+            Encoder.ReadObject(buffer);
         }
     }
 }

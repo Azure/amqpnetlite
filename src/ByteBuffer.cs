@@ -41,8 +41,8 @@ namespace Amqp
         int end;
         bool autoGrow;
 
-        public ByteBuffer(byte[] buffer, int offset, int count)
-            : this(buffer, offset, count, count, false)
+        public ByteBuffer(byte[] buffer, int offset, int count, int capacity)
+            : this(buffer, offset, count, capacity, false)
         {
         }
 
@@ -51,13 +51,13 @@ namespace Amqp
         {
         }
 
-        ByteBuffer(byte[] buffer, int offset, int count, int size, bool autoGrow)
+        ByteBuffer(byte[] buffer, int offset, int count, int capacity, bool autoGrow)
         {
             this.buffer = buffer;
             this.start = offset;
             this.read = offset;
             this.write = offset + count;
-            this.end = offset + size;
+            this.end = offset + capacity;
             this.autoGrow = autoGrow;
         }
 

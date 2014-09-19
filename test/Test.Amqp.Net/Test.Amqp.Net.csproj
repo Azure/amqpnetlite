@@ -57,7 +57,9 @@
     <Compile Include="..\Test.Amqp.NetMF\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>
+    <Compile Include="AmqpCodecTests.cs" />
     <Compile Include="Assert.cs" />
+    <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -108,7 +108,6 @@
     <Compile Include="Session.cs" />
     <Compile Include="Trace.cs" />
     <Compile Include="Types\Described.cs" />
-    <Compile Include="Types\DescribedCompound.cs" />
     <Compile Include="Types\DescribedList.cs" />
     <Compile Include="Types\DescribedMap.cs" />
     <Compile Include="Types\DescribedValue.cs" />
@@ -119,6 +118,7 @@
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />
     <Compile Include="Types\Multiple.cs" />
+    <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
   </ItemGroup>
   <ItemGroup>

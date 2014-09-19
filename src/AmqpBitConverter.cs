@@ -241,7 +241,7 @@ namespace Amqp
             buffer.Buffer[pos++] = p[7];
             buffer.Buffer[pos++] = p[6];
 
-            Array.Copy(p, 8, buffer.Buffer, 8, 8);
+            Array.Copy(p, 8, buffer.Buffer, pos, 8);
 
             buffer.Append(FixedWidth.Uuid);
         }

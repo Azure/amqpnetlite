@@ -19,7 +19,7 @@ namespace Amqp.Types
 {
     using System;
 
-    public abstract class DescribedList : DescribedCompound
+    public abstract class DescribedList : RestrictedDescribed
     {
         readonly object[] fields;
 
@@ -34,15 +34,81 @@ namespace Amqp.Types
             get { return this.fields; }
         }
 
-        public override void DecodeValue(ByteBuffer buffer)
+        internal override void DecodeValue(ByteBuffer buffer)
         {
-            object[] list = Encoder.ReadList(buffer, FormatCode.Unknown);
-            Array.Copy(list, this.fields, list.Length);
+            var list = Encoder.ReadList(buffer, FormatCode.Unknown);
+            int count = list.Count < this.fields.Length ? list.Count : this.fields.Length;
+            for (int i = 0; i < count; i++)
+            {
+                this.fields[i] = list[i];
+            }
         }
 
-        protected override void EncodeValue(ByteBuffer buffer)
+        internal override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteList(buffer, this.fields);
         }
+
+#if TRACE
+        protected string GetDebugString(string name, object[] fieldNames, object[] fieldValues)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(name);
+            sb.Append("(");
+            bool addComma = false;
+            for (int i = 0; i < fieldValues.Length; i++)
+            {
+                if (fieldValues[i] != null)
+                {
+                    if (addComma)
+                    {
+                        sb.Append(",");
+                    }
+
+                    sb.Append(fieldNames[i]);
+                    sb.Append(":");
+                    sb.Append(GetStringObject(fieldValues[i]));
+                    addComma = true;
+                }
+            }
+            sb.Append(")");
+
+            return sb.ToString();
+        }
+
+        object GetStringObject(object value)
+        {
+            byte[] binary = value as byte[];
+            if (binary != null)
+            {
+                string hexChars = "0123456789ABCDEF";
+                System.Text.StringBuilder sb = new System.Text.StringBuilder(binary.Length * 2);
+                for (int i = 0; i < binary.Length; ++i)
+                {
+                    sb.Append(hexChars[binary[i] >> 4]);
+                    sb.Append(hexChars[binary[i] & 0x0F]);
+                }
+
+                return sb.ToString();
+            }
+
+            object[] list = value as object[];
+            if (list != null)
+            {
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                sb.Append('[');
+                for (int i = 0; i < list.Length; ++i)
+                {
+                    if (i > 0) sb.Append(',');
+                    sb.Append(list[i]);
+                }
+                sb.Append(']');
+
+                return sb.ToString();
+            }
+
+            return value;
+        }
+#endif
     }
 }

@@ -21,32 +21,50 @@ namespace Amqp.Types
 
     public class DescribedValue : Described
     {
+        object descriptor;
         object value;
 
-        public DescribedValue(Descriptor descriptor)
-            : base(descriptor)
+        public DescribedValue(object descriptor, object value)
         {
+            this.descriptor = descriptor;
+            this.value = value;
+        }
+
+        public object Descriptor
+        {
+            get { return this.descriptor; }
         }
 
         public object Value
         {
             get { return this.value; }
-            set { this.value = value; }
         }
 
-        public override void DecodeValue(ByteBuffer buffer)
+        internal override void EncodeDescriptor(ByteBuffer buffer)
         {
-            this.value = Encoder.ReadObject(buffer);
+            Encoder.WriteObject(buffer, this.descriptor);
         }
 
-        protected override void EncodeValue(ByteBuffer buffer)
+        internal override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteObject(buffer, this.value);
         }
 
+        internal override void DecodeDescriptor(ByteBuffer buffer)
+        {
+            this.descriptor = Encoder.ReadObject(buffer);
+        }
+
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            this.value = Encoder.ReadObject(buffer);
+        }
+
+#if TRACE
         public override string ToString()
         {
-            return this.value == null ? null : this.value.ToString();
+            return this.value == null ? "nil" : this.value.ToString();
         }
+#endif
     }
 }

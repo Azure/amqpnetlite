@@ -122,9 +122,9 @@ namespace Amqp.Framing
             }
         }
 
-        public static Described Decode(ByteBuffer buffer)
+        public static RestrictedDescribed Decode(ByteBuffer buffer)
         {
-            return (Described)Encoder.ReadObject(buffer);
+            return (RestrictedDescribed)Encoder.ReadObject(buffer);
         }
     }
 }

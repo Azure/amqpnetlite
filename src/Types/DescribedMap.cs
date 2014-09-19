@@ -20,7 +20,7 @@ namespace Amqp.Types
     using System;
     using System.Collections;
 
-    public abstract class DescribedMap : DescribedCompound, IEnumerable
+    public abstract class DescribedMap : RestrictedDescribed, IEnumerable
     {
         Map map;
 
@@ -36,12 +36,12 @@ namespace Amqp.Types
             set { this.map[key] = value; }
         }
 
-        public override void DecodeValue(ByteBuffer buffer)
+        internal override void DecodeValue(ByteBuffer buffer)
         {
             this.map = Encoder.ReadMap(buffer, FormatCode.Unknown);
         }
 
-        protected override void EncodeValue(ByteBuffer buffer)
+        internal override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteMap(buffer, this.map);
         }

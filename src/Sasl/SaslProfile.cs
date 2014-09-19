@@ -30,6 +30,7 @@ namespace Amqp.Sasl
             ByteBuffer headerBuffer = new ByteBuffer(
                 new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', myHeader.Id, myHeader.Major, myHeader.Minor, myHeader.Revision },
                 0,
+                8,
                 8);
             transport.Send(headerBuffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP {0}", myHeader);

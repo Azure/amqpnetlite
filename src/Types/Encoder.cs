@@ -24,78 +24,229 @@ namespace Amqp.Types
 
     public delegate Described CreateDescribed();
 
+    delegate void Encode(ByteBuffer buffer, object value);
+
+    delegate object Decode(ByteBuffer buffer, byte formatCode);
+
     static class Encoder
     {
-        delegate void Encode(ByteBuffer buffer, object value);
-        delegate object Decode(ByteBuffer buffer, byte formatCode);
+        class Serializer
+        {
+            public Encode Encoder;
+            public Decode Decoder;
+        }
 
         public static readonly DateTime StartOfEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
-
-        static readonly Map encoders = new Map()
-        {
-            { typeof(bool),     (Encode)((b, o) => WriteBoolean(b, (bool)o)) },
-            { typeof(byte),     (Encode)((b, o) => WriteUByte(b, (byte)o)) },
-            { typeof(ushort),   (Encode)((b, o) => WriteUShort(b, (ushort)o)) },
-            { typeof(uint),     (Encode)((b, o) => WriteUInt(b, (uint)o)) },
-            { typeof(ulong),    (Encode)((b, o) => WriteULong(b, (ulong)o)) },
-            { typeof(sbyte),    (Encode)((b, o) => WriteByte(b, (sbyte)o)) },
-            { typeof(short),    (Encode)((b, o) => WriteShort(b, (short)o)) },
-            { typeof(int),      (Encode)((b, o) => WriteInt(b, (int)o)) },
-            { typeof(long),     (Encode)((b, o) => WriteLong(b, (long)o)) },
-            { typeof(float),    (Encode)((b, o) => WriteFloat(b, (float)o)) },
-            { typeof(double),   (Encode)((b, o) => WriteDouble(b, (double)o)) },
-            { typeof(char),     (Encode)((b, o) => WriteChar(b, (char)o)) },
-            { typeof(DateTime), (Encode)((b, o) => WriteTimestamp(b, (DateTime)o)) },
-            { typeof(Guid),     (Encode)((b, o) => WriteUuid(b, (Guid)o)) },
-            { typeof(byte[]),   (Encode)((b, o) => WriteBinary(b, (byte[])o)) },
-            { typeof(string),   (Encode)((b, o) => WriteString(b, (string)o)) },
-            { typeof(Symbol),   (Encode)((b, o) => WriteSymbol(b, (Symbol)o)) },
-            { typeof(List),     (Encode)((b, o) => WriteList(b, (IList)o)) },
-            { typeof(Map),      (Encode)((b, o) => WriteMap(b, (Map)o)) },
-            { typeof(Multiple), (Encode)((b, o) => ((Multiple)o).Encode(b)) },
-        };
-
-        static readonly Map decoders = new Map()
-        {
-            { FormatCode.Null,      (Decode)((b, c) => null) },
-            { FormatCode.Boolean,   (Decode)((b, c) => ReadBoolean(b, c)) },
-            { FormatCode.BooleanTrue,   (Decode)((b, c) => true) },
-            { FormatCode.BooleanFalse,  (Decode)((b, c) => false) },
-            { FormatCode.UByte,     (Decode)((b, c) => ReadUByte(b, c)) },
-            { FormatCode.UShort,    (Decode)((b, c) => ReadUShort(b, c)) },
-            { FormatCode.UInt0,     (Decode)((b, c) => 0u) },
-            { FormatCode.SmallUInt, (Decode)((b, c) => ReadUInt(b, c)) },
-            { FormatCode.UInt,      (Decode)((b, c) => ReadUInt(b, c)) },
-            { FormatCode.ULong0,    (Decode)((b, c) => 0ul) },
-            { FormatCode.SmallULong,(Decode)((b, c) => ReadULong(b, c)) },
-            { FormatCode.ULong,     (Decode)((b, c) => ReadULong(b, c)) },
-            { FormatCode.Byte,      (Decode)((b, c) => ReadByte(b, c)) },
-            { FormatCode.Short,     (Decode)((b, c) => ReadShort(b, c)) },
-            { FormatCode.Int,       (Decode)((b, c) => ReadInt(b, c)) },
-            { FormatCode.SmallInt,  (Decode)((b, c) => ReadInt(b, c)) },
-            { FormatCode.Long,      (Decode)((b, c) => ReadLong(b, c)) },
-            { FormatCode.SmallLong, (Decode)((b, c) => ReadLong(b, c)) },
-            { FormatCode.Float,     (Decode)((b, c) => ReadFloat(b, c)) },
-            { FormatCode.Double,    (Decode)((b, c) => ReadDouble(b, c)) },
-            { FormatCode.Char,      (Decode)((b, c) => ReadChar(b, c)) },
-            { FormatCode.TimeStamp, (Decode)((b, c) => ReadTimestamp(b, c)) },
-            { FormatCode.Uuid,      (Decode)((b, c) => ReadUuid(b, c)) },
-            { FormatCode.Binary8,   (Decode)((b, c) => ReadBinary(b, c)) },
-            { FormatCode.Binary32,  (Decode)((b, c) => ReadBinary(b, c)) },
-            { FormatCode.String8Utf8,  (Decode)((b, c) => ReadString(b, c)) },
-            { FormatCode.String32Utf8, (Decode)((b, c) => ReadString(b, c)) },
-            { FormatCode.Symbol8,   (Decode)((b, c) => ReadSymbol(b, c)) },
-            { FormatCode.Symbol32,  (Decode)((b, c) => ReadSymbol(b, c)) },
-            { FormatCode.List0,     (Decode)((b, c) => new object[0]) },
-            { FormatCode.List8,     (Decode)((b, c) => ReadList(b, c)) },
-            { FormatCode.List32,    (Decode)((b, c) => ReadList(b, c)) },
-            { FormatCode.Map8,      (Decode)((b, c) => ReadMap(b, c)) },
-            { FormatCode.Map32,     (Decode)((b, c) => ReadMap(b, c)) },
-            { FormatCode.Array8,    (Decode)((b, c) => ReadArray(b, c)) },
-            { FormatCode.Array32,   (Decode)((b, c) => ReadArray(b, c)) },
-        };
-
+        static readonly Serializer[] serializers;
+        static readonly Map codecByType;
+        static readonly Map codecByFormatCode;
         static Map knownDescrided;
+
+        static Encoder()
+        {
+            serializers = new Serializer[]
+            {
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { AmqpBitConverter.WriteUByte(b, FormatCode.Null); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return null; }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteBoolean(b, (bool)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadBoolean(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteUByte(b, (byte)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadUByte(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteUShort(b, (ushort)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadUShort(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteUInt(b, (uint)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadUInt(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteULong(b, (ulong)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadULong(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteByte(b, (sbyte)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadByte(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteShort(b, (short)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadShort(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteInt(b, (int)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadInt(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteLong(b, (long)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadLong(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteFloat(b, (float)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadFloat(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteDouble(b, (double)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadDouble(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteChar(b, (char)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadChar(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteTimestamp(b, (DateTime)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadTimestamp(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteUuid(b, (Guid)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadUuid(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteBinary(b, (byte[])o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadBinary(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteString(b, (string)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadString(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteSymbol(b, (Symbol)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadSymbol(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteList(b, (IList)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadList(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteMap(b, (Map)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadMap(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteArray(b, (object[])o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadArray(b, c); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { ((Multiple)o).Encode(b); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return Multiple.From(ReadObject(b)); }
+                },
+                new Serializer()
+                {
+                    Encoder = delegate(ByteBuffer b, object o) { WriteObject(b, o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadObject(b); }
+                },
+            };
+
+            codecByType = new Map()
+            {
+                { typeof(bool),     serializers[1] },
+                { typeof(byte),     serializers[2] },
+                { typeof(ushort),   serializers[3] },
+                { typeof(uint),     serializers[4] },
+                { typeof(ulong),    serializers[5] },
+                { typeof(sbyte),    serializers[6] },
+                { typeof(short),    serializers[7] },
+                { typeof(int),      serializers[8] },
+                { typeof(long),     serializers[9] },
+                { typeof(float),    serializers[10] },
+                { typeof(double),   serializers[11] },
+                { typeof(char),     serializers[12] },
+                { typeof(DateTime), serializers[13] },
+                { typeof(Guid),     serializers[14] },
+                { typeof(byte[]),   serializers[15] },
+                { typeof(string),   serializers[16] },
+                { typeof(Symbol),   serializers[17] },
+                { typeof(List),     serializers[18] },
+                { typeof(Map),      serializers[19] },
+                { typeof(object[]), serializers[20] },
+                { typeof(Multiple), serializers[21] },
+                { typeof(object),   serializers[22] },
+            };
+
+            codecByFormatCode = new Map()
+            {
+                { FormatCode.Null,          serializers[0] },
+                { FormatCode.Boolean,       serializers[1] },
+                { FormatCode.BooleanTrue,   serializers[1] },
+                { FormatCode.BooleanFalse,  serializers[1] },
+                { FormatCode.UByte,         serializers[2] },
+                { FormatCode.UShort,        serializers[3] },
+                { FormatCode.UInt0,         serializers[4] },
+                { FormatCode.SmallUInt,     serializers[4] },
+                { FormatCode.UInt,          serializers[4] },
+                { FormatCode.ULong0,        serializers[5] },
+                { FormatCode.SmallULong,    serializers[5] },
+                { FormatCode.ULong,         serializers[5] },
+                { FormatCode.Byte,          serializers[6] },
+                { FormatCode.Short,         serializers[7] },
+                { FormatCode.Int,           serializers[8] },
+                { FormatCode.SmallInt,      serializers[8] },
+                { FormatCode.Long,          serializers[9] },
+                { FormatCode.SmallLong,     serializers[9] },
+                { FormatCode.Float,         serializers[10] },
+                { FormatCode.Double,        serializers[11] },
+                { FormatCode.Char,          serializers[12] },
+                { FormatCode.TimeStamp,     serializers[13] },
+                { FormatCode.Uuid,          serializers[14] },
+                { FormatCode.Binary8,       serializers[15] },
+                { FormatCode.Binary32,      serializers[15] },
+                { FormatCode.String8Utf8,   serializers[16] },
+                { FormatCode.String32Utf8,  serializers[16] },
+                { FormatCode.Symbol8,       serializers[17] },
+                { FormatCode.Symbol32,      serializers[17] },
+                { FormatCode.List0,         serializers[18] },
+                { FormatCode.List8,         serializers[18] },
+                { FormatCode.List32,        serializers[18] },
+                { FormatCode.Map8,          serializers[19] },
+                { FormatCode.Map32,         serializers[19] },
+                { FormatCode.Array8,        serializers[20] },
+                { FormatCode.Array32,       serializers[20] },
+            };
+        }
+
+        public static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
+        {
+            Serializer codec = (Serializer)codecByType[type];
+            if (codec != null)
+            {
+                encoder = codec.Encoder;
+                decoder = codec.Decoder;
+                return true;
+            }
+            else
+            {
+                encoder = null;
+                decoder = null;
+                return false;
+            }
+
+        }
 
         public static void AddKnownDescribed(Descriptor descriptor, CreateDescribed ctor)
         {
@@ -121,10 +272,10 @@ namespace Amqp.Types
             }
             else
             {
-                Encode encode = (Encode)encoders[value.GetType()];
-                if (encode != null)
+                Serializer serializer = (Serializer)codecByType[value.GetType()];
+                if (serializer != null)
                 {
-                    encode(buffer, value);
+                    serializer.Encoder(buffer, value);
                 }
                 else if (value is Described)
                 {
@@ -397,7 +548,7 @@ namespace Amqp.Types
                 AmqpBitConverter.WriteUInt(buffer, 0);
 
                 Encoder.WriteObject(buffer, value[0]);
-                for (int i = 1; i <= value.Count; ++i)
+                for (int i = 1; i < value.Count; ++i)
                 {
                     int lastPos = buffer.WritePos - 1;
                     byte lastByte = buffer.Buffer[lastPos];
@@ -468,21 +619,20 @@ namespace Amqp.Types
         public static object ReadObject(ByteBuffer buffer)
         {
             byte formatCode = Encoder.ReadFormatCode(buffer);
-            Decode decode = (Decode)decoders[formatCode];
-            if (decode != null)
+            Serializer serializer = (Serializer)codecByFormatCode[formatCode];
+            if (serializer != null)
             {
-                return decode(buffer, formatCode);
+                return serializer.Decoder(buffer, formatCode);
             }
             else if (formatCode == FormatCode.Described)
             {
                 Described described;
                 object descriptor = Encoder.ReadObject(buffer);
-                CreateDescribed create = (CreateDescribed)knownDescrided[descriptor];
-                if (create == null)
+                CreateDescribed create = null;
+                if (knownDescrided == null || (create = (CreateDescribed)knownDescrided[descriptor]) == null)
                 {
                     object value = Encoder.ReadObject(buffer);
-                    Descriptor des = new Descriptor(descriptor is ulong ? (ulong)descriptor : 0, descriptor as string);
-                    described = new DescribedValue(des) { Value = value };
+                    described = new DescribedValue(descriptor, value);
                 }
                 else
                 {
@@ -819,12 +969,12 @@ namespace Amqp.Types
             return ReadString(buffer, formatCode, FormatCode.String8Utf8, FormatCode.String32Utf8, "string");
         }
 
-        public static string ReadSymbol(ByteBuffer buffer, byte formatCode)
+        public static Symbol ReadSymbol(ByteBuffer buffer, byte formatCode)
         {
             return ReadString(buffer, formatCode, FormatCode.Symbol8, FormatCode.Symbol32, "symbol");
         }
 
-        public static object[] ReadList(ByteBuffer buffer, byte formatCode)
+        public static List ReadList(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Unknown)
             {
@@ -853,10 +1003,10 @@ namespace Amqp.Types
                     Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "list"));
             }
 
-            object[] value = new object[count];
+            List value = new List();
             for (int i = 0; i < count; ++i)
             {
-                value[i] = ReadObject(buffer);
+                value.Add(ReadObject(buffer));
             }
 
             return value;
@@ -888,8 +1038,8 @@ namespace Amqp.Types
             }
 
             formatCode = Encoder.ReadFormatCode(buffer);
-            Decode decode = (Decode)decoders[formatCode];
-            if (decode == null)
+            Serializer codec = (Serializer)codecByFormatCode[formatCode];
+            if (codec == null)
             {
                 throw new AmqpException(ErrorCode.DecodeError,
                     Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "*"));
@@ -898,7 +1048,7 @@ namespace Amqp.Types
             object[] value = new object[count];
             for (int i = 0; i < count; ++i)
             {
-                value[i] = decode(buffer, formatCode);
+                value[i] = codec.Decoder(buffer, formatCode);
             }
 
             return value;

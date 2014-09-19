@@ -19,27 +19,26 @@ namespace Amqp.Types
 {
     public abstract class Described
     {
-        readonly Descriptor descriptor;
-
-        protected Described(Descriptor descriptor)
-        {
-            this.descriptor = descriptor;
-        }
-
-        public Descriptor Descriptor
-        {
-            get { return this.descriptor; }
-        }
-
         public void Encode(ByteBuffer buffer)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Described);
-            Encoder.WriteObject(buffer, this.descriptor.Code);
+            this.EncodeDescriptor(buffer);
             this.EncodeValue(buffer);
         }
 
-        public abstract void DecodeValue(ByteBuffer buffer);
+        public void Decode(ByteBuffer buffer)
+        {
+            Encoder.ReadFormatCode(buffer);
+            this.DecodeDescriptor(buffer);
+            this.DecodeValue(buffer);
+        }
 
-        protected abstract void EncodeValue(ByteBuffer buffer);
+        internal abstract void EncodeDescriptor(ByteBuffer buffer);
+
+        internal abstract void EncodeValue(ByteBuffer buffer);
+
+        internal abstract void DecodeDescriptor(ByteBuffer buffer);
+
+        internal abstract void DecodeValue(ByteBuffer buffer);
     }
 }

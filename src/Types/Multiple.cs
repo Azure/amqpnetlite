@@ -36,13 +36,16 @@ namespace Amqp.Types
 
         public static Multiple From(object value)
         {
-            object[] array = value as object[];
-            if (array != null)
+            if (value == null)
+            {
+                return null;
+            }
+            else if (value.GetType().IsArray)
             {
                 Multiple multiple = new Multiple();
-                for (int i = 0; i < array.Length; ++i)
+                foreach (object item in (IEnumerable)value)
                 {
-                    multiple.Add(array[i]);
+                    multiple.Add(item);
                 }
 
                 return multiple;
