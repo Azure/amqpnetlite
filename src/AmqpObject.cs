@@ -52,13 +52,17 @@ namespace Amqp
         {
             // initialize event first to avoid the race with NotifyClosed
             this.endEvent = new ManualResetEvent(false);
-            if (!this.OnClose(error) && waitUntilEnded > 0)
+            if (!this.OnClose(error))
             {
-                this.endEvent.WaitOne(waitUntilEnded, false);
+                if (waitUntilEnded > 0)
+                {
+                    this.endEvent.WaitOne(waitUntilEnded, false);
+                }
             }
             else
             {
                 this.endEvent.Set();
+                this.NotifyClosed(null);
             }
         }
 

@@ -9,9 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Amqp</RootNamespace>
     <AssemblyName>Amqp.Net</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseIntermediateOutputPath>..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
   </PropertyGroup>
@@ -20,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;NET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,6 +44,7 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="TaskExtensions.cs" />
     <Compile Include="Delivery.cs" />
     <Compile Include="Framing\Accepted.cs" />
     <Compile Include="Framing\ApplicationProperties.cs" />

@@ -77,30 +77,15 @@ namespace Amqp
 
         public Message Receive(int timeout = 60000)
         {
-            this.ThrowIfDetaching("Receive");
-
-            Waiter waiter = null;
-
-            lock (this.ThisLock)
-            {
-                MessageNode first = (MessageNode)this.receivedMessages.First;
-                if (first != null)
-                {
-                    this.receivedMessages.Remove(first);
-                    return first.Message;
-                }
-
-                if (timeout == 0)
-                {
-                    return null;
-                }
-
-                waiter = new Waiter();
-                this.waiterList.Add(waiter);
-            }
-
-            return waiter.Wait(timeout);
+            return this.ReceiveInternal(null, timeout);
         }
+
+#if NET
+        public Message Receive(MessageCallback callback, int timeout = 60000)
+        {
+            return this.ReceiveInternal(callback, timeout);
+        }
+#endif
 
         public void Accept(Message message)
         {
@@ -159,17 +144,35 @@ namespace Amqp
                     if (waiter == null && callback == null)
                     {
                         this.receivedMessages.Add(new MessageNode() { Message = delivery.Message });
+                        return;
                     }
                 }
 
-                if (waiter != null)
+                while (waiter != null)
                 {
-                    waiter.Signal(delivery.Message);
+                    if (waiter.Signal(delivery.Message))
+                    {
+                        return;
+                    }
+
+                    lock (this.ThisLock)
+                    {
+                        waiter = (Waiter)this.waiterList.First;
+                        if (waiter != null)
+                        {
+                            this.waiterList.Remove(waiter);
+                        }
+                        else if (callback == null)
+                        {
+                            this.receivedMessages.Add(new MessageNode() { Message = delivery.Message });
+                            return;
+                        }
+                    }
                 }
-                else if (callback != null)
-                {
-                    callback(this, delivery.Message);
-                }
+
+                Fx.Assert(waiter == null, "waiter must be null now");
+                Fx.Assert(callback != null, "callback must not be null now");
+                callback(this, delivery.Message);
             }
             else
             {
@@ -218,6 +221,35 @@ namespace Amqp
             return base.OnClose(error);
         }
 
+        Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
+        {
+            this.ThrowIfDetaching("Receive");
+            Waiter waiter = null;
+            lock (this.ThisLock)
+            {
+                MessageNode first = (MessageNode)this.receivedMessages.First;
+                if (first != null)
+                {
+                    this.receivedMessages.Remove(first);
+                    return first.Message;
+                }
+
+                if (timeout == 0)
+                {
+                    return null;
+                }
+
+#if NET
+                waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
+#else
+                waiter = new SyncWaiter();
+#endif
+                this.waiterList.Add(waiter);
+            }
+
+            return waiter.Wait(timeout);
+        }
+        
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;
@@ -251,22 +283,29 @@ namespace Amqp
             public INode Next { get; set; }
         }
 
-        sealed class Waiter : INode
+        abstract class Waiter : INode
+        {
+            public INode Previous { get; set; }
+
+            public INode Next { get; set; }
+
+            public abstract Message Wait(int timeout);
+
+            public abstract bool Signal(Message message);
+        }
+
+        sealed class SyncWaiter : Waiter
         {
             readonly ManualResetEvent signal;
             Message message;
             bool expired;
 
-            public INode Previous { get; set; }
-
-            public INode Next { get; set; }
-
-            public Waiter()
+            public SyncWaiter()
             {
                 this.signal = new ManualResetEvent(false);
             }
 
-            public Message Wait(int timeout)
+            public override Message Wait(int timeout)
             {
                 this.signal.WaitOne(timeout, false);
                 lock (this)
@@ -276,15 +315,64 @@ namespace Amqp
                 }
             }
 
-            public void Signal(Message message)
+            public override bool Signal(Message message)
             {
+                bool signaled = false;
                 lock (this)
                 {
-                    this.message = message;
+                    if (!this.expired)
+                    {
+                        this.message = message;
+                        signaled = true;
+                    }
                 }
 
                 this.signal.Set();
+                return signaled;
             }
         }
+
+#if NET
+        sealed class AsyncWaiter : Waiter
+        {
+            readonly static TimerCallback onTimer = OnTimer;
+            readonly ReceiverLink link;
+            readonly MessageCallback callback;
+            Timer timer;
+            int signaled;
+
+            public AsyncWaiter(ReceiverLink link, MessageCallback callback)
+            {
+                this.link = link;
+                this.callback = callback;
+            }
+
+            public override Message Wait(int timeout)
+            {
+                this.timer = new Timer(onTimer, this, timeout, -1);
+                return null;
+            }
+
+            public override bool Signal(Message message)
+            {
+                this.timer.Dispose();
+                if (Interlocked.Exchange(ref this.signaled, 1) == 0)
+                {
+                    this.callback(this.link, message);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            static void OnTimer(object state)
+            {
+                var thisPtr = (AsyncWaiter)state;
+                thisPtr.Signal(null);
+            }
+        }
+#endif
     }
 }
