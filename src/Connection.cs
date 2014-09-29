@@ -53,7 +53,6 @@ namespace Amqp
         ITransport transport;
         uint maxFrameSize;
         Pump reader;
-        Writer writer;
 
         public Connection(Address address)
         {
@@ -61,7 +60,6 @@ namespace Amqp
             this.localSessions = new Session[MaxSessions];
             this.remoteSessions = new Session[MaxSessions];
             this.maxFrameSize = DefaultMaxFrameSize;
-            this.writer = new Writer(this);
             this.Connect();
         }
 
@@ -75,8 +73,6 @@ namespace Amqp
             lock (this.ThisLock)
             {
                 this.ThrowIfClosed("AddSession");
-                this.StartIfNeeded();
-
                 for (int i = 0; i < this.localSessions.Length; ++i)
                 {
                     if (this.localSessions[i] == null)
@@ -107,7 +103,7 @@ namespace Amqp
                 payload.Complete(payloadSize);
             }
 
-            this.writer.Write(buffer);
+            this.transport.Send(buffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
         }
 
@@ -150,71 +146,27 @@ namespace Amqp
 
         void Connect()
         {
+            ITransport transport;
             TcpTransport tcpTransport = new TcpTransport();
-            if (!tcpTransport.ConnectAsync(
-                    this.address.Host,
-                    this.address.Port,
-                    this.address.UseSsl ? this.address.Host : null,
-                    DisableServerCertValidation,
-                    OnTcpConnect,
-                    this))
-            {
-                OnTcpConnect(tcpTransport, true, null, this);
-            }
-        }
+            tcpTransport.Connect(this, this.address, DisableServerCertValidation);
+            transport = tcpTransport;
 
-        static void OnTcpConnect(ITransport tcpTransport, bool syncComplete, Exception exception, object state)
-        {
-            Connection thisPtr = (Connection)state;
-            if (exception != null)
+            if (this.address.User != null)
             {
-                thisPtr.OnIoException(exception);
-                return;
+                SaslTransport saslTransport = new SaslTransport(tcpTransport);
+                saslTransport.Open(this.address.Host, new SaslPlanProfile(this.address.User, this.address.Password));
+                transport = saslTransport;
             }
 
-            try
-            {
-                if (thisPtr.address.User != null)
-                {
-                    SaslTransport saslTransport = new SaslTransport(tcpTransport);
-                    saslTransport.Open(thisPtr.address.Host, new SaslPlanProfile(thisPtr.address.User, thisPtr.address.Password));
-                    OnConnect(saslTransport, null, thisPtr);
-                }
-                else
-                {
-                    OnConnect(tcpTransport, null, thisPtr);
-                }
-            }
-            catch (Exception exception2)
-            {
-                if (syncComplete)
-                {
-                    throw;
-                }
-                else
-                {
-                    thisPtr.OnIoException(exception2);
-                }
-            }
-        }
+            this.transport = transport;
 
-        static void OnConnect(ITransport transport, Exception exception, object state)
-        {
-            Connection thisPtr = (Connection)state;
-            if (exception != null)
-            {
-                thisPtr.OnIoException(exception);
-                return;
-            }
+            // after getting the transport, move state to open pipe before starting the pump
+            this.SendHeader();
+            this.SendOpen();
+            this.state = State.OpenPipe;
 
-            thisPtr.transport = transport;
-            lock (thisPtr.ThisLock)
-            {
-                thisPtr.StartIfNeeded();
-            }
-
-            thisPtr.reader = new Pump(thisPtr);
-            thisPtr.reader.Start();
+            this.reader = new Pump(this);
+            this.reader.Start();
         }
 
         void ThrowIfClosed(string operation)
@@ -226,21 +178,10 @@ namespace Amqp
             }
         }
 
-        void StartIfNeeded()
-        {
-            // need to be called with lock held
-            if (this.state == State.Start)
-            {
-                this.SendHeader();
-                this.SendOpen();
-                this.state = State.OpenPipe;
-            }
-        }
-
         void SendHeader()
         {
             byte[] header = new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
-            this.writer.Write(new ByteBuffer(header, 0, header.Length, header.Length));
+            this.transport.Send(new ByteBuffer(header, 0, header.Length, header.Length));
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP 0 1.0.0");
         }
 
@@ -449,7 +390,7 @@ namespace Amqp
             }
         }
 
-        void OnIoException(Exception exception)
+        internal void OnIoException(Exception exception)
         {
             if (this.state != State.End)
             {
@@ -466,90 +407,6 @@ namespace Amqp
             }
 
             this.NotifyClosed(error);
-        }
-
-        sealed class Writer
-        {
-            readonly Connection connection;
-            ByteBuffer[] outgoingQueue;
-            int head;
-            int count;
-
-            public Writer(Connection connection)
-            {
-                this.connection = connection;
-                this.outgoingQueue = new ByteBuffer[8];
-            }
-
-            public void Write(ByteBuffer buffer)
-            {
-                bool shouldWrite;
-                lock (this)
-                {
-                    shouldWrite = this.Enqueue(buffer);
-                }
-
-                if (shouldWrite)
-                {
-                    this.WriteCore(buffer);
-                }
-            }
-
-            void WriteCore(ByteBuffer buffer)
-            {
-                do
-                {
-                    try
-                    {
-                        this.connection.transport.Send(buffer);
-                    }
-                    catch (Exception exception)
-                    {
-                        this.connection.OnIoException(exception);
-                        break;
-                    }
-
-                    lock (this)
-                    {
-                        this.Dequeue(out buffer);
-                    }
-                }
-                while (buffer != null);
-            }
-
-            bool Enqueue(ByteBuffer buffer)
-            {
-                if (this.count == this.outgoingQueue.Length)
-                {
-                    ByteBuffer[] expanded = new ByteBuffer[this.count * 2];
-                    int c1 = this.count - this.head;
-                    Array.Copy(this.outgoingQueue, this.head, expanded, 0, c1);
-                    if (this.head > 0)
-                    {
-                        Array.Copy(this.outgoingQueue, 0, expanded, c1, this.head);
-                    }
-
-                    this.outgoingQueue = expanded;
-                    this.head = 0;
-                }
-
-                int index = (this.head + this.count) % this.outgoingQueue.Length;
-                this.outgoingQueue[index] = buffer;
-                this.count++;
-
-                return this.count == 1 && this.connection.transport != null;
-            }
-
-            void Dequeue(out ByteBuffer next)
-            {
-                next = null;
-                this.outgoingQueue[this.head] = null;
-                this.head = (this.head + 1) % this.outgoingQueue.Length;
-                if (--this.count > 0)
-                {
-                    next = this.outgoingQueue[this.head];
-                }
-            }
         }
 
         sealed class Pump

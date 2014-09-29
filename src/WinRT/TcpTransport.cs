@@ -20,7 +20,6 @@ namespace Amqp
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices.WindowsRuntime;
-    using Windows.Foundation;
     using Windows.Networking;
     using Windows.Networking.Sockets;
     using Windows.Storage.Streams;
@@ -28,6 +27,7 @@ namespace Amqp
     sealed class TcpTransport : ITransport
     {
         readonly Queue<ByteBuffer> writeQueue;
+        Connection connection;
         StreamSocket socket;
 
         public TcpTransport()
@@ -35,21 +35,14 @@ namespace Amqp
             this.writeQueue = new Queue<ByteBuffer>();
         }
 
-        public bool ConnectAsync(string hostname, int port, string sslHost,
-            bool noVerification, TransportCallback callback, object state)
+        public void Connect(Connection connection, Address address, bool noVerification)
         {
+            this.connection = connection;
             this.socket = new StreamSocket();
-            IAsyncAction action = this.socket.ConnectAsync(
-                new HostName(hostname),
-                port.ToString(),
-                sslHost != null ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket);
-            bool pending = action.Status == AsyncStatus.Started;
-            if (pending)
-            {
-                this.AwaitConnect(action, callback, state);
-            }
-
-            return pending;
+            this.socket.ConnectAsync(
+                new HostName(address.Host),
+                address.Port.ToString(),
+                address.UseSsl ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket).AsTask().Wait();
         }
 
         public void Close()
@@ -77,27 +70,19 @@ namespace Amqp
             return (int)result.Length;
         }
 
-        async void AwaitConnect(IAsyncAction action, TransportCallback callback, object state)
-        {
-            Exception exception = null;
-
-            try
-            {
-                await action;
-            }
-            catch (Exception exp)
-            {
-                exception = exp;
-            }
-
-            callback(this, false, exception, state);
-        }
-
         async void SendAsync(ByteBuffer buffer)
         {
             while (buffer != null)
             {
-                await this.socket.OutputStream.WriteAsync(buffer.Buffer.AsBuffer(buffer.Offset, buffer.Length));
+                try
+                {
+                    await this.socket.OutputStream.WriteAsync(buffer.Buffer.AsBuffer(buffer.Offset, buffer.Length));
+                }
+                catch (Exception exception)
+                {
+                    this.connection.OnIoException(exception);
+                    break;
+                }
 
                 lock (this.writeQueue)
                 {

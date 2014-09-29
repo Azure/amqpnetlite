@@ -26,10 +26,9 @@ namespace Amqp
     {
         ITransport socketTransport;
 
-        public bool ConnectAsync(string hostname, int port, string sslHost,
-            bool noVerification, TransportCallback callback, object state)
+        public void Connect(Connection connection, Address address, bool noVerification)
         {
-            var ipHostEntry = Dns.GetHostEntry(hostname);
+            var ipHostEntry = Dns.GetHostEntry(address.Host);
             Exception exception = null;
             TcpSocket socket = null;
             // reference to SSL socket, wrapper for above TCP socket
@@ -46,18 +45,18 @@ namespace Amqp
                 {
                     socket = new TcpSocket();
                     // SSL connection requested with an SSL host
-                    if (sslHost != null)
+                    if (address.UseSsl)
                     {
                         // wrap TCP socket to SSL socket
-                        sslSocket = new SslSocket(socket, sslHost, ValidateCertificate);
+                        sslSocket = new SslSocket(socket, address.Host, ValidateCertificate);
                     }
-                    socket.Connect(new IPEndPoint(ipAddress, port));
+                    socket.Connect(new IPEndPoint(ipAddress, address.Port));
                     exception = null;
                     break;
                 }
                 catch (SocketException socketException)
                 {
-                    if (sslHost != null)
+                    if (address.UseSsl)
                     {
                         if (sslSocket != null)
                         {
@@ -81,7 +80,7 @@ namespace Amqp
                 throw exception;
             }
 
-            if (sslHost != null)
+            if (address.UseSsl)
             {
                 this.socketTransport = sslSocket;
             }
@@ -89,8 +88,6 @@ namespace Amqp
             {
                 this.socketTransport = socket;
             }
-
-            return false;
         }
 
         public void Close()

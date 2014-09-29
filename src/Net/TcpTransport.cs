@@ -21,19 +21,31 @@ namespace Amqp
     using System.Net;
     using System.Net.Security;
     using System.Net.Sockets;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     sealed class TcpTransport : ITransport
     {
-        ITransport socketTransport;
+        Connection connection;
+        Writer writer;
+        IAsyncTransport socketTransport;
 
-        public bool ConnectAsync(string hostname, int port, string sslHost,
-            bool noVerification, TransportCallback callback, object state)
+        public void Connect(Connection connection, Address address, bool noVerification)
         {
-            var ipHostEntry = Dns.GetHostEntry(hostname);
+            IPAddress[] addressList;
+            IPAddress ipHost;
+            if (IPAddress.TryParse(address.Host, out ipHost))
+            {
+                addressList = new IPAddress[] { ipHost };
+            }
+            else
+            {
+                addressList = Dns.GetHostEntry(address.Host).AddressList;
+            }
+
             Exception exception = null;
             TcpSocket socket = null;
-
-            foreach (var ipAddress in ipHostEntry.AddressList)
+            foreach (var ipAddress in addressList)
             {
                 if (ipAddress == null)
                 {
@@ -42,8 +54,8 @@ namespace Amqp
 
                 try
                 {
-                    socket = new TcpSocket();
-                    socket.Connect(new IPEndPoint(ipAddress, port));
+                    socket = new TcpSocket(this, ipAddress.AddressFamily);
+                    socket.Connect(new IPEndPoint(ipAddress, address.Port));
                     exception = null;
                     break;
                 }
@@ -64,10 +76,10 @@ namespace Amqp
                 throw exception;
             }
 
-            if (sslHost != null)
+            if (address.UseSsl)
             {
-                SslSocket sslSocket = new SslSocket(socket);
-                sslSocket.AuthenticateAsClient(sslHost);
+                SslSocket sslSocket = new SslSocket(this, socket, noVerification);
+                sslSocket.AuthenticateAsClient(address.Host);
                 this.socketTransport = sslSocket;
             }
             else
@@ -75,7 +87,8 @@ namespace Amqp
                 this.socketTransport = socket;
             }
 
-            return false;
+            this.connection = connection;
+            this.writer = new Writer(this, this.socketTransport);
         }
 
         public void Close()
@@ -85,7 +98,7 @@ namespace Amqp
 
         public void Send(ByteBuffer buffer)
         {
-            this.socketTransport.Send(buffer);
+            this.writer.Write(buffer);
         }
 
         public int Receive(byte[] buffer, int offset, int count)
@@ -93,16 +106,61 @@ namespace Amqp
             return this.socketTransport.Receive(buffer, offset, count);
         }
 
-        class TcpSocket : Socket, ITransport
+        interface IAsyncTransport : ITransport
         {
-            public TcpSocket()
-                : base(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            // true: pending, false: completed
+            bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize);
+        }
+
+        class TcpSocket : Socket, IAsyncTransport
+        {
+            readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
+            readonly TcpTransport transport;
+            readonly SocketAsyncEventArgs args;
+
+            public TcpSocket(TcpTransport transport, AddressFamily addressFamily)
+                : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
             {
+                this.NoDelay = true;
+
+                this.transport = transport;
+                this.args = new SocketAsyncEventArgs();
+                this.args.Completed += onWriteComplete;
+                this.args.UserToken = this;
+            }
+
+            static void OnWriteComplete(object sender, SocketAsyncEventArgs eventArgs)
+            {
+                var thisPtr = (TcpSocket)eventArgs.UserToken;
+                if (eventArgs.SocketError != SocketError.Success)
+                {
+                    thisPtr.transport.connection.OnIoException(new SocketException((int)eventArgs.SocketError));
+                }
+                else
+                {
+                    thisPtr.transport.writer.ContinueWrite();
+                }
+            }
+
+            bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+            {
+                if (buffer != null)
+                {
+                    this.args.BufferList = null;
+                    this.args.SetBuffer(buffer.Buffer, buffer.Offset, buffer.Length);
+                }
+                else
+                {
+                    this.args.SetBuffer(null, 0, 0);
+                    this.args.BufferList = bufferList;
+                }
+
+                return this.SendAsync(this.args);
             }
 
             void ITransport.Send(ByteBuffer buffer)
             {
-                base.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
+                throw new InvalidOperationException();
             }
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
@@ -114,33 +172,170 @@ namespace Amqp
             {
                 base.Close();
             }
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    this.args.Dispose();
+                }
+
+                base.Dispose(disposing);
+            }
         }
 
-        class SslSocket : SslStream, ITransport
+        class SslSocket : SslStream, IAsyncTransport
         {
-            Socket socket;
+            static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
+            readonly TcpTransport transport;
 
-            public SslSocket(Socket socket)
-                : base(new NetworkStream(socket))
+            public SslSocket(TcpTransport transport, Socket socket, bool noVarification)
+                : base(new NetworkStream(socket), false, noVarification ? noneCertValidator : null)
             {
-                this.socket = socket;
+                this.transport = transport;
             }
 
+            bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+            {
+                ArraySegment<byte> writeBuffer;
+                if (buffer != null)
+                {
+                    writeBuffer = new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length);
+                }
+                else
+                {
+                    byte[] temp = new byte[listSize];
+                    int offset = 0;
+                    for (int i = 0; i < bufferList.Count; i++)
+                    {
+                        ArraySegment<byte> segment = bufferList[i];
+                        Buffer.BlockCopy(segment.Array, segment.Offset, temp, offset, segment.Count);
+                        offset += segment.Count;
+                    }
+
+                    writeBuffer = new ArraySegment<byte>(temp, 0, listSize);
+                }
+
+                Task task = this.WriteAsync(writeBuffer.Array, writeBuffer.Offset, writeBuffer.Count);
+                bool pending = !task.IsCompleted;
+                if (pending)
+                {
+                    task.ContinueWith(
+                        (t, s) =>
+                        {
+                            var thisPtr = (SslSocket)s;
+                            if (t.IsFaulted)
+                            {
+                                thisPtr.transport.connection.OnIoException(t.Exception.InnerException);
+                            }
+                            else
+                            {
+                                thisPtr.transport.writer.ContinueWrite();
+                            }
+                        },
+                        this);
+                }
+
+                return pending;
+            }
+            
             void ITransport.Send(ByteBuffer buffer)
             {
-                base.Write(buffer.Buffer, buffer.Offset, buffer.Length);
+                throw new InvalidOperationException();
             }
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                //if (this.socket.Available <= 0) System.Threading.Thread.Sleep(20);
-                //Trace.WriteLine(TraceLevel.Information, "Data Available: {0}", this.DataAvailable);
                 return base.Read(buffer, offset, count);
             }
 
             void ITransport.Close()
             {
                 base.Close();
+            }
+        }
+
+        sealed class Writer
+        {
+            readonly TcpTransport owner;
+            readonly IAsyncTransport transport;
+            Queue<ByteBuffer> bufferQueue;
+            bool writing;
+
+            public Writer(TcpTransport owner, IAsyncTransport transport)
+            {
+                this.owner = owner;
+                this.transport = transport;
+                this.bufferQueue = new Queue<ByteBuffer>();
+            }
+
+            public void Write(ByteBuffer buffer)
+            {
+                lock (this.bufferQueue)
+                {
+                    if (this.writing)
+                    {
+                        this.bufferQueue.Enqueue(buffer);
+                        return;
+                    }
+
+                    this.writing = true;
+                }
+
+                if (!this.transport.SendAsync(buffer, null, 0))
+                {
+                    this.ContinueWrite();
+                }
+            }
+
+            public void ContinueWrite()
+            {
+                ByteBuffer buffer = null;
+                IList<ArraySegment<byte>> buffers = null;
+                int listSize = 0;
+                do
+                {
+                    lock (this.bufferQueue)
+                    {
+                        int queueDepth = this.bufferQueue.Count;
+                        if (queueDepth == 0)
+                        {
+                            this.writing = false;
+                            return;
+                        }
+                        else if (queueDepth == 1)
+                        {
+                            buffer = this.bufferQueue.Dequeue();
+                            buffers = null;
+                        }
+                        else
+                        {
+                            buffer = null;
+                            listSize = 0;
+                            buffers = new ArraySegment<byte>[queueDepth];
+                            for (int i = 0; i < queueDepth; i++)
+                            {
+                                ByteBuffer item = this.bufferQueue.Dequeue();
+                                buffers[i] = new ArraySegment<byte>(item.Buffer, item.Offset, item.Length);
+                                listSize += item.Length;
+                            }
+                        }
+                    }
+
+                    try
+                    {
+                        if (this.transport.SendAsync(buffer, buffers, listSize))
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        this.owner.connection.OnIoException(exception);
+                        break;
+                    }
+                }
+                while (true);
             }
         }
     }

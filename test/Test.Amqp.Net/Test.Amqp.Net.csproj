@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="AmqpCodecTests.cs" />
     <Compile Include="Assert.cs" />
+    <Compile Include="PerfTests.cs" />
     <Compile Include="TaskTests.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

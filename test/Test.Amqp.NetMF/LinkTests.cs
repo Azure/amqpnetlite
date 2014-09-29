@@ -30,12 +30,13 @@ namespace Test.Amqp
 #endif
     public class LinkTests
     {
-        Address address = new Address("amqp://guest:guest@localhost:5672");
+        public static Address address = new Address("amqp://guest:guest@localhost:5672");
 
 #if !(NETMF || COMPACT_FRAMEWORK)
-        [TestInitialize]
-        public void Initialize()
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
         {
+            Connection.DisableServerCertValidation = true;
             // uncomment the following to write frame traces
             //Trace.TraceLevel = TraceLevel.Frame;
             //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));

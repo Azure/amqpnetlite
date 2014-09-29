@@ -26,10 +26,9 @@ namespace Amqp
     {
         ITransport socketTransport;
 
-        public bool ConnectAsync(string hostname, int port, string sslHost,
-            bool noVerification, TransportCallback callback, object state)
+        public void Connect(Connection connection, Address address, bool noVerification)
         {
-            var ipHostEntry = Dns.GetHostEntry(hostname);
+            var ipHostEntry = Dns.GetHostEntry(address.Host);
             Exception exception = null;
             TcpSocket socket = null;
 
@@ -43,7 +42,7 @@ namespace Amqp
                 try
                 {
                     socket = new TcpSocket();
-                    socket.Connect(new IPEndPoint(ipAddress, port));
+                    socket.Connect(new IPEndPoint(ipAddress, address.Port));
                     exception = null;
                     break;
                 }
@@ -64,11 +63,11 @@ namespace Amqp
                 throw exception;
             }
 
-            if (sslHost != null)
+            if (address.UseSsl)
             {
                 SslSocket sslSocket = new SslSocket(socket);
                 sslSocket.AuthenticateAsClient(
-                    sslHost,
+                    address.Host,
                     null,
                     noVerification ? SslVerification.NoVerification : SslVerification.VerifyPeer,
                     SslProtocols.Default);
@@ -78,8 +77,6 @@ namespace Amqp
             {
                 this.socketTransport = socket;
             }
-
-            return false;
         }
 
         public void Close()
