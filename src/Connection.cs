@@ -69,10 +69,11 @@ namespace Amqp
         }
 
 #if NET
-        internal Connection(Address address, ITransport transport)
+        internal Connection(Address address, IAsyncTransport transport)
             : this()
         {
             this.address = address;
+            transport.SetConnection(this);
             this.OnTransport(transport);
         }
 #endif

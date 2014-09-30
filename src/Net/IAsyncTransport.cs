@@ -23,6 +23,8 @@ namespace Amqp
    
     interface IAsyncTransport : ITransport
     {
+        void SetConnection(Connection connection);
+
         // true: pending, false: completed
         bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize);
 

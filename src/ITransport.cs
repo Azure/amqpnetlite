@@ -19,8 +19,6 @@ namespace Amqp
 {
     using System;
 
-    delegate void TransportCallback(ITransport transport, bool syncComplete, Exception exception, object state);
-
     interface ITransport
     {
         // if transport supports async write, it should perform async write with queued buffers

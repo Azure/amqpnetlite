@@ -30,27 +30,32 @@ namespace Amqp
             this.innerTransport = innerTransport;
         }
 
-        public void Close()
+        void ITransport.Close()
         {
             this.innerTransport.Close();
         }
 
-        public void Send(ByteBuffer buffer)
+        void ITransport.Send(ByteBuffer buffer)
         {
             this.innerTransport.Send(buffer);
         }
 
-        public int Receive(byte[] buffer, int offset, int count)
+        int ITransport.Receive(byte[] buffer, int offset, int count)
         {
             throw new InvalidOperationException();
         }
 
-        public bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        void IAsyncTransport.SetConnection(Connection connection)
+        {
+            this.innerTransport.SetConnection(connection);
+        }
+
+        bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
         {
             throw new InvalidOperationException();
         }
 
-        public Task<int> ReceiveAsync(byte[] buffer, int offset, int count)
+        Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
             return this.innerTransport.ReceiveAsync(buffer, offset, count);
         }

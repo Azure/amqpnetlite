@@ -15,10 +15,10 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
-using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Test.Amqp
 {
@@ -40,7 +40,7 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "send-link", "q1");
 
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < 50; ++i)
             {
                 Message message = new Message();
                 message.Properties = new Properties() { GroupId = "abcdefg" };
@@ -50,7 +50,41 @@ namespace Test.Amqp
             }
 
             ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < 50; ++i)
+            {
+                if (i % 50 == 0) receiver.SetCredit(50);
+                Message message = await receiver.ReceiveAsync();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            await sender.CloseAsync();
+            await receiver.CloseAsync();
+            await session.CloseAsync();
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task WebSocketSendReceiveAsyncTest()
+        {
+            // assuming it matches the broker's setup
+            Address wsAddress = new Address("ws://guest:guest@localhost:80");
+
+            Connection connection = await wsAddress.ConnectAsync();
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "send-link", "q1");
+
+            for (int i = 0; i < 50; ++i)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                await sender.SendAsync(message);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            for (int i = 0; i < 50; ++i)
             {
                 if (i % 50 == 0) receiver.SetCredit(50);
                 Message message = await receiver.ReceiveAsync();

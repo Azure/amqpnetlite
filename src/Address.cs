@@ -230,14 +230,17 @@ namespace Amqp
             {
                 this.UseSsl = true;
             }
-            else if (schemeUpper != Amqp)
-            {
-                throw new AmqpException(ErrorCode.InvalidField, "scheme");
-            }
 
             if (this.Port == -1)
             {
-                this.Port = this.UseSsl ? AmqpsPort : AmqpPort;
+                if (this.UseSsl)
+                {
+                    this.Port = AmqpsPort;
+                }
+                else if (schemeUpper == Amqp)
+                {
+                    this.Port = AmqpPort;
+                }
             }
 
             if (this.Path == null)

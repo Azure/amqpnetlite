@@ -98,6 +98,7 @@
       <DependentUpon>SRAmqp.resx</DependentUpon>
     </Compile>
     <Compile Include="Net\TcpTransport.cs" />
+    <Compile Include="Net\WebSocketTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiverLink.cs" />
     <Compile Include="Sasl\SaslChallenge.cs" />

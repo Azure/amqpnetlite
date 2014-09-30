@@ -109,15 +109,24 @@ namespace Amqp
         public static async Task<Connection> ConnectAsync(this Address address)
         {
             IAsyncTransport transport;
-            TcpTransport tcpTransport = new TcpTransport();
-            await tcpTransport.ConnectAsync(address, Connection.DisableServerCertValidation);
-            transport = tcpTransport;
+            if (WebSocketTransport.MatchScheme(address.Scheme))
+            {
+                WebSocketTransport wsTransport = new WebSocketTransport();
+                await wsTransport.ConnectAsync(address);
+                transport = wsTransport;
+            }
+            else
+            {
+                TcpTransport tcpTransport = new TcpTransport();
+                await tcpTransport.ConnectAsync(address, Connection.DisableServerCertValidation);
+                transport = tcpTransport;
+            }
 
             if (address.User != null)
             {
                 SaslPlanProfile profile = new SaslPlanProfile(address.User, address.Password);
-                await profile.OpenAsync(address.Host, tcpTransport);
-                transport = new AsyncSaslTransport(tcpTransport);
+                await profile.OpenAsync(address.Host, transport);
+                transport = new AsyncSaslTransport(transport);
             }
 
             AsyncPump pump = new AsyncPump(transport);

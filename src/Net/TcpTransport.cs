@@ -112,27 +112,32 @@ namespace Amqp
             this.writer = new Writer(this, this.socketTransport);
         }
 
-        public Task<int> ReceiveAsync(byte[] buffer, int offset, int count)
+        void IAsyncTransport.SetConnection(Connection connection)
+        {
+            this.connection = connection;
+        }
+
+        Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
             return this.socketTransport.ReceiveAsync(buffer, offset, count);
         }
 
-        public bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
         {
             throw new InvalidOperationException();
         }
 
-        public void Close()
+        void ITransport.Close()
         {
             this.socketTransport.Close();
         }
 
-        public void Send(ByteBuffer buffer)
+        void ITransport.Send(ByteBuffer buffer)
         {
             this.writer.Write(buffer);
         }
 
-        public int Receive(byte[] buffer, int offset, int count)
+        int ITransport.Receive(byte[] buffer, int offset, int count)
         {
             return this.socketTransport.Receive(buffer, offset, count);
         }
@@ -165,6 +170,11 @@ namespace Amqp
                 {
                     thisPtr.transport.writer.ContinueWrite();
                 }
+            }
+
+            void IAsyncTransport.SetConnection(Connection connection)
+            {
+                throw new NotImplementedException();
             }
 
             bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
@@ -226,6 +236,11 @@ namespace Amqp
                 : base(new NetworkStream(socket), false, noVarification ? noneCertValidator : null)
             {
                 this.transport = transport;
+            }
+
+            void IAsyncTransport.SetConnection(Connection connection)
+            {
+                throw new NotImplementedException();
             }
 
             bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
