@@ -44,7 +44,10 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
-    <Compile Include="TaskExtensions.cs" />
+    <Compile Include="Net\AsyncPump.cs" />
+    <Compile Include="Net\AsyncSaslTransport.cs" />
+    <Compile Include="Net\IAsyncTransport.cs" />
+    <Compile Include="Net\TaskExtensions.cs" />
     <Compile Include="Delivery.cs" />
     <Compile Include="Framing\Accepted.cs" />
     <Compile Include="Framing\ApplicationProperties.cs" />

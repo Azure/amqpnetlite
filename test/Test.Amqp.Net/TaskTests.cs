@@ -25,20 +25,18 @@ namespace Test.Amqp
     [TestClass]
     public class TaskTests
     {
-        Address address = new Address("amqp://guest:guest@localhost:5672");
+        Address address = LinkTests.address;
 
-        [TestInitialize]
-        public void Initialize()
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
         {
-            // uncomment the following to write frame traces
-            //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            LinkTests.Initialize(context);
         }
 
         [TestMethod]
         public async Task BasicSendReceiveAsyncTest()
         {
-            Connection connection = new Connection(address);
+            Connection connection = await this.address.ConnectAsync();
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "send-link", "q1");
 

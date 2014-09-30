@@ -29,24 +29,8 @@ namespace Amqp.Framing
             {
                 throw new ObjectDisposedException(transport.GetType().Name);
             }
-            else
-            {
-                if (smallBuffer[0] != (byte)'A' ||
-                    smallBuffer[1] != (byte)'M' ||
-                    smallBuffer[2] != (byte)'Q' ||
-                    smallBuffer[3] != (byte)'P')
-                {
-                    throw new AmqpException(ErrorCode.InvalidField, "ProtocolName");
-                }
 
-                return new ProtocolHeader()
-                {
-                    Id = smallBuffer[4],
-                    Major = smallBuffer[5],
-                    Minor = smallBuffer[6],
-                    Revision = smallBuffer[7]
-                };
-            }
+            return ProtocolHeader.Create(smallBuffer, 0);
         }
 
         public static ByteBuffer ReadFrameBuffer(ITransport transport, byte[] sizeBuffer, uint maxFrameSize)

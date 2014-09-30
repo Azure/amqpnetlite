@@ -54,14 +54,28 @@ namespace Amqp
         uint maxFrameSize;
         Pump reader;
 
-        public Connection(Address address)
+        Connection()
         {
-            this.address = address;
             this.localSessions = new Session[MaxSessions];
             this.remoteSessions = new Session[MaxSessions];
             this.maxFrameSize = DefaultMaxFrameSize;
+        }
+
+        public Connection(Address address)
+            : this()
+        {
+            this.address = address;
             this.Connect();
         }
+
+#if NET
+        internal Connection(Address address, ITransport transport)
+            : this()
+        {
+            this.address = address;
+            this.OnTransport(transport);
+        }
+#endif
 
         object ThisLock
         {
@@ -158,15 +172,20 @@ namespace Amqp
                 transport = saslTransport;
             }
 
+            this.OnTransport(transport);
+
+            this.reader = new Pump(this);
+            this.reader.Start();
+        }
+
+        void OnTransport(ITransport transport)
+        {
             this.transport = transport;
 
             // after getting the transport, move state to open pipe before starting the pump
             this.SendHeader();
             this.SendOpen();
             this.state = State.OpenPipe;
-
-            this.reader = new Pump(this);
-            this.reader.Start();
         }
 
         void ThrowIfClosed(string operation)
@@ -298,7 +317,7 @@ namespace Amqp
             }
         }
 
-        void OnHeader(ProtocolHeader header)
+        internal void OnHeader(ProtocolHeader header)
         {
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", header);
             lock (this.ThisLock)
@@ -324,8 +343,9 @@ namespace Amqp
             }
         }
 
-        void OnFrame(ByteBuffer buffer)
+        internal bool OnFrame(ByteBuffer buffer)
         {
+            bool shouldContinue = true;
             try
             {
                 ushort channel;
@@ -340,6 +360,7 @@ namespace Amqp
                 else if (command.Descriptor.Code == Codec.Close.Code)
                 {
                     this.OnClose((Close)command);
+                    shouldContinue = false;
                 }
                 else if (command.Descriptor.Code == Codec.Begin.Code)
                 {
@@ -357,7 +378,10 @@ namespace Amqp
             catch (Exception exception)
             {
                 this.OnException(exception);
+                shouldContinue = false;
             }
+
+            return shouldContinue;
         }
 
         void OnException(Exception exception)

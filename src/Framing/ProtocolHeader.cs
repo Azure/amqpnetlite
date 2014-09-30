@@ -17,6 +17,8 @@
 
 namespace Amqp.Framing
 {
+    using Amqp.Types;
+
     struct ProtocolHeader
     {
         public byte Id;
@@ -27,9 +29,30 @@ namespace Amqp.Framing
 
         public byte Revision;
 
+        public static ProtocolHeader Create(byte[] buffer, int offset)
+        {
+            if (buffer[offset + 0] != (byte)'A' ||
+                buffer[offset + 1] != (byte)'M' ||
+                buffer[offset + 2] != (byte)'Q' ||
+                buffer[offset + 3] != (byte)'P')
+            {
+                throw new AmqpException(ErrorCode.InvalidField, "ProtocolName");
+            }
+
+            return new ProtocolHeader()
+            {
+                Id = buffer[offset + 4],
+                Major = buffer[offset + 5],
+                Minor = buffer[offset + 6],
+                Revision = buffer[offset + 7]
+            };
+        }
+
+#if TRACE
         public override string ToString()
         {
             return Fx.Format("{0} {1} {2} {3}", this.Id, this.Major, this.Minor, this.Revision);
         }
+#endif
     }
 }

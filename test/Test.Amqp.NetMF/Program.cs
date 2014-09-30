@@ -31,7 +31,7 @@ namespace Test.Amqp
     {
         public static void Main()
         {
-            AmqpTrace.TraceLevel = TraceLevel.Frame | TraceLevel.Verbose;
+            AmqpTrace.TraceLevel = TraceLevel.Frame;
             AmqpTrace.TraceListener = Program.WriteTrace;
             Connection.DisableServerCertValidation = true;
 

@@ -21,6 +21,7 @@ namespace Amqp
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Types;
+    using Amqp.Sasl;
 
     public static class TaskExtensions
     {
@@ -103,6 +104,38 @@ namespace Amqp
             }
 
             return tcs.Task;
+        }
+
+        public static async Task<Connection> ConnectAsync(this Address address)
+        {
+            IAsyncTransport transport;
+            TcpTransport tcpTransport = new TcpTransport();
+            await tcpTransport.ConnectAsync(address, Connection.DisableServerCertValidation);
+            transport = tcpTransport;
+
+            if (address.User != null)
+            {
+                SaslPlanProfile profile = new SaslPlanProfile(address.User, address.Password);
+                await profile.OpenAsync(address.Host, tcpTransport);
+                transport = new AsyncSaslTransport(tcpTransport);
+            }
+
+            AsyncPump pump = new AsyncPump(transport);
+            Connection connection = new Connection(address, transport);
+            pump.Start(connection);
+
+            return connection;
+        }
+
+        internal static async Task OpenAsync(this SaslProfile saslProfile, string hostname, IAsyncTransport transport)
+        {
+            ProtocolHeader header = saslProfile.Start(hostname, transport);
+
+            AsyncPump pump = new AsyncPump(transport);
+
+            await pump.PumpAsync(
+                h => saslProfile.OnHeader(header, h),
+                b => { SaslCode code; return saslProfile.OnFrame(transport, b, out code); });
         }
     }
 }

@@ -25,6 +25,36 @@ namespace Amqp.Sasl
     {
         public void Open(string hostname, ITransport transport)
         {
+            ProtocolHeader myHeader = this.Start(hostname, transport);
+
+            ProtocolHeader theirHeader = Reader.ReadHeader(transport);
+            Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", theirHeader);
+            this.OnHeader(myHeader, theirHeader);
+
+            SaslCode code = SaslCode.SysTemp;
+            while (true)
+            {
+                ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], uint.MaxValue);
+                if (buffer == null)
+                {
+                    throw new ObjectDisposedException(transport.GetType().Name);
+                }
+
+                if (!this.OnFrame(transport, buffer, out code))
+                {
+                    break;
+                }
+            }
+
+            if (code != SaslCode.Ok)
+            {
+                throw new AmqpException(ErrorCode.UnauthorizedAccess,
+                    Fx.Format(SRAmqp.SaslNegoFailed, code));
+            }
+        }
+
+        public ProtocolHeader Start(string hostname, ITransport transport)
+        {
             ProtocolHeader myHeader = new ProtocolHeader() { Id = 3, Major = 1, Minor = 0, Revision = 0 };
 
             ByteBuffer headerBuffer = new ByteBuffer(
@@ -37,56 +67,49 @@ namespace Amqp.Sasl
 
             SaslInit init = this.GetInit(hostname);
             this.SendCommand(transport, init);
+           
+            return myHeader;
+        }
 
-            ProtocolHeader theirHeader = Reader.ReadHeader(transport);
-            Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", theirHeader);
-
+        public void OnHeader(ProtocolHeader myHeader, ProtocolHeader theirHeader)
+        {
             if (theirHeader.Id != myHeader.Id || theirHeader.Major != myHeader.Major ||
                 theirHeader.Minor != myHeader.Minor || theirHeader.Revision != myHeader.Revision)
             {
                 throw new AmqpException(ErrorCode.NotImplemented, theirHeader.ToString());
             }
+        }
 
-            SaslCode code = SaslCode.SysTemp;
-            while (true)
+        public bool OnFrame(ITransport transport, ByteBuffer buffer, out SaslCode code)
+        {
+            ushort channel;
+            DescribedList command;
+            Frame.GetFrame(buffer, out channel, out command);
+            Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
+
+            bool shouldContinue = true; ;
+            code = SaslCode.Ok;
+            if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
             {
-                ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], uint.MaxValue);
-                if (buffer == null)
-                {
-                    throw new ObjectDisposedException(transport.GetType().Name);
-                }
-
-                ushort channel;
-                DescribedList command;
-                Frame.GetFrame(buffer, out channel, out command);
-                Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
-
-                if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
-                {
-                }
-                else if (command.Descriptor.Code == Codec.SaslChallenge.Code)
-                {
-                    SaslResponse response = this.OnChallenge((SaslChallenge)command);
-                    this.SendCommand(transport, response);
-                }
-                else if (command.Descriptor.Code == Codec.SaslOutcome.Code)
-                {
-                    SaslOutcome outcome = (SaslOutcome)command;
-                    this.OnOutcome(outcome);
-                    code = outcome.Code;
-                    break;
-                }
-                else
-                {
-                    throw new AmqpException(ErrorCode.NotImplemented, command.Descriptor.Name);
-                }
+            }
+            else if (command.Descriptor.Code == Codec.SaslChallenge.Code)
+            {
+                SaslResponse response = this.OnChallenge((SaslChallenge)command);
+                this.SendCommand(transport, response);
+            }
+            else if (command.Descriptor.Code == Codec.SaslOutcome.Code)
+            {
+                SaslOutcome outcome = (SaslOutcome)command;
+                this.OnOutcome(outcome);
+                code = outcome.Code;
+                shouldContinue = false;
+            }
+            else
+            {
+                throw new AmqpException(ErrorCode.NotImplemented, command.Descriptor.Name);
             }
 
-            if (code != SaslCode.Ok)
-            {
-                throw new AmqpException(ErrorCode.UnauthorizedAccess,
-                    Fx.Format(SRAmqp.SaslNegoFailed, code));
-            }
+            return shouldContinue;
         }
 
         protected abstract SaslInit GetInit(string hostname);

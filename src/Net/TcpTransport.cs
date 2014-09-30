@@ -24,7 +24,7 @@ namespace Amqp
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
-    sealed class TcpTransport : ITransport
+    sealed class TcpTransport : IAsyncTransport
     {
         Connection connection;
         Writer writer;
@@ -91,6 +91,37 @@ namespace Amqp
             this.writer = new Writer(this, this.socketTransport);
         }
 
+        public async Task ConnectAsync(Address address, bool noVerification)
+        {
+            IAsyncTransport transport;
+            TcpSocket socket = new TcpSocket(this, AddressFamily.InterNetwork);
+            await Task.Factory.FromAsync(
+                (c, s) => ((Socket)s).BeginConnect(address.Host, address.Port, c, s),
+                (r) => ((Socket)r.AsyncState).EndConnect(r),
+                socket);
+
+            transport = socket;
+            if (address.UseSsl)
+            {
+                SslSocket sslSocket = new SslSocket(this, socket, noVerification);
+                await sslSocket.AuthenticateAsClientAsync(address.Host);
+                transport = sslSocket;
+            }
+
+            this.socketTransport = transport;
+            this.writer = new Writer(this, this.socketTransport);
+        }
+
+        public Task<int> ReceiveAsync(byte[] buffer, int offset, int count)
+        {
+            return this.socketTransport.ReceiveAsync(buffer, offset, count);
+        }
+
+        public bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        {
+            throw new InvalidOperationException();
+        }
+
         public void Close()
         {
             this.socketTransport.Close();
@@ -104,12 +135,6 @@ namespace Amqp
         public int Receive(byte[] buffer, int offset, int count)
         {
             return this.socketTransport.Receive(buffer, offset, count);
-        }
-
-        interface IAsyncTransport : ITransport
-        {
-            // true: pending, false: completed
-            bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize);
         }
 
         class TcpSocket : Socket, IAsyncTransport
@@ -156,6 +181,14 @@ namespace Amqp
                 }
 
                 return this.SendAsync(this.args);
+            }
+
+            Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
+            {
+                return Task.Factory.FromAsync(
+                    (c, s) => this.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
+                    (r) => this.EndReceive(r),
+                    null);
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -238,7 +271,12 @@ namespace Amqp
 
                 return pending;
             }
-            
+
+            Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
+            {
+                return this.ReadAsync(buffer, offset, count);
+            }
+
             void ITransport.Send(ByteBuffer buffer)
             {
                 throw new InvalidOperationException();
