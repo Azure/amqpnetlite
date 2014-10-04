@@ -84,7 +84,7 @@ namespace Amqp.Framing
         public DateTime CreationTime
         {
             get { return this.Fields[9] == null ? DateTime.MinValue : (DateTime)this.Fields[9]; }
-            set { this.Fields[8] = value; }
+            set { this.Fields[9] = value; }
         }
 
         public string GroupId

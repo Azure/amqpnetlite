@@ -41,12 +41,6 @@ namespace Amqp
             this.bufferQueue = new Queue<ByteBuffer>();
         }
 
-        public Connection Connection
-        {
-            get { return this.connection; }
-            set { this.connection = value; }
-        }
-
         public static bool MatchScheme(string scheme)
         {
             return string.Equals(scheme, WebSockets, StringComparison.OrdinalIgnoreCase) ||
