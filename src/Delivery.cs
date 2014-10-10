@@ -69,7 +69,7 @@ namespace Amqp
             {
                 if (delivery.OnOutcome != null)
                 {
-                    delivery.OnOutcome(delivery.Message, outcome, delivery.State);
+                    delivery.OnOutcome(delivery.Message, outcome, delivery.UserToken);
                 }
 
                 delivery = (Delivery)delivery.Next;
