@@ -215,10 +215,11 @@ namespace Test.Amqp
             // update the filter descriptor and expression according to the broker
             Map filters = new Map();
             // JMS selector filter: code = 0x0000468C00000004L, symbol="apache.org:selector-filter:string"
-            filters.Add(new Symbol("f1"), new DescribedValue("apache.org:selector-filter:string", "sn = 100"));
+            filters.Add(new Symbol("f1"), new DescribedValue(new Symbol("apache.org:selector-filter:string"), "sn = 100"));
             ReceiverLink receiver = new ReceiverLink(session, "receive-link", new Source() { Address = "q1", FilterSet = filters });
             receiver.SetCredit(10);
             Message message2 = receiver.Receive();
+            receiver.Accept(message2);
 
             sender.Close();
             receiver.Close();
