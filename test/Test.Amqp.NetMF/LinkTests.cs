@@ -282,6 +282,7 @@ namespace Test.Amqp
             receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
+            receiver.Accept(message);
 
             sender.Close();
             receiver.Close();
@@ -307,6 +308,7 @@ namespace Test.Amqp
             receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
+            receiver.Accept(message);
 
             sender.Close();
             receiver.Close();
@@ -341,6 +343,7 @@ namespace Test.Amqp
             receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
+            receiver.Accept(message);
 
             sender.Close();
             receiver.Close();
@@ -382,6 +385,7 @@ namespace Test.Amqp
             responseLink.SetCredit(10);
             Message response = responseLink.Receive();
             Assert.IsTrue(response != null, "no response was received");
+            responseLink.Accept(response);
 
             requestLink.Close();
             responseLink.Close();
