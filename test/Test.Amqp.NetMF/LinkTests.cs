@@ -32,6 +32,12 @@ namespace Test.Amqp
     {
         public static Address address = new Address("amqp://guest:guest@localhost:5672");
 
+#if !COMPACT_FRAMEWORK
+        bool waitExitContext = true;
+#else
+        bool waitExitContext = false;
+#endif
+
 #if !(NETMF || COMPACT_FRAMEWORK)
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -46,9 +52,10 @@ namespace Test.Amqp
 #endif
         public void TestMethod_BasicSendReceive()
         {
+            string testName = "BasicSendReceive";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "send-link", "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
             for (int i = 0; i < 200; ++i)
             {
@@ -59,7 +66,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < 200; ++i)
             {
                 if (i % 50 == 0) receiver.SetCredit(50);
@@ -79,39 +86,144 @@ namespace Test.Amqp
 #endif
         public void TestMethod_OnMessage()
         {
+            string testName = "OnMessage";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             ManualResetEvent done = new ManualResetEvent(false);
-            receiver.Start(200, (link, m) =>
+            int received = 0;
+            receiver.Start(10, (link, m) =>
                 {
                     Trace.WriteLine(TraceLevel.Information, "receive: {0}", m.ApplicationProperties["sn"]);
                     link.Accept(m);
-                    if ((int)m.ApplicationProperties["sn"] == 199)
+                    received++;
+                    if (received == 200)
                     {
                         done.Set();
                     }
+                    else if (received % 10 == 0)
+                    {
+                        link.SetCredit(10);
+                    }
                 });
 
-            SenderLink sender = new SenderLink(session, "send-link", "q1");
-            for (int i = 0; i < 200; ++i)
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            for (int i = 0; i < 2000; ++i)
             {
                 Message message = new Message();
-                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
                 message.ApplicationProperties = new ApplicationProperties();
                 message.ApplicationProperties["sn"] = i;
                 sender.Send(message, null, null);
             }
 
-#if !COMPACT_FRAMEWORK
-            done.WaitOne(10000, true);
-#else
-            done.WaitOne(10000, false);
-#endif
+            int last = -1;
+            while (!done.WaitOne(10000, waitExitContext) && received > last)
+            {
+                last = received;
+            }
 
             sender.Close();
             receiver.Close();
+            session.Close();
+            connection.Close();
+
+            Assert.AreEqual(200, received, "not all messages are received.");
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_CloseBusyReceiver()
+        {
+            string testName = "CloseBusyReceiver";
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            for (int i = 0; i < 20; ++i)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg" + i };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ManualResetEvent closed = new ManualResetEvent(false);
+            receiver.OnClosed += (o, e) => closed.Set();
+            receiver.Start(
+                200,
+                (r, m) =>
+                {
+                    if (m.Properties.MessageId == "msg0") r.Close(0);
+                });
+            Assert.IsTrue(closed.WaitOne(10000, waitExitContext));
+
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
+            receiver2.SetCredit(20);
+            for (int i = 0; i < 20; ++i)
+            {
+                Message message = receiver2.Receive();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                receiver2.Accept(message);
+            }
+
+            receiver2.Close();
+            sender.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_ReleaseMessage()
+        {
+            string testName = "ReleaseMessage";
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            for (int i = 0; i < 20; ++i)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg" + i };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            receiver.SetCredit(20);
+            for (int i = 0; i < 20; ++i)
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                if (i % 2 == 0)
+                {
+                    receiver.Accept(message);
+                }
+                else
+                {
+                    receiver.Release(message);
+                }
+            }
+            receiver.Close();
+
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
+            receiver2.SetCredit(10);
+            for (int i = 0; i < 10; ++i)
+            {
+                Message message = receiver2.Receive();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                receiver2.Accept(message);
+            }
+
+            receiver2.Close();
+            sender.Close();
             session.Close();
             connection.Close();
         }
@@ -121,10 +233,11 @@ namespace Test.Amqp
 #endif
         public void TestMethod_SendAck()
         {
+            string testName = "SendAck";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
-            SenderLink sender = new SenderLink(session, "send-link", "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             ManualResetEvent done = new ManualResetEvent(false);
             OutcomeCallback callback = (m, o, s) =>
             {
@@ -138,19 +251,15 @@ namespace Test.Amqp
             for (int i = 0; i < 200; ++i)
             {
                 Message message = new Message();
-                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
                 message.ApplicationProperties = new ApplicationProperties();
                 message.ApplicationProperties["sn"] = i;
                 sender.Send(message, callback, null);
             }
 
-#if !COMPACT_FRAMEWORK
-            done.WaitOne(10000, true);
-#else
-            done.WaitOne(10000, false);
-#endif
+            done.WaitOne(10000, waitExitContext);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < 200; ++i)
             {
                 if (i % 100 == 0) receiver.SetCredit(100);
@@ -170,10 +279,11 @@ namespace Test.Amqp
 #endif
         public void TestMethod_ReceiveWaiter()
         {
+            string testName = "ReceiveWaiter";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             Thread t = new Thread(() =>
             {
                 receiver.SetCredit(1);
@@ -184,7 +294,7 @@ namespace Test.Amqp
 
             t.Start();
 
-            SenderLink sender = new SenderLink(session, "send-link", "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             Message msg = new Message() { Properties = new Properties() { MessageId = "123456" } };
             sender.Send(msg, null, null);
 
@@ -199,8 +309,9 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
-        public void TestMethod_ReceiveWithFilterTest()
+        public void TestMethod_ReceiveWithFilter()
         {
+            string testName = "ReceiveWithFilter";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
@@ -209,14 +320,14 @@ namespace Test.Amqp
             message.ApplicationProperties = new ApplicationProperties();
             message.ApplicationProperties["sn"] = 100;
 
-            SenderLink sender = new SenderLink(session, "send-link", "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             sender.Send(message, null, null);
 
             // update the filter descriptor and expression according to the broker
             Map filters = new Map();
             // JMS selector filter: code = 0x0000468C00000004L, symbol="apache.org:selector-filter:string"
             filters.Add(new Symbol("f1"), new DescribedValue(new Symbol("apache.org:selector-filter:string"), "sn = 100"));
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", new Source() { Address = "q1", FilterSet = filters });
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Address = "q1", FilterSet = filters });
             receiver.SetCredit(10);
             Message message2 = receiver.Receive();
             receiver.Accept(message2);
@@ -230,11 +341,12 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
-        public void TestMethod_LinkCloseWithPendingSendTest()
+        public void TestMethod_LinkCloseWithPendingSend()
         {
+            string testName = "LinkCloseWithPendingSend";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "send-link", "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
             bool cancelled = false;
             Message message = new Message("released");
@@ -270,15 +382,16 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
-        public void TestMethod_SynchronousSendTest()
+        public void TestMethod_SynchronousSend()
         {
+            string testName = "SynchronousSend";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sync-send-link", "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
@@ -293,18 +406,19 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
-        public void TestMethod_DynamicSenderLinkTest()
+        public void TestMethod_DynamicSenderLink()
         {
+            string testName = "DynamicSenderLink";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
             Target remoteTarget = null;
-            SenderLink sender = new SenderLink(session, "sync-send-link", new Target() { Dynamic = true }, (l, t, s) => remoteTarget = t);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, new Target() { Dynamic = true }, (l, t, s) => remoteTarget = t);
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
             Assert.IsTrue(remoteTarget != null, "dynamic target not attached");
-            ReceiverLink receiver = new ReceiverLink(session, "receive-link", remoteTarget.Address);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, remoteTarget.Address);
             receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
@@ -319,24 +433,22 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
-        public void TestMethod_DynamicReceiverLinkTest()
+        public void TestMethod_DynamicReceiverLink()
         {
+            string testName = "DynamicReceiverLink";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
             Source remoteSource = null;
             ManualResetEvent attached = new ManualResetEvent(false);
             OnAttached onAttached = (l, t, s) => { remoteSource = s; attached.Set(); };
-            ReceiverLink receiver = new ReceiverLink(session, "dynamic-receive-link", new Source() { Dynamic = true }, onAttached);
-#if !COMPACT_FRAMEWORK
-            attached.WaitOne(10000, true);
-#else
-            attached.WaitOne(10000, false);
-#endif
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Dynamic = true }, onAttached);
+
+            attached.WaitOne(10000, waitExitContext);
 
             Assert.IsTrue(remoteSource != null, "dynamic source not attached");
 
-            SenderLink sender = new SenderLink(session, "send-link", remoteSource.Address);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, remoteSource.Address);
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
@@ -354,19 +466,20 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
-        public void TestMethod_RequestResponseTest()
+        public void TestMethod_RequestResponse()
         {
+            string testName = "RequestResponse";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
             // server app: the request handler
-            ReceiverLink requestLink = new ReceiverLink(session, "server-request-link", "q1");
+            ReceiverLink requestLink = new ReceiverLink(session, "srv.requester-" + testName, "q1");
             requestLink.Start(10, (l, m) =>
                 {
                     l.Accept(m);
 
                     // got a request, send back a reply
-                    SenderLink sender = new SenderLink(session, "server-reply-link", m.Properties.ReplyTo);
+                    SenderLink sender = new SenderLink(session, "srv.replier-" + testName, m.Properties.ReplyTo);
                     Message reply = new Message("received");
                     reply.Properties = new Properties() { CorrelationId = m.Properties.MessageId };
                     sender.Send(reply, (a, b, c) => ((Link)c).Close(0), sender);
@@ -376,12 +489,12 @@ namespace Test.Amqp
             OnAttached onAttached = (l, t, s) =>
                 {
                     // client: sends a request to the request queue, specifies the temp queue as the reply queue
-                    SenderLink sender = new SenderLink(session, "client-request-link", "q1");
+                    SenderLink sender = new SenderLink(session, "cli.requester-" + testName, "q1");
                     Message request = new Message("hello");
                     request.Properties = new Properties() { MessageId = "request1", ReplyTo = s.Address };
                     sender.Send(request, (a, b, c) => ((Link)c).Close(0), sender);
                 };
-            ReceiverLink responseLink = new ReceiverLink(session, "dynamic-response-link", new Source() { Dynamic = true }, onAttached);
+            ReceiverLink responseLink = new ReceiverLink(session, "cli.responder-" + testName, new Source() { Dynamic = true }, onAttached);
             responseLink.SetCredit(10);
             Message response = responseLink.Receive();
             Assert.IsTrue(response != null, "no response was received");

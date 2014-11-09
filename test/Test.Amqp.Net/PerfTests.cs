@@ -43,11 +43,12 @@ namespace Test.Amqp
 
         [Description("Messages are sent unsettled. Completed count is incremented when the ack is received.")]
         //[TestMethod]
-        public void AtLeastOnceSendTest()
+        public void PerfAtLeastOnceSend()
         {
+            string testName = "PerfAtLeastOnceSend";
             Connection connection = new Connection(address);
             Session session = new Session(connection);
-            this.sender = new SenderLink(session, "send-link", "q1");
+            this.sender = new SenderLink(session, "sender-" + testName, "q1");
 
             this.onOutcome = OnSendComplete;
             this.done = new ManualResetEvent(false);
@@ -74,7 +75,7 @@ namespace Test.Amqp
             for (int i = 0; i < count; ++i)
             {
                 Message message = new Message();
-                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = "perf" };
                 message.ApplicationProperties = new ApplicationProperties();
                 message.ApplicationProperties["sn"] = i;
                 message.Body = new AmqpValue() { Value = "hello" };
