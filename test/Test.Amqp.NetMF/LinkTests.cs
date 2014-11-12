@@ -53,11 +53,12 @@ namespace Test.Amqp
         public void TestMethod_BasicSendReceive()
         {
             string testName = "BasicSendReceive";
+            const int nMsgs = 200;
             Connection connection = new Connection(address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
                 message.Properties = new Properties() { GroupId = "abcdefg" };
@@ -67,7 +68,7 @@ namespace Test.Amqp
             }
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 if (i % 50 == 0) receiver.SetCredit(50);
                 Message message = receiver.Receive();
@@ -87,6 +88,7 @@ namespace Test.Amqp
         public void TestMethod_OnMessage()
         {
             string testName = "OnMessage";
+            const int nMsgs = 200;
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
@@ -98,7 +100,7 @@ namespace Test.Amqp
                     Trace.WriteLine(TraceLevel.Information, "receive: {0}", m.ApplicationProperties["sn"]);
                     link.Accept(m);
                     received++;
-                    if (received == 200)
+                    if (received == nMsgs)
                     {
                         done.Set();
                     }
@@ -109,7 +111,7 @@ namespace Test.Amqp
                 });
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
-            for (int i = 0; i < 2000; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
                 message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
@@ -129,7 +131,7 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
 
-            Assert.AreEqual(200, received, "not all messages are received.");
+            Assert.AreEqual(nMsgs, received, "not all messages are received.");
         }
 
 #if !(NETMF || COMPACT_FRAMEWORK)
@@ -138,11 +140,12 @@ namespace Test.Amqp
         public void TestMethod_CloseBusyReceiver()
         {
             string testName = "CloseBusyReceiver";
+            const int nMsgs = 20;
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
                 message.Properties = new Properties() { MessageId = "msg" + i };
@@ -155,7 +158,7 @@ namespace Test.Amqp
             ManualResetEvent closed = new ManualResetEvent(false);
             receiver.OnClosed += (o, e) => closed.Set();
             receiver.Start(
-                200,
+                nMsgs,
                 (r, m) =>
                 {
                     if (m.Properties.MessageId == "msg0") r.Close(0);
@@ -163,8 +166,8 @@ namespace Test.Amqp
             Assert.IsTrue(closed.WaitOne(10000, waitExitContext));
 
             ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
-            receiver2.SetCredit(20);
-            for (int i = 0; i < 20; ++i)
+            receiver2.SetCredit(nMsgs);
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver2.Receive();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
@@ -183,11 +186,12 @@ namespace Test.Amqp
         public void TestMethod_ReleaseMessage()
         {
             string testName = "ReleaseMessage";
+            const int nMsgs = 20;
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
-            for (int i = 0; i < 20; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
                 message.Properties = new Properties() { MessageId = "msg" + i };
@@ -197,8 +201,8 @@ namespace Test.Amqp
             }
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            receiver.SetCredit(20);
-            for (int i = 0; i < 20; ++i)
+            receiver.SetCredit(nMsgs);
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
@@ -214,8 +218,8 @@ namespace Test.Amqp
             receiver.Close();
 
             ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
-            receiver2.SetCredit(10);
-            for (int i = 0; i < 10; ++i)
+            receiver2.SetCredit(nMsgs / 2);
+            for (int i = 0; i < nMsgs / 2; ++i)
             {
                 Message message = receiver2.Receive();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
@@ -234,6 +238,7 @@ namespace Test.Amqp
         public void TestMethod_SendAck()
         {
             string testName = "SendAck";
+            const int nMsgs = 20;
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
@@ -242,13 +247,13 @@ namespace Test.Amqp
             OutcomeCallback callback = (m, o, s) =>
             {
                 Trace.WriteLine(TraceLevel.Information, "send complete: sn {0} outcome {1}", m.ApplicationProperties["sn"], o.Descriptor.Name);
-                if ((int)m.ApplicationProperties["sn"] == 199)
+                if ((int)m.ApplicationProperties["sn"] == (nMsgs - 1))
                 {
                     done.Set();
                 }
             };
 
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
                 message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
@@ -260,7 +265,7 @@ namespace Test.Amqp
             done.WaitOne(10000, waitExitContext);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            for (int i = 0; i < 200; ++i)
+            for (int i = 0; i < nMsgs; ++i)
             {
                 if (i % 100 == 0) receiver.SetCredit(100);
                 Message message = receiver.Receive();
