@@ -20,12 +20,12 @@ namespace Amqp.Sasl
     using System;
     using System.Text;
 
-    sealed class SaslPlanProfile : SaslProfile
+    sealed class SaslPlainProfile : SaslProfile
     {
         readonly string user;
         readonly string password;
         
-        public SaslPlanProfile(string user, string password)
+        public SaslPlainProfile(string user, string password)
         {
             this.user = user;
             this.password = password;

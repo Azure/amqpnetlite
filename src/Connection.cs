@@ -169,7 +169,7 @@ namespace Amqp
             if (this.address.User != null)
             {
                 SaslTransport saslTransport = new SaslTransport(tcpTransport);
-                saslTransport.Open(this.address.Host, new SaslPlanProfile(this.address.User, this.address.Password));
+                saslTransport.Open(this.address.Host, new SaslPlainProfile(this.address.User, this.address.Password));
                 transport = saslTransport;
             }
 

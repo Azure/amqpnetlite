@@ -124,7 +124,7 @@ namespace Amqp
 
             if (address.User != null)
             {
-                SaslPlanProfile profile = new SaslPlanProfile(address.User, address.Password);
+                SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
                 await profile.OpenAsync(address.Host, transport);
                 transport = new AsyncSaslTransport(transport);
             }
