@@ -120,7 +120,7 @@ namespace Amqp.Sasl
 
         void SendCommand(ITransport transport, DescribedList command)
         {
-            ByteBuffer buffer = Frame.GetBuffer(FrameType.Sasl, 0, command, 128, 0);
+            ByteBuffer buffer = Frame.Encode(FrameType.Sasl, 0, command);
             transport.Send(buffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND {0}", command);
         }

@@ -29,16 +29,45 @@ namespace Amqp.Framing
     static class Frame
     {
         const byte DOF = 2;
+        const int cmdBufferSize = 128;
 
-        public static ByteBuffer GetBuffer(FrameType type, ushort channel, DescribedList command, int initialSize, int payloadSize)
+        public static ByteBuffer Encode(FrameType type, ushort channel, DescribedList command)
         {
-            ByteBuffer buffer = new ByteBuffer(initialSize, true);
-            AmqpBitConverter.WriteUInt(buffer, 0u);
-            AmqpBitConverter.WriteUByte(buffer, DOF);
-            AmqpBitConverter.WriteUByte(buffer, (byte)type);
-            AmqpBitConverter.WriteUShort(buffer, channel);
-            if (command != null) command.Encode(buffer);
-            AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length + payloadSize);
+            ByteBuffer buffer = new ByteBuffer(cmdBufferSize, true);
+            EncodeFrame(buffer, type, channel, command);
+            AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length);
+            return buffer;
+        }
+
+        public static ByteBuffer Encode(FrameType type, ushort channel, Transfer transfer, ByteBuffer payload, int maxFrameSize)
+        {
+            int bufferSize = cmdBufferSize + payload.Length;
+            if (bufferSize > maxFrameSize)
+            {
+                bufferSize = maxFrameSize;
+            }
+
+            bool more = false;   // estimate it first
+            if (payload.Length > bufferSize - 32)
+            {
+                transfer.More = more = true;
+            }
+
+            ByteBuffer buffer = new ByteBuffer(bufferSize, false);
+            EncodeFrame(buffer, type, channel, transfer);
+
+            if (more && payload.Length <= buffer.Size)
+            {
+                // guessed it wrong. correct it
+                transfer.More = false;
+                buffer.Reset();
+                EncodeFrame(buffer, type, channel, transfer);
+            }
+
+            int payloadSize = Math.Min(payload.Length, buffer.Size);
+            AmqpBitConverter.WriteBytes(buffer, payload.Buffer, payload.Offset, payloadSize);
+            payload.Complete(payloadSize);
+            AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length);
             return buffer;
         }
 
@@ -49,6 +78,15 @@ namespace Amqp.Framing
             AmqpBitConverter.ReadUByte(buffer);
             channel = AmqpBitConverter.ReadUShort(buffer);
             command = (DescribedList)Encoder.ReadObject(buffer);
+        }
+
+        static void EncodeFrame(ByteBuffer buffer, FrameType type, ushort channel, DescribedList command)
+        {
+            AmqpBitConverter.WriteUInt(buffer, 0u);
+            AmqpBitConverter.WriteUByte(buffer, DOF);
+            AmqpBitConverter.WriteUByte(buffer, (byte)type);
+            AmqpBitConverter.WriteUShort(buffer, channel);
+            command.Encode(buffer);
         }
     }
 }

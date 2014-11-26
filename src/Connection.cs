@@ -102,26 +102,22 @@ namespace Amqp
             }
         }
 
-        internal void SendCommand(ushort channel, DescribedList command, int initBufferSize)
-        {
-            this.SendCommand(channel, command, initBufferSize, null);
-        }
-
-        internal void SendCommand(ushort channel, DescribedList command, int initBufferSize, ByteBuffer payload)
+        internal void SendCommand(ushort channel, DescribedList command)
         {
             this.ThrowIfClosed("Send");
-            ByteBuffer buffer = Frame.GetBuffer(FrameType.Amqp, channel, command, initBufferSize, payload == null ? 0 : payload.Length);
-            if (payload != null)
-            {
-                int payloadSize = Math.Min(payload.Length, (int)this.maxFrameSize - buffer.Length);
-                AmqpBitConverter.WriteBytes(buffer, payload.Buffer, payload.Offset, payloadSize);
-                payload.Complete(payloadSize);
-            }
-
+            ByteBuffer buffer = Frame.Encode(FrameType.Amqp, channel, command);
             this.transport.Send(buffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
         }
 
+        internal void SendCommand(ushort channel, Transfer transfer, ByteBuffer payload)
+        {
+            this.ThrowIfClosed("Send");
+            ByteBuffer buffer = Frame.Encode(FrameType.Amqp, channel, transfer, payload, (int)this.maxFrameSize);
+            this.transport.Send(buffer);
+            Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payload.Length);
+        }
+       
         protected override bool OnClose(Error error = null)
         {
             lock (this.ThisLock)
@@ -215,12 +211,12 @@ namespace Amqp
                 ChannelMax = MaxSessions - 1
             };
 
-            this.SendCommand(0, open, 128);
+            this.SendCommand(0, open);
         }
 
         void SendClose(Error error)
         {
-            this.SendCommand(0, new Close() { Error = error }, 128);
+            this.SendCommand(0, new Close() { Error = error });
         }
 
         void OnOpen(Open open)

@@ -85,6 +85,40 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
+        public void TestMethod_ConnectionFrameSize()
+        {
+            string testName = "ConnectionFrameSize";
+            const int nMsgs = 200;
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+
+            int frameSize = 16 * 1024;
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message(new string('A', frameSize + (i - nMsgs / 2)));
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                if (i % 20 == 0) receiver.SetCredit(20);
+                Message message = receiver.Receive();
+                string value = (string)message.ValueBody.Value;
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}x{1}", value[0], value.Length);
+                receiver.Accept(message);
+            }
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
         public void TestMethod_OnMessage()
         {
             string testName = "OnMessage";

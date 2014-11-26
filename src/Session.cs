@@ -164,7 +164,7 @@ namespace Amqp
 
         internal void SendCommand(DescribedList command)
         {
-            this.connection.SendCommand(this.channel, command, 128);
+            this.connection.SendCommand(this.channel, command);
         }
 
         internal void OnBegin(ushort remoteChannel, Begin begin)
@@ -362,10 +362,10 @@ namespace Amqp
                 }
 
                 this.nextIncomingId++;
-                this.incomingWindow--;
                 newDelivery = transfer.HasDeliveryId && transfer.DeliveryId > this.incomingDeliveryId;
                 if (newDelivery)
                 {
+                    this.incomingWindow--;
                     this.incomingDeliveryId = transfer.DeliveryId;
                 }
             }
@@ -458,12 +458,12 @@ namespace Amqp
                 HandleMax = 7
             };
 
-            this.connection.SendCommand(this.channel, begin, 128);
+            this.connection.SendCommand(this.channel, begin);
         }
 
         void SendEnd()
         {
-            this.connection.SendCommand(this.channel, new End(), 128);
+            this.connection.SendCommand(this.channel, new End());
         }
 
         void WriteDelivery(Delivery delivery)
@@ -472,23 +472,21 @@ namespace Amqp
             while (this.outgoingWindow > 0 && delivery != null && delivery.Buffer.Length > 0)
             {
                 --this.outgoingWindow;
+                Transfer transfer = new Transfer() { Handle = delivery.Handle };
+
                 if (delivery.BytesTransfered == 0)
                 {
+                    // initialize properties for first transfer
                     delivery.DeliveryId = this.outgoingDeliveryId++;
+                    transfer.DeliveryTag = delivery.Tag;
+                    transfer.DeliveryId = delivery.DeliveryId;
+                    transfer.MessageFormat = 0;
+                    transfer.Settled = delivery.Settled;
+                    transfer.Batchable = true;
                 }
 
-                Transfer transfer = new Transfer()
-                {
-                    Handle = delivery.Handle,
-                    DeliveryTag = delivery.Tag,
-                    DeliveryId = delivery.DeliveryId,
-                    MessageFormat = 0,
-                    Settled = delivery.Settled,
-                    Batchable = true
-                };
-
                 int len = delivery.Buffer.Length;
-                this.connection.SendCommand(this.channel, transfer, 128, delivery.Buffer);
+                this.connection.SendCommand(this.channel, transfer, delivery.Buffer);
                 delivery.BytesTransfered += len - delivery.Buffer.Length;
 
                 if (delivery.Buffer.Length == 0)
