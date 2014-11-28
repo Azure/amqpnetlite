@@ -26,9 +26,9 @@ namespace Amqp.Framing
         {
         }
 
-        public string Condition
+        public Symbol Condition
         {
-            get { return (string)this.Fields[0]; }
+            get { return (Symbol)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
@@ -44,16 +44,14 @@ namespace Amqp.Framing
             set { this.Fields[2] = value; }
         }
 
+#if TRACE
         public override string ToString()
         {
-#if TRACE
             return this.GetDebugString(
                 "error",
                 new object[] { "condition", "description", "fields" },
                 this.Fields);
-#else
-            return base.ToString();
-#endif
         }
+#endif
     }
 }
