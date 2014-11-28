@@ -20,8 +20,8 @@ namespace Amqp
     using System;
     using System.Threading.Tasks;
     using Amqp.Framing;
-    using Amqp.Types;
     using Amqp.Sasl;
+    using Amqp.Types;
 
     public static class TaskExtensions
     {
@@ -104,36 +104,6 @@ namespace Amqp
             }
 
             return tcs.Task;
-        }
-
-        public static async Task<Connection> ConnectAsync(this Address address)
-        {
-            IAsyncTransport transport;
-            if (WebSocketTransport.MatchScheme(address.Scheme))
-            {
-                WebSocketTransport wsTransport = new WebSocketTransport();
-                await wsTransport.ConnectAsync(address);
-                transport = wsTransport;
-            }
-            else
-            {
-                TcpTransport tcpTransport = new TcpTransport();
-                await tcpTransport.ConnectAsync(address, Connection.DisableServerCertValidation);
-                transport = tcpTransport;
-            }
-
-            if (address.User != null)
-            {
-                SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                await profile.OpenAsync(address.Host, transport);
-                transport = new AsyncSaslTransport(transport);
-            }
-
-            AsyncPump pump = new AsyncPump(transport);
-            Connection connection = new Connection(address, transport);
-            pump.Start(connection);
-
-            return connection;
         }
 
         internal static async Task OpenAsync(this SaslProfile saslProfile, string hostname, IAsyncTransport transport)

@@ -18,93 +18,67 @@
 namespace Amqp
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Net.Security;
     using System.Net.Sockets;
-    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     sealed class TcpTransport : IAsyncTransport
     {
+        static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
         Connection connection;
         Writer writer;
         IAsyncTransport socketTransport;
 
         public void Connect(Connection connection, Address address, bool noVerification)
         {
-            IPAddress[] addressList;
-            IPAddress ipHost;
-            if (IPAddress.TryParse(address.Host, out ipHost))
-            {
-                addressList = new IPAddress[] { ipHost };
-            }
-            else
-            {
-                addressList = Dns.GetHostEntry(address.Host).AddressList;
-            }
-
-            Exception exception = null;
-            TcpSocket socket = null;
-            foreach (var ipAddress in addressList)
-            {
-                if (ipAddress == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    socket = new TcpSocket(this, ipAddress.AddressFamily);
-                    socket.Connect(new IPEndPoint(ipAddress, address.Port));
-                    exception = null;
-                    break;
-                }
-                catch (SocketException socketException)
-                {
-                    if (socket != null)
-                    {
-                        socket.Close();
-                        socket = null;
-                    }
-
-                    exception = socketException;
-                }
-            }
-
-            if (exception != null)
-            {
-                throw exception;
-            }
-
-            if (address.UseSsl)
-            {
-                SslSocket sslSocket = new SslSocket(this, socket, noVerification);
-                sslSocket.AuthenticateAsClient(address.Host);
-                this.socketTransport = sslSocket;
-            }
-            else
-            {
-                this.socketTransport = socket;
-            }
-
-            this.connection = connection;
-            this.writer = new Writer(this, this.socketTransport);
+            this.ConnectAsync(address, new ConnectionFactory()).Wait();
         }
 
-        public async Task ConnectAsync(Address address, bool noVerification)
+        public async Task ConnectAsync(Address address, ConnectionFactory factory)
         {
-            IAsyncTransport transport;
-            TcpSocket socket = new TcpSocket(this, AddressFamily.InterNetwork);
+            TcpSocket socket;
+            IPAddress[] ipAddresses;
+            IPAddress ipAddress;
+            if (IPAddress.TryParse(address.Host, out ipAddress))
+            {
+                socket = new TcpSocket(this, ipAddress.AddressFamily);
+                ipAddresses = new IPAddress[] { ipAddress };
+            }
+            else
+            {
+                socket = new TcpSocket(this, AddressFamily.InterNetwork);
+                ipAddresses = Dns.GetHostEntry(address.Host).AddressList;
+            }
+
+            if (factory.tcpSettings != null)
+            {
+                factory.tcpSettings.Configure(socket);
+            }
+
             await Task.Factory.FromAsync(
-                (c, s) => ((Socket)s).BeginConnect(address.Host, address.Port, c, s),
+                (c, s) => ((Socket)s).BeginConnect(ipAddresses, address.Port, c, s),
                 (r) => ((Socket)r.AsyncState).EndConnect(r),
                 socket);
 
-            transport = socket;
+            IAsyncTransport transport = socket;
             if (address.UseSsl)
             {
-                SslSocket sslSocket = new SslSocket(this, socket, noVerification);
-                await sslSocket.AuthenticateAsClientAsync(address.Host);
+                SslSocket sslSocket;
+                var ssl = factory.sslSettings;
+                if (ssl == null)
+                {
+                    sslSocket = new SslSocket(this, socket, null);
+                    await sslSocket.AuthenticateAsClientAsync(address.Host);
+                }
+                else
+                {
+                    sslSocket = new SslSocket(this, socket, ssl.RemoteCertificateValidationCallback);
+                    await sslSocket.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
+                        ssl.Protocols, ssl.CheckCertificateRevocation);
+                }
+
                 transport = sslSocket;
             }
 
@@ -229,11 +203,10 @@ namespace Amqp
 
         class SslSocket : SslStream, IAsyncTransport
         {
-            static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
             readonly TcpTransport transport;
 
-            public SslSocket(TcpTransport transport, Socket socket, bool noVarification)
-                : base(new NetworkStream(socket), false, noVarification ? noneCertValidator : null)
+            public SslSocket(TcpTransport transport, Socket socket, RemoteCertificateValidationCallback certValidator)
+                : base(new NetworkStream(socket), false, certValidator)
             {
                 this.transport = transport;
             }

@@ -46,6 +46,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="Net\AsyncPump.cs" />
     <Compile Include="Net\AsyncSaslTransport.cs" />
+    <Compile Include="Net\ConnectionFactory.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
     <Compile Include="Net\TaskExtensions.cs" />
     <Compile Include="Delivery.cs" />

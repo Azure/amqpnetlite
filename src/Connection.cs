@@ -44,8 +44,8 @@ namespace Amqp
 
         public static bool DisableServerCertValidation;
 
-        const uint DefaultMaxFrameSize = 16 * 1024;
-        const int MaxSessions = 4;
+        internal const uint DefaultMaxFrameSize = 16 * 1024;
+        internal const int MaxSessions = 4;
         readonly Address address;
         readonly Session[] localSessions;
         readonly Session[] remoteSessions;
@@ -69,12 +69,18 @@ namespace Amqp
         }
 
 #if NET
-        internal Connection(Address address, IAsyncTransport transport)
+        internal Connection(ConnectionFactory factory, Address address, IAsyncTransport transport)
             : this()
         {
             this.address = address;
+            this.maxFrameSize = (uint)factory.amqpSettings.MaxFrameSize;
+            this.transport = transport;
             transport.SetConnection(this);
-            this.OnTransport(transport);
+
+            // after getting the transport, move state to open pipe before starting the pump
+            this.SendHeader();
+            this.SendOpen(factory.amqpSettings.ContainerId, factory.amqpSettings.HostName ?? this.address.Host);
+            this.state = State.OpenPipe;
         }
 #endif
 
@@ -169,20 +175,15 @@ namespace Amqp
                 transport = saslTransport;
             }
 
-            this.OnTransport(transport);
-
-            this.reader = new Pump(this);
-            this.reader.Start();
-        }
-
-        void OnTransport(ITransport transport)
-        {
             this.transport = transport;
 
             // after getting the transport, move state to open pipe before starting the pump
             this.SendHeader();
-            this.SendOpen();
+            this.SendOpen(Guid.NewGuid().ToString(), this.address.Host);
             this.state = State.OpenPipe;
+
+            this.reader = new Pump(this);
+            this.reader.Start();
         }
 
         void ThrowIfClosed(string operation)
@@ -201,12 +202,12 @@ namespace Amqp
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP 0 1.0.0");
         }
 
-        void SendOpen()
+        void SendOpen(string containerId, string hostName)
         {
             Open open = new Open()
             {
-                ContainerId = Guid.NewGuid().ToString(),
-                HostName = this.address.Host,
+                ContainerId = containerId,
+                HostName = hostName,
                 MaxFrameSize = this.maxFrameSize,
                 ChannelMax = MaxSessions - 1
             };

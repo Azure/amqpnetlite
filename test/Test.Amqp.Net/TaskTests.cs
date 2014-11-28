@@ -40,7 +40,7 @@ namespace Test.Amqp
             string testName = "BasicSendReceiveAsync";
             int nMsgs = 50;
 
-            Connection connection = await this.address.ConnectAsync();
+            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -74,7 +74,7 @@ namespace Test.Amqp
             string testName = "LargeMessageSendReceiveAsync";
             int nMsgs = 50;
 
-            Connection connection = await this.address.ConnectAsync();
+            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -111,7 +111,7 @@ namespace Test.Amqp
             string testName = "LargeMessageOnMessageCallback";
             int nMsgs = 50;
 
-            Connection connection = await this.address.ConnectAsync();
+            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -145,6 +145,38 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public async Task CustomTransportConfiguration()
+        {
+            string testName = "CustomTransportConfiguration";
+
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.TCP.NoDelay = true;
+            factory.TCP.SendBufferSize = 16 * 1024;
+            factory.TCP.SendTimeout = 30000;
+            factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+            factory.AMQP.MaxFrameSize = 64 * 1024;
+            factory.AMQP.HostName = "contoso.com";
+            factory.AMQP.ContainerId = "container:" + testName;
+
+            Address sslAddress = new Address("amqps://guest:guest@127.0.0.1:5671");
+            Connection connection = await factory.CreateAsync(sslAddress);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+
+            Message message = new Message("custom transport config");
+            message.Properties = new Properties() { MessageId = testName };
+            await sender.SendAsync(message);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            receiver.SetCredit(10);
+            Message message2 = await receiver.ReceiveAsync();
+            Assert.IsTrue(message2 != null, "no message received");
+            receiver.Accept(message2);
+
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
         public async Task WebSocketSendReceiveAsync()
         {
             string testName = "WebSocketSendReceiveAsync";
@@ -152,7 +184,7 @@ namespace Test.Amqp
             Address wsAddress = new Address("ws://guest:guest@localhost:80");
             int nMsgs = 50;
 
-            Connection connection = await wsAddress.ConnectAsync();
+            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
