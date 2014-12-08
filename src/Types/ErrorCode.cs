@@ -56,5 +56,8 @@ namespace Amqp.Types
         public const string TransactionUnknownId = "amqp:transaction:unknown-id";
         public const string TransactionRollback = "amqp:transaction:rollback";
         public const string TransactionTimeout = "amqp:transaction:timeout";
+
+        // messaging
+        public const string MessageReleased = "amqp:message:released";
     }
 }

@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NET</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;DOTNET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -27,7 +27,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;NET</DefineConstants>
+    <DefineConstants>TRACE;DOTNET</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -125,6 +125,14 @@
     <Compile Include="Serialization\SerializableType.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Trace.cs" />
+    <Compile Include="Transactions\Controller.cs" />
+    <Compile Include="Transactions\Coordinator.cs" />
+    <Compile Include="Transactions\ResourceManager.cs" />
+    <Compile Include="Transactions\Declare.cs" />
+    <Compile Include="Transactions\Declared.cs" />
+    <Compile Include="Transactions\Discharge.cs" />
+    <Compile Include="Transactions\TransactionalState.cs" />
+    <Compile Include="Transactions\TxnCapabilities.cs" />
     <Compile Include="Types\Described.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\DescribedList.cs" />
@@ -141,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

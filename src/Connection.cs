@@ -68,7 +68,7 @@ namespace Amqp
             this.Connect();
         }
 
-#if NET
+#if DOTNET
         internal Connection(ConnectionFactory factory, Address address, IAsyncTransport transport)
             : this()
         {
@@ -119,9 +119,10 @@ namespace Amqp
         internal void SendCommand(ushort channel, Transfer transfer, ByteBuffer payload)
         {
             this.ThrowIfClosed("Send");
-            ByteBuffer buffer = Frame.Encode(FrameType.Amqp, channel, transfer, payload, (int)this.maxFrameSize);
+            int payloadSize;
+            ByteBuffer buffer = Frame.Encode(FrameType.Amqp, channel, transfer, payload, (int)this.maxFrameSize, out payloadSize);
             this.transport.Send(buffer);
-            Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payload.Length);
+            Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
         }
        
         protected override bool OnClose(Error error = null)
@@ -349,7 +350,14 @@ namespace Amqp
                 ushort channel;
                 DescribedList command;
                 Frame.GetFrame(buffer, out channel, out command);
-                Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
+                if (buffer.Length > 0)
+                {
+                    Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1} payload {2}", channel, command, buffer.Length);
+                }
+                else
+                {
+                    Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
+                }
 
                 if (command.Descriptor.Code == Codec.Open.Code)
                 {

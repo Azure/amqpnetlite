@@ -24,7 +24,7 @@ namespace Amqp
 
     public delegate void OutcomeCallback(Message message, Outcome outcome, object state);
 
-    public sealed class SenderLink : Link
+    public class SenderLink : Link
     {
         // flow control
         SequenceNumber deliveryCount;
@@ -51,10 +51,25 @@ namespace Amqp
             this.SendAttach(false, this.deliveryCount, target, new Source());
         }
 
+#if DOTNET
+        internal SenderLink(Session session, string name, object target, object source)
+            : base(session, name, null)
+        {
+            this.outgoingList = new LinkedList();
+            this.SendAttach(false, this.deliveryCount, target, source);
+        }
+#endif
+        
         public void Send(Message message, int millisecondsTimeout = 60000)
         {
             ManualResetEvent acked = new ManualResetEvent(false);
-            OutcomeCallback callback = (m, o, s) => ((ManualResetEvent)s).Set();
+            Outcome outcome = null;
+            OutcomeCallback callback = (m, o, s) =>
+            {
+                outcome = o;
+                acked.Set();
+            };
+
             this.Send(message, callback, acked);
 
 #if !COMPACT_FRAMEWORK
@@ -66,9 +81,32 @@ namespace Amqp
             {
                 throw new TimeoutException();
             }
+
+            if (outcome != null)
+            {
+                if (outcome.Descriptor.Code == Codec.Released.Code)
+                {
+                    Released released = (Released)outcome;
+                    throw new AmqpException(ErrorCode.MessageReleased, null);
+                }
+                else if (outcome.Descriptor.Code == Codec.Rejected.Code)
+                {
+                    Rejected rejected = (Rejected)outcome;
+                    throw new AmqpException(rejected.Error);
+                }
+            }
         }
 
         public void Send(Message message, OutcomeCallback callback, object state)
+        {
+            DeliveryState deliveryState = null;
+#if DOTNET
+            deliveryState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
+#endif
+            this.Send(message, deliveryState, callback, state);
+        }
+
+        internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
             this.ThrowIfDetaching("Send");
 
@@ -76,6 +114,7 @@ namespace Amqp
             {
                 Message = message,
                 Buffer = message.Encode(),
+                State = deliveryState,
                 Link = this,
                 OnOutcome = callback,
                 UserToken = state,
@@ -140,7 +179,14 @@ namespace Amqp
 
             if (delivery.OnOutcome != null)
             {
-                delivery.OnOutcome(delivery.Message, delivery.State as Outcome, delivery.UserToken);
+                Outcome outcome = delivery.State as Outcome;
+#if DOTNET
+                if (delivery.State != null && delivery.State is TransactionalState)
+                {
+                    outcome = ((TransactionalState)delivery.State).Outcome;
+                }
+#endif
+                delivery.OnOutcome(delivery.Message, outcome, delivery.UserToken);
             }
         }
 

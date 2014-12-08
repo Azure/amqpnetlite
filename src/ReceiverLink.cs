@@ -80,7 +80,7 @@ namespace Amqp
             return this.ReceiveInternal(null, timeout);
         }
 
-#if NET
+#if DOTNET
         public Message Receive(MessageCallback callback, int timeout = 60000)
         {
             return this.ReceiveInternal(callback, timeout);
@@ -239,7 +239,7 @@ namespace Amqp
                     return null;
                 }
 
-#if NET
+#if DOTNET
                 waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
 #else
                 waiter = new SyncWaiter();
@@ -258,7 +258,18 @@ namespace Amqp
                 return;
             }
 
-            this.Session.DisposeDelivery(true, delivery, outcome, true);
+            DeliveryState state = outcome;
+            bool settled = true;
+#if DOTNET
+            var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
+            if (txnState != null)
+            {
+                txnState.Outcome = outcome;
+                state = txnState;
+                settled = false;
+            }
+#endif
+            this.Session.DisposeDelivery(true, delivery, state, settled);
         }
 
         void OnDelivery(SequenceNumber deliveryId)
@@ -332,14 +343,14 @@ namespace Amqp
             }
         }
 
-#if NET
+#if DOTNET
         sealed class AsyncWaiter : Waiter
         {
             readonly static TimerCallback onTimer = OnTimer;
             readonly ReceiverLink link;
             readonly MessageCallback callback;
             Timer timer;
-            int signaled;
+            int state;  // 0: created, 1: waiting, 2: signaled
 
             public AsyncWaiter(ReceiverLink link, MessageCallback callback)
             {
@@ -350,14 +361,25 @@ namespace Amqp
             public override Message Wait(int timeout)
             {
                 this.timer = new Timer(onTimer, this, timeout, -1);
+                if (Interlocked.CompareExchange(ref this.state, 1, 0) != 0)
+                {
+                    // already signaled
+                    this.timer.Dispose();
+                }
+
                 return null;
             }
 
             public override bool Signal(Message message)
             {
-                this.timer.Dispose();
-                if (Interlocked.Exchange(ref this.signaled, 1) == 0)
+                int old = Interlocked.Exchange(ref this.state, 2);
+                if (old != 2)
                 {
+                    if (old == 1)
+                    {
+                        this.timer.Dispose();
+                    }
+
                     this.callback(this.link, message);
                     return true;
                 }

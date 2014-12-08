@@ -63,7 +63,7 @@ namespace Amqp
             get { return this.handle; }
         }
 
-        protected Session Session
+        internal Session Session
         {
             get { return this.session; }
         }
@@ -170,7 +170,7 @@ namespace Amqp
             this.session.SendFlow(flow);
         }
 
-        protected void SendAttach(bool role, uint initialDeliveryCount, Target target, Source source)
+        protected void SendAttach(bool role, uint initialDeliveryCount, object target, object source)
         {
             Fx.Assert(this.state == State.Start, "state must be Start");
             this.state = State.AttachSent;

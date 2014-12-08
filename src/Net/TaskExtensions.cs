@@ -21,6 +21,7 @@ namespace Amqp
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
+    using Amqp.Transactions;
     using Amqp.Types;
 
     public static class TaskExtensions
@@ -52,37 +53,11 @@ namespace Amqp
             return tcs.Task;
         }
 
-        public static Task SendAsync(this SenderLink sender, Message message)
+        public static async Task SendAsync(this SenderLink sender, Message message)
         {
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-            try
-            {
-                sender.Send(
-                    message,
-                    (m, o, s) => 
-                    {
-                        var t = (TaskCompletionSource<object>)s;
-                        if (o.Descriptor.Code == Codec.Accepted.Code)
-                        {
-                            t.SetResult(null);
-                        }
-                        else if (o.Descriptor.Code == Codec.Rejected.Code)
-                        {
-                            t.SetException(new AmqpException(((Rejected)o).Error));
-                        }
-                        else
-                        {
-                            t.SetException(new AmqpException(ErrorCode.InternalError, o.Descriptor.Name));
-                        }
-                    },
-                    tcs);
-            }
-            catch (Exception exception)
-            {
-                tcs.SetException(exception);
-            }
+            var txnState = await ResourceManager.GetTransactionalStateAsync(sender);
 
-            return tcs.Task;
+            await sender.SendAsync(message, txnState);
         }
 
         public static Task<Message> ReceiveAsync(this ReceiverLink receiver, int timeout = 60000)
@@ -115,6 +90,40 @@ namespace Amqp
             await pump.PumpAsync(
                 h => saslProfile.OnHeader(header, h),
                 b => { SaslCode code; return saslProfile.OnFrame(transport, b, out code); });
+        }
+
+        static Task SendAsync(this SenderLink sender, Message message, DeliveryState deliveryState)
+        {
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            try
+            {
+                sender.Send(
+                    message,
+                    deliveryState,
+                    (m, o, s) =>
+                    {
+                        var t = (TaskCompletionSource<object>)s;
+                        if (o.Descriptor.Code == Codec.Accepted.Code)
+                        {
+                            t.SetResult(null);
+                        }
+                        else if (o.Descriptor.Code == Codec.Rejected.Code)
+                        {
+                            t.SetException(new AmqpException(((Rejected)o).Error));
+                        }
+                        else
+                        {
+                            t.SetException(new AmqpException(ErrorCode.InternalError, o.Descriptor.Name));
+                        }
+                    },
+                    tcs);
+            }
+            catch (Exception exception)
+            {
+                tcs.SetException(exception);
+            }
+
+            return tcs.Task;
         }
     }
 }

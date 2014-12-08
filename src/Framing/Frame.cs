@@ -39,7 +39,8 @@ namespace Amqp.Framing
             return buffer;
         }
 
-        public static ByteBuffer Encode(FrameType type, ushort channel, Transfer transfer, ByteBuffer payload, int maxFrameSize)
+        public static ByteBuffer Encode(FrameType type, ushort channel, Transfer transfer,
+            ByteBuffer payload, int maxFrameSize, out int payloadSize)
         {
             int bufferSize = cmdBufferSize + payload.Length;
             if (bufferSize > maxFrameSize)
@@ -64,7 +65,7 @@ namespace Amqp.Framing
                 EncodeFrame(buffer, type, channel, transfer);
             }
 
-            int payloadSize = Math.Min(payload.Length, buffer.Size);
+            payloadSize = Math.Min(payload.Length, buffer.Size);
             AmqpBitConverter.WriteBytes(buffer, payload.Buffer, payload.Offset, payloadSize);
             payload.Complete(payloadSize);
             AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length);

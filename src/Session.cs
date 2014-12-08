@@ -80,6 +80,11 @@ namespace Amqp
             get { return this.channel; }
         }
 
+        internal Connection Connection
+        {
+            get { return this.connection; }
+        }
+
         internal uint AddLink(Link link)
         {
             lock (this.ThisLock)
@@ -480,6 +485,7 @@ namespace Amqp
                     delivery.DeliveryId = this.outgoingDeliveryId++;
                     transfer.DeliveryTag = delivery.Tag;
                     transfer.DeliveryId = delivery.DeliveryId;
+                    transfer.State = delivery.State;
                     transfer.MessageFormat = 0;
                     transfer.Settled = delivery.Settled;
                     transfer.Batchable = true;
