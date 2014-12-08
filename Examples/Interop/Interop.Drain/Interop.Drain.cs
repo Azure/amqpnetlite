@@ -55,9 +55,6 @@ namespace Examples.Interop {
                     if (nReceived % options.ResetCredit == 0)
                     {
                         receiver.SetCredit(options.InitialCredit);
-                        receiver.SetCredit(options.InitialCredit+1);
-                        receiver.SetCredit(options.InitialCredit-1);
-                        receiver.SetCredit(options.InitialCredit);
                     }
                     if (!options.Quiet)
                     {
