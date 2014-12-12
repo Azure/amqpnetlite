@@ -70,7 +70,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                if (i % 50 == 0) receiver.SetCredit(50);
                 Message message = receiver.Receive();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
@@ -103,7 +102,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                if (i % 20 == 0) receiver.SetCredit(20);
                 Message message = receiver.Receive();
                 string value = (string)message.ValueBody.Value;
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}x{1}", value[0], value.Length);
@@ -137,10 +135,6 @@ namespace Test.Amqp
                     if (received == nMsgs)
                     {
                         done.Set();
-                    }
-                    else if (received % 10 == 0)
-                    {
-                        link.SetCredit(10);
                     }
                 });
 
@@ -200,7 +194,6 @@ namespace Test.Amqp
             Assert.IsTrue(closed.WaitOne(10000, waitExitContext));
 
             ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
-            receiver2.SetCredit(nMsgs);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver2.Receive();
@@ -235,7 +228,6 @@ namespace Test.Amqp
             }
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            receiver.SetCredit(nMsgs);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
@@ -252,7 +244,6 @@ namespace Test.Amqp
             receiver.Close();
 
             ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
-            receiver2.SetCredit(nMsgs / 2);
             for (int i = 0; i < nMsgs / 2; ++i)
             {
                 Message message = receiver2.Receive();
@@ -301,7 +292,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                if (i % 100 == 0) receiver.SetCredit(100);
                 Message message = receiver.Receive();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
@@ -325,7 +315,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             Thread t = new Thread(() =>
             {
-                receiver.SetCredit(1);
                 Message message = receiver.Receive();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
                 receiver.Accept(message);
@@ -367,7 +356,6 @@ namespace Test.Amqp
             // JMS selector filter: code = 0x0000468C00000004L, symbol="apache.org:selector-filter:string"
             filters.Add(new Symbol("f1"), new DescribedValue(new Symbol("apache.org:selector-filter:string"), "sn = 100"));
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Address = "q1", FilterSet = filters });
-            receiver.SetCredit(10);
             Message message2 = receiver.Receive();
             receiver.Accept(message2);
 
@@ -431,7 +419,6 @@ namespace Test.Amqp
             sender.Send(message, 60000);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
             receiver.Accept(message);
@@ -458,7 +445,6 @@ namespace Test.Amqp
 
             Assert.IsTrue(remoteTarget != null, "dynamic target not attached");
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, remoteTarget.Address);
-            receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
             receiver.Accept(message);
@@ -491,7 +477,6 @@ namespace Test.Amqp
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
-            receiver.SetCredit(10);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
             receiver.Accept(message);
@@ -534,13 +519,63 @@ namespace Test.Amqp
                     sender.Send(request, (a, b, c) => ((Link)c).Close(0), sender);
                 };
             ReceiverLink responseLink = new ReceiverLink(session, "cli.responder-" + testName, new Source() { Dynamic = true }, onAttached);
-            responseLink.SetCredit(10);
             Message response = responseLink.Receive();
             Assert.IsTrue(response != null, "no response was received");
             responseLink.Accept(response);
 
             requestLink.Close();
             responseLink.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_AdvancedLinkFlowControl()
+        {
+            string testName = "AdvancedLinkFlowControl";
+            int nMsgs = 20;
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            receiver.SetCredit(2, false);
+            Message m1 = receiver.Receive();
+            Message m2 = receiver.Receive();
+            Assert.AreEqual("msg0", m1.Properties.MessageId);
+            Assert.AreEqual("msg1", m2.Properties.MessageId);
+            receiver.Accept(m1);
+            receiver.Accept(m2);
+
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
+            receiver2.SetCredit(2, false);
+            Message m3 = receiver2.Receive();
+            Message m4 = receiver2.Receive();
+            Assert.AreEqual("msg2", m3.Properties.MessageId);
+            Assert.AreEqual("msg3", m4.Properties.MessageId);
+            receiver2.Accept(m3);
+            receiver2.Accept(m4);
+
+            receiver.SetCredit(4);
+            for (int i = 4; i < nMsgs; i++)
+            {
+                Message m = receiver.Receive();
+                Assert.AreEqual("msg" + i, m.Properties.MessageId);
+                receiver.Accept(m);
+            }
+
+            sender.Close();
+            receiver.Close();
+            receiver2.Close();
             session.Close();
             connection.Close();
         }

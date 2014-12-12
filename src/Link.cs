@@ -73,6 +73,11 @@ namespace Amqp
             get { return this; }
         }
 
+        protected bool IsDetaching
+        {
+            get { return this.state >= State.DetachPipe; }
+        }
+
         internal void OnAttach(uint remoteHandle, Attach attach)
         {
             lock (this.ThisLock)
@@ -193,7 +198,7 @@ namespace Amqp
 
         protected void ThrowIfDetaching(string operation)
         {
-            if (this.state >= State.DetachPipe)
+            if (this.IsDetaching)
             {
                 throw new AmqpException(ErrorCode.IllegalState,
                     Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state));

@@ -52,10 +52,6 @@ namespace Examples.Interop {
                 while ((message = receiver.Receive(null, timeout)) != null)
                 {
                     nReceived++;
-                    if (nReceived % options.ResetCredit == 0)
-                    {
-                        receiver.SetCredit(options.InitialCredit);
-                    }
                     if (!options.Quiet)
                     {
                         Console.WriteLine("Message(Properties={0}, ApplicationProperties={1}, Body={2}",

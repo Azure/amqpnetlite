@@ -25,9 +25,16 @@ namespace Amqp
 
     public sealed class ReceiverLink : Link
     {
+#if DOTNET
+        const int DefaultCredit = 200;
+#else
+        const int DefaultCredit = 20;
+#endif
         // flow control
         SequenceNumber deliveryCount;
+        int totalCredit;
         int credit;
+        int restored;
 
         // received messages queue
         LinkedList receivedMessages;
@@ -50,6 +57,7 @@ namespace Amqp
         public ReceiverLink(Session session, string name, Source source, OnAttached onAttached)
             : base(session, name, onAttached)
         {
+            this.totalCredit = -1;
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(true, 0, new Target(), source);
@@ -58,17 +66,22 @@ namespace Amqp
         public void Start(int credit, MessageCallback onMessage = null)
         {
             this.onMessage = onMessage;
-            this.SetCredit(credit);
+            this.SetCredit(credit, true);
         }
 
-        public void SetCredit(int credit)
+        public void SetCredit(int credit, bool autoRestore = true)
         {
-            this.ThrowIfDetaching("SetCredit");
-
             uint dc;
             lock (this.ThisLock)
             {
+                if (this.IsDetaching)
+                {
+                    return;
+                }
+
+                this.totalCredit = autoRestore ? credit : 0;
                 this.credit = credit;
+                this.restored = 0;
                 dc = this.deliveryCount;
             }
 
@@ -152,6 +165,7 @@ namespace Amqp
                 {
                     if (waiter.Signal(delivery.Message))
                     {
+                        this.OnDeliverMessage();
                         return;
                     }
 
@@ -173,6 +187,7 @@ namespace Amqp
                 Fx.Assert(waiter == null, "waiter must be null now");
                 Fx.Assert(callback != null, "callback must not be null now");
                 callback(this, delivery.Message);
+                this.OnDeliverMessage();
             }
             else
             {
@@ -221,9 +236,23 @@ namespace Amqp
             return base.OnClose(error);
         }
 
+        void OnDeliverMessage()
+        {
+            if (this.totalCredit > 0 &&
+                Interlocked.Increment(ref this.restored) >= (this.totalCredit / 2))
+            {
+                this.SetCredit(this.totalCredit, true);
+            }
+        }
+
         Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
         {
             this.ThrowIfDetaching("Receive");
+            if (this.totalCredit < 0)
+            {
+                this.SetCredit(DefaultCredit, true);
+            }
+
             Waiter waiter = null;
             lock (this.ThisLock)
             {
@@ -231,6 +260,7 @@ namespace Amqp
                 if (first != null)
                 {
                     this.receivedMessages.Remove(first);
+                    this.OnDeliverMessage();
                     return first.Message;
                 }
 

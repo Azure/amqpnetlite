@@ -56,7 +56,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                if (i % 20 == 0) receiver.SetCredit(20);
                 Message message = await receiver.ReceiveAsync();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
@@ -91,7 +90,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                if (i % 10 == 0) receiver.SetCredit(10);
                 Message message = await receiver.ReceiveAsync();
                 string value = (string)message.ValueBody.Value;
                 Trace.WriteLine(TraceLevel.Information, "receive: {0} body {1}x{2}",
@@ -136,7 +134,6 @@ namespace Test.Amqp
                 receiver.Accept(message);
 
                 if (++count == nMsgs) done.Set();
-                if (count % 10 == 0) link.SetCredit(30);
             });
 
             Assert.IsTrue(done.WaitOne(120000));
@@ -168,7 +165,6 @@ namespace Test.Amqp
             await sender.SendAsync(message);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            receiver.SetCredit(10);
             Message message2 = await receiver.ReceiveAsync();
             Assert.IsTrue(message2 != null, "no message received");
             receiver.Accept(message2);
@@ -200,7 +196,6 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                if (i % 50 == 0) receiver.SetCredit(50);
                 Message message = await receiver.ReceiveAsync();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);

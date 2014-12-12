@@ -86,7 +86,6 @@ namespace Test.Amqp
             }
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            receiver.SetCredit(nMsgs * 2);
             for (int i = 0; i < nMsgs * 2; i++)
             {
                 Message message = receiver.Receive();
@@ -118,7 +117,6 @@ namespace Test.Amqp
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             Message[] messages = new Message[nMsgs];
-            receiver.SetCredit(nMsgs);
             for (int i = 0; i < nMsgs; i++)
             {
                 messages[i] = receiver.Receive();
@@ -147,7 +145,6 @@ namespace Test.Amqp
 
             // after rollback, messages should be still acquired
             {
-                receiver.SetCredit(1);
                 Message message = receiver.Receive();
                 Assert.AreEqual("msg" + nMsgs, message.Properties.MessageId);
                 receiver.Release(message);
@@ -166,7 +163,6 @@ namespace Test.Amqp
 
             // only the last message is left
             {
-                receiver.SetCredit(1);
                 Message message = receiver.Receive();
                 Assert.AreEqual("msg" + nMsgs, message.Properties.MessageId);
                 receiver.Accept(message);
@@ -197,7 +193,7 @@ namespace Test.Amqp
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
 
-            receiver.SetCredit(2);
+            receiver.SetCredit(2, false);
             Message message1 = receiver.Receive();
             Message message2 = receiver.Receive();
 
