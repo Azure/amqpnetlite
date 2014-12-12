@@ -78,7 +78,14 @@ namespace Amqp.Framing
             AmqpBitConverter.ReadUByte(buffer);
             AmqpBitConverter.ReadUByte(buffer);
             channel = AmqpBitConverter.ReadUShort(buffer);
-            command = (DescribedList)Encoder.ReadObject(buffer);
+            if (buffer.Length > 0)
+            {
+                command = (DescribedList)Encoder.ReadObject(buffer);
+            }
+            else
+            {
+                command = null;
+            }
         }
 
         static void EncodeFrame(ByteBuffer buffer, FrameType type, ushort channel, DescribedList command)

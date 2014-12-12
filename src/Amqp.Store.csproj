@@ -192,6 +192,7 @@
     <Compile Include="Types\Multiple.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
+    <Compile Include="WinRT\Timer.cs" />
     <Compile Include="WinRT\Fx.cs" />
     <Compile Include="WinRT\List.cs" />
     <Compile Include="WinRT\Map.cs" />

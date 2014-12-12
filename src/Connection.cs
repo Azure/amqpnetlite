@@ -46,6 +46,8 @@ namespace Amqp
 
         internal const uint DefaultMaxFrameSize = 16 * 1024;
         internal const int MaxSessions = 4;
+        const uint MaxIdleTimeout = 30 * 60 * 1000;
+        static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         readonly Address address;
         readonly Session[] localSessions;
         readonly Session[] remoteSessions;
@@ -53,6 +55,7 @@ namespace Amqp
         ITransport transport;
         uint maxFrameSize;
         Pump reader;
+        Timer heartBeatTimer;
 
         Connection()
         {
@@ -162,6 +165,14 @@ namespace Amqp
             }
         }
 
+        static void OnHeartBeatTimer(object state)
+        {
+            var thisPtr = (Connection)state;
+            byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
+            thisPtr.transport.Send(new ByteBuffer(frame, 0, frame.Length, frame.Length));
+            Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
+        }
+
         void Connect()
         {
             ITransport transport;
@@ -238,11 +249,23 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnOpen", this.state));
                 }
+            }
 
-                if (open.MaxFrameSize < this.maxFrameSize)
+            if (open.MaxFrameSize < this.maxFrameSize)
+            {
+                this.maxFrameSize = open.MaxFrameSize;
+            }
+
+            uint idleTimeout = open.IdleTimeOut;
+            if (idleTimeout > 0 && idleTimeout < uint.MaxValue)
+            {
+                idleTimeout -= 3000;
+                if (idleTimeout > MaxIdleTimeout)
                 {
-                    this.maxFrameSize = open.MaxFrameSize;
+                    idleTimeout = MaxIdleTimeout;
                 }
+
+                this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
             }
         }
 
@@ -359,26 +382,29 @@ namespace Amqp
                     Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
                 }
 
-                if (command.Descriptor.Code == Codec.Open.Code)
+                if (command != null)
                 {
-                    this.OnOpen((Open)command);
-                }
-                else if (command.Descriptor.Code == Codec.Close.Code)
-                {
-                    this.OnClose((Close)command);
-                    shouldContinue = false;
-                }
-                else if (command.Descriptor.Code == Codec.Begin.Code)
-                {
-                    this.OnBegin(channel, (Begin)command);
-                }
-                else if (command.Descriptor.Code == Codec.End.Code)
-                {
-                    this.OnEnd(channel, (End)command);
-                }
-                else
-                {
-                    this.OnSessionCommand(channel, command, buffer);
+                    if (command.Descriptor.Code == Codec.Open.Code)
+                    {
+                        this.OnOpen((Open)command);
+                    }
+                    else if (command.Descriptor.Code == Codec.Close.Code)
+                    {
+                        this.OnClose((Close)command);
+                        shouldContinue = false;
+                    }
+                    else if (command.Descriptor.Code == Codec.Begin.Code)
+                    {
+                        this.OnBegin(channel, (Begin)command);
+                    }
+                    else if (command.Descriptor.Code == Codec.End.Code)
+                    {
+                        this.OnEnd(channel, (End)command);
+                    }
+                    else
+                    {
+                        this.OnSessionCommand(channel, command, buffer);
+                    }
                 }
             }
             catch (Exception exception)
@@ -431,6 +457,11 @@ namespace Amqp
 
         void OnEnded(Error error)
         {
+            if (this.heartBeatTimer != null)
+            {
+                this.heartBeatTimer.Dispose();
+            }
+
             if (this.transport != null)
             {
                 this.transport.Close();
