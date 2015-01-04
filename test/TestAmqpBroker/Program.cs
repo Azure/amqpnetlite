@@ -10,12 +10,12 @@
         static void Usage()
         {
             Console.WriteLine("AmqpTestBroker url [url] [/creds:user:pwd] [/cert:ssl_cert] [/trace:level] [/queues:q1;q2;...]");
-            Console.WriteLine("  url=amqp|amqps|ws|wss://host[:port] (can be multiple)");
+            Console.WriteLine("  url=amqp|amqps://host[:port] (can be multiple)");
             Console.WriteLine("  creds=username:passwrod");
-            Console.WriteLine("  cert=ssl cert find value (thumbprint or subject), default to url.host");
+            Console.WriteLine("  cert=ssl cert find value (thumbprint or subject)");
             Console.WriteLine("  trace=level (info, warn, error, frame)");
-            Console.WriteLine("  queues: semicolon seperated queue names. If not specified, the broker implicitly");
-            Console.WriteLine("          creates a new node for any address and deletes it when the link is closed.");
+            Console.WriteLine("  queues: semicolon separated queue names. If not specified, the broker implicitly");
+            Console.WriteLine("          creates a new node for any address and deletes it when the connection is closed.");
         }
 
         static void Main(string[] args)
