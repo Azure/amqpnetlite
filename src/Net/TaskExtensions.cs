@@ -88,7 +88,7 @@ namespace Amqp
             AsyncPump pump = new AsyncPump(transport);
 
             await pump.PumpAsync(
-                h => saslProfile.OnHeader(header, h),
+                h => { saslProfile.OnHeader(header, h); return true; },
                 b => { SaslCode code; return saslProfile.OnFrame(transport, b, out code); });
         }
 
@@ -100,6 +100,7 @@ namespace Amqp
                 sender.Send(
                     message,
                     deliveryState,
+                    false,
                     (m, o, s) =>
                     {
                         var t = (TaskCompletionSource<object>)s;

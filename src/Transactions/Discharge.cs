@@ -20,10 +20,10 @@ namespace Amqp.Framing
     using Amqp.Transactions;
     using Amqp.Types;
 
-    sealed class Discharge : DescribedList
+    public sealed class Discharge : DescribedList
     {
         public Discharge()
-            : base(Controller.Discharge, 2)
+            : base(Codec.Discharge, 2)
         {
         }
 
@@ -35,7 +35,7 @@ namespace Amqp.Framing
 
         public bool Fail
         {
-            get { return this.Fields[4] == null ? false : (bool)this.Fields[1]; }
+            get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
             set { this.Fields[1] = value; }
         }
 

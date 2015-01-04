@@ -37,13 +37,19 @@ namespace Amqp
             Task task = this.StartAsync(connection);
         }
 
-        public async Task PumpAsync(Action<ProtocolHeader> onHeader, Func<ByteBuffer, bool> onBuffer)
+        public async Task PumpAsync(Func<ProtocolHeader, bool> onHeader, Func<ByteBuffer, bool> onBuffer)
         {
             byte[] header = new byte[FixedWidth.ULong];
 
-            // header
-            await this.ReceiveBufferAsync(header, 0, FixedWidth.ULong);
-            onHeader(ProtocolHeader.Create(header, 0));
+            if (onHeader != null)
+            {
+                // header
+                await this.ReceiveBufferAsync(header, 0, FixedWidth.ULong);
+                if (!onHeader(ProtocolHeader.Create(header, 0)))
+                {
+                    return;
+                }
+            }
 
             // frames
             while (true)

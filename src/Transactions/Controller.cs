@@ -21,25 +21,9 @@ namespace Amqp.Transactions
     using System.Threading.Tasks;
     using Amqp;
     using Amqp.Framing;
-    using Amqp.Types;
 
     sealed class Controller : SenderLink
     {
-        public static readonly Descriptor Coordinator = new Descriptor(0x0000000000000030, "amqp:coordinator:list");
-        public static readonly Descriptor Declare = new Descriptor(0x0000000000000031, "amqp:declare:list");
-        public static readonly Descriptor Discharge = new Descriptor(0x0000000000000032, "amqp:discharge:list");
-        public static readonly Descriptor Declared = new Descriptor(0x0000000000000033, "amqp:declared:list");
-        public static readonly Descriptor TransactionalState = new Descriptor(0x0000000000000034, "amqp:transactional-state:list");
-
-        static Controller()
-        {
-            Encoder.AddKnownDescribed(Coordinator, () => new Coordinator());
-            Encoder.AddKnownDescribed(Declare, () => new Declare());
-            Encoder.AddKnownDescribed(Discharge, () => new Discharge());
-            Encoder.AddKnownDescribed(Declared, () => new Declared());
-            Encoder.AddKnownDescribed(TransactionalState, () => new TransactionalState());
-        }
-
         public Controller(Session session)
             : base(session, GetName(), new Coordinator(), new Source())
         {
@@ -49,7 +33,7 @@ namespace Amqp.Transactions
         {
             Message message = new Message(new Declare());
             TaskCompletionSource<byte[]> tcs = new TaskCompletionSource<byte[]>();
-            this.Send(message, null, OnOutcome, tcs);
+            this.Send(message, null, false, OnOutcome, tcs);
             return tcs.Task;
         }
 
@@ -57,7 +41,7 @@ namespace Amqp.Transactions
         {
             Message message = new Message(new Discharge() { TxnId = txnId, Fail = fail });
             TaskCompletionSource<byte[]> tcs = new TaskCompletionSource<byte[]>();
-            this.Send(message, null, OnOutcome, tcs);
+            this.Send(message, null, false, OnOutcome, tcs);
             return tcs.Task;
         }
 
@@ -69,7 +53,7 @@ namespace Amqp.Transactions
         static void OnOutcome(Message message, Outcome outcome, object state)
         {
             var tcs = (TaskCompletionSource<byte[]>)state;
-            if (outcome.Descriptor.Code == Declared.Code)
+            if (outcome.Descriptor.Code == Codec.Declared.Code)
             {
                 tcs.SetResult(((Declared)outcome).TxnId);
             }

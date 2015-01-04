@@ -17,7 +17,7 @@
 
 namespace Amqp.Framing
 {
-    enum ReceiverSettleMode : byte
+    public enum ReceiverSettleMode : byte
     {
         First = 0,
         Second = 1

@@ -180,7 +180,7 @@ namespace Test.Amqp
             Address wsAddress = new Address("ws://guest:guest@localhost:80");
             int nMsgs = 50;
 
-            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
+            Connection connection = await ConnectionFactory.CreateConnectionAsync(wsAddress);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 

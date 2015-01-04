@@ -20,10 +20,10 @@ namespace Amqp.Framing
     using Amqp.Transactions;
     using Amqp.Types;
 
-    sealed class Declared : Outcome
+    public sealed class Declared : Outcome
     {
         public Declared()
-            : base(Controller.Declared, 1)
+            : base(Codec.Declared, 1)
         {
         }
 

@@ -17,9 +17,9 @@
 
 namespace Amqp.Sasl
 {
+    using System;
     using Amqp.Framing;
     using Amqp.Types;
-    using System;
 
     abstract class SaslProfile
     {
@@ -65,9 +65,12 @@ namespace Amqp.Sasl
             transport.Send(headerBuffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP {0}", myHeader);
 
-            SaslInit init = this.GetInit(hostname);
-            this.SendCommand(transport, init);
-           
+            DescribedList command = this.GetStartCommand(hostname);
+            if (command != null)
+            {
+                this.SendCommand(transport, command);
+            }
+
             return myHeader;
         }
 
@@ -87,36 +90,29 @@ namespace Amqp.Sasl
             Frame.GetFrame(buffer, out channel, out command);
             Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
 
-            bool shouldContinue = true; ;
-            code = SaslCode.Ok;
-            if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
+            bool shouldContinue = true;
+            if (command.Descriptor.Code == Codec.SaslOutcome.Code)
             {
-            }
-            else if (command.Descriptor.Code == Codec.SaslChallenge.Code)
-            {
-                SaslResponse response = this.OnChallenge((SaslChallenge)command);
-                this.SendCommand(transport, response);
-            }
-            else if (command.Descriptor.Code == Codec.SaslOutcome.Code)
-            {
-                SaslOutcome outcome = (SaslOutcome)command;
-                this.OnOutcome(outcome);
-                code = outcome.Code;
+                code = ((SaslOutcome)command).Code;
                 shouldContinue = false;
             }
             else
             {
-                throw new AmqpException(ErrorCode.NotImplemented, command.Descriptor.Name);
+                code = SaslCode.Ok;
+                DescribedList response = this.OnCommand(command);
+                if (response != null)
+                {
+                    this.SendCommand(transport, response);
+                    shouldContinue = response.Descriptor.Code != Codec.SaslOutcome.Code;
+                }
             }
 
             return shouldContinue;
         }
 
-        protected abstract SaslInit GetInit(string hostname);
+        protected abstract DescribedList GetStartCommand(string hostname);
 
-        protected abstract SaslResponse OnChallenge(SaslChallenge challenge);
-
-        protected abstract void OnOutcome(SaslOutcome outcome);
+        internal abstract DescribedList OnCommand(DescribedList command);
 
         void SendCommand(ITransport transport, DescribedList command)
         {

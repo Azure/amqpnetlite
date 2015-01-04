@@ -222,7 +222,7 @@ namespace Test.Amqp
             receiver.Release(message2);
 
             // receive all messages. should see the effect of the first txn
-            receiver.SetCredit(nMsgs);
+            receiver.SetCredit(nMsgs, false);
             for (int i = 1; i <= nMsgs; i++)
             {
                 Message message = receiver.Receive();

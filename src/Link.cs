@@ -78,7 +78,7 @@ namespace Amqp
             get { return this.state >= State.DetachPipe; }
         }
 
-        internal void OnAttach(uint remoteHandle, Attach attach)
+        internal virtual void OnAttach(uint remoteHandle, Attach attach)
         {
             lock (this.ThisLock)
             {
@@ -95,8 +95,6 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnAttach", this.state));
                 }
-
-                this.HandleAttach(attach);
             }
 
             if (this.onAttached != null && attach.Target != null && attach.Source != null)
@@ -115,7 +113,7 @@ namespace Amqp
                 }
                 else if (this.state == State.Attached)
                 {
-                    this.SendDetach();
+                    this.SendDetach(null);
                     this.state = State.End;
                 }
                 else
@@ -133,8 +131,6 @@ namespace Amqp
         internal abstract void OnFlow(Flow flow);
 
         internal abstract void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer);
-
-        internal abstract void HandleAttach(Attach attach);
 
         internal abstract void OnDeliveryStateChanged(Delivery delivery);
 
@@ -164,7 +160,7 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
                 }
 
-                this.SendDetach();
+                this.SendDetach(error);
                 return this.state == State.End;
             }
         }
@@ -205,9 +201,9 @@ namespace Amqp
             }
         }
 
-        void SendDetach()
+        void SendDetach(Error error)
         {
-            Detach detach = new Detach() { Handle = this.handle, Closed = true };
+            Detach detach = new Detach() { Handle = this.handle, Error = error, Closed = true };
             this.session.SendCommand(detach);
         }
     }

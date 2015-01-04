@@ -46,13 +46,6 @@ namespace Amqp.Framing
         public static readonly Descriptor Source =   new Descriptor(0x0000000000000028, "amqp:source:list");
         public static readonly Descriptor Target =   new Descriptor(0x0000000000000029, "amqp:target:list");
 
-        // transaction
-        public static readonly Descriptor Coordinator = new Descriptor(0x0000000000000030, "amqp:coordinator:list");
-        public static readonly Descriptor Declare = new Descriptor(0x0000000000000031, "amqp:declare:list");
-        public static readonly Descriptor Discharge = new Descriptor(0x0000000000000032, "amqp:discharge:list");
-        public static readonly Descriptor Declared = new Descriptor(0x0000000000000033, "amqp:declared:list");
-        public static readonly Descriptor TxnState = new Descriptor(0x0000000000000034, "amqp:transactional-state:list");
-
         // sasl
         public static readonly Descriptor SaslMechanisms = new Descriptor(0x0000000000000040, "amqp:sasl-mechanisms:list");
         public static readonly Descriptor SaslInit = new Descriptor(0x0000000000000041, "amqp:sasl-init:list");
@@ -70,6 +63,15 @@ namespace Amqp.Framing
         public static readonly Descriptor AmqpSequence = new Descriptor(0x0000000000000076, "amqp:amqp-sequence:list");
         public static readonly Descriptor AmqpValue = new Descriptor(0x0000000000000077, "amqp:amqp-value:*");
         public static readonly Descriptor Footer = new Descriptor(0x0000000000000078, "amqp:footer:map");
+
+        // transactions
+#if DOTNET
+        public static readonly Descriptor Coordinator = new Descriptor(0x0000000000000030, "amqp:coordinator:list");
+        public static readonly Descriptor Declare = new Descriptor(0x0000000000000031, "amqp:declare:list");
+        public static readonly Descriptor Discharge = new Descriptor(0x0000000000000032, "amqp:discharge:list");
+        public static readonly Descriptor Declared = new Descriptor(0x0000000000000033, "amqp:declared:list");
+        public static readonly Descriptor TransactionalState = new Descriptor(0x0000000000000034, "amqp:transactional-state:list");
+#endif
 
         static Codec()
         {
@@ -108,6 +110,14 @@ namespace Amqp.Framing
             Encoder.AddKnownDescribed(Codec.AmqpSequence, () => new AmqpSequence());
             Encoder.AddKnownDescribed(Codec.AmqpValue, () => new AmqpValue());
             Encoder.AddKnownDescribed(Codec.Footer, () => new Footer());
+
+#if DOTNET
+            Encoder.AddKnownDescribed(Codec.Coordinator, () => new Coordinator());
+            Encoder.AddKnownDescribed(Codec.Declare, () => new Declare());
+            Encoder.AddKnownDescribed(Codec.Discharge, () => new Discharge());
+            Encoder.AddKnownDescribed(Codec.Declared, () => new Declared());
+            Encoder.AddKnownDescribed(Codec.TransactionalState, () => new TransactionalState());
+#endif
         }
 
         public static void Encode(ByteBuffer buffer, Described described)

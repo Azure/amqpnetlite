@@ -19,7 +19,7 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Attach : DescribedList
+    public sealed class Attach : DescribedList
     {
         public Attach()
             : base(Codec.Attach, 14)

@@ -58,6 +58,12 @@ namespace Amqp
             this.outgoingList = new LinkedList();
             this.SendAttach(false, this.deliveryCount, target, source);
         }
+
+        internal SenderLink(Session session, string name)
+            : base(session, name, null)
+        {
+            this.outgoingList = new LinkedList();
+        }
 #endif
         
         public void Send(Message message, int millisecondsTimeout = 60000)
@@ -103,10 +109,10 @@ namespace Amqp
 #if DOTNET
             deliveryState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
 #endif
-            this.Send(message, deliveryState, callback, state);
+            this.Send(message, deliveryState, callback == null, callback, state);
         }
 
-        internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
+        internal void Send(Message message, DeliveryState deliveryState, bool settled, OutcomeCallback callback, object state)
         {
             this.ThrowIfDetaching("Send");
 
@@ -118,7 +124,7 @@ namespace Amqp
                 Link = this,
                 OnOutcome = callback,
                 UserToken = state,
-                Settled = callback == null
+                Settled = settled
             };
 
             lock (this.ThisLock)
@@ -163,10 +169,6 @@ namespace Amqp
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
         {
             throw new InvalidOperationException();
-        }
-
-        internal override void HandleAttach(Attach attach)
-        {
         }
 
         internal override void OnDeliveryStateChanged(Delivery delivery)

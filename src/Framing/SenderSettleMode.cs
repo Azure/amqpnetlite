@@ -17,7 +17,7 @@
 
 namespace Amqp.Framing
 {
-    enum SenderSettleMode : byte
+    public enum SenderSettleMode : byte
     {
         Unsettled = 0,
         Settled = 1,

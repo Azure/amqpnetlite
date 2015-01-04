@@ -15,32 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Framing
+namespace Amqp.Sasl
 {
-    using Amqp.Transactions;
-    using Amqp.Types;
-
-    public sealed class Declare : DescribedList
+    abstract class SaslMechanism
     {
-        public Declare()
-            : base(Codec.Declare, 1)
-        {
-        }
+        public abstract string Name { get; }
 
-        public object GlobalId
-        {
-            get { return this.Fields[0]; }
-            set { this.Fields[0] = value; }
-        }
-
-#if TRACE
-        public override string ToString()
-        {
-            return this.GetDebugString(
-                "declare",
-                new object[] { "global-id" },
-                this.Fields);
-        }
-#endif
+        public abstract SaslProfile CreateProfile();
     }
 }

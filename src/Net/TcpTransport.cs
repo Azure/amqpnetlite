@@ -31,6 +31,24 @@ namespace Amqp
         Writer writer;
         IAsyncTransport socketTransport;
 
+        public TcpTransport()
+        {
+        }
+
+        // called by listener
+        public TcpTransport(Socket socket)
+        {
+            this.socketTransport = new TcpSocket(this, socket);
+            this.writer = new Writer(this, this.socketTransport);
+        }
+
+        // called by listener
+        public TcpTransport(SslStream sslStream)
+        {
+            this.socketTransport = new SslSocket(this, sslStream);
+            this.writer = new Writer(this, this.socketTransport);
+        }
+
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.ConnectAsync(address, new ConnectionFactory()).Wait();
@@ -38,17 +56,17 @@ namespace Amqp
 
         public async Task ConnectAsync(Address address, ConnectionFactory factory)
         {
-            TcpSocket socket;
+            Socket socket;
             IPAddress[] ipAddresses;
             IPAddress ipAddress;
             if (IPAddress.TryParse(address.Host, out ipAddress))
             {
-                socket = new TcpSocket(this, ipAddress.AddressFamily);
+                socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 ipAddresses = new IPAddress[] { ipAddress };
             }
             else
             {
-                socket = new TcpSocket(this, AddressFamily.InterNetwork);
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 ipAddresses = Dns.GetHostEntry(address.Host).AddressList;
             }
 
@@ -62,24 +80,29 @@ namespace Amqp
                 (r) => ((Socket)r.AsyncState).EndConnect(r),
                 socket);
 
-            IAsyncTransport transport = socket;
+            IAsyncTransport transport;
             if (address.UseSsl)
             {
+                SslStream sslStream;
                 SslSocket sslSocket;
                 var ssl = factory.sslSettings;
                 if (ssl == null)
                 {
-                    sslSocket = new SslSocket(this, socket, null);
-                    await sslSocket.AuthenticateAsClientAsync(address.Host);
+                    sslStream = new SslStream(new NetworkStream(socket));
+                    await sslStream.AuthenticateAsClientAsync(address.Host);
                 }
                 else
                 {
-                    sslSocket = new SslSocket(this, socket, ssl.RemoteCertificateValidationCallback);
-                    await sslSocket.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
+                    sslStream = new SslStream(new NetworkStream(socket), false, ssl.RemoteCertificateValidationCallback);
+                    await sslStream.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
                         ssl.Protocols, ssl.CheckCertificateRevocation);
                 }
 
-                transport = sslSocket;
+                transport = new SslSocket(this, sslStream);
+            }
+            else
+            {
+                transport = new TcpSocket(this, socket);
             }
 
             this.socketTransport = transport;
@@ -116,18 +139,17 @@ namespace Amqp
             return this.socketTransport.Receive(buffer, offset, count);
         }
 
-        class TcpSocket : Socket, IAsyncTransport
+        class TcpSocket : IAsyncTransport
         {
             readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
             readonly TcpTransport transport;
+            readonly Socket socket;
             readonly SocketAsyncEventArgs args;
 
-            public TcpSocket(TcpTransport transport, AddressFamily addressFamily)
-                : base(addressFamily, SocketType.Stream, ProtocolType.Tcp)
+            public TcpSocket(TcpTransport transport, Socket socket)
             {
-                this.NoDelay = true;
-
                 this.transport = transport;
+                this.socket = socket;
                 this.args = new SocketAsyncEventArgs();
                 this.args.Completed += onWriteComplete;
                 this.args.UserToken = this;
@@ -164,15 +186,15 @@ namespace Amqp
                     this.args.BufferList = bufferList;
                 }
 
-                return this.SendAsync(this.args);
+                return this.socket.SendAsync(this.args);
             }
 
             Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
             {
                 return Task.Factory.FromAsync(
-                    (c, s) => this.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
-                    (r) => this.EndReceive(r),
-                    null);
+                    (c, s) => ((TcpSocket)s).socket.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
+                    (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
+                    this);
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -182,33 +204,25 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                return base.Receive(buffer, offset, count, SocketFlags.None);
+                return this.socket.Receive(buffer, offset, count, SocketFlags.None);
             }
 
             void ITransport.Close()
             {
-                base.Close();
-            }
-
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    this.args.Dispose();
-                }
-
-                base.Dispose(disposing);
+                this.socket.Close();
+                this.args.Dispose();
             }
         }
 
-        class SslSocket : SslStream, IAsyncTransport
+        class SslSocket : IAsyncTransport
         {
             readonly TcpTransport transport;
+            readonly SslStream sslStream;
 
-            public SslSocket(TcpTransport transport, Socket socket, RemoteCertificateValidationCallback certValidator)
-                : base(new NetworkStream(socket), false, certValidator)
+            public SslSocket(TcpTransport transport, SslStream sslStream)
             {
                 this.transport = transport;
+                this.sslStream = sslStream;
             }
 
             void IAsyncTransport.SetConnection(Connection connection)
@@ -237,7 +251,7 @@ namespace Amqp
                     writeBuffer = new ArraySegment<byte>(temp, 0, listSize);
                 }
 
-                Task task = this.WriteAsync(writeBuffer.Array, writeBuffer.Offset, writeBuffer.Count);
+                Task task = this.sslStream.WriteAsync(writeBuffer.Array, writeBuffer.Offset, writeBuffer.Count);
                 bool pending = !task.IsCompleted;
                 if (pending)
                 {
@@ -262,7 +276,7 @@ namespace Amqp
 
             Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
             {
-                return this.ReadAsync(buffer, offset, count);
+                return this.sslStream.ReadAsync(buffer, offset, count);
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -272,12 +286,12 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                return base.Read(buffer, offset, count);
+                return this.sslStream.Read(buffer, offset, count);
             }
 
             void ITransport.Close()
             {
-                base.Close();
+                this.sslStream.Close();
             }
         }
 

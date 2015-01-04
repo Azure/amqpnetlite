@@ -19,6 +19,7 @@ namespace Amqp.Sasl
 {
     using System;
     using System.Text;
+    using Amqp.Types;
 
     sealed class SaslPlainProfile : SaslProfile
     {
@@ -31,7 +32,7 @@ namespace Amqp.Sasl
             this.password = password;
         }
 
-        protected override SaslInit GetInit(string hostname)
+        protected override DescribedList GetStartCommand(string hostname)
         {
             byte[] b1 = Encoding.UTF8.GetBytes(this.user);
             byte[] b2 = Encoding.UTF8.GetBytes(this.password);
@@ -49,13 +50,9 @@ namespace Amqp.Sasl
             return init;
         }
 
-        protected override SaslResponse OnChallenge(SaslChallenge challenge)
+        internal override DescribedList OnCommand(DescribedList command)
         {
-            throw new System.NotImplementedException();
-        }
-
-        protected override void OnOutcome(SaslOutcome outcome)
-        {
+            return null;
         }
     }
 }

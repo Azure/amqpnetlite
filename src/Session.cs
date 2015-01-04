@@ -35,7 +35,8 @@ namespace Amqp
             End
         }
 
-        const int MaxLinks = 4;
+        const int MaxLinks = 8;
+        const uint defaultWindowSize = 2048;
         readonly Connection connection;
         readonly Link[] localLinks;
         readonly Link[] remoteLinks;
@@ -46,7 +47,6 @@ namespace Amqp
         SequenceNumber incomingDeliveryId;
         LinkedList incomingList;
         SequenceNumber nextIncomingId;
-        const uint incomingWindow = 2048;
 
         // outgoing delivery tracking & flow control
         SequenceNumber outgoingDeliveryId;
@@ -55,6 +55,11 @@ namespace Amqp
         uint outgoingWindow;
 
         public Session(Connection connection)
+            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize })
+        {
+        }
+
+        internal Session(Connection connection, Begin begin)
         {
             this.connection = connection;
             this.channel = connection.AddSession(this);
@@ -63,10 +68,14 @@ namespace Amqp
             this.incomingList = new LinkedList();
             this.outgoingList = new LinkedList();
             this.nextOutgoingId = uint.MaxValue - 2u;
-            this.outgoingWindow = 2048;
+            this.outgoingWindow = begin.IncomingWindow;
             this.incomingDeliveryId = uint.MaxValue;
+
+            begin.IncomingWindow = defaultWindowSize;
+            begin.HandleMax = MaxLinks - 1;
+            begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
-            this.SendBegin();
+            this.SendBegin(begin);
         }
 
         object ThisLock
@@ -159,7 +168,7 @@ namespace Amqp
                 flow.NextOutgoingId = this.nextOutgoingId;
                 flow.OutgoingWindow = this.outgoingWindow;
                 flow.NextIncomingId = this.nextIncomingId;
-                flow.IncomingWindow = incomingWindow;
+                flow.IncomingWindow = defaultWindowSize;
 
                 this.SendCommand(flow);
             }
@@ -284,7 +293,7 @@ namespace Amqp
             }
         }
 
-        void OnAttach(Attach attach)
+        internal virtual void OnAttach(Attach attach)
         {
             lock (this.ThisLock)
             {
@@ -374,7 +383,8 @@ namespace Amqp
                 {
                     DeliveryId = transfer.DeliveryId,
                     Tag = transfer.DeliveryTag,
-                    Settled = transfer.Settled
+                    Settled = transfer.Settled,
+                    State = transfer.State
                 };
 
                 if (!delivery.Settled)
@@ -444,16 +454,8 @@ namespace Amqp
             }
         }
 
-        void SendBegin()
+        void SendBegin(Begin begin)
         {
-            Begin begin = new Begin()
-            {
-                IncomingWindow = incomingWindow,
-                OutgoingWindow = this.outgoingWindow,
-                NextOutgoingId = this.nextOutgoingId,
-                HandleMax = 7
-            };
-
             this.connection.SendCommand(this.channel, begin);
         }
 

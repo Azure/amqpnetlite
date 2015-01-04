@@ -44,9 +44,16 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Listener\ListenerLink.cs" />
+    <Compile Include="Sasl\SaslPlainMechanism.cs" />
+    <Compile Include="Sasl\SaslMechanism.cs" />
+    <Compile Include="Listener\IContainer.cs" />
+    <Compile Include="Listener\ListenerSession.cs" />
+    <Compile Include="Listener\ListenerConnection.cs" />
     <Compile Include="Net\AsyncPump.cs" />
     <Compile Include="Net\AsyncSaslTransport.cs" />
     <Compile Include="Net\ConnectionFactory.cs" />
+    <Compile Include="Listener\ConnectionListener.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
     <Compile Include="Net\TaskExtensions.cs" />
     <Compile Include="Delivery.cs" />

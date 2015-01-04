@@ -20,10 +20,10 @@ namespace Amqp.Framing
     using Amqp.Transactions;
     using Amqp.Types;
 
-    sealed class TransactionalState : DeliveryState
+    public sealed class TransactionalState : DeliveryState
     {
         public TransactionalState()
-            : base(Controller.TransactionalState, 2)
+            : base(Codec.TransactionalState, 2)
         {
         }
 

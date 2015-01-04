@@ -291,7 +291,7 @@ namespace Amqp
             }
         }
 
-        void OnBegin(ushort remoteChannel, Begin begin)
+        internal virtual void OnBegin(ushort remoteChannel, Begin begin)
         {
             lock (this.ThisLock)
             {
@@ -339,7 +339,7 @@ namespace Amqp
             }
         }
 
-        internal void OnHeader(ProtocolHeader header)
+        internal bool OnHeader(ProtocolHeader header)
         {
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", header);
             lock (this.ThisLock)
@@ -363,6 +363,8 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.NotImplemented, header.ToString());
                 }
             }
+
+            return true;
         }
 
         internal bool OnFrame(ByteBuffer buffer)

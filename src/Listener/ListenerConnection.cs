@@ -15,32 +15,35 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Framing
+namespace Amqp.Listener
 {
-    using Amqp.Transactions;
-    using Amqp.Types;
+    using System.Threading;
+    using Amqp.Framing;
 
-    public sealed class Declare : DescribedList
+    public class ListenerConnection : Connection
     {
-        public Declare()
-            : base(Codec.Declare, 1)
+        readonly ConnectionListener listener;
+
+        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
+            : base(listener, address, transport)
         {
+            this.listener = listener;
         }
 
-        public object GlobalId
+        internal ConnectionListener Listener
         {
-            get { return this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.listener; }
         }
 
-#if TRACE
-        public override string ToString()
+        internal override void OnBegin(ushort remoteChannel, Begin begin)
         {
-            return this.GetDebugString(
-                "declare",
-                new object[] { "global-id" },
-                this.Fields);
+            // this sends a begin to the remote peer
+            begin.RemoteChannel = remoteChannel;
+            var session = new ListenerSession(this, begin);
+
+            // this updates the local session state
+            begin.RemoteChannel = session.Channel;
+            base.OnBegin(remoteChannel, begin);
         }
-#endif
     }
 }

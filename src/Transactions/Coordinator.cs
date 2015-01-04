@@ -20,10 +20,10 @@ namespace Amqp.Framing
     using Amqp.Transactions;
     using Amqp.Types;
 
-    sealed class Coordinator : DescribedList
+    public sealed class Coordinator : DescribedList
     {
         public Coordinator()
-            : base(Controller.Coordinator, 1)
+            : base(Codec.Coordinator, 1)
         {
         }
 

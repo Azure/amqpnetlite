@@ -23,7 +23,7 @@ namespace Amqp
 
     public delegate void MessageCallback(ReceiverLink receiver, Message message);
 
-    public sealed class ReceiverLink : Link
+    public class ReceiverLink : Link
     {
 #if DOTNET
         const int DefaultCredit = 200;
@@ -97,6 +97,11 @@ namespace Amqp
         public Message Receive(MessageCallback callback, int timeout = 60000)
         {
             return this.ReceiveInternal(callback, timeout);
+        }
+
+        internal void SetInitialDeliveryCount(uint deliveryCount)
+        {
+            this.deliveryCount = deliveryCount;
         }
 #endif
 
@@ -210,8 +215,9 @@ namespace Amqp
             }
         }
 
-        internal override void HandleAttach(Attach attach)
+        internal override void OnAttach(uint remoteHandle, Attach attach)
         {
+            base.OnAttach(remoteHandle, attach);
             this.deliveryCount = attach.InitialDeliveryCount;
         }
 

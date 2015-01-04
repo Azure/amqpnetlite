@@ -17,7 +17,7 @@
 
 namespace Amqp.Types
 {
-    static class ErrorCode
+    public static class ErrorCode
     {
         // amqp errors
         public const string InternalError = "amqp:internal-error";

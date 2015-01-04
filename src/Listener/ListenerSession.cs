@@ -15,32 +15,24 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Framing
+namespace Amqp.Listener
 {
-    using Amqp.Transactions;
+    using System;
+    using Amqp.Framing;
     using Amqp.Types;
 
-    public sealed class Declare : DescribedList
+    public class ListenerSession : Session
     {
-        public Declare()
-            : base(Codec.Declare, 1)
+        internal ListenerSession(ListenerConnection connection, Begin begin)
+            : base(connection, begin)
         {
         }
 
-        public object GlobalId
+        internal override void OnAttach(Attach attach)
         {
-            get { return this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            var connection = (ListenerConnection)this.Connection;
+            Link link = connection.Listener.Container.CreateLink(connection, this, attach);
+            base.OnAttach(attach);
         }
-
-#if TRACE
-        public override string ToString()
-        {
-            return this.GetDebugString(
-                "declare",
-                new object[] { "global-id" },
-                this.Fields);
-        }
-#endif
     }
 }
