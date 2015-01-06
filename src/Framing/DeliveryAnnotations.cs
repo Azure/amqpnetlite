@@ -25,5 +25,12 @@ namespace Amqp.Framing
             : base(Codec.DeliveryAnnotations, typeof(Symbol))
         {
         }
+
+#if TRACE
+        public override string ToString()
+        {
+            return "delivery-annotations:" + base.ToString();
+        }
+#endif
     }
 }

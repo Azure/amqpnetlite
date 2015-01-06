@@ -25,5 +25,12 @@ namespace Amqp.Framing
             : base(Codec.ApplicationProperties, typeof(string))
         {
         }
+
+#if TRACE
+        public override string ToString()
+        {
+            return "app-properties:" + base.ToString();
+        }
+#endif
     }
 }

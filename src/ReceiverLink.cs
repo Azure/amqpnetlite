@@ -60,7 +60,7 @@ namespace Amqp
             this.totalCredit = -1;
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
-            this.SendAttach(true, 0, new Target(), source);
+            this.SendAttach(true, 0, new Target() { Address = name }, source);
         }
 
         public void Start(int credit, MessageCallback onMessage = null)

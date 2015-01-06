@@ -25,5 +25,12 @@ namespace Amqp.Framing
             : base(Codec.MessageAnnotations, typeof(Symbol))
         {
         }
+
+#if TRACE
+        public override string ToString()
+        {
+            return "msg-annotations:" + base.ToString();
+        }
+#endif
     }
 }

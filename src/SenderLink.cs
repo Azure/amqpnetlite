@@ -48,7 +48,7 @@ namespace Amqp
             : base(session, name, onAttached)
         {
             this.outgoingList = new LinkedList();
-            this.SendAttach(false, this.deliveryCount, target, new Source());
+            this.SendAttach(false, this.deliveryCount, target, new Source() { Address = name });
         }
 
 #if DOTNET

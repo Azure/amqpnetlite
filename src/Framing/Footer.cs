@@ -26,5 +26,12 @@ namespace Amqp.Framing
             : base(Codec.Footer, typeof(Symbol))
         {
         }
+
+#if TRACE
+        public override string ToString()
+        {
+            return "footer:" + base.ToString();
+        }
+#endif
     }
 }

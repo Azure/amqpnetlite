@@ -101,6 +101,12 @@ namespace Amqp
                 await profile.OpenAsync(address.Host, transport);
                 transport = new AsyncSaslTransport(transport);
             }
+            else if (this.amqpSettings != null && this.amqpSettings.SaslExternal)
+            {
+                SaslExternalProfile profile = new SaslExternalProfile();
+                await profile.OpenAsync(address.Host, transport);
+                transport = new AsyncSaslTransport(transport);
+            }
 
             AsyncPump pump = new AsyncPump(transport);
             Connection connection = new Connection(this, address, transport);
@@ -200,6 +206,12 @@ namespace Amqp
 
         public class AmqpSettings
         {
+            public bool SaslExternal
+            {
+                get;
+                set;
+            }
+
             public int MaxFrameSize
             {
                 get;
