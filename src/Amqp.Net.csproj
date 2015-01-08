@@ -52,7 +52,6 @@
     <Compile Include="Listener\ListenerSession.cs" />
     <Compile Include="Listener\ListenerConnection.cs" />
     <Compile Include="Net\AsyncPump.cs" />
-    <Compile Include="Net\AsyncSaslTransport.cs" />
     <Compile Include="Net\ConnectionFactory.cs" />
     <Compile Include="Listener\ConnectionListener.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
@@ -118,7 +117,6 @@
     <Compile Include="Sasl\SaslPlainProfile.cs" />
     <Compile Include="Sasl\SaslProfile.cs" />
     <Compile Include="Sasl\SaslResponse.cs" />
-    <Compile Include="Sasl\SaslTransport.cs" />
     <Compile Include="SenderLink.cs" />
     <Compile Include="SequenceNumber.cs" />
     <Compile Include="Serialization\AmqpContractAttribute.cs" />

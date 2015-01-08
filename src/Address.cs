@@ -17,9 +17,8 @@
 
 namespace Amqp
 {
-    using Amqp.Types;
-
     using System;
+    using Amqp.Types;
 
     public sealed class Address
     {

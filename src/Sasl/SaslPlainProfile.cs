@@ -32,6 +32,11 @@ namespace Amqp.Sasl
             this.password = password;
         }
 
+        protected override ITransport UpgradeTransport(ITransport transport)
+        {
+            return transport;
+        }
+
         protected override DescribedList GetStartCommand(string hostname)
         {
             byte[] b1 = Encoding.UTF8.GetBytes(this.user);
@@ -50,7 +55,7 @@ namespace Amqp.Sasl
             return init;
         }
 
-        internal override DescribedList OnCommand(DescribedList command)
+        protected override DescribedList OnCommand(DescribedList command)
         {
             return null;
         }

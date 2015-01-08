@@ -25,12 +25,17 @@ namespace Amqp.Sasl
         {
         }
 
+        protected override ITransport UpgradeTransport(ITransport transport)
+        {
+            return transport;
+        }
+
         protected override DescribedList GetStartCommand(string hostname)
         {
             return new SaslInit() { Mechanism = "EXTERNAL" };
         }
 
-        internal override DescribedList OnCommand(DescribedList command)
+        protected override DescribedList OnCommand(DescribedList command)
         {
             return null;
         }

@@ -40,7 +40,7 @@ namespace Test.Amqp
             string testName = "BasicSendReceiveAsync";
             int nMsgs = 50;
 
-            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -73,7 +73,7 @@ namespace Test.Amqp
             string testName = "LargeMessageSendReceiveAsync";
             int nMsgs = 50;
 
-            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -109,7 +109,7 @@ namespace Test.Amqp
             string testName = "LargeMessageOnMessageCallback";
             int nMsgs = 50;
 
-            Connection connection = await ConnectionFactory.CreateConnectionAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -180,7 +180,7 @@ namespace Test.Amqp
             Address wsAddress = new Address("ws://guest:guest@localhost:80");
             int nMsgs = 50;
 
-            Connection connection = await ConnectionFactory.CreateConnectionAsync(wsAddress);
+            Connection connection = await Connection.Factory.CreateAsync(wsAddress);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 

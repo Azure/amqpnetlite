@@ -65,10 +65,15 @@ namespace Amqp
         }
 
         public Connection(Address address)
+            : this(address, null)
+        {
+        }
+
+        public Connection(Address address, SaslProfile saslProfile)
             : this()
         {
             this.address = address;
-            this.Connect();
+            this.Connect(saslProfile);
         }
 
 #if DOTNET
@@ -84,6 +89,11 @@ namespace Amqp
             this.SendHeader();
             this.SendOpen(factory.amqpSettings.ContainerId, factory.amqpSettings.HostName ?? this.address.Host);
             this.state = State.OpenPipe;
+        }
+
+        public static ConnectionFactory Factory
+        {
+            get { return new ConnectionFactory(); }
         }
 #endif
 
@@ -173,18 +183,20 @@ namespace Amqp
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
         }
 
-        void Connect()
+        void Connect(SaslProfile saslProfile)
         {
             ITransport transport;
             TcpTransport tcpTransport = new TcpTransport();
             tcpTransport.Connect(this, this.address, DisableServerCertValidation);
             transport = tcpTransport;
 
-            if (this.address.User != null)
+            if (saslProfile != null)
             {
-                SaslTransport saslTransport = new SaslTransport(tcpTransport);
-                saslTransport.Open(this.address.Host, new SaslPlainProfile(this.address.User, this.address.Password));
-                transport = saslTransport;
+                transport = saslProfile.Open(this.address.Host, transport);
+            }
+            else if (this.address.User != null)
+            {
+                transport = new SaslPlainProfile(this.address.User, this.address.Password).Open(this.address.Host, transport);
             }
 
             this.transport = transport;

@@ -103,7 +103,7 @@ namespace Amqp.Listener
                 try
                 {
                     ListenerSasProfile profile = new ListenerSasProfile(this);
-                    await profile.OpenAsync(null, transport);
+                    transport = await profile.OpenAsync(null, transport);
                 }
                 catch (Exception exception)
                 {
@@ -111,8 +111,6 @@ namespace Amqp.Listener
                     transport.Close();
                     return;
                 }
-
-                transport = new AsyncSaslTransport(transport);
             }
 
             Connection connection = new ListenerConnection(this, this.address, transport);
@@ -149,6 +147,11 @@ namespace Amqp.Listener
                 get { return this.innerProfile; }
             }
 
+            protected override ITransport UpgradeTransport(ITransport transport)
+            {
+                return transport;
+            }
+
             protected override DescribedList GetStartCommand(string hostname)
             {
                 Symbol[] symbols = new Symbol[this.listener.saslMechanisms.Length];
@@ -160,7 +163,7 @@ namespace Amqp.Listener
                 return new SaslMechanisms() { SaslServerMechanisms = Multiple.From(symbols) };
             }
 
-            internal override DescribedList OnCommand(DescribedList command)
+            protected override DescribedList OnCommand(DescribedList command)
             {
                 if (this.innerProfile == null)
                 {
@@ -187,7 +190,7 @@ namespace Amqp.Listener
                     }
                 }
 
-                return this.innerProfile.OnCommand(command);
+                return this.innerProfile.OnCommandInternal(command);
             }
         }
 

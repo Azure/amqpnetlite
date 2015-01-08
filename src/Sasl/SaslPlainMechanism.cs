@@ -52,12 +52,17 @@ namespace Amqp.Sasl
                 this.mechanism = mechanism;
             }
 
+            protected override ITransport UpgradeTransport(ITransport transport)
+            {
+                return transport;
+            }
+
             protected override DescribedList GetStartCommand(string hostname)
             {
                 throw new NotImplementedException();
             }
 
-            internal override DescribedList OnCommand(DescribedList command)
+            protected override DescribedList OnCommand(DescribedList command)
             {
                 if (command.Descriptor.Code == Codec.SaslInit.Code)
                 {

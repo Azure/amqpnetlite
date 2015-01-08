@@ -19,7 +19,7 @@ namespace Amqp
 {
     using System;
 
-    interface ITransport
+    public interface ITransport
     {
         // if transport supports async write, it should perform async write with queued buffers
         void Send(ByteBuffer buffer);

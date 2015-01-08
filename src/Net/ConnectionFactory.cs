@@ -28,9 +28,9 @@ namespace Amqp
 
     public class ConnectionFactory
     {
-        static readonly ConnectionFactory defaultInstance = new ConnectionFactory();
         internal TcpSettings tcpSettings;
         internal SslSettings sslSettings;
+        internal SaslSettings saslSettings;
         internal AmqpSettings amqpSettings;
 
         public ConnectionFactory()
@@ -47,12 +47,7 @@ namespace Amqp
         {
             get
             {
-                if (this.tcpSettings == null)
-                {
-                    this.tcpSettings = new TcpSettings();
-                }
-
-                return this.tcpSettings;
+                return this.tcpSettings ?? (this.tcpSettings = new TcpSettings());
             }
         }
 
@@ -60,23 +55,21 @@ namespace Amqp
         {
             get
             {
-                if (this.sslSettings == null)
-                {
-                    this.sslSettings = new SslSettings();
-                }
+                return this.sslSettings ?? (this.sslSettings = new SslSettings());
+            }
+        }
 
-                return this.sslSettings;
+        public SaslSettings SASL
+        {
+            get
+            {
+                return this.saslSettings ?? (this.saslSettings = new SaslSettings());
             }
         }
 
         public AmqpSettings AMQP
         {
             get { return this.amqpSettings; }
-        }
-
-        public static Task<Connection> CreateConnectionAsync(Address address)
-        {
-            return defaultInstance.CreateAsync(address);
         }
 
         public async Task<Connection> CreateAsync(Address address)
@@ -98,14 +91,11 @@ namespace Amqp
             if (address.User != null)
             {
                 SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                await profile.OpenAsync(address.Host, transport);
-                transport = new AsyncSaslTransport(transport);
+                transport = await profile.OpenAsync(address.Host, transport);
             }
-            else if (this.amqpSettings != null && this.amqpSettings.SaslExternal)
+            else if (this.saslSettings != null && this.saslSettings.Profile != null)
             {
-                SaslExternalProfile profile = new SaslExternalProfile();
-                await profile.OpenAsync(address.Host, transport);
-                transport = new AsyncSaslTransport(transport);
+                transport = await this.saslSettings.Profile.OpenAsync(address.Host, transport);
             }
 
             AsyncPump pump = new AsyncPump(transport);
@@ -204,14 +194,17 @@ namespace Amqp
             }
         }
 
-        public class AmqpSettings
+        public class SaslSettings
         {
-            public bool SaslExternal
+            public SaslProfile Profile
             {
                 get;
                 set;
             }
+        }
 
+        public class AmqpSettings
+        {
             public int MaxFrameSize
             {
                 get;

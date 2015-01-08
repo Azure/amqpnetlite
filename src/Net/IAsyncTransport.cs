@@ -21,7 +21,7 @@ namespace Amqp
     using System.Collections.Generic;
     using System.Threading.Tasks;
    
-    interface IAsyncTransport : ITransport
+    public interface IAsyncTransport : ITransport
     {
         void SetConnection(Connection connection);
 

@@ -21,9 +21,14 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
-    abstract class SaslProfile
+    public abstract class SaslProfile
     {
-        public void Open(string hostname, ITransport transport)
+        public static SaslProfile External
+        {
+            get { return new SaslExternalProfile(); }
+        }
+
+        internal ITransport Open(string hostname, ITransport transport)
         {
             ProtocolHeader myHeader = this.Start(hostname, transport);
 
@@ -51,9 +56,11 @@ namespace Amqp.Sasl
                 throw new AmqpException(ErrorCode.UnauthorizedAccess,
                     Fx.Format(SRAmqp.SaslNegoFailed, code));
             }
+
+            return this.UpgradeTransport(transport);
         }
 
-        public ProtocolHeader Start(string hostname, ITransport transport)
+        internal ProtocolHeader Start(string hostname, ITransport transport)
         {
             ProtocolHeader myHeader = new ProtocolHeader() { Id = 3, Major = 1, Minor = 0, Revision = 0 };
 
@@ -74,7 +81,7 @@ namespace Amqp.Sasl
             return myHeader;
         }
 
-        public void OnHeader(ProtocolHeader myHeader, ProtocolHeader theirHeader)
+        internal void OnHeader(ProtocolHeader myHeader, ProtocolHeader theirHeader)
         {
             if (theirHeader.Id != myHeader.Id || theirHeader.Major != myHeader.Major ||
                 theirHeader.Minor != myHeader.Minor || theirHeader.Revision != myHeader.Revision)
@@ -83,7 +90,7 @@ namespace Amqp.Sasl
             }
         }
 
-        public bool OnFrame(ITransport transport, ByteBuffer buffer, out SaslCode code)
+        internal bool OnFrame(ITransport transport, ByteBuffer buffer, out SaslCode code)
         {
             ushort channel;
             DescribedList command;
@@ -110,9 +117,23 @@ namespace Amqp.Sasl
             return shouldContinue;
         }
 
+        internal DescribedList OnCommandInternal(DescribedList command)
+        {
+            return this.OnCommand(command);
+        }
+
+        internal ITransport UpgradeTransportInternal(ITransport transport)
+        {
+            return this.UpgradeTransport(transport);
+        }
+
+        // if a profile handles signing and/or encryption, it should create
+        // a new transport
+        protected abstract ITransport UpgradeTransport(ITransport transport);
+
         protected abstract DescribedList GetStartCommand(string hostname);
 
-        internal abstract DescribedList OnCommand(DescribedList command);
+        protected abstract DescribedList OnCommand(DescribedList command);
 
         void SendCommand(ITransport transport, DescribedList command)
         {

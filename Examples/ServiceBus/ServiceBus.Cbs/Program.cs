@@ -25,6 +25,7 @@ namespace ServiceBus.Cbs
     using System.Web;
     using Amqp;
     using Amqp.Framing;
+    using Amqp.Sasl;
 
     class Program
     {
@@ -52,7 +53,7 @@ namespace ServiceBus.Cbs
         static async Task RunSampleAsync()
         {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.AMQP.SaslExternal = true;
+            factory.SASL.Profile = SaslProfile.External;
 
             Trace.WriteLine(TraceLevel.Information, "Establishing a connection...");
             Address address = new Address(sbNamespace, 5671, null, null, "/", "amqps");
@@ -104,7 +105,7 @@ namespace ServiceBus.Cbs
 
             // receive the response
             var response = await cbsReceiver.ReceiveAsync();
-            if (response.Properties == null || response.ApplicationProperties == null)
+            if (response == null || response.Properties == null || response.ApplicationProperties == null)
             {
                 throw new Exception("invalid response received");
             }

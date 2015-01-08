@@ -81,7 +81,7 @@ namespace Amqp
             return tcs.Task;
         }
 
-        internal static async Task OpenAsync(this SaslProfile saslProfile, string hostname, IAsyncTransport transport)
+        internal static async Task<IAsyncTransport> OpenAsync(this SaslProfile saslProfile, string hostname, IAsyncTransport transport)
         {
             ProtocolHeader header = saslProfile.Start(hostname, transport);
 
@@ -90,6 +90,8 @@ namespace Amqp
             await pump.PumpAsync(
                 h => { saslProfile.OnHeader(header, h); return true; },
                 b => { SaslCode code; return saslProfile.OnFrame(transport, b, out code); });
+
+            return (IAsyncTransport)saslProfile.UpgradeTransportInternal(transport);
         }
 
         static Task SendAsync(this SenderLink sender, Message message, DeliveryState deliveryState)

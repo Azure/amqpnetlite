@@ -59,6 +59,7 @@
       <DependentUpon>SRAmqp.resx</DependentUpon>
     </Compile>
     <Compile Include="NETMF\TcpTransport.cs" />
+    <Compile Include="Sasl\SaslExternalProfile.cs" />
     <Compile Include="Trace.cs" />
     <Compile Include="Framing\ApplicationProperties.cs" />
     <Compile Include="Framing\Reader.cs" />
@@ -106,7 +107,6 @@
     <Compile Include="Framing\Open.cs" />
     <Compile Include="Framing\ReceiverSettleMode.cs" />
     <Compile Include="Framing\SenderSettleMode.cs" />
-    <Compile Include="Sasl\SaslTransport.cs" />
     <Compile Include="ITransport.cs" />
     <Compile Include="Types\DescribedMap.cs" />
     <Compile Include="Types\DescribedValue.cs" />
