@@ -20,13 +20,14 @@ namespace Amqp.Listener
     using System;
     using System.Collections.Generic;
     using System.Net;
+    using System.Net.Security;
     using System.Net.Sockets;
+    using System.Net.WebSockets;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
     using Amqp.Types;
-    using System.Security.Cryptography.X509Certificates;
-    using System.Net.Security;
 
     public class ConnectionListener : ConnectionFactory
     {
@@ -36,23 +37,31 @@ namespace Amqp.Listener
         readonly HashSet<Connection> connections;
         readonly Address address;
 
-        public ConnectionListener(Uri address, string sslValue, string userInfo, IContainer container)
+        public ConnectionListener(Uri addressUri, X509Certificate2 certificate, string userInfo, IContainer container)
         {
             this.connections = new HashSet<Connection>();
             this.saslMechanisms = this.CreateSaslMechanisms(userInfo);
             this.container = container;
-            this.address = new Address(address.Host, address.Port, null, null, "/", address.Scheme);
-            if (address.Scheme.Equals("amqp", StringComparison.OrdinalIgnoreCase))
+            this.address = new Address(addressUri.Host, addressUri.Port, null, null, "/", addressUri.Scheme);
+            if (addressUri.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
             {
-                this.listener = new TcpTransportListener(this, address.Host, address.Port);
+                this.listener = new TcpTransportListener(this, addressUri.Host, addressUri.Port);
             }
-            else if (address.Scheme.Equals("amqps", StringComparison.OrdinalIgnoreCase))
+            else if (addressUri.Scheme.Equals(Address.Amqps, StringComparison.OrdinalIgnoreCase))
             {
-                this.listener = new TlsTransportListener(this, address.Host, address.Port, sslValue);
+                this.listener = new TlsTransportListener(this, addressUri.Host, addressUri.Port, certificate);
+            }
+            else if (addressUri.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
+            {
+                this.listener = new WebSocketTransportListener(this, addressUri.Host, address.Port, address.Path, null);
+            }
+            else if (addressUri.Scheme.Equals(WebSocketTransport.SecureWebSockets, StringComparison.OrdinalIgnoreCase))
+            {
+                this.listener = new WebSocketTransportListener(this, addressUri.Host, address.Port, address.Path, certificate);
             }
             else
             {
-                throw new NotSupportedException(address.Scheme);
+                throw new NotSupportedException(addressUri.Scheme);
             }
         }
 
@@ -84,33 +93,12 @@ namespace Amqp.Listener
             return new SaslPlainMechanism[] { new SaslPlainMechanism(userName, password) };
         }
 
-        async Task HandleTransportAsync(Socket socket)
+        async Task HandleTransportAsync(IAsyncTransport transport)
         {
-            IAsyncTransport transport;
-            try
-            {
-                transport = await this.listener.CreateTransportAsync(socket);
-            }
-            catch (Exception exception)
-            {
-                Trace.WriteLine(TraceLevel.Error, exception.ToString());
-                socket.Close();
-                return;
-            }
-
             if (this.saslMechanisms != null)
             {
-                try
-                {
-                    ListenerSasProfile profile = new ListenerSasProfile(this);
-                    transport = await profile.OpenAsync(null, transport);
-                }
-                catch (Exception exception)
-                {
-                    Trace.WriteLine(TraceLevel.Error, exception.ToString());
-                    transport.Close();
-                    return;
-                }
+                ListenerSasProfile profile = new ListenerSasProfile(this);
+                transport = await profile.OpenAsync(null, transport);
             }
 
             Connection connection = new ListenerConnection(this, this.address, transport);
@@ -196,6 +184,8 @@ namespace Amqp.Listener
 
         abstract class TransportListener
         {
+            protected bool closed;
+
             protected ConnectionListener Listener
             {
                 get;
@@ -205,14 +195,11 @@ namespace Amqp.Listener
             public abstract void Open();
 
             public abstract void Close();
-
-            public abstract Task<IAsyncTransport> CreateTransportAsync(Socket socket);
         }
 
         class TcpTransportListener : TransportListener
         {
             Socket[] listenSockets;
-            bool closed;
 
             public TcpTransportListener(ConnectionListener listener, string host, int port)
             {
@@ -275,7 +262,27 @@ namespace Amqp.Listener
                 }
             }
 
-            public override Task<IAsyncTransport> CreateTransportAsync(Socket socket)
+            protected async Task HandleSocketAsync(Socket socket)
+            {
+                try
+                {
+                    if (this.Listener.tcpSettings != null)
+                    {
+                        this.Listener.tcpSettings.Configure(socket);
+                    }
+
+                    IAsyncTransport transport = await this.CreateTransportAsync(socket);
+
+                    await this.Listener.HandleTransportAsync(transport);
+                }
+                catch (Exception exception)
+                {
+                    Trace.WriteLine(TraceLevel.Error, exception.ToString());
+                    socket.Close();
+                }
+            }
+
+            protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
                 return Task.FromResult<IAsyncTransport>(new TcpTransport(socket));
             }
@@ -291,12 +298,7 @@ namespace Amqp.Listener
                             (r) => ((Socket)r.AsyncState).EndAccept(r),
                             socket);
 
-                        if (this.Listener.tcpSettings != null)
-                        {
-                            this.Listener.tcpSettings.Configure(acceptSocket);
-                        }
-
-                        var t = this.Listener.HandleTransportAsync(acceptSocket);
+                        var task = this.HandleSocketAsync(acceptSocket);
                     }
                     catch (Exception exception)
                     {
@@ -312,50 +314,92 @@ namespace Amqp.Listener
         {
             readonly X509Certificate2 certificate;
 
-            public TlsTransportListener(ConnectionListener listener, string host, int port, string sslValue)
+            public TlsTransportListener(ConnectionListener listener, string host, int port, X509Certificate2 certificate)
                 : base(listener, host, port)
             {
-                this.certificate = GetCertificate(sslValue);
+                this.certificate = certificate;
             }
 
-            public override async Task<IAsyncTransport> CreateTransportAsync(Socket socket)
+            protected override async Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
                 var sslStream = new SslStream(new NetworkStream(socket));
-                await sslStream.AuthenticateAsServerAsync(this.certificate);
+                if (this.Listener.sslSettings == null)
+                {
+                    await sslStream.AuthenticateAsServerAsync(this.certificate);
+                }
+                else
+                {
+                    await sslStream.AuthenticateAsServerAsync(this.certificate, this.Listener.sslSettings.ClientCertificates.Count > 0,
+                        this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation);
+                }
+
                 return new TcpTransport(sslStream);
             }
         }
 
-        static X509Certificate2 GetCertificate(string certFindValue)
+        class WebSocketTransportListener : TransportListener
         {
-            StoreLocation[] locations = new StoreLocation[] { StoreLocation.LocalMachine, StoreLocation.CurrentUser };
-            foreach (StoreLocation location in locations)
+            readonly ConnectionListener listener;
+            HttpListener httpListener;
+
+            public WebSocketTransportListener(ConnectionListener listener, string host, int port, string path, X509Certificate2 certificate)
             {
-                X509Store store = new X509Store(StoreName.My, location);
-                store.Open(OpenFlags.OpenExistingOnly);
+                this.listener = listener;
 
-                X509Certificate2Collection collection = store.Certificates.Find(
-                    X509FindType.FindBySubjectName,
-                    certFindValue,
-                    false);
+                // if certificate is set, it must be bound to host:port by netsh http command
+                string address = string.Format("{0}://{1}:{2}{3}", certificate == null ? "http" : "https", host, port, path);
+                this.httpListener = new HttpListener();
+                this.httpListener.Prefixes.Add(address);
+            }
 
-                if (collection.Count == 0)
+            public override void Open()
+            {
+                this.httpListener.Start();
+                var task = this.AcceptListenerContextLoop();
+            }
+
+            public override void Close()
+            {
+                this.closed = true;
+                this.httpListener.Stop();
+                this.httpListener.Close();
+            }
+
+            async Task HandleListenerContextAsync(HttpListenerContext context)
+            {
+                WebSocket webSocket = null;
+                try
                 {
-                    collection = store.Certificates.Find(
-                        X509FindType.FindByThumbprint,
-                        certFindValue,
-                        false);
+                    var wsContext = await context.AcceptWebSocketAsync(WebSocketTransport.WebSocketSubProtocol);
+                    var wsTransport = new WebSocketTransport(wsContext.WebSocket);
+                    await this.listener.HandleTransportAsync(wsTransport);
                 }
-
-                store.Close();
-
-                if (collection.Count > 0)
+                catch(Exception exception)
                 {
-                    return collection[0];
+                    Trace.WriteLine(TraceLevel.Error, exception.ToString());
+                    if (webSocket != null)
+                    {
+                        webSocket.Abort();
+                    }
                 }
             }
 
-            throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
+            async Task AcceptListenerContextLoop()
+            {
+                while (!this.closed)
+                {
+                    try
+                    {
+                        HttpListenerContext context = await this.httpListener.GetContextAsync();
+
+                        var task = this.HandleListenerContextAsync(context);
+                    }
+                    catch (Exception exception)
+                    {
+                        Trace.WriteLine(TraceLevel.Error, exception.ToString());
+                    }
+                }
+            }
         }
     }
 }

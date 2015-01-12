@@ -26,12 +26,12 @@ namespace Amqp
 
     sealed class WebSocketTransport : IAsyncTransport
     {
-        const string WebSocketSubProtocol = "AMQPWSB10";
-        const string WebSockets = "WS";
-        const string SecureWebSockets = "WSS";
+        public const string WebSocketSubProtocol = "AMQPWSB10";
+        public const string WebSockets = "WS";
+        public const string SecureWebSockets = "WSS";
         const int WebSocketsPort = 80;
         const int SecureWebSocketsPort = 443;
-        ClientWebSocket websocket;
+        WebSocket webSocket;
         Queue<ByteBuffer> bufferQueue;
         bool writing;
         Connection connection;
@@ -39,6 +39,12 @@ namespace Amqp
         public WebSocketTransport()
         {
             this.bufferQueue = new Queue<ByteBuffer>();
+        }
+
+        public WebSocketTransport(WebSocket webSocket)
+            : this()
+        {
+            this.webSocket = webSocket;
         }
 
         public static bool MatchScheme(string scheme)
@@ -71,7 +77,7 @@ namespace Amqp
                     cws.SubProtocol ?? "<null>"));
             }
 
-            this.websocket = cws;
+            this.webSocket = cws;
         }
 
         void IAsyncTransport.SetConnection(Connection connection)
@@ -81,12 +87,12 @@ namespace Amqp
 
         async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
-            if (this.websocket.State != WebSocketState.Open)
+            if (this.webSocket.State != WebSocketState.Open)
             {
                 return 0;
             }
 
-            var result = await this.websocket.ReceiveAsync(new ArraySegment<byte>(buffer, offset, count), CancellationToken.None);
+            var result = await this.webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, offset, count), CancellationToken.None);
             if (result.MessageType == WebSocketMessageType.Close)
             {
                 return 0;
@@ -102,7 +108,7 @@ namespace Amqp
 
         void ITransport.Close()
         {
-            this.websocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "close", CancellationToken.None).Wait();
+            this.webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "close", CancellationToken.None).Wait();
         }
 
         void ITransport.Send(ByteBuffer buffer)
@@ -150,7 +156,7 @@ namespace Amqp
             {
                 try
                 {
-                    await this.websocket.SendAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
+                    await this.webSocket.SendAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
                         WebSocketMessageType.Binary, true, CancellationToken.None);
                 }
                 catch (Exception exception)

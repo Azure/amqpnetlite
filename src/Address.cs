@@ -22,8 +22,8 @@ namespace Amqp
 
     public sealed class Address
     {
-        const string Amqp = "AMQP";
-        const string Amqps = "AMQPS";
+        internal const string Amqp = "AMQP";
+        internal const string Amqps = "AMQPS";
         const int AmqpPort = 5672;
         const int AmqpsPort = 5671;
 

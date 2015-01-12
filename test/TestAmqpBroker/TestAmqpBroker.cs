@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using global::Amqp;
     using global::Amqp.Framing;
@@ -32,10 +33,12 @@
                 this.implicitQueue = true;
             }
 
+            X509Certificate2 certificate = GetCertificate(certValue);
+
             this.listeners = new ConnectionListener[endpoints.Count];
             for (int i = 0; i < endpoints.Count; i++)
             {
-                this.listeners[i] = new ConnectionListener(endpoints[i], certValue, userInfo, this);
+                this.listeners[i] = new ConnectionListener(endpoints[i], certificate, userInfo, this);
             }
         }
 
@@ -76,6 +79,39 @@
             {
                 this.queues.Remove(queue);
             }
+        }
+
+
+        static X509Certificate2 GetCertificate(string certFindValue)
+        {
+            StoreLocation[] locations = new StoreLocation[] { StoreLocation.LocalMachine, StoreLocation.CurrentUser };
+            foreach (StoreLocation location in locations)
+            {
+                X509Store store = new X509Store(StoreName.My, location);
+                store.Open(OpenFlags.OpenExistingOnly);
+
+                X509Certificate2Collection collection = store.Certificates.Find(
+                    X509FindType.FindBySubjectName,
+                    certFindValue,
+                    false);
+
+                if (collection.Count == 0)
+                {
+                    collection = store.Certificates.Find(
+                        X509FindType.FindByThumbprint,
+                        certFindValue,
+                        false);
+                }
+
+                store.Close();
+
+                if (collection.Count > 0)
+                {
+                    return collection[0];
+                }
+            }
+
+            throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
         }
 
         Message IContainer.CreateMessage(ByteBuffer buffer)
