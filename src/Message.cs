@@ -29,7 +29,7 @@ namespace Amqp
         public Properties Properties;
         public ApplicationProperties ApplicationProperties;
         public Footer Footer;
-        public RestrictedDescribed Body; // support single Data or AmqpSequence section only
+        public RestrictedDescribed BodySection; // support single Data or AmqpSequence section only
 
         public Message()
         {
@@ -37,22 +37,34 @@ namespace Amqp
 
         public Message(object body)
         {
-            this.Body = new AmqpValue() { Value = body };
+            this.BodySection = new AmqpValue() { Value = body };
         }
 
-        public AmqpValue ValueBody
+        public object Body
         {
-            get { return (AmqpValue)this.Body; }
-        }
-
-        public Data DataBody
-        {
-            get { return (Data)this.Body; }
-        }
-
-        public AmqpSequence SequenceBody
-        {
-            get { return (AmqpSequence)this.Body; }
+            get
+            {
+                if (this.BodySection == null)
+                {
+                    return null;
+                }
+                else if (this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
+                {
+                    return ((AmqpValue)this.BodySection).Value;
+                }
+                else if (this.BodySection.Descriptor.Code == Codec.Data.Code)
+                {
+                    return ((Data)this.BodySection).Binary;
+                }
+                else if (this.BodySection.Descriptor.Code == Codec.AmqpSequence.Code)
+                {
+                    return ((AmqpSequence)this.BodySection).List;
+                }
+                else
+                {
+                    throw new AmqpException(ErrorCode.DecodeError, "The body section is invalid.");
+                }
+            }
         }
 
         internal Delivery Delivery
@@ -69,45 +81,47 @@ namespace Amqp
             if (this.MessageAnnotations != null) Codec.Encode(buffer, this.MessageAnnotations);
             if (this.Properties != null)  Codec.Encode(buffer, this.Properties);
             if (this.ApplicationProperties != null) Codec.Encode(buffer, this.ApplicationProperties);
-            if (this.Body != null) Codec.Encode(buffer, this.Body);
+            if (this.BodySection != null) Codec.Encode(buffer, this.BodySection);
             if (this.Footer != null) Codec.Encode(buffer, this.Footer);
             return buffer;
         }
 
-        public Message Decode(ByteBuffer buffer)
+        public static Message Decode(ByteBuffer buffer)
         {
+            Message message = new Message();
+
             while (buffer.Length > 0)
             {
                 RestrictedDescribed described = Codec.Decode(buffer);
                 if (described.Descriptor.Code == Codec.Header.Code)
                 {
-                    this.Header = (Header)described;
+                    message.Header = (Header)described;
                 }
                 else if (described.Descriptor.Code == Codec.DeliveryAnnotations.Code)
                 {
-                    this.DeliveryAnnotations = (DeliveryAnnotations)described;
+                    message.DeliveryAnnotations = (DeliveryAnnotations)described;
                 }
                 else if (described.Descriptor.Code == Codec.MessageAnnotations.Code)
                 {
-                    this.MessageAnnotations = (MessageAnnotations)described;
+                    message.MessageAnnotations = (MessageAnnotations)described;
                 }
                 else if (described.Descriptor.Code == Codec.Properties.Code)
                 {
-                    this.Properties = (Properties)described;
+                    message.Properties = (Properties)described;
                 }
                 else if (described.Descriptor.Code == Codec.ApplicationProperties.Code)
                 {
-                    this.ApplicationProperties = (ApplicationProperties)described;
+                    message.ApplicationProperties = (ApplicationProperties)described;
                 }
                 else if (described.Descriptor.Code == Codec.AmqpValue.Code ||
                     described.Descriptor.Code == Codec.Data.Code ||
                     described.Descriptor.Code == Codec.AmqpSequence.Code)
                 {
-                    this.Body = described;
+                    message.BodySection = described;
                 }
                 else if (described.Descriptor.Code == Codec.Footer.Code)
                 {
-                    this.Footer = (Footer)described;
+                    message.Footer = (Footer)described;
                 }
                 else
                 {
@@ -116,7 +130,7 @@ namespace Amqp
                 }
             }
 
-            return this;
+            return message;
         }
     }
 }

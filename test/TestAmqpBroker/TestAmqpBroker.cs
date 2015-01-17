@@ -652,7 +652,7 @@ namespace TestAmqpBroker
                 object body;
                 try
                 {
-                    body = new Message().Decode(((BrokerMessage)message).Buffer).ValueBody.Value;
+                    body = Message.Decode(((BrokerMessage)message).Buffer).Body;
                 }
                 catch (Exception exception)
                 {

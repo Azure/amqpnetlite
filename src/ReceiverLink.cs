@@ -142,14 +142,14 @@ namespace Amqp
                         this.deliveryCurrent = null;
                         Fx.Assert(delivery != null, "Must have a delivery in the queue");
                         AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                        delivery.Message = new Message().Decode(delivery.Buffer);
+                        delivery.Message = Message.Decode(delivery.Buffer);
                         delivery.Buffer = null;
                     }
                     else
                     {
                         // single tranfer delivery
                         this.OnDelivery(transfer.DeliveryId);
-                        delivery.Message = new Message().Decode(buffer);
+                        delivery.Message = Message.Decode(buffer);
                     }
 
                     callback = this.onMessage;

@@ -74,11 +74,10 @@ namespace Test.Amqp
         {
             for (int i = 0; i < count; ++i)
             {
-                Message message = new Message();
+                Message message = new Message("hello");
                 message.Properties = new Properties() { MessageId = "msg" + i, GroupId = "perf" };
                 message.ApplicationProperties = new ApplicationProperties();
                 message.ApplicationProperties["sn"] = i;
-                message.Body = new AmqpValue() { Value = "hello" };
                 this.sender.Send(message, onOutcome, this);
             }
         }

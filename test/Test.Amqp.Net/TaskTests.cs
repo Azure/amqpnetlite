@@ -91,7 +91,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = await receiver.ReceiveAsync();
-                string value = (string)message.ValueBody.Value;
+                string value = message.GetBody<string>();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0} body {1}x{2}",
                     message.ApplicationProperties["sn"], value[0], value.Length);
                 receiver.Accept(message);
@@ -128,7 +128,7 @@ namespace Test.Amqp
             int count = 0;
             receiver.Start(30, (link, message) =>
             {
-                string value = (string)message.ValueBody.Value;
+                string value = message.GetBody<string>();
                 Trace.WriteLine(TraceLevel.Information, "receive: {0} body {1}x{2}",
                     message.ApplicationProperties["sn"], value[0], value.Length);
                 receiver.Accept(message);

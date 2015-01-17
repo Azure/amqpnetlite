@@ -34,32 +34,8 @@ namespace Interop.Server
         //
         static String GetContent(Message msg)
         {
-            String retval = "";
-            var typeCode = msg.Body.GetType();
-            if (typeCode == typeof(Amqp.Framing.AmqpValue))
-            {
-                retval = "[AmqpValue] " + msg.ValueBody.Value.ToString();
-            }
-            else if (typeCode == typeof(Amqp.Framing.AmqpSequence))
-            {
-                retval = "[AmqpSequence] TODO: return sequence content as string";
-            }
-            else if (typeCode == typeof(Amqp.Framing.Data))
-            {
-                try
-                {
-                    retval = "[AmqpData] " + System.Text.Encoding.Default.GetString(msg.DataBody.Binary);
-                }
-                catch (Exception e)
-                {
-                    retval = "[AmqpData] " + String.Format("Error Encoding.Default.GetString(msg.DataBody.Binary) : {0}", e);
-                }
-            }
-            else
-            {
-                retval = String.Format("Message has unknown body type code: {0}", typeCode);
-            }
-            return retval;
+            object body = msg.Body;
+            return body == null ? null : body.ToString();
         }
 
         //

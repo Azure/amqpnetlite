@@ -26,6 +26,11 @@ namespace Amqp
 
     public static class TaskExtensions
     {
+        public static T GetBody<T>(this Message message)
+        {
+            return (T)message.Body;
+        }
+
         public static Task CloseAsync(this AmqpObject amqpObject, int timeout = 60000)
         {
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
