@@ -74,7 +74,7 @@ namespace Test.Amqp
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
             }
-
+            
             sender.Close();
             receiver.Close();
             session.Close();
@@ -103,7 +103,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
-                string value = (string)message.ValueBody.Value;
+                string value = (string)message.Body;
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}x{1}", value[0], value.Length);
                 receiver.Accept(message);
             }
