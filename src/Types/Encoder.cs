@@ -184,6 +184,7 @@ namespace Amqp.Types
                 { typeof(Symbol),   serializers[17] },
                 { typeof(List),     serializers[18] },
                 { typeof(Map),      serializers[19] },
+                { typeof(Fields),   serializers[19] },
                 { typeof(object[]), serializers[20] },
                 { typeof(Multiple), serializers[21] },
                 { typeof(object),   serializers[22] },

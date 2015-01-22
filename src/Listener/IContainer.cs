@@ -17,14 +17,17 @@
 
 namespace Amqp.Listener
 {
+    using System.Security.Cryptography.X509Certificates;
     using Amqp.Framing;
 
     public interface IContainer
     {
+        X509Certificate2 ServiceCertificate { get; }
+
         Message CreateMessage(ByteBuffer buffer);
 
         Link CreateLink(ListenerConnection connection, ListenerSession session, Attach attach);
 
-        void AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach);
+        bool AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach);
     }
 }

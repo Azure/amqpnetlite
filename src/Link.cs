@@ -22,7 +22,7 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Types;
 
-    public delegate void OnAttached(Link link, Target target, Source source);
+    public delegate void OnAttached(Link link, Attach attach);
 
     public abstract class Link : AmqpObject
     {
@@ -78,6 +78,17 @@ namespace Amqp
             get { return this.state >= State.DetachPipe; }
         }
 
+        internal void Abort(Error error)
+        {
+            this.OnAbort(error);
+
+            if (this.state != State.End)
+            {
+                this.state = State.End;
+                this.NotifyClosed(error);
+            }
+        }
+
         internal virtual void OnAttach(uint remoteHandle, Attach attach)
         {
             lock (this.ThisLock)
@@ -99,7 +110,7 @@ namespace Amqp
 
             if (this.onAttached != null && attach.Target != null && attach.Source != null)
             {
-                this.onAttached(this, (Target)attach.Target, (Source)attach.Source);
+                this.onAttached(this, attach);
             }
         }
 
@@ -133,6 +144,8 @@ namespace Amqp
         internal abstract void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer);
 
         internal abstract void OnDeliveryStateChanged(Delivery delivery);
+
+        protected abstract void OnAbort(Error error);
 
         protected override bool OnClose(Error error)
         {
@@ -171,19 +184,13 @@ namespace Amqp
             this.session.SendFlow(flow);
         }
 
-        protected void SendAttach(bool role, uint initialDeliveryCount, object target, object source)
+        protected void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
         {
             Fx.Assert(this.state == State.Start, "state must be Start");
             this.state = State.AttachSent;
-            Attach attach = new Attach()
-            {
-                LinkName = this.name,
-                Handle = this.handle,
-                Role = role,
-                Source = source,
-                Target = target
-            };
-
+            attach.LinkName = this.name;
+            attach.Handle = this.handle;
+            attach.Role = role;
             if (!role)
             {
                 attach.InitialDeliveryCount = initialDeliveryCount;

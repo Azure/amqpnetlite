@@ -36,7 +36,7 @@ namespace Amqp
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
             try
             {
-                amqpObject.OnClosed += (o, e) =>
+                amqpObject.Closed += (o, e) =>
                 {
                     if (e != null)
                     {

@@ -45,22 +45,22 @@ namespace Amqp
         MessageCallback onMessage;
 
         public ReceiverLink(Session session, string name, string adderss)
-            : this(session, name, new Source() { Address = adderss })
-        {
-        }
-
-        public ReceiverLink(Session session, string name, Source source)
-            : this(session, name, source, null)
+            : this(session, name, new Source() { Address = adderss }, null)
         {
         }
 
         public ReceiverLink(Session session, string name, Source source, OnAttached onAttached)
+            : this(session, name, new Attach() { Source = source, Target = new Target() }, onAttached)
+        {
+        }
+
+        public ReceiverLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
             this.totalCredit = -1;
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
-            this.SendAttach(true, 0, new Target() { Address = name }, source);
+            this.SendAttach(true, 0, attach);
         }
 
         public void Start(int credit, MessageCallback onMessage = null)
@@ -227,6 +227,13 @@ namespace Amqp
 
         protected override bool OnClose(Error error)
         {
+            this.OnAbort(error);
+
+            return base.OnClose(error);
+        }
+
+        protected override void OnAbort(Error error)
+        {
             Waiter waiter;
             lock (this.ThisLock)
             {
@@ -238,8 +245,6 @@ namespace Amqp
                 waiter.Signal(null);
                 waiter = (Waiter)waiter.Next;
             }
-
-            return base.OnClose(error);
         }
 
         void OnDeliverMessage()

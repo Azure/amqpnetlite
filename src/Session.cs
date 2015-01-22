@@ -93,6 +93,25 @@ namespace Amqp
             get { return this.connection; }
         }
 
+        internal void Abort(Error error)
+        {
+            for (int i = 0; i < this.localLinks.Length; i++)
+            {
+                if (this.localLinks[i] != null)
+                {
+                    this.localLinks[i].Abort(error);
+                }
+            }
+
+            this.CancelPendingDeliveries(error);
+
+            if (this.state != State.End)
+            {
+                this.state = State.End;
+                this.NotifyClosed(error);
+            }
+        }
+
         internal uint AddLink(Link link)
         {
             lock (this.ThisLock)
@@ -256,13 +275,7 @@ namespace Amqp
 
         protected override bool OnClose(Error error)
         {
-            Delivery toRealse;
-            lock (this.ThisLock)
-            {
-                toRealse = (Delivery)this.outgoingList.Clear();
-            }
-
-            Delivery.ReleaseAll(toRealse, error);
+            this.CancelPendingDeliveries(error);
 
             lock (this.ThisLock)
             {
@@ -311,6 +324,17 @@ namespace Amqp
 
             throw new AmqpException(ErrorCode.NotFound,
                 Fx.Format(SRAmqp.LinkNotFound, attach.LinkName));
+        }
+
+        void CancelPendingDeliveries(Error error)
+        {
+            Delivery toRealse;
+            lock (this.ThisLock)
+            {
+                toRealse = (Delivery)this.outgoingList.Clear();
+            }
+
+            Delivery.ReleaseAll(toRealse, error);
         }
 
         void OnDetach(Detach detach)

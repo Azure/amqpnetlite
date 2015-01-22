@@ -70,7 +70,7 @@ namespace Amqp.Framing
 
         public Fields Properties
         {
-            get { return Amqp.Framing.Fields.From(this.Fields, 7); }
+            get { return Amqp.Types.Fields.From(this.Fields, 7); }
             set { this.Fields[7] = value; }
         }
 

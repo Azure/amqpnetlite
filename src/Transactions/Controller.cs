@@ -25,7 +25,7 @@ namespace Amqp.Transactions
     sealed class Controller : SenderLink
     {
         public Controller(Session session)
-            : base(session, GetName(), new Coordinator(), new Source())
+            : base(session, GetName(), new Attach() { Target = new Coordinator(), Source = new Source() }, null)
         {
         }
 

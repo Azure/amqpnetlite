@@ -19,7 +19,7 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Open : DescribedList
+    public sealed class Open : DescribedList
     {
         public Open()
             : base(Codec.Open, 10)
@@ -82,7 +82,7 @@ namespace Amqp.Framing
 
         public Fields Properties
         {
-            get { return Amqp.Framing.Fields.From(this.Fields, 9); }
+            get { return Amqp.Types.Fields.From(this.Fields, 9); }
             set { this.Fields[9] = value; }
         }
 

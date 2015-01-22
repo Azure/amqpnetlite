@@ -91,7 +91,7 @@ namespace Amqp.Transactions
                 {
                     Session session = new Session(link.Session.Connection);
                     controller = new Controller(session);
-                    controller.OnClosed += this.OnControllerClosed;
+                    controller.Closed += this.OnControllerClosed;
                     this.controllers.Add(link.Session.Connection, controller);
                 }
             }

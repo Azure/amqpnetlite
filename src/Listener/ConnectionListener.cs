@@ -37,10 +37,10 @@ namespace Amqp.Listener
         readonly HashSet<Connection> connections;
         readonly Address address;
 
-        public ConnectionListener(Uri addressUri, X509Certificate2 certificate, string userInfo, IContainer container)
+        public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
         {
             this.connections = new HashSet<Connection>();
-            this.saslMechanisms = this.CreateSaslMechanisms(userInfo);
+            this.saslMechanisms = CreateSaslMechanisms(userInfo);
             this.container = container;
             this.address = new Address(addressUri.Host, addressUri.Port, null, null, "/", addressUri.Scheme);
             if (addressUri.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
@@ -49,7 +49,7 @@ namespace Amqp.Listener
             }
             else if (addressUri.Scheme.Equals(Address.Amqps, StringComparison.OrdinalIgnoreCase))
             {
-                this.listener = new TlsTransportListener(this, addressUri.Host, addressUri.Port, certificate);
+                this.listener = new TlsTransportListener(this, addressUri.Host, addressUri.Port, container.ServiceCertificate);
             }
             else if (addressUri.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
             {
@@ -57,7 +57,7 @@ namespace Amqp.Listener
             }
             else if (addressUri.Scheme.Equals(WebSocketTransport.SecureWebSockets, StringComparison.OrdinalIgnoreCase))
             {
-                this.listener = new WebSocketTransportListener(this, addressUri.Host, address.Port, address.Path, certificate);
+                this.listener = new WebSocketTransportListener(this, addressUri.Host, address.Port, address.Path, container.ServiceCertificate);
             }
             else
             {
@@ -80,7 +80,7 @@ namespace Amqp.Listener
             this.listener.Close();
         }
 
-        SaslMechanism[] CreateSaslMechanisms(string userInfo)
+        static SaslMechanism[] CreateSaslMechanisms(string userInfo)
         {
             if (string.IsNullOrEmpty(userInfo))
             {
@@ -102,7 +102,7 @@ namespace Amqp.Listener
             }
 
             Connection connection = new ListenerConnection(this, this.address, transport);
-            connection.OnClosed += this.OnConnectionClosed;
+            connection.Closed += this.OnConnectionClosed;
             lock (this.connections)
             {
                 this.connections.Add(connection);

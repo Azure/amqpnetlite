@@ -117,6 +117,35 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
+        public void TestMethod_ConnectionRemoteProperties()
+        {
+            string testName = "ConnectionRemoteProperties";            
+            ManualResetEvent opened = new ManualResetEvent(false);
+            Open remoteOpen = null;
+            OnOpened onOpen = (c, o) =>
+            {
+                remoteOpen = o;
+                opened.Set();
+            };
+
+            Open open = new Open()
+            {
+                ContainerId = testName,
+                Properties = new Fields() { { new Symbol("p1"), "abcd" } }
+            };
+
+            Connection connection = new Connection(address, null, open, onOpen);
+
+            opened.WaitOne(10000, waitExitContext);
+
+            connection.Close();
+
+            Assert.IsTrue(remoteOpen != null, "remote open not set");
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
         public void TestMethod_OnMessage()
         {
             string testName = "OnMessage";
@@ -184,7 +213,7 @@ namespace Test.Amqp
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             ManualResetEvent closed = new ManualResetEvent(false);
-            receiver.OnClosed += (o, e) => closed.Set();
+            receiver.Closed += (o, e) => closed.Set();
             receiver.Start(
                 nMsgs,
                 (r, m) =>
@@ -355,7 +384,7 @@ namespace Test.Amqp
             Map filters = new Map();
             // JMS selector filter: code = 0x0000468C00000004L, symbol="apache.org:selector-filter:string"
             filters.Add(new Symbol("f1"), new DescribedValue(new Symbol("apache.org:selector-filter:string"), "sn = 100"));
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Address = "q1", FilterSet = filters });
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Address = "q1", FilterSet = filters }, null);
             Message message2 = receiver.Receive();
             receiver.Accept(message2);
 
@@ -438,13 +467,18 @@ namespace Test.Amqp
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
-            Target remoteTarget = null;
-            SenderLink sender = new SenderLink(session, "sender-" + testName, new Target() { Dynamic = true }, (l, t, s) => remoteTarget = t);
+            string targetAddress = null;
+            OnAttached onAttached = (link, attach) =>
+            {
+                targetAddress = ((Target)attach.Target).Address;
+            };
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, new Target() { Dynamic = true }, onAttached);
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
-            Assert.IsTrue(remoteTarget != null, "dynamic target not attached");
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, remoteTarget.Address);
+            Assert.IsTrue(targetAddress != null, "dynamic target not attached");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, targetAddress);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
             receiver.Accept(message);
@@ -464,16 +498,16 @@ namespace Test.Amqp
             Connection connection = new Connection(address);
             Session session = new Session(connection);
 
-            Source remoteSource = null;
+            string remoteSource = null;
             ManualResetEvent attached = new ManualResetEvent(false);
-            OnAttached onAttached = (l, t, s) => { remoteSource = s; attached.Set(); };
+            OnAttached onAttached = (link, attach) => { remoteSource = ((Source)attach.Source).Address; attached.Set(); };
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Dynamic = true }, onAttached);
 
             attached.WaitOne(10000, waitExitContext);
 
             Assert.IsTrue(remoteSource != null, "dynamic source not attached");
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, remoteSource.Address);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, remoteSource);
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
@@ -510,12 +544,12 @@ namespace Test.Amqp
                 });
 
             // client: setup a temp queue and waits for responses
-            OnAttached onAttached = (l, t, s) =>
+            OnAttached onAttached = (l, at) =>
                 {
                     // client: sends a request to the request queue, specifies the temp queue as the reply queue
                     SenderLink sender = new SenderLink(session, "cli.requester-" + testName, "q1");
                     Message request = new Message("hello");
-                    request.Properties = new Properties() { MessageId = "request1", ReplyTo = s.Address };
+                    request.Properties = new Properties() { MessageId = "request1", ReplyTo = ((Source)at.Source).Address };
                     sender.Send(request, (a, b, c) => ((Link)c).Close(0), sender);
                 };
             ReceiverLink responseLink = new ReceiverLink(session, "cli.responder-" + testName, new Source() { Dynamic = true }, onAttached);

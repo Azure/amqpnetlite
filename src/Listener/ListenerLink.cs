@@ -44,16 +44,29 @@ namespace Amqp.Listener
             this.SettleOnSend = attach.SndSettleMode == SenderSettleMode.Settled;
         }
 
-        public bool SettleOnSend { get; private set; }
+        public bool Role
+        {
+            get { return this.role; }
+        }
 
-        public void Start(uint credit, Action<ListenerLink, Message, DeliveryState, object> onMessage, object state)
+        public bool SettleOnSend
+        {
+            get; internal set;
+        }
+
+        public object State
+        {
+            get { return this.state; }
+        }
+
+        public void InitializeReceiver(uint credit, Action<ListenerLink, Message, DeliveryState, object> onMessage, object state)
         {
             this.credit = credit;
             this.onMessage = onMessage;
             this.state = state;
         }
 
-        public void Start(Action<int, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
+        public void InitializeSender(Action<int, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
         {
             this.onCredit = onCredit;
             this.onDispose = onDispose;
@@ -86,35 +99,18 @@ namespace Amqp.Listener
             this.Session.DisposeDelivery(this.role, delivery, deliveryState, settled);
         }
 
-        internal override void OnAttach(uint remoteHandle, Attach attach)
+        public void CompleteAttach(Attach attach, Error error)
         {
-            var container = ((ListenerConnection)this.Session.Connection).Listener.Container;
-
-            Error error = null;
-
-            try
-            {
-                container.AttachLink((ListenerConnection)this.Session.Connection, (ListenerSession)this.Session, this, attach);
-            }
-            catch (AmqpException amqpException)
-            {
-                error = amqpException.Error;
-            }
-            catch (Exception exception)
-            {
-                error = new Error() { Condition = ErrorCode.InternalError, Description = exception.Message };
-            }
-
             if (error != null)
             {
-                this.SendAttach(!attach.Role, attach.InitialDeliveryCount, null, null);
+                this.SendAttach(!attach.Role, attach.InitialDeliveryCount, new Attach() { Target = null, Source = null });
             }
             else
             {
-                this.SendAttach(!attach.Role, attach.InitialDeliveryCount, attach.Target, attach.Source);
+                this.SendAttach(!attach.Role, attach.InitialDeliveryCount, new Attach() { Target = attach.Target, Source = attach.Source });
             }
 
-            base.OnAttach(remoteHandle, attach);
+            base.OnAttach(attach.Handle, attach);
 
             if (error != null)
             {
@@ -127,6 +123,32 @@ namespace Amqp.Listener
                     this.SendFlow(this.deliveryCount, credit);
                 }
             }
+        }
+
+        internal override void OnAttach(uint remoteHandle, Attach attach)
+        {
+            var container = ((ListenerConnection)this.Session.Connection).Listener.Container;
+
+            Error error = null;
+
+            try
+            {
+                bool done = container.AttachLink((ListenerConnection)this.Session.Connection, (ListenerSession)this.Session, this, attach);
+                if (!done)
+                {
+                    return;
+                }
+            }
+            catch (AmqpException amqpException)
+            {
+                error = amqpException.Error;
+            }
+            catch (Exception exception)
+            {
+                error = new Error() { Condition = ErrorCode.InternalError, Description = exception.Message };
+            }
+
+            this.CompleteAttach(attach, error);
         }
 
         internal override void OnFlow(Flow flow)
@@ -183,6 +205,10 @@ namespace Amqp.Listener
                     AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
                 }
             }
+        }
+
+        protected override void OnAbort(Error error)
+        {
         }
 
         void DeliverMessage(Delivery delivery)

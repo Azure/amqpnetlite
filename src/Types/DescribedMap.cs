@@ -22,18 +22,29 @@ namespace Amqp.Types
 
     public abstract class DescribedMap : RestrictedDescribed, IEnumerable
     {
+        readonly Type keyType;
         Map map;
 
         protected DescribedMap(Descriptor descriptor, Type keyType)
             : base(descriptor)
         {
-            this.map = new Map(keyType);
+            this.keyType = keyType;
+            this.map = new Map();
         }
 
         public object this[object key]
         {
-            get { return this.map[key]; }
-            set { this.map[key] = value; }
+            get
+            {
+                Map.ValidateKeyType(this.keyType, key.GetType());
+                return this.map[key];
+            }
+
+            set
+            {
+                Map.ValidateKeyType(this.keyType, key.GetType());
+                this.map[key] = value;
+            }
         }
 
         internal override void DecodeValue(ByteBuffer buffer)

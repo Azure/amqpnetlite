@@ -84,9 +84,14 @@ namespace ServiceBus.Cbs
         {
             var session = new Session(connection);
 
-            string cbsClientAddress = "cbs-receiver/123";
+            string cbsClientAddress = "cbs-client-reply-to";
             var cbsSender = new SenderLink(session, "cbs-sender", "$cbs");
-            var cbsReceiver = new ReceiverLink(session, cbsClientAddress, "$cbs");
+            var receiverAttach = new Attach()
+            {
+                Source = new Source() { Address = "$cbs" },
+                Target = new Target() { Address = cbsClientAddress }
+            };
+            var cbsReceiver = new ReceiverLink(session, "cbs-receiver", receiverAttach, null);
             var sasToken = GetSASToken(keyName, keyValue, string.Format("http://{0}/{1}", sbNamespace, entity), TimeSpan.FromMinutes(20));
             Trace.WriteLine(TraceLevel.Information, " sas token: {0}", sasToken);
 

@@ -24,6 +24,7 @@ namespace Amqp
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
+    using Amqp.Framing;
     using Amqp.Sasl;
 
     public class ConnectionFactory
@@ -39,7 +40,8 @@ namespace Amqp
             {
                 MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
                 ContainerId = Process.GetCurrentProcess().ProcessName,
-                IdleTimeout = int.MaxValue
+                IdleTimeout = int.MaxValue,
+                MaxSessionsPerConnection = 8
             };
         }
 
@@ -72,7 +74,17 @@ namespace Amqp
             get { return this.amqpSettings; }
         }
 
-        public async Task<Connection> CreateAsync(Address address)
+        public Task<Connection> CreateAsync(Address address)
+        {
+            return this.CreateAsync(address, null, null);
+        }
+
+        public Task<Connection> CreateAsync(Address address, OnOpened onOpened)
+        {
+            return this.CreateAsync(address, null, onOpened);
+        }
+
+        public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
             if (WebSocketTransport.MatchScheme(address.Scheme))
@@ -99,7 +111,7 @@ namespace Amqp
             }
 
             AsyncPump pump = new AsyncPump(transport);
-            Connection connection = new Connection(this, address, transport);
+            Connection connection = new Connection(this, address, transport, open, onOpened);
             pump.Start(connection);
 
             return connection;
@@ -218,6 +230,12 @@ namespace Amqp
             }
 
             public string HostName
+            {
+                get;
+                set;
+            }
+
+            public ushort MaxSessionsPerConnection
             {
                 get;
                 set;

@@ -23,6 +23,8 @@ namespace Amqp
     using System;
     using System.Threading;
 
+    public delegate void OnOpened(Connection connection, Open open);
+
     public class Connection : AmqpObject
     {
         enum State
@@ -45,10 +47,11 @@ namespace Amqp
         public static bool DisableServerCertValidation;
 
         internal const uint DefaultMaxFrameSize = 16 * 1024;
-        internal const int MaxSessions = 4;
+        internal const ushort DefaultMaxSessions = 4;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         readonly Address address;
+        readonly OnOpened onOpened;
         readonly Session[] localSessions;
         readonly Session[] remoteSessions;
         State state;
@@ -57,37 +60,48 @@ namespace Amqp
         Pump reader;
         Timer heartBeatTimer;
 
-        Connection()
+        Connection(ushort channelMax)
         {
-            this.localSessions = new Session[MaxSessions];
-            this.remoteSessions = new Session[MaxSessions];
+            this.localSessions = new Session[channelMax];
+            this.remoteSessions = new Session[channelMax];
             this.maxFrameSize = DefaultMaxFrameSize;
         }
 
         public Connection(Address address)
-            : this(address, null)
+            : this(address, null, null, null)
         {
         }
 
-        public Connection(Address address, SaslProfile saslProfile)
-            : this()
+        public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
+            : this(DefaultMaxSessions)
         {
             this.address = address;
-            this.Connect(saslProfile);
+            this.onOpened = onOpened;
+            this.Connect(saslProfile, open);
         }
 
 #if DOTNET
-        internal Connection(ConnectionFactory factory, Address address, IAsyncTransport transport)
-            : this()
+        internal Connection(ConnectionFactory factory, Address address, IAsyncTransport transport, Open open, OnOpened onOpened)
+            : this(factory.amqpSettings.MaxSessionsPerConnection)
         {
             this.address = address;
+            this.onOpened = onOpened;
             this.maxFrameSize = (uint)factory.amqpSettings.MaxFrameSize;
             this.transport = transport;
             transport.SetConnection(this);
 
             // after getting the transport, move state to open pipe before starting the pump
+            if (open == null)
+            {
+                open = new Open()
+                {
+                    ContainerId = factory.amqpSettings.ContainerId,
+                    HostName = factory.amqpSettings.HostName ?? this.address.Host
+                };
+            }
+
             this.SendHeader();
-            this.SendOpen(factory.amqpSettings.ContainerId, factory.amqpSettings.HostName ?? this.address.Host);
+            this.SendOpen(open);
             this.state = State.OpenPipe;
         }
 
@@ -117,7 +131,7 @@ namespace Amqp
                 }
 
                 throw new AmqpException(ErrorCode.NotAllowed,
-                    Fx.Format(SRAmqp.AmqpHandleExceeded, MaxSessions));
+                    Fx.Format(SRAmqp.AmqpHandleExceeded, DefaultMaxSessions));
             }
         }
 
@@ -183,7 +197,7 @@ namespace Amqp
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
         }
 
-        void Connect(SaslProfile saslProfile)
+        void Connect(SaslProfile saslProfile, Open open)
         {
             ITransport transport;
             TcpTransport tcpTransport = new TcpTransport();
@@ -202,8 +216,13 @@ namespace Amqp
             this.transport = transport;
 
             // after getting the transport, move state to open pipe before starting the pump
+            if (open == null)
+            {
+                open = new Open() { ContainerId = Guid.NewGuid().ToString(), HostName = this.address.Host };
+            }
+
             this.SendHeader();
-            this.SendOpen(Guid.NewGuid().ToString(), this.address.Host);
+            this.SendOpen(open);
             this.state = State.OpenPipe;
 
             this.reader = new Pump(this);
@@ -226,16 +245,10 @@ namespace Amqp
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP 0 1.0.0");
         }
 
-        void SendOpen(string containerId, string hostName)
+        void SendOpen(Open open)
         {
-            Open open = new Open()
-            {
-                ContainerId = containerId,
-                HostName = hostName,
-                MaxFrameSize = this.maxFrameSize,
-                ChannelMax = MaxSessions - 1
-            };
-
+            open.ChannelMax = DefaultMaxSessions - 1;
+            open.MaxFrameSize = this.maxFrameSize;
             this.SendCommand(0, open);
         }
 
@@ -278,6 +291,11 @@ namespace Amqp
                 }
 
                 this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
+            }
+
+            if (this.onOpened != null)
+            {
+                this.onOpened(this, open);
             }
         }
 
@@ -462,10 +480,20 @@ namespace Amqp
 
         internal void OnIoException(Exception exception)
         {
+            Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception.ToString());
             if (this.state != State.End)
             {
+                Error error = new Error() { Condition = ErrorCode.ConnectionForced };
+                for (int i = 0; i < this.localSessions.Length; i++)
+                {
+                    if (this.localSessions[i] != null)
+                    {
+                        this.localSessions[i].Abort(error);
+                    }
+                }
+
                 this.state = State.End;
-                this.OnEnded(new Error() { Condition = ErrorCode.ConnectionForced });
+                this.OnEnded(error);
             }
         }
 

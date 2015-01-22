@@ -35,36 +35,21 @@ namespace Amqp
         bool writing;
 
         public SenderLink(Session session, string name, string adderss)
-            : this(session, name, new Target() { Address = adderss })
-        {
-        }
-
-        public SenderLink(Session session, string name, Target target)
-            : this(session, name, target, null)
+            : this(session, name, new Target() { Address = adderss }, null)
         {
         }
 
         public SenderLink(Session session, string name, Target target, OnAttached onAttached)
+            : this(session, name, new Attach() { Source = new Source(), Target = target }, onAttached)
+        {
+        }
+
+        public SenderLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
             this.outgoingList = new LinkedList();
-            this.SendAttach(false, this.deliveryCount, target, new Source() { Address = name });
+            this.SendAttach(false, this.deliveryCount, attach);
         }
-
-#if DOTNET
-        internal SenderLink(Session session, string name, object target, object source)
-            : base(session, name, null)
-        {
-            this.outgoingList = new LinkedList();
-            this.SendAttach(false, this.deliveryCount, target, source);
-        }
-
-        internal SenderLink(Session session, string name)
-            : base(session, name, null)
-        {
-            this.outgoingList = new LinkedList();
-        }
-#endif
         
         public void Send(Message message, int millisecondsTimeout = 60000)
         {
@@ -194,6 +179,13 @@ namespace Amqp
 
         protected override bool OnClose(Error error)
         {
+            this.OnAbort(error);
+
+            return base.OnClose(error);
+        }
+
+        protected override void OnAbort(Error error)
+        {
             Delivery toRelease = null;
             while (true)
             {
@@ -212,8 +204,6 @@ namespace Amqp
             }
 
             Delivery.ReleaseAll(toRelease, error);
-
-            return base.OnClose(error);
         }
 
         static byte[] GetDeliveryTag(uint tag)

@@ -67,9 +67,9 @@ namespace Examples.Interop
                 // Discover its name when it attaches.
                 String replyTo = "";
                 ManualResetEvent receiverAttached = new ManualResetEvent(false);
-                OnAttached onReceiverAttached = (l, t, s) =>
+                OnAttached onReceiverAttached = (l, a) =>
                 {
-                    replyTo = s.Address;
+                    replyTo = ((Source)a.Source).Address;
                     receiverAttached.Set();
                 };
 

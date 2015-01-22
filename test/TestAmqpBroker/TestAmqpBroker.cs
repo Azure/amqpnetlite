@@ -28,6 +28,7 @@ namespace TestAmqpBroker
 
     public sealed class TestAmqpBroker : IContainer
     {
+        readonly X509Certificate2 certificate;
         readonly Dictionary<string, TestQueue> queues;
         readonly ConnectionListener[] listeners;
         readonly TxnManager txnManager;
@@ -50,12 +51,12 @@ namespace TestAmqpBroker
                 this.implicitQueue = true;
             }
 
-            X509Certificate2 certificate = certValue == null ? null : GetCertificate(certValue);
+            this.certificate = certValue == null ? null : GetCertificate(certValue);
 
             this.listeners = new ConnectionListener[endpoints.Count];
             for (int i = 0; i < endpoints.Count; i++)
             {
-                this.listeners[i] = new ConnectionListener(endpoints[i], certificate, userInfo, this);
+                this.listeners[i] = new ConnectionListener(endpoints[i], userInfo, this);
             }
         }
 
@@ -98,7 +99,6 @@ namespace TestAmqpBroker
             }
         }
 
-
         static X509Certificate2 GetCertificate(string certFindValue)
         {
             StoreLocation[] locations = new StoreLocation[] { StoreLocation.LocalMachine, StoreLocation.CurrentUser };
@@ -131,6 +131,11 @@ namespace TestAmqpBroker
             throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
         }
 
+        X509Certificate2 IContainer.ServiceCertificate
+        {
+            get { return this.certificate; }
+        }
+
         Message IContainer.CreateMessage(ByteBuffer buffer)
         {
             return new BrokerMessage(buffer);
@@ -141,7 +146,7 @@ namespace TestAmqpBroker
             return new ListenerLink(session, attach);
         }
 
-        void IContainer.AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach)
+        bool IContainer.AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach)
         {
             Source source = attach.Source as Source;
             Target target = attach.Target as Target;
@@ -162,7 +167,7 @@ namespace TestAmqpBroker
                 else if (attach.Target is Coordinator)
                 {
                     this.txnManager.AddCoordinator((ListenerLink)link);
-                    return;
+                    return true;
                 }
             }
 
@@ -190,7 +195,7 @@ namespace TestAmqpBroker
                     {
                         queue = new TestQueue(this);
                         this.queues.Add(address, queue);
-                        connection.OnClosed += (o, e) => this.RemoveQueue(address);
+                        connection.Closed += (o, e) => this.RemoveQueue(address);
                     }
                     else
                     {
@@ -207,6 +212,8 @@ namespace TestAmqpBroker
             {
                 queue.CreatePublisher((ListenerLink)link);
             }
+
+            return true;
         }
 
         sealed class BrokerMessage : Message
@@ -300,29 +307,29 @@ namespace TestAmqpBroker
 
             void Enqueue(BrokerMessage message)
             {
+                // clone the message as the incoming one is associated with a delivery already
+                BrokerMessage clone = new BrokerMessage(message.Buffer);
                 Consumer consumer = null;
                 lock (this.syncRoot)
                 {
                     consumer = this.GetConsumerWithLock();
                     if (consumer == null)
                     {
-                        message.Node = this.messages.AddLast(message);
+                        clone.Node = this.messages.AddLast(clone);
                     }
                     else
                     {
-                        // clone the message as the incoming one will be disposed
-                        message = new BrokerMessage(message.Buffer);
                         if (!consumer.SettleOnSend)
                         {
-                            message.LockedBy = consumer;
-                            message.Node = this.messages.AddLast(message);
+                            clone.LockedBy = consumer;
+                            clone.Node = this.messages.AddLast(clone);
                         }
                     }
                 }
 
                 if (consumer != null)
                 {
-                    consumer.Signal(message);
+                    consumer.Signal(clone);
                 }
             }
 
@@ -440,8 +447,8 @@ namespace TestAmqpBroker
                     this.link = link;
                     this.id = id;
 
-                    link.OnClosed += this.OnLinkClosed;
-                    link.Start(200, onMessage, this);
+                    link.Closed += this.OnLinkClosed;
+                    link.InitializeReceiver(200, onMessage, this);
                 }
 
                 void OnLinkClosed(AmqpObject sender, Error error)
@@ -509,8 +516,8 @@ namespace TestAmqpBroker
                     this.link = link;
                     this.id = id;
 
-                    link.OnClosed += this.OnLinkClosed;
-                    link.Start(onCredit, onDispose, this);
+                    link.Closed += this.OnLinkClosed;
+                    link.InitializeSender(onCredit, onDispose, this);
                 }
 
                 public bool SettleOnSend { get { return this.link.SettleOnSend; } }
@@ -628,8 +635,8 @@ namespace TestAmqpBroker
                     this.coordinators.Add(link);
                 }
 
-                link.OnClosed += (o, e) => this.RemoveCoordinator((ListenerLink)o);
-                link.Start(100, OnMessage, this);
+                link.Closed += (o, e) => this.RemoveCoordinator((ListenerLink)o);
+                link.InitializeReceiver(100, OnMessage, this);
             }
 
             public Transaction GetTransaction(byte[] txnId)

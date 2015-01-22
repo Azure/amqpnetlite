@@ -18,43 +18,34 @@
 namespace Amqp.Types
 {
     using System;
-    using System.Collections;
 
     public partial class Map
     {
-        readonly Type keyType;
-
-        public Map()
-        {
-        }
-
         public new object this[object key]
         {
             get
             {
-                this.CheckKeyType(key);
+                this.CheckKeyType(key.GetType());
                 return this.GetValue(key);
             }
 
             set
             {
-                this.CheckKeyType(key);
+                this.CheckKeyType(key.GetType());
                 base[key] = value;
             }
         }
 
-        internal Map(Type keyType)
+        internal static void ValidateKeyType(Type expected, Type actual)
         {
-            this.keyType = keyType;
+            if (expected != actual)
+            {
+                throw new InvalidOperationException(Fx.Format(SRAmqp.InvalidMapKeyType, actual.Name, expected.Name));
+            }
         }
 
-        void CheckKeyType(object key)
+        protected virtual void CheckKeyType(Type keyType)
         {
-            if (this.keyType != null && key.GetType() != this.keyType)
-            {
-                throw new InvalidOperationException(
-                    Fx.Format(SRAmqp.InvalidMapKeyType, key.GetType().Name, this.keyType.Name));
-            }
         }
 
 #if TRACE

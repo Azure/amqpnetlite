@@ -61,7 +61,6 @@
     <Compile Include="Framing\Dispose.cs" />
     <Compile Include="Framing\End.cs" />
     <Compile Include="Framing\Error.cs" />
-    <Compile Include="Framing\Fields.cs" />
     <Compile Include="Framing\Flow.cs" />
     <Compile Include="Framing\Footer.cs" />
     <Compile Include="Framing\Frame.cs" />
@@ -114,6 +113,7 @@
     <Compile Include="Types\Descriptor.cs" />
     <Compile Include="Types\Encoder.cs" />
     <Compile Include="Types\ErrorCode.cs" />
+    <Compile Include="Types\Fields.cs" />
     <Compile Include="Types\FixedWidth.cs" />
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />

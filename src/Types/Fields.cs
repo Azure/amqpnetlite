@@ -15,35 +15,41 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Listener
+namespace Amqp.Types
 {
-    using System.Threading;
-    using Amqp.Framing;
+    using System;
 
-    public class ListenerConnection : Connection
+    public class Fields : Map
     {
-        readonly ConnectionListener listener;
-
-        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
-            : base(listener, address, transport, null, null)
+        public static Fields From(object[] array, int index)
         {
-            this.listener = listener;
+            object obj = array[index];
+            if (obj != null)
+            {
+                Fields fields = array[index] as Fields;
+                if (fields == null)
+                {
+                    fields = new Fields();
+                    Map map = (Map)obj;
+                    foreach (var key in map.Keys)
+                    {
+                        fields.Add(key, map[key]);
+                    }
+
+                    array[index] = fields;
+                }
+
+                return fields;
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        internal ConnectionListener Listener
+        protected override void CheckKeyType(Type keyType)
         {
-            get { return this.listener; }
-        }
-
-        internal override void OnBegin(ushort remoteChannel, Begin begin)
-        {
-            // this sends a begin to the remote peer
-            begin.RemoteChannel = remoteChannel;
-            var session = new ListenerSession(this, begin);
-
-            // this updates the local session state
-            begin.RemoteChannel = session.Channel;
-            base.OnBegin(remoteChannel, begin);
+            Map.ValidateKeyType(typeof(Symbol), keyType);
         }
     }
 }

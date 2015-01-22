@@ -103,13 +103,13 @@
     <Compile Include="Framing\Flow.cs" />
     <Compile Include="Framing\End.cs" />
     <Compile Include="Framing\Detach.cs" />
-    <Compile Include="Framing\Fields.cs" />
     <Compile Include="Framing\Open.cs" />
     <Compile Include="Framing\ReceiverSettleMode.cs" />
     <Compile Include="Framing\SenderSettleMode.cs" />
     <Compile Include="ITransport.cs" />
     <Compile Include="Types\DescribedMap.cs" />
     <Compile Include="Types\DescribedValue.cs" />
+    <Compile Include="Types\Fields.cs" />
     <Compile Include="Types\Multiple.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
