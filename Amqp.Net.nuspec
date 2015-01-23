@@ -18,6 +18,7 @@
   </metadata>
   <files>
     <file src="bin\Release\Amqp.Net\*.*" target="lib\net" />
+    <file src="bin\Release\Amqp.Net35\*.*" target="lib\net35" />
     <file src="bin\Release\Amqp.NetCF39\*.*" target="lib\netcf39" />
     <file src="bin\Release\Amqp.NetMF42\*.*" target="lib\netmf42" />
     <file src="bin\Release\Amqp.NetMF42\le\*.p*" target="lib\netmf42\le" />

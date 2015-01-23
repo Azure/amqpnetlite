@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.Server", "Exampl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.Client", "Examples\PeerToPeer\PeerToPeer.Client\PeerToPeer.Client.csproj", "{8FC90E46-024B-4089-9590-A7E8C2B092BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net35", "src\Amqp.Net35.csproj", "{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -294,6 +296,16 @@ Global
 		{8FC90E46-024B-4089-9590-A7E8C2B092BE}.Release|ARM.ActiveCfg = Release|Any CPU
 		{8FC90E46-024B-4089-9590-A7E8C2B092BE}.Release|x64.ActiveCfg = Release|Any CPU
 		{8FC90E46-024B-4089-9590-A7E8C2B092BE}.Release|x86.ActiveCfg = Release|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Release|x64.ActiveCfg = Release|Any CPU
+		{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
