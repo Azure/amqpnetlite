@@ -36,7 +36,7 @@ namespace Amqp.Types
 
         internal override void DecodeValue(ByteBuffer buffer)
         {
-            var list = Encoder.ReadList(buffer, FormatCode.Unknown);
+            var list = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
             int count = list.Count < this.fields.Length ? list.Count : this.fields.Length;
             for (int i = 0; i < count; i++)
             {

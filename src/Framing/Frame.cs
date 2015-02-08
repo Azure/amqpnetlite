@@ -80,7 +80,7 @@ namespace Amqp.Framing
             channel = AmqpBitConverter.ReadUShort(buffer);
             if (buffer.Length > 0)
             {
-                command = (DescribedList)Encoder.ReadObject(buffer);
+                command = (DescribedList)Codec.Decode(buffer);
             }
             else
             {
@@ -94,7 +94,7 @@ namespace Amqp.Framing
             AmqpBitConverter.WriteUByte(buffer, DOF);
             AmqpBitConverter.WriteUByte(buffer, (byte)type);
             AmqpBitConverter.WriteUShort(buffer, channel);
-            command.Encode(buffer);
+            Codec.Encode(command, buffer);
         }
     }
 }

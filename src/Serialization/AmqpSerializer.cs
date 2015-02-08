@@ -256,6 +256,11 @@ namespace Amqp.Serialization
                 return SerializableType.CreatePrimitiveType(type, encoder, decoder);
             }
 
+            if (type == typeof(object))
+            {
+                return SerializableType.CreateObjectType(type);
+            }
+
             if (typeof(IAmqpSerializable).IsAssignableFrom(type))
             {
                 return SerializableType.CreateAmqpSerializableType(this, type);

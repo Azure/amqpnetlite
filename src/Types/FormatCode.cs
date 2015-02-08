@@ -21,8 +21,6 @@ namespace Amqp.Types
     {
         public const byte
         
-        Unknown = 0xFF,
-
         Described = 0x00,
 
         // fixed width

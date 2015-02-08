@@ -39,7 +39,7 @@ namespace Amqp.Framing
 
         internal override void DecodeValue(ByteBuffer buffer)
         {
-            this.Binary = Encoder.ReadBinary(buffer, FormatCode.Unknown);
+            this.Binary = Encoder.ReadBinary(buffer, Encoder.ReadFormatCode(buffer));
         }
     }
 }

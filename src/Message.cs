@@ -76,13 +76,13 @@ namespace Amqp
         public ByteBuffer Encode()
         {
             ByteBuffer buffer = new ByteBuffer(128, true);
-            if (this.Header != null) Codec.Encode(buffer, this.Header);
-            if (this.DeliveryAnnotations != null) Codec.Encode(buffer, this.DeliveryAnnotations);
-            if (this.MessageAnnotations != null) Codec.Encode(buffer, this.MessageAnnotations);
-            if (this.Properties != null)  Codec.Encode(buffer, this.Properties);
-            if (this.ApplicationProperties != null) Codec.Encode(buffer, this.ApplicationProperties);
-            if (this.BodySection != null) Codec.Encode(buffer, this.BodySection);
-            if (this.Footer != null) Codec.Encode(buffer, this.Footer);
+            EncodeIfNotNull(this.Header, buffer);
+            EncodeIfNotNull(this.DeliveryAnnotations, buffer);
+            EncodeIfNotNull(this.MessageAnnotations, buffer);
+            EncodeIfNotNull(this.Properties, buffer);
+            EncodeIfNotNull(this.ApplicationProperties, buffer);
+            EncodeIfNotNull(this.BodySection, buffer);
+            EncodeIfNotNull(this.Footer, buffer);
             return buffer;
         }
 
@@ -92,7 +92,7 @@ namespace Amqp
 
             while (buffer.Length > 0)
             {
-                RestrictedDescribed described = Codec.Decode(buffer);
+                var described = (RestrictedDescribed)Encoder.ReadObject(buffer);
                 if (described.Descriptor.Code == Codec.Header.Code)
                 {
                     message.Header = (Header)described;
@@ -131,6 +131,14 @@ namespace Amqp
             }
 
             return message;
+        }
+
+        static void EncodeIfNotNull(RestrictedDescribed section, ByteBuffer buffer)
+        {
+            if (section != null)
+            {
+                section.Encode(buffer);
+            }
         }
     }
 }

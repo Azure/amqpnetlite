@@ -49,7 +49,7 @@ namespace Amqp.Types
 
         internal override void DecodeValue(ByteBuffer buffer)
         {
-            this.map = Encoder.ReadMap(buffer, FormatCode.Unknown);
+            this.map = Encoder.ReadMap(buffer, Encoder.ReadFormatCode(buffer));
         }
 
         internal override void EncodeValue(ByteBuffer buffer)

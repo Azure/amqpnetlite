@@ -75,6 +75,8 @@ namespace Amqp.Framing
 
         static Codec()
         {
+            Encoder.Initialize();
+
             Encoder.AddKnownDescribed(Codec.Open, () => new Open());
             Encoder.AddKnownDescribed(Codec.Begin, () => new Begin());
             Encoder.AddKnownDescribed(Codec.Attach, () => new Attach());
@@ -120,21 +122,19 @@ namespace Amqp.Framing
 #endif
         }
 
-        public static void Encode(ByteBuffer buffer, Described described)
+        // Transport layer should call Codec to encode/decode frames. It ensures that
+        // all dependant static fields in other class are initialized correctly.
+        // NETMF does not track cross-class static field/ctor dependancies
+
+        public static void Encode(RestrictedDescribed command, ByteBuffer buffer)
         {
-            if (described == null)
-            {
-                AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
-            }
-            else
-            {
-                described.Encode(buffer);
-            }
+            Fx.Assert(command != null, "command is null!");
+            command.Encode(buffer);
         }
 
-        public static RestrictedDescribed Decode(ByteBuffer buffer)
+        public static object Decode(ByteBuffer buffer)
         {
-            return (RestrictedDescribed)Encoder.ReadObject(buffer);
+            return Encoder.ReadDescribed(buffer, Encoder.ReadFormatCode(buffer));
         }
     }
 }

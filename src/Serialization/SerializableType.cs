@@ -57,6 +57,11 @@ namespace Amqp.Serialization
             return new AmqpPrimitiveType(type, encoder, decoder);
         }
 
+        public static SerializableType CreateObjectType(Type type)
+        {
+            return new AmqpObjectType(type);
+        }
+
         public static SerializableType CreateNullableType(Type type, SerializableType argType)
         {
             return new NullableType(type, argType);
@@ -151,7 +156,26 @@ namespace Amqp.Serialization
 
             public override object ReadObject(ByteBuffer buffer)
             {
-                return this.decoder(buffer, FormatCode.Unknown);
+                byte formatCode = Encoder.ReadFormatCode(buffer);
+                return this.decoder(buffer, formatCode);
+            }
+        }
+
+        sealed class AmqpObjectType : SerializableType
+        {
+            public AmqpObjectType(Type type)
+                : base(null, type)
+            {
+            }
+
+            public override void WriteObject(ByteBuffer buffer, object value)
+            {
+                Encoder.WriteObject(buffer, value);
+            }
+
+            public override object ReadObject(ByteBuffer buffer)
+            {
+                return Encoder.ReadObject(buffer);
             }
         }
 
@@ -450,7 +474,7 @@ namespace Amqp.Serialization
 
             public override object ReadObject(ByteBuffer buffer)
             {
-                object value = Encoder.ReadArray(buffer, FormatCode.Unknown);
+                object value = Encoder.ReadArray(buffer, Encoder.ReadFormatCode(buffer));
                 if (itemType.type != typeof(object))
                 {
                     Array source = (Array)value;
@@ -832,7 +856,7 @@ namespace Amqp.Serialization
 
                 for (int i = 0; i < this.membersMap.Count && count > 0; ++i, count -= 2)
                 {
-                    Symbol key = Encoder.ReadSymbol(buffer, FormatCode.Unknown);
+                    Symbol key = Encoder.ReadSymbol(buffer, Encoder.ReadFormatCode(buffer));
                     SerialiableMember member;
                     if (this.membersMap.TryGetValue((string)key, out member))
                     {
