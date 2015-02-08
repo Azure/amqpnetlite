@@ -28,6 +28,12 @@ namespace Amqp
     {
         public static T GetBody<T>(this Message message)
         {
+            if (message.BodySection != null && 
+                message.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
+            {
+                return ((AmqpValue)message.BodySection).GetValue<T>();
+            }
+
             return (T)message.Body;
         }
 

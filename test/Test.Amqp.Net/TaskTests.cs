@@ -38,7 +38,7 @@ namespace Test.Amqp
         public async Task BasicSendReceiveAsync()
         {
             string testName = "BasicSendReceiveAsync";
-            int nMsgs = 50;
+            int nMsgs = 10;
 
             Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
@@ -65,6 +65,40 @@ namespace Test.Amqp
             await receiver.CloseAsync();
             await session.CloseAsync();
             await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task CustomMessgeBody()
+        {
+            string testName = "CustomMessgeBody";
+
+            Connection connection = await Connection.Factory.CreateAsync(this.address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+
+            Student student = new Student("Tom");
+            student.Age = 16;
+            student.Address = new StreetAddress() { FullAddress = "100 Main St. Small Town" };
+            student.DateOfBirth = new System.DateTime(1988, 5, 1, 1, 2, 3, 100, System.DateTimeKind.Utc);
+
+            Message message = new Message(student);
+            message.Properties = new Properties() { MessageId = "student" };
+            await sender.SendAsync(message);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            Message message2 = await receiver.ReceiveAsync();
+            Trace.WriteLine(TraceLevel.Information, "receive: {0}", message2.Properties);
+            receiver.Accept(message);
+
+            await sender.CloseAsync();
+            await receiver.CloseAsync();
+            await session.CloseAsync();
+            await connection.CloseAsync();
+
+            Student student2 = message2.GetBody<Student>();
+            Assert.AreEqual(student.Age, student2.Age - 1); // incremented in OnDeserialized
+            Assert.AreEqual(student.DateOfBirth, student2.DateOfBirth);
+            Assert.AreEqual(student.Address.FullAddress, student2.Address.FullAddress);
         }
 
         [TestMethod]
