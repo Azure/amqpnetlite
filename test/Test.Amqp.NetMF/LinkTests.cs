@@ -18,6 +18,7 @@ using Amqp;
 using Amqp.Framing;
 using Amqp.Types;
 using System;
+using System.Text;
 using System.Threading;
 #if !(NETMF || COMPACT_FRAMEWORK)
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -60,7 +61,7 @@ namespace Test.Amqp
 
             for (int i = 0; i < nMsgs; ++i)
             {
-                Message message = new Message();
+                Message message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = "abcdefg" };
                 message.ApplicationProperties = new ApplicationProperties();
                 message.ApplicationProperties["sn"] = i;
@@ -131,7 +132,9 @@ namespace Test.Amqp
             Open open = new Open()
             {
                 ContainerId = testName,
-                Properties = new Fields() { { new Symbol("p1"), "abcd" } }
+                Properties = new Fields() { { new Symbol("p1"), "abcd" } },
+                DesiredCapabilities = new Multiple() { new Symbol("dc1"), new Symbol("dc2") },
+                OfferedCapabilities = new Multiple() { new Symbol("oc") }
             };
 
             Connection connection = new Connection(address, null, open, onOpen);
@@ -170,7 +173,10 @@ namespace Test.Amqp
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
-                Message message = new Message();
+                Message message = new Message()
+                {
+                    BodySection = new Data() { Binary = Encoding.UTF8.GetBytes("msg" + i) }
+                };
                 message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
                 message.ApplicationProperties = new ApplicationProperties();
                 message.ApplicationProperties["sn"] = i;
