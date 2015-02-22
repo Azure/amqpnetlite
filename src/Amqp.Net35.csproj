@@ -93,7 +93,6 @@
     <Compile Include="Net\Fx.cs" />
     <Compile Include="Net\List.cs" />
     <Compile Include="Net\Map.cs" />
-    <Compile Include="Net\Multiple.cs" />
     <Compile Include="Net\SRAmqp.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -135,7 +134,6 @@
     <Compile Include="Types\FixedWidth.cs" />
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />
-    <Compile Include="Types\Multiple.cs" />
     <Compile Include="Types\Symbol.cs" />
   </ItemGroup>
   <ItemGroup>

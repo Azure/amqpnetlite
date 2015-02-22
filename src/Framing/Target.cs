@@ -62,9 +62,9 @@ namespace Amqp.Framing
             set { this.Fields[5] = value; }
         }
 
-        public Multiple Capabilities
+        public Symbol[] Capabilities
         {
-            get { return Multiple.From(this.Fields[6]); }
+            get { return Codec.GetSymbolMultiple(this.Fields, 6); }
             set { this.Fields[6] = value; }
         }
 

@@ -189,14 +189,12 @@
     <Compile Include="Types\FixedWidth.cs" />
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />
-    <Compile Include="Types\Multiple.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
     <Compile Include="WinRT\Timer.cs" />
     <Compile Include="WinRT\Fx.cs" />
     <Compile Include="WinRT\List.cs" />
     <Compile Include="WinRT\Map.cs" />
-    <Compile Include="WinRT\Multiple.cs" />
     <Compile Include="WinRT\SRAmqp.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

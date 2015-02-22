@@ -56,15 +56,15 @@ namespace Amqp.Framing
             set { this.Fields[4] = value; }
         }
 
-        public Multiple OfferedCapabilities
+        public Symbol[] OfferedCapabilities
         {
-            get { return Multiple.From(this.Fields[5]); }
+            get { return Codec.GetSymbolMultiple(this.Fields, 5); }
             set { this.Fields[5] = value; }
         }
 
-        public Multiple DesiredCapabilities
+        public Symbol[] DesiredCapabilities
         {
-            get { return Multiple.From(this.Fields[6]); }
+            get { return Codec.GetSymbolMultiple(this.Fields, 6); }
             set { this.Fields[6] = value; }
         }
 

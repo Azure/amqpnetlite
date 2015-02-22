@@ -20,9 +20,11 @@ namespace Test.Amqp
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Reflection;
     using global::Amqp;
     using global::Amqp.Serialization;
     using global::Amqp.Types;
+    using global::Amqp.Framing;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -186,33 +188,6 @@ namespace Test.Amqp
         }
 
         [TestMethod()]
-        public void AmqpCodecMultipleTest()
-        {
-            byte[] workBuffer = new byte[2048];
-
-            Action<byte[], Multiple> runMultipleTest = (b, m) =>
-            {
-                ByteBuffer buffer = new ByteBuffer(b, 0, 0, b.Length);
-                AmqpSerializer.Serialize(buffer, m);
-
-                var m2 = AmqpSerializer.Deserialize<Multiple>(buffer);
-                if (m == null)
-                {
-                    Assert.IsTrue(m2 == null);
-                }
-                else
-                {
-                    EnsureEqual(m, m2);
-                }
-            };
-
-            runMultipleTest(workBuffer, null);
-            runMultipleTest(workBuffer, new Multiple() { strValue });
-            runMultipleTest(workBuffer, new Multiple() { uuidValue, uuidValue });
-            runMultipleTest(workBuffer, new Multiple() { (Symbol)"sym1", (Symbol)"sym2", (Symbol)"sym3" });
-        }
-
-        [TestMethod()]
         public void AmqpCodecListTest()
         {
             byte[] workBuffer = new byte[4096];
@@ -238,7 +213,7 @@ namespace Test.Amqp
             list.Add(uuidValue);
             list.Add(bin8ValueBin);
             list.Add(bin32ValueBin);
-            list.Add(new Symbol());
+            list.Add((Symbol)null);
             list.Add(new Symbol(strValue));
             list.Add(new Symbol(strBig));
             list.Add(strValue);
@@ -356,7 +331,7 @@ namespace Test.Amqp
             map.Add(new Symbol("binaryNull"), null);
             map.Add(new Symbol("binary8"), bin8ValueBin);
             map.Add(new Symbol("binary32"), bin32ValueBin);
-            map.Add(new Symbol("symbolNull"), new Symbol());
+            map.Add(new Symbol("symbolNull"), (Symbol)null);
             map.Add(new Symbol("symbol8"), new Symbol(strValue));
             map.Add(new Symbol("symbol32"), new Symbol(strBig));
             map.Add(new Symbol("string8"), strValue);
@@ -556,10 +531,326 @@ namespace Test.Amqp
             Assert.AreEqual(teacher.Classes[102], ((Teacher)p6).Classes[102]);
             Assert.AreEqual(teacher.Classes[205], ((Teacher)p6).Classes[205]);
         }
-        
+
+        [TestMethod()]
+        public void AmqpCodecFramingTypeTest()
+        {
+            Type codec = typeof(Open).Assembly.GetType("Amqp.Framing.Codec", true);
+            var decode = codec.GetMethod("Decode", BindingFlags.Public | BindingFlags.Static);
+            Random random = new Random();
+
+            foreach (var type in codec.Assembly.GetTypes())
+            {
+                if (!typeof(RestrictedDescribed).IsAssignableFrom(type) ||
+                    type.IsAbstract)
+                {
+                    continue;
+                }
+
+                System.Diagnostics.Trace.WriteLine("testing " + type.Name);
+
+                object obj = CreateRestrictedDescribed(type, random);
+
+                ByteBuffer buffer = new ByteBuffer(1024, true);
+                ((RestrictedDescribed)obj).Encode(buffer);
+
+                object obj2 = decode.Invoke(null, new object[] { buffer });
+                ValidateRestrictedDescribed(obj, obj2);
+            }
+        }
+
         static DescribedValue CreateDescribed(ulong code, string symbol, object value)
         {
             return new DescribedValue(symbol == null ? (object)code : symbol, value);
+        }
+
+        static object CreateRestrictedDescribed(Type type, Random random)
+        {
+            object obj = Activator.CreateInstance(type);
+
+            if (typeof(DescribedList).IsAssignableFrom(type))
+            {
+                var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var p in props)
+                {
+                    if (p.PropertyType == typeof(object) ||
+                        p.PropertyType.IsAbstract ||
+                        p.GetSetMethod(false) == null)
+                    {
+                        continue;
+                    }
+
+                    bool simpleType = !typeof(RestrictedDescribed).IsAssignableFrom(p.PropertyType);
+                    object value = simpleType ? 
+                        CreateObject(p.PropertyType, true, true, random) : 
+                        CreateRestrictedDescribed(p.PropertyType, random);
+                    p.SetValue(obj, value);
+                }
+            }
+            else if (typeof(DescribedMap).IsAssignableFrom(type))
+            {
+                Type keyType = null;
+                Type temp = type;
+                while (temp != null)
+                {
+                    FieldInfo fi = temp.GetField("keyType", BindingFlags.NonPublic | BindingFlags.Instance);
+                    if (fi == null)
+                    {
+                        temp = temp.BaseType;
+                    }
+                    else
+                    {
+                        keyType = (Type)fi.GetValue(obj);
+                        break;
+                    }
+                }
+
+                Assert.IsTrue(keyType != null, "cannot find key type");
+                var map = (DescribedMap)obj;
+                for (int i = 0; i < 10; i++)
+                {
+                    object key = CreateObject(keyType, false, false, random);
+                    object value = CreateObject(GetSingleValueType(false, random), true, false, random);
+                    map[key] = value;
+                }
+            }
+            else if (type == typeof(Data))
+            {
+                var data = (Data)obj;
+                data.Binary = (byte[])CreateObject(typeof(byte[]), true, false, random);
+            }
+            else if (type == typeof(AmqpValue))
+            {
+                var value = (AmqpValue)obj;
+                value.Value = CreateObject(GetSingleValueType(false, random), true, true, random);
+            }
+            else if (type == typeof(AmqpSequence))
+            {
+                var seq = (AmqpSequence)obj;
+                seq.List = (object[])CreateObject(typeof(object[]), true, true, random);
+            }
+            else
+            {
+                System.Diagnostics.Trace.WriteLine("dont know how to initialize " + type.Name);
+            }
+
+            return obj;
+        }
+
+        static void ValidateRestrictedDescribed(object x, object y)
+        {
+            Assert.AreEqual(x.GetType(), y.GetType());
+            Assert.IsTrue(typeof(RestrictedDescribed).IsAssignableFrom(x.GetType()));
+
+            if (typeof(DescribedList).IsAssignableFrom(x.GetType()))
+            {
+                var props = x.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+                foreach (var p in props)
+                {
+                    if (p.PropertyType == typeof(object) ||
+                        p.PropertyType.IsAbstract ||
+                        p.GetSetMethod(false) == null)
+                    {
+                        continue;
+                    }
+
+                    object v1 = p.GetValue(x);
+                    object v2 = p.GetValue(y);
+                    if (typeof(RestrictedDescribed).IsAssignableFrom(p.PropertyType))
+                    {
+                        ValidateRestrictedDescribed(v1, v2);
+                    }
+                    else
+                    {
+                        EnsureEqual(v1, v2);
+                    }
+                }
+            }
+            else if (typeof(DescribedMap).IsAssignableFrom(x.GetType()))
+            {
+                var v1 = (DescribedMap)x;
+                var v2 = (DescribedMap)y;
+                EnsureEqual(v1.Map, v2.Map);
+            }
+            else if (x.GetType() == typeof(Data))
+            {
+                EnsureEqual(((Data)x).Binary, ((Data)y).Binary);
+            }
+            else if (x.GetType() == typeof(AmqpValue))
+            {
+                EnsureEqual(((AmqpValue)x).Value, ((AmqpValue)y).Value);
+            }
+            else if (x.GetType() == typeof(AmqpSequence))
+            {
+                EnsureEqual(((AmqpSequence)x).List, ((AmqpSequence)y).List);
+            }
+            else
+            {
+                System.Diagnostics.Trace.WriteLine("skip validation for " + x.GetType().Name);
+            }
+        }
+
+        static Type GetSingleValueType(bool forKey, Random random)
+        {
+            Type[] types = new Type[]
+            {
+                typeof(bool),
+                typeof(byte),
+                typeof(ushort),
+                typeof(uint),
+                typeof(ulong),
+                typeof(sbyte),
+                typeof(short),
+                typeof(int),
+                typeof(long),
+                typeof(float),
+                typeof(double),
+                typeof(char),
+                typeof(Guid),
+                typeof(string),
+                typeof(Symbol),
+                typeof(DateTime),
+                typeof(byte[])
+            };
+
+            return types[random.Next(types.Length - (forKey ? 2 : 0))];
+        }
+
+        static object CreateObject(Type type, bool allowNull, bool allowCollection, Random random)
+        {
+            if (allowNull && random.Next(10) < 3)
+            {
+                return null;
+            }
+
+            if (type == typeof(object))
+            {
+                type = GetSingleValueType(false, random);
+            }
+
+            if (type == typeof(bool))
+            {
+                return random.Next(2) == 1;
+            }
+            else if (type == typeof(byte))
+            {
+                return (byte)random.Next(byte.MaxValue + 1);
+            }
+            else if (type == typeof(ushort))
+            {
+                return (ushort)random.Next(ushort.MaxValue + 1);
+            }
+            else if (type == typeof(uint))
+            {
+                return (uint)random.Next() + (uint)random.Next();
+            }
+            else if (type == typeof(ulong))
+            {
+                return (ulong)random.Next() + (ulong)random.Next() + (ulong)random.Next() + (ulong)random.Next();
+            }
+            else if (type == typeof(sbyte))
+            {
+                return (sbyte)random.Next(byte.MaxValue + 1);
+            }
+            else if (type == typeof(short))
+            {
+                return (short)random.Next(ushort.MaxValue + 1);
+            }
+            else if (type == typeof(int))
+            {
+                return random.Next() * (random.Next(2) == 0 ? 1 : -1);
+            }
+            else if (type == typeof(long))
+            {
+                return ((long)random.Next() + (long)random.Next()) * (random.Next(2) == 0 ? 1 : -1);
+            }
+            else if (type == typeof(float))
+            {
+                return 3.14159F * (random.Next(2) == 0 ? 1 : -1);
+            }
+            else if (type == typeof(double))
+            {
+                return 1234567.9876 * (random.Next(2) == 0 ? 1 : -1);
+            }
+            else if (type == typeof(char))
+            {
+                return '&';
+            }
+            else if (type == typeof(DateTime))
+            {
+                return DateTime.UtcNow.AddSeconds(random.Next(2000) * (random.Next(2) == 0 ? 1 : -1));
+            }
+            else if (type == typeof(Guid))
+            {
+                return Guid.NewGuid();
+            }
+            else if (type == typeof(byte[]))
+            {
+                byte[] b = new byte[random.Next(300)];
+                for (int i = 0; i < b.Length; i++) b[i] = (byte)random.Next(byte.MaxValue + 1);
+                return b;
+            }
+            else if (type == typeof(string))
+            {
+                return new string('A', random.Next(300));
+            }
+            else if (type == typeof(Symbol))
+            {
+                return new Symbol(new string('A', random.Next(300)));
+            }
+            else if (type == typeof(Fields))
+            {
+                Fields fields = new Fields();
+                for (int i = 0; i < random.Next(10); i++)
+                {
+                    object key = CreateObject(typeof(Symbol), false, false, random);
+                    fields[key] = CreateObject(GetSingleValueType(false, random), true, false, random);
+                }
+
+                return fields;
+            }
+            else if (type.IsEnum)
+            {
+                var values = Enum.GetValues(type);
+                return values.GetValue(random.Next(values.Length));
+            }
+            else if (type.IsArray)
+            {
+                Type elementType = type.GetElementType();
+                Array array = Array.CreateInstance(elementType, random.Next(6) + 1);
+                for (int i = 0; i < array.Length; i++)
+                {
+                    array.SetValue(CreateObject(elementType, false, false, random), i);
+                }
+
+                return array;
+            }
+            else if (allowCollection)
+            {
+                if (type == typeof(List))
+                {
+                    List list = new List();
+                    for (int i = 0; i < random.Next(20); i++)
+                    {
+                        list.Add(CreateObject(GetSingleValueType(false, random), true, false, random));
+                    }
+
+                    return list;
+                }
+                else if (type == typeof(Map))
+                {
+                    Map map = new Map();
+                    for (int i = 0; i < random.Next(10); i++)
+                    {
+                        object key = CreateObject(GetSingleValueType(true, random), false, false, random);
+                        map[key] = CreateObject(GetSingleValueType(false, random), true, false, random);
+                    }
+
+                    return map;
+                }
+            }
+
+            throw new Exception(type.Name + " is not covered!");
         }
 
         static void RunSingleValueTest<T>(byte[] workBuffer, T value, byte[] result, string message)
@@ -605,7 +896,7 @@ namespace Test.Amqp
             }
         }
 
-        void EnsureEqual(IList list1, IList list2)
+        static void EnsureEqual(IList list1, IList list2)
         {
             if (list1 == null && list2 == null)
             {
@@ -617,17 +908,64 @@ namespace Test.Amqp
             Assert.IsTrue(list1.Count == list2.Count, "Count not equal.");
             for (int i = 0; i < list1.Count; i++)
             {
-                Assert.IsTrue(list1[i].Equals(list2[i]), "Value not equal.");
+                EnsureEqual(list1[i], list2[i]);
             }
         }
 
-        void EnsureEqual(DateTime d1, DateTime d2)
+        static void EnsureEqual(Map map1, Map map2)
+        {
+            if (map1 == null && map2 == null)
+            {
+                return;
+            }
+
+            Assert.IsTrue(map1 != null && map2 != null);
+            Assert.AreEqual(map1.Count, map2.Count);
+
+            foreach (var key in map1.Keys)
+            {
+                Assert.IsTrue(map2.ContainsKey(key));
+                EnsureEqual(map1[key], map2[key]);
+            }
+        }
+
+        static void EnsureEqual(DateTime d1, DateTime d2)
         {
             Assert.IsTrue(Math.Abs((d1.ToUniversalTime() - d2.ToUniversalTime()).TotalMilliseconds) < 5, "Datetime difference is greater than 5ms.");
         }
 
-        void Test()
+        static void EnsureEqual(object x, object y)
         {
+            if (x == null && y == null)
+            {
+                return;
+            }
+
+            Assert.IsTrue(x != null && y != null);
+            Assert.AreEqual(x.GetType(), y.GetType());
+
+            if (x is IList)
+            {
+                EnsureEqual((IList)x, (IList)y);
+            }
+            else if (x is Map)
+            {
+                EnsureEqual((Map)x, (Map)y);
+            }
+            else if (x is byte[])
+            {
+                byte[] b1 = (byte[])x;
+                byte[] b2 = (byte[])y;
+                EnsureEqual(b1, 0, b1.Length, b2, 0, b2.Length);
+            }
+            else if (x is DateTime)
+            {
+                EnsureEqual((DateTime)x, (DateTime)y);
+            }
+            else
+            {
+                Assert.IsTrue(x.Equals(y));
+            }
         }
     }
 }

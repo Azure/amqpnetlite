@@ -301,12 +301,6 @@ namespace Amqp.Serialization
 
         SerializableType CompileCollectionTypes(Type type)
         {
-            if (type.IsArray)
-            {
-                return SerializableType.CreateArrayType(this, type,
-                    this.GetOrCompileType(type.GetElementType(), false));
-            }
-
             MemberAccessor keyAccessor = null;
             MemberAccessor valueAccessor = null;
             MethodAccessor addAccess = null;

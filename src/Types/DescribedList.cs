@@ -46,7 +46,7 @@ namespace Amqp.Types
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            Encoder.WriteList(buffer, this.fields);
+            Encoder.WriteList(buffer, this.fields, true);
         }
 
 #if TRACE
@@ -92,12 +92,12 @@ namespace Amqp.Types
                 return sb.ToString();
             }
 
-            object[] list = value as object[];
+            var list = value as System.Collections.IList;
             if (list != null)
             {
                 System.Text.StringBuilder sb = new System.Text.StringBuilder();
                 sb.Append('[');
-                for (int i = 0; i < list.Length; ++i)
+                for (int i = 0; i < list.Count; ++i)
                 {
                     if (i > 0) sb.Append(',');
                     sb.Append(list[i]);

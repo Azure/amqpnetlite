@@ -136,5 +136,29 @@ namespace Amqp.Framing
         {
             return Encoder.ReadDescribed(buffer, Encoder.ReadFormatCode(buffer));
         }
+
+        public static Symbol[] GetSymbolMultiple(object[] fields, int index)
+        {
+            if (fields[index] == null)
+            {
+                return null;
+            }
+
+            Symbol[] symbols = fields[index] as Symbol[];
+            if (symbols != null)
+            {
+                return symbols;
+            }
+
+            Symbol symbol = fields[index] as Symbol;
+            if (symbol != null)
+            {
+                symbols = new Symbol[] { symbol };
+                fields[index] = symbols;
+                return symbols;
+            }
+
+            throw new AmqpException(ErrorCode.InvalidField, Fx.Format("{0} {1}", index, fields[index].GetType().Name));
+        }
     }
 }

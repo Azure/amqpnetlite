@@ -17,6 +17,7 @@
 
 namespace Amqp.Framing
 {
+    using System.Collections;
     using Amqp.Types;
 
     public sealed class AmqpSequence : RestrictedDescribed
@@ -26,7 +27,7 @@ namespace Amqp.Framing
         {
         }
 
-        public object[] List
+        public IList List
         {
             get;
             set;
@@ -34,12 +35,12 @@ namespace Amqp.Framing
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            Encoder.WriteArray(buffer, this.List);
+            Encoder.WriteList(buffer, this.List, true);
         }
 
         internal override void DecodeValue(ByteBuffer buffer)
         {
-            this.List = Encoder.ReadArray(buffer, Encoder.ReadFormatCode(buffer));
+            this.List = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
         }
     }
 }

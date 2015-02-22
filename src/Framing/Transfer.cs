@@ -70,7 +70,7 @@ namespace Amqp.Framing
         public ReceiverSettleMode RcvSettleMode
         {
             get { return this.Fields[6] == null ? ReceiverSettleMode.First : (ReceiverSettleMode)this.Fields[6]; }
-            set { this.Fields[6] = value; }
+            set { this.Fields[6] = (byte)value; }
         }
 
         public DeliveryState State

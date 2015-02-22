@@ -24,7 +24,7 @@ namespace Amqp.Types
 
     public delegate Described CreateDescribed();
 
-    delegate void Encode(ByteBuffer buffer, object value);
+    delegate void Encode(ByteBuffer buffer, object value, bool smallEncoding);
 
     delegate object Decode(ByteBuffer buffer, byte formatCode);
 
@@ -32,19 +32,29 @@ namespace Amqp.Types
     {
         class Serializer
         {
+            public Type Type;
             public Encode Encoder;
             public Decode Decoder;
         }
 
-        static DateTime startOfEpoch;
+        const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
+        const long ticksPerMillisecond = 10000;
+
         static Serializer[] serializers;
         static Map codecByType;
         static byte[][] codecIndexTable;
         static Map knownDescrided;
 
+        static Encoder()
+        {
+            if (serializers == null)
+            {
+                Initialize();
+            }
+        }
+
         public static void Initialize()
         {
-            startOfEpoch = new DateTime(1970, 1, 1, 0, 0, 0);
             knownDescrided = new Map();
 
             serializers = new Serializer[]
@@ -52,136 +62,150 @@ namespace Amqp.Types
                 // 0: null
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { AmqpBitConverter.WriteUByte(b, FormatCode.Null); },
+                    Type = null,
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { AmqpBitConverter.WriteUByte(b, FormatCode.Null); },
                     Decoder = delegate(ByteBuffer b, byte c) { return null; }
                 },
                 // 1: boolean
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteBoolean(b, (bool)o); },
+                    Type = typeof(bool),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteBoolean(b, (bool)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadBoolean(b, c); }
                 },
                 // 2: ubyte
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteUByte(b, (byte)o); },
+                    Type = typeof(byte),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteUByte(b, (byte)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadUByte(b, c); }
                 },
                 // 3: ushort
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteUShort(b, (ushort)o); },
+                    Type = typeof(ushort),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteUShort(b, (ushort)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadUShort(b, c); }
                 },
                 // 4: uint
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteUInt(b, (uint)o); },
+                    Type = typeof(uint),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteUInt(b, (uint)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadUInt(b, c); }
                 },
                 // 5: ulong
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteULong(b, (ulong)o); },
+                    Type = typeof(ulong),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteULong(b, (ulong)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadULong(b, c); }
                 },
                 // 6: byte
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteByte(b, (sbyte)o); },
+                    Type = typeof(sbyte),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteByte(b, (sbyte)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadByte(b, c); }
                 },
                 // 7: short
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteShort(b, (short)o); },
+                    Type = typeof(short),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteShort(b, (short)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadShort(b, c); }
                 },
                 // 8: int
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteInt(b, (int)o); },
+                    Type = typeof(int),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteInt(b, (int)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadInt(b, c); }
                 },
                 // 9: long
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteLong(b, (long)o); },
+                    Type = typeof(long),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteLong(b, (long)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadLong(b, c); }
                 },
                 // 10: float
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteFloat(b, (float)o); },
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteFloat(b, (float)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadFloat(b, c); }
                 },
                 // 11: double
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteDouble(b, (double)o); },
+                    Type = typeof(double),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteDouble(b, (double)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadDouble(b, c); }
                 },
                 // 12: char
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteChar(b, (char)o); },
+                    Type = typeof(char),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteChar(b, (char)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadChar(b, c); }
                 },
                 // 13: timestamp
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteTimestamp(b, (DateTime)o); },
+                    Type = typeof(DateTime),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteTimestamp(b, (DateTime)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadTimestamp(b, c); }
                 },
                 // 14: uuid
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteUuid(b, (Guid)o); },
+                    Type = typeof(Guid),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteUuid(b, (Guid)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadUuid(b, c); }
                 },
                 // 15: binary
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteBinary(b, (byte[])o); },
+                    Type = typeof(byte[]),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteBinary(b, (byte[])o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadBinary(b, c); }
                 },
                 // 16: string
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteString(b, (string)o); },
+                    Type = typeof(string),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteString(b, (string)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadString(b, c); }
                 },
                 // 17: symbol
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteSymbol(b, (Symbol)o); },
+                    Type = typeof(Symbol),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteSymbol(b, (Symbol)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadSymbol(b, c); }
                 },
                 // 18: list
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteList(b, (IList)o); },
+                    Type = typeof(List),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteList(b, (IList)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadList(b, c); }
                 },
                 // 19: map
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteMap(b, (Map)o); },
+                    Type = typeof(Map),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteMap(b, (Map)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadMap(b, c); }
                 },
                 // 20: array
                 new Serializer()
                 {
-                    Encoder = delegate(ByteBuffer b, object o) { WriteArray(b, (object[])o); },
+                    Type = typeof(Array),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteArray(b, (Array)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadArray(b, c); }
                 },
-                // 21: multiple
-                new Serializer()
-                {
-                    Encoder = delegate(ByteBuffer b, object o) { ((Multiple)o).Encode(b); },
-                    Decoder = delegate(ByteBuffer b, byte c) { return Multiple.From(ReadObject(b, c)); }
-                },
-                // 22: invalid
+                // 21: invalid
                 null
             };
 
@@ -207,8 +231,6 @@ namespace Amqp.Types
                 { typeof(List),     serializers[18] },
                 { typeof(Map),      serializers[19] },
                 { typeof(Fields),   serializers[19] },
-                { typeof(object[]), serializers[20] },
-                { typeof(Multiple), serializers[21] },
             };
 
             codecIndexTable = new byte[][]
@@ -229,13 +251,13 @@ namespace Amqp.Types
                 new byte[] { 5, 9, 11, 13 },
 
                 // 0x98:uuid
-                new byte[] { 22, 22, 22, 22, 22, 22, 22, 22, 14 },
+                new byte[] { 21, 21, 21, 21, 21, 21, 21, 21, 14 },
             
                 // 0xa0:bin8, 0xa1:str8, 0xa3:sym8
-                new byte[] { 15, 16, 22, 17 },
+                new byte[] { 15, 16, 21, 17 },
 
                 // 0xb0:bin32, 0xb1:str32, 0xb3:sym32
-                new byte[] { 15, 16, 22, 17 },
+                new byte[] { 15, 16, 21, 17 },
 
                 // 0xc0:list8, 0xc1:map8
                 new byte[] { 18, 19 },
@@ -254,6 +276,11 @@ namespace Amqp.Types
         public static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
         {
             Serializer codec = (Serializer)codecByType[type];
+            if (codec == null && type.IsArray)
+            {
+                codec = serializers[20];
+            }
+
             if (codec != null)
             {
                 encoder = codec.Encoder;
@@ -282,7 +309,7 @@ namespace Amqp.Types
             return AmqpBitConverter.ReadUByte(buffer);
         }
 
-        public static void WriteObject(ByteBuffer buffer, object value)
+        public static void WriteObject(ByteBuffer buffer, object value, bool smallEncoding = true)
         {
             if (value == null)
             {
@@ -290,10 +317,11 @@ namespace Amqp.Types
             }
             else
             {
-                Serializer serializer = (Serializer)codecByType[value.GetType()];
-                if (serializer != null)
+                Encode encoder;
+                Decode decoder;
+                if (TryGetCodec(value.GetType(), out encoder, out decoder))
                 {
-                    serializer.Encoder(buffer, value);
+                    encoder(buffer, value, smallEncoding);
                 }
                 else if (value is Described)
                 {
@@ -324,9 +352,14 @@ namespace Amqp.Types
             AmqpBitConverter.WriteUShort(buffer, value);
         }
 
-        public static void WriteUInt(ByteBuffer buffer, uint value)
+        public static void WriteUInt(ByteBuffer buffer, uint value, bool smallEncoding)
         {
-            if (value == 0)
+            if (!smallEncoding || value > byte.MaxValue)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.UInt);
+                AmqpBitConverter.WriteUInt(buffer, value);
+            }
+            else if (value == 0)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.UInt0);
             }
@@ -335,16 +368,16 @@ namespace Amqp.Types
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.SmallUInt);
                 AmqpBitConverter.WriteUByte(buffer, (byte)value);
             }
-            else
-            {
-                AmqpBitConverter.WriteUByte(buffer, FormatCode.UInt);
-                AmqpBitConverter.WriteUInt(buffer, value);
-            }
         }
 
-        public static void WriteULong(ByteBuffer buffer, ulong value)
+        public static void WriteULong(ByteBuffer buffer, ulong value, bool smallEncoding)
         {
-            if (value == 0)
+            if (!smallEncoding || value > byte.MaxValue)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.ULong);
+                AmqpBitConverter.WriteULong(buffer, value);
+            }
+            else if (value == 0)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.ULong0);
             }
@@ -352,11 +385,6 @@ namespace Amqp.Types
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.SmallULong);
                 AmqpBitConverter.WriteUByte(buffer, (byte)value);
-            }
-            else
-            {
-                AmqpBitConverter.WriteUByte(buffer, FormatCode.ULong);
-                AmqpBitConverter.WriteULong(buffer, value);
             }
         }
 
@@ -372,9 +400,9 @@ namespace Amqp.Types
             AmqpBitConverter.WriteShort(buffer, value);
         }
 
-        public static void WriteInt(ByteBuffer buffer, int value)
+        public static void WriteInt(ByteBuffer buffer, int value, bool smallEncoding)
         {
-            if (value >= sbyte.MinValue && value <= sbyte.MaxValue)
+            if (smallEncoding && value >= sbyte.MinValue && value <= sbyte.MaxValue)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.SmallInt);
                 AmqpBitConverter.WriteByte(buffer, (sbyte)value);
@@ -386,9 +414,9 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteLong(ByteBuffer buffer, long value)
+        public static void WriteLong(ByteBuffer buffer, long value, bool smallEncoding)
         {
-            if (value >= sbyte.MinValue && value <= sbyte.MaxValue)
+            if (smallEncoding && value >= sbyte.MinValue && value <= sbyte.MaxValue)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.SmallLong);
                 AmqpBitConverter.WriteByte(buffer, (sbyte)value);
@@ -422,7 +450,7 @@ namespace Amqp.Types
         public static void WriteTimestamp(ByteBuffer buffer, DateTime value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.TimeStamp);
-            AmqpBitConverter.WriteLong(buffer, (value.ToUniversalTime() - startOfEpoch).Ticks / TimeSpan.TicksPerMillisecond);
+            AmqpBitConverter.WriteLong(buffer, (value.ToUniversalTime().Ticks - epochTicks) / ticksPerMillisecond);
         }
 
         public static void WriteUuid(ByteBuffer buffer, Guid value)
@@ -431,13 +459,13 @@ namespace Amqp.Types
             AmqpBitConverter.WriteUuid(buffer, value);
         }
 
-        public static void WriteBinary(ByteBuffer buffer, byte[] value)
+        public static void WriteBinary(ByteBuffer buffer, byte[] value, bool smallEncoding)
         {
             if (value == null)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
             }
-            else if (value.Length <= byte.MaxValue)
+            else if (smallEncoding && value.Length <= byte.MaxValue)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.Binary8);
                 AmqpBitConverter.WriteUByte(buffer, (byte)value.Length);
@@ -451,7 +479,7 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteString(ByteBuffer buffer, string value)
+        public static void WriteString(ByteBuffer buffer, string value, bool smallEncoding)
         {
             if (value == null)
             {
@@ -460,7 +488,7 @@ namespace Amqp.Types
             else
             {
                 byte[] data = Encoding.UTF8.GetBytes(value);
-                if (data.Length <= byte.MaxValue)
+                if (smallEncoding && data.Length <= byte.MaxValue)
                 {
                     AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
                     AmqpBitConverter.WriteUByte(buffer, (byte)data.Length);
@@ -475,16 +503,16 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteSymbol(ByteBuffer buffer, Symbol value)
+        public static void WriteSymbol(ByteBuffer buffer, Symbol value, bool smallEncoding)
         {
-            if (value.IsNull)
+            if (value == null)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
             }
             else
             {
                 byte[] data = Encoding.UTF8.GetBytes(value);
-                if (data.Length <= byte.MaxValue)
+                if (smallEncoding && data.Length <= byte.MaxValue)
                 {
                     AmqpBitConverter.WriteUByte(buffer, FormatCode.Symbol8);
                     AmqpBitConverter.WriteUByte(buffer, (byte)data.Length);
@@ -499,7 +527,7 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteList(ByteBuffer buffer, IList value)
+        public static void WriteList(ByteBuffer buffer, IList value, bool smallEncoding)
         {
             if (value == null)
             {
@@ -514,7 +542,7 @@ namespace Amqp.Types
                     --last;
                 }
 
-                if (last < 0)
+                if (last < 0 && smallEncoding)
                 {
                     AmqpBitConverter.WriteUByte(buffer, FormatCode.List0);
                 }
@@ -527,13 +555,13 @@ namespace Amqp.Types
 
                     for (int i = 0; i <= last; ++i)
                     {
-                        Encoder.WriteObject(buffer, value[i]);
+                        Encoder.WriteObject(buffer, value[i], smallEncoding);
                     }
 
                     int size = buffer.WritePos - pos - 9;
                     int count = last + 1;
 
-                    if (size < byte.MaxValue && count <= byte.MaxValue)
+                    if (smallEncoding && size < byte.MaxValue && count <= byte.MaxValue)
                     {
                         buffer.Buffer[pos] = FormatCode.List8;
                         buffer.Buffer[pos + 1] = (byte)(size + 1);
@@ -551,7 +579,7 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteArray(ByteBuffer buffer, IList value)
+        public static void WriteArray(ByteBuffer buffer, Array value)
         {
             if (value == null)
             {
@@ -559,24 +587,31 @@ namespace Amqp.Types
             }
             else
             {
-                Fx.Assert(value.Count > 0, "must have at least 1 element in array");
+                int count = value.Length;
+                Fx.Assert(count > 0, "must have at least 1 element in array");
                 int pos = buffer.WritePos;
                 AmqpBitConverter.WriteUByte(buffer, 0);
                 AmqpBitConverter.WriteUInt(buffer, 0);
                 AmqpBitConverter.WriteUInt(buffer, 0);
 
-                Encoder.WriteObject(buffer, value[0]);
-                for (int i = 1; i < value.Count; ++i)
+                for (int i = 0; i < count; ++i)
                 {
-                    int lastPos = buffer.WritePos - 1;
-                    byte lastByte = buffer.Buffer[lastPos];
-                    buffer.Shrink(1);
-                    Encoder.WriteObject(buffer, value[i]);
-                    buffer.Buffer[lastPos] = lastByte;
+                    object item = value.GetValue(i);
+                    if (i == 0)
+                    {
+                        Encoder.WriteObject(buffer, item, false);
+                    }
+                    else
+                    {
+                        int lastPos = buffer.WritePos - 1;
+                        byte lastByte = buffer.Buffer[lastPos];
+                        buffer.Shrink(1);
+                        Encoder.WriteObject(buffer, item, false);
+                        buffer.Buffer[lastPos] = lastByte;
+                    }
                 }
 
                 int size = buffer.WritePos - pos - 9;
-                int count = value.Count;
 
                 if (size < byte.MaxValue && count <= byte.MaxValue)
                 {
@@ -595,7 +630,7 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteMap(ByteBuffer buffer, Map value)
+        public static void WriteMap(ByteBuffer buffer, Map value, bool smallEncoding)
         {
             if (value == null)
             {
@@ -617,7 +652,7 @@ namespace Amqp.Types
                 int size = buffer.WritePos - pos - 9;
                 int count = value.Count * 2;
 
-                if (size < byte.MaxValue && count <= byte.MaxValue)
+                if (smallEncoding && size < byte.MaxValue && count <= byte.MaxValue)
                 {
                     buffer.Buffer[pos] = FormatCode.Map8;
                     buffer.Buffer[pos + 1] = (byte)(size + 1);
@@ -653,8 +688,7 @@ namespace Amqp.Types
                 return ReadDescribed(buffer, formatCode);
             }
 
-            throw new AmqpException(ErrorCode.DecodeError,
-                Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "*"));
+            throw DecodeException(formatCode, buffer.Offset);
         }
 
         public static object ReadDescribed(ByteBuffer buffer, byte formatCode)
@@ -694,8 +728,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "boolean"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -707,8 +740,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "ubyte"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -720,8 +752,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "ushort"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -741,8 +772,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "uint"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -762,8 +792,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "ulong"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -775,8 +804,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "byte"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -788,8 +816,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "short"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -805,8 +832,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "int"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -822,8 +848,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "long"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -835,8 +860,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "char"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -848,8 +872,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "float"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -861,8 +884,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "double"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -870,12 +892,11 @@ namespace Amqp.Types
         {
             if (formatCode == FormatCode.TimeStamp)
             {
-                return startOfEpoch.AddMilliseconds(AmqpBitConverter.ReadLong(buffer));
+                return new DateTime(epochTicks + AmqpBitConverter.ReadLong(buffer) * ticksPerMillisecond, DateTimeKind.Utc);
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "timestamp"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -887,13 +908,17 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "uuid"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
         }
 
         public static byte[] ReadBinary(ByteBuffer buffer, byte formatCode)
         {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
             int count;
             if (formatCode == FormatCode.Binary8)
             {
@@ -905,8 +930,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "binary"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
 
             buffer.Validate(false, count);
@@ -929,6 +953,11 @@ namespace Amqp.Types
 
         public static List ReadList(ByteBuffer buffer, byte formatCode)
         {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+            
             int size;
             int count;
             if (formatCode == FormatCode.List0)
@@ -947,8 +976,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "list"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
 
             List value = new List();
@@ -960,8 +988,13 @@ namespace Amqp.Types
             return value;
         }
 
-        public static object[] ReadArray(ByteBuffer buffer, byte formatCode)
+        public static Array ReadArray(ByteBuffer buffer, byte formatCode)
         {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
             int size;
             int count;
             if (formatCode == FormatCode.Array8)
@@ -976,22 +1009,21 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "list"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
 
             formatCode = Encoder.ReadFormatCode(buffer);
             Serializer codec = GetSerializer(formatCode);
             if (codec == null)
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "*"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
 
-            object[] value = new object[count];
+            Array value = Array.CreateInstance(codec.Type, count);
+            IList list = value;
             for (int i = 0; i < count; ++i)
             {
-                value[i] = codec.Decoder(buffer, formatCode);
+                list[i] = codec.Decoder(buffer, formatCode);
             }
 
             return value;
@@ -999,6 +1031,11 @@ namespace Amqp.Types
 
         public static Map ReadMap(ByteBuffer buffer, byte formatCode)
         {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
             int size;
             int count;
             if (formatCode == FormatCode.Map8)
@@ -1013,8 +1050,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, "map"));
+                throw DecodeException(formatCode, buffer.Offset);
             }
 
             if (count % 2 > 0)
@@ -1049,6 +1085,11 @@ namespace Amqp.Types
 
         static string ReadString(ByteBuffer buffer, byte formatCode, byte code8, byte code32, string type)
         {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
             int count;
             if (formatCode == code8)
             {
@@ -1060,8 +1101,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset, type));
+                throw DecodeException(formatCode, buffer.Offset);
             }
 
             buffer.Validate(false, count);
@@ -1069,6 +1109,12 @@ namespace Amqp.Types
             buffer.Complete(count);
 
             return value;
+        }
+
+        static AmqpException DecodeException(byte formatCode, int offset)
+        {
+            return new AmqpException(ErrorCode.DecodeError,
+                Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, offset));
         }
     }
 }

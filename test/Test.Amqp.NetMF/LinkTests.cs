@@ -133,8 +133,8 @@ namespace Test.Amqp
             {
                 ContainerId = testName,
                 Properties = new Fields() { { new Symbol("p1"), "abcd" } },
-                DesiredCapabilities = new Multiple() { new Symbol("dc1"), new Symbol("dc2") },
-                OfferedCapabilities = new Multiple() { new Symbol("oc") }
+                DesiredCapabilities = new Symbol[] { new Symbol("dc1"), new Symbol("dc2") },
+                OfferedCapabilities = new Symbol[] { new Symbol("oc") }
             };
 
             Connection connection = new Connection(address, null, open, onOpen);

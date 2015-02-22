@@ -27,9 +27,9 @@ namespace Amqp.Framing
         {
         }
 
-        public Multiple Capabilities
+        public Symbol[] Capabilities
         {
-            get { return Multiple.From(this.Fields[0]); }
+            get { return Codec.GetSymbolMultiple(this.Fields, 0); }
             set { this.Fields[0] = value; }
         }
 

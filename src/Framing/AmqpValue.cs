@@ -28,29 +28,29 @@ namespace Amqp.Framing
         {
         }
 
-#if DOTNET
         public object Value
         {
-            get { return this.GetValue<object>(); }
+            get { return this.value; }
             set { this.value = value; }
         }
 
+#if DOTNET
+        ByteBuffer valueBuffer;
+
         internal T GetValue<T>()
         {
-            ByteBuffer buffer = this.value as ByteBuffer;
-            if (buffer != null)
+            if (this.value == null)
             {
-                if (typeof(T) == typeof(object))
-                {
-                    return (T)Encoder.ReadObject(buffer);
-                }
-                else
-                {
-                    return Serialization.AmqpSerializer.Deserialize<T>(buffer);
-                }
+                return default(T);
             }
-
-            return (T)this.value;
+            else if (typeof(T) == typeof(object) || typeof(T) == this.value.GetType())
+            {
+                return (T)this.value;
+            }
+            else
+            {
+                return Serialization.AmqpSerializer.Deserialize<T>(this.valueBuffer);
+            }
         }
 
         internal override void EncodeValue(ByteBuffer buffer)
@@ -61,41 +61,22 @@ namespace Amqp.Framing
         internal override void DecodeValue(ByteBuffer buffer)
         {
             int offset = buffer.Offset;
-            byte formatCode = Encoder.ReadFormatCode(buffer);
-            if (formatCode == FormatCode.Described)
-            {
-                // descriptor
-                Encoder.ReadObject(buffer);
-
-                int typeCode = Encoder.ReadFormatCode(buffer) & 0xF0;
-                if (typeCode == 0xC0 || typeCode == 0xD0)
-                {
-                    int size = (int)AmqpBitConverter.ReadUInt(buffer);
-                    buffer.Complete(size);
-                    int count = buffer.Offset - offset;
-                    this.value = new ByteBuffer(buffer.Buffer, offset, count, count);
-                    return;
-                }
-            }
-
-            buffer.Seek(offset);
             this.value = Encoder.ReadObject(buffer);
+            if (this.value is DescribedValue)
+            {
+                int count = buffer.Offset - offset;
+                this.valueBuffer = new ByteBuffer(buffer.Buffer, offset, count, count);
+            }
         }
 #else
-        public object Value
-        {
-            get { return this.value; }
-            set { this.value = value; }
-        }
-
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            Encoder.WriteObject(buffer, this.Value);
+            Encoder.WriteObject(buffer, this.value);
         }
 
         internal override void DecodeValue(ByteBuffer buffer)
         {
-            this.Value = Encoder.ReadObject(buffer);
+            this.value = Encoder.ReadObject(buffer);
         }
 #endif
     }

@@ -87,7 +87,6 @@
     <Compile Include="NetCF39\Fx.cs" />
     <Compile Include="NetCF39\List.cs" />
     <Compile Include="NetCF39\Map.cs" />
-    <Compile Include="NetCF39\Multiple.cs" />
     <Compile Include="NetCF39\SRAmqp.Designer.cs" />
     <Compile Include="NetCF39\SslSocket.cs" />
     <Compile Include="NetCF39\TcpTransport.cs" />
@@ -117,7 +116,6 @@
     <Compile Include="Types\FixedWidth.cs" />
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />
-    <Compile Include="Types\Multiple.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
   </ItemGroup>

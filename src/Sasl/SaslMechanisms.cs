@@ -27,9 +27,9 @@ namespace Amqp.Sasl
         {
         }
 
-        public Multiple SaslServerMechanisms
+        public Symbol[] SaslServerMechanisms
         {
-            get { return Multiple.From(this.Fields[0]); }
+            get { return Codec.GetSymbolMultiple(this.Fields, 0); }
             set { this.Fields[0] = value; }
         }
 

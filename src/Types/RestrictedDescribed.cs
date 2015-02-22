@@ -33,7 +33,7 @@ namespace Amqp.Types
 
         internal override void EncodeDescriptor(ByteBuffer buffer)
         {
-            Encoder.WriteULong(buffer, this.descriptor.Code);
+            Encoder.WriteULong(buffer, this.descriptor.Code, true);
         }
 
         internal override void DecodeDescriptor(ByteBuffer buffer)

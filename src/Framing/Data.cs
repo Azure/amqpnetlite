@@ -34,7 +34,7 @@ namespace Amqp.Framing
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            Encoder.WriteBinary(buffer, this.Binary);
+            Encoder.WriteBinary(buffer, this.Binary, true);
         }
 
         internal override void DecodeValue(ByteBuffer buffer)

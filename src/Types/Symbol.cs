@@ -17,28 +17,41 @@
 
 namespace Amqp.Types
 {
-    public struct Symbol
+    using System;
+
+    public class Symbol
     {
         string value;
 
         public Symbol(string value)
         {
-            this.value = value;
-        }
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
 
-        public bool IsNull
-        {
-            get { return this.value == null; }
+            this.value = value;
         }
 
         public static implicit operator Symbol(string value)
         {
-            return new Symbol(value);
+            return value == null ? null : new Symbol(value);
         }
 
         public static implicit operator string(Symbol value)
         {
-            return value.value;
+            return value == null ? null : value.value;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Symbol other = obj as Symbol;
+            return other != null ? this.value.Equals(other.value) : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.value.GetHashCode();
         }
 
         public override string ToString()

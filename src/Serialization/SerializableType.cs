@@ -96,11 +96,6 @@ namespace Amqp.Serialization
             return new GenericMapType(serializer, type, keyAccessor, valueAccessor, addAccessor);
         }
 
-        public static SerializableType CreateArrayType(AmqpSerializer serializer, Type type, SerializableType itemType)
-        {
-            return new ArrayType(serializer, type, itemType);
-        }
-
         public static SerializableType CreateDescribedListType(
             AmqpSerializer serializer,
             Type type,
@@ -151,7 +146,7 @@ namespace Amqp.Serialization
 
             public override void WriteObject(ByteBuffer buffer, object value)
             {
-                this.encoder(buffer, value);
+                this.encoder(buffer, value, true);
             }
 
             public override object ReadObject(ByteBuffer buffer)
@@ -457,37 +452,6 @@ namespace Amqp.Serialization
             }
         }
 
-        sealed class ArrayType : SerializableType
-        {
-            readonly SerializableType itemType;
-
-            public ArrayType(AmqpSerializer serializer, Type type, SerializableType itemType)
-                : base(serializer, type)
-            {
-                this.itemType = itemType;
-            }
-
-            public override void WriteObject(ByteBuffer buffer, object graph)
-            {
-                Encoder.WriteArray(buffer, (IList)graph);
-            }
-
-            public override object ReadObject(ByteBuffer buffer)
-            {
-                object value = Encoder.ReadArray(buffer, Encoder.ReadFormatCode(buffer));
-                if (itemType.type != typeof(object))
-                {
-                    Array source = (Array)value;
-                    Array array = Array.CreateInstance(this.itemType.type, source.Length);
-                    Array.Copy(source, array, source.Length);
-
-                    value = array;
-                }
-
-                return value;
-            }
-        }
-
         sealed class GenericMapType : CollectionType
         {
             readonly SerializableType keyType;
@@ -604,11 +568,11 @@ namespace Amqp.Serialization
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.Described);
                 if (this.descriptorCode != null)
                 {
-                    Encoder.WriteULong(buffer, this.descriptorCode.Value);
+                    Encoder.WriteULong(buffer, this.descriptorCode.Value, true);
                 }
                 else
                 {
-                    Encoder.WriteSymbol(buffer, this.descriptorName);
+                    Encoder.WriteSymbol(buffer, this.descriptorName, true);
                 }
 
                 AmqpBitConverter.WriteUByte(buffer, this.Code);
@@ -710,7 +674,7 @@ namespace Amqp.Serialization
                     return code1.Value == code2.Value;
                 }
 
-                if (!symbol1.IsNull && !symbol2.IsNull)
+                if (symbol1 != null && symbol2 != null)
                 {
                     return string.Equals((string)symbol1, (string)symbol2, StringComparison.Ordinal);
                 }
@@ -831,7 +795,7 @@ namespace Amqp.Serialization
                     object memberValue = member.Accessor.Get(container);
                     if (memberValue != null)
                     {
-                        Encoder.WriteSymbol(buffer, (Symbol)memberValue);
+                        Encoder.WriteSymbol(buffer, (Symbol)memberValue, true);
 
                         SerializableType effectiveType = member.Type;
                         if (memberValue.GetType() != effectiveType.type)

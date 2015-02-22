@@ -148,7 +148,7 @@ namespace Amqp.Listener
                     symbols[i] = this.listener.saslMechanisms[i].Name;
                 }
 
-                return new SaslMechanisms() { SaslServerMechanisms = Multiple.From(symbols) };
+                return new SaslMechanisms() { SaslServerMechanisms = symbols };
             }
 
             protected override DescribedList OnCommand(DescribedList command)

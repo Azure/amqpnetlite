@@ -33,9 +33,9 @@ namespace Amqp.Framing
             set { this.Fields[0] = value; }
         }
 
-        public ByteBuffer UserId
+        public byte[] UserId
         {
-            get { return (ByteBuffer)this.Fields[1]; }
+            get { return (byte[])this.Fields[1]; }
             set { this.Fields[1] = value; }
         }
 
