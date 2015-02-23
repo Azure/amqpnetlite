@@ -18,6 +18,9 @@
 namespace Amqp.Framing
 {
     using Amqp.Sasl;
+#if DOTNET
+    using Amqp.Transactions;
+#endif
     using Amqp.Types;
     using System.Collections;
 

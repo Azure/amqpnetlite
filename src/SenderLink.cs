@@ -19,6 +19,9 @@ namespace Amqp
 {
     using System;
     using Amqp.Framing;
+#if DOTNET
+    using Amqp.Transactions;
+#endif
     using Amqp.Types;
     using System.Threading;
 

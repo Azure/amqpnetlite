@@ -24,6 +24,7 @@ namespace TestAmqpBroker
     using global::Amqp;
     using global::Amqp.Framing;
     using global::Amqp.Listener;
+    using global::Amqp.Transactions;
     using global::Amqp.Types;
 
     public sealed class TestAmqpBroker : IContainer

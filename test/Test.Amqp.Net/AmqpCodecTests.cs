@@ -547,7 +547,7 @@ namespace Test.Amqp
                     continue;
                 }
 
-                System.Diagnostics.Trace.WriteLine("testing " + type.Name);
+                System.Diagnostics.Trace.WriteLine("testing " + type.FullName);
 
                 object obj = CreateRestrictedDescribed(type, random);
 

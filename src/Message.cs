@@ -67,6 +67,14 @@ namespace Amqp
             }
         }
 
+        public byte[] DeliveryTag
+        {
+            get
+            {
+                return this.Delivery != null ? this.Delivery.Tag : null;
+            }
+        }
+
         internal Delivery Delivery
         {
             get;

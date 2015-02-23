@@ -15,9 +15,9 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Framing
+namespace Amqp.Transactions
 {
-    using Amqp.Transactions;
+    using Amqp.Framing;
     using Amqp.Types;
 
     public sealed class Declared : Outcome

@@ -33,16 +33,14 @@ namespace Amqp.Sasl
             set { this.Fields[0] = value; }
         }
 
+#if TRACE
         public override string ToString()
         {
-#if TRACE
             return this.GetDebugString(
                 "sasl-mechanisms",
                 new object[] { "sasl-server-mechanisms" },
                 this.Fields);
-#else
-            return base.ToString();
-#endif
         }
+#endif
     }
 }

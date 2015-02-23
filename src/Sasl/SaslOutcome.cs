@@ -39,16 +39,14 @@ namespace Amqp.Sasl
             set { this.Fields[1] = value; }
         }
 
+#if TRACE
         public override string ToString()
         {
-#if TRACE
             return this.GetDebugString(
                 "sasl-outcome",
                 new object[] { "code", "additional-data" },
                 this.Fields);
-#else
-            return base.ToString();
-#endif
         }
+#endif
     }
 }
