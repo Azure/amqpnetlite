@@ -19,15 +19,18 @@ namespace Amqp
 {
     using System;
     using Amqp.Types;
+#if MF_FRAMEWORK_VERSION_V4_2
+    using Microsoft.SPOT;
+    using Microsoft.SPOT.Hardware;
+#endif
 
-    static class AmqpBitConverter
+    public static class AmqpBitConverter
     {
-        public static byte[] GetBytes(uint data)
-        {
-            byte[] bytes = new byte[FixedWidth.UInt];
-            WriteInt(bytes, 0, (int)data);
-            return bytes;
-        }
+#if MF_FRAMEWORK_VERSION_V4_2
+        public static readonly bool IsLittleEndian = Utility.ExtractValueFromArray(new byte[] { 0x01, 0x02 }, 0, 2) == 0x0201u;
+#else
+        public static readonly bool IsLittleEndian = BitConverter.IsLittleEndian;
+#endif
 
         public static sbyte ReadByte(ByteBuffer buffer)
         {
@@ -77,7 +80,7 @@ namespace Amqp
         {
             buffer.Validate(false, FixedWidth.Long);
             long high = ReadInt(buffer.Buffer, buffer.Offset);
-            long low = (uint) ReadInt(buffer.Buffer, buffer.Offset + 4);
+            long low = (uint)ReadInt(buffer.Buffer, buffer.Offset + 4);
             long data = (high << 32) | low;
             buffer.Complete(FixedWidth.Long);
             return data;
@@ -88,21 +91,23 @@ namespace Amqp
             return (ulong)ReadLong(buffer);
         }
 
-        public static float ReadFloat(ByteBuffer buffer)
+        public static unsafe float ReadFloat(ByteBuffer buffer)
         {
-            return Fx.ReadFloat(buffer);
+            int data = ReadInt(buffer);
+            return *((float*)&data);
         }
 
-        public static double ReadDouble(ByteBuffer buffer)
+        public static unsafe double ReadDouble(ByteBuffer buffer)
         {
-            return Fx.ReadDouble(buffer);
+            long data = ReadLong(buffer);
+            return *((double*)&data);
         }
 
         public static Guid ReadUuid(ByteBuffer buffer)
         {
             buffer.Validate(false, FixedWidth.Uuid);
             byte[] d = new byte[FixedWidth.Uuid];
-            if (Fx.IsLittleEndian)
+            if (AmqpBitConverter.IsLittleEndian)
             {
                 int pos = buffer.Offset;
                 d[3] = buffer.Buffer[pos++];
@@ -149,16 +154,8 @@ namespace Amqp
         public static void WriteShort(ByteBuffer buffer, short data)
         {
             buffer.Validate(true, FixedWidth.Short);
-            if (Fx.IsLittleEndian)
-            {
-                buffer.Buffer[buffer.WritePos] = (byte)((data & 0xFF00) >> 8);
-                buffer.Buffer[buffer.WritePos + 1] = (byte)(data & 0xFF);
-            }
-            else
-            {
-                Fx.InsertValueIntoArray(buffer.Buffer, buffer.WritePos, FixedWidth.Short, (uint)data);
-            }
-
+            buffer.Buffer[buffer.WritePos] = (byte)(data >> 8);
+            buffer.Buffer[buffer.WritePos + 1] = (byte)data;
             buffer.Append(FixedWidth.Short);
         }
 
@@ -176,17 +173,10 @@ namespace Amqp
 
         public static void WriteInt(byte[] buffer, int offset, int data)
         {
-            if (Fx.IsLittleEndian)
-            {
-                buffer[offset] = (byte)((data & 0xFF000000) >> 24);
-                buffer[offset + 1] = (byte)((data & 0xFF0000) >> 16);
-                buffer[offset + 2] = (byte)((data & 0xFF00) >> 8);
-                buffer[offset + 3] = (byte)(data & 0xFF);
-            }
-            else
-            {
-                Fx.InsertValueIntoArray(buffer, offset, FixedWidth.Int, (uint)data);
-            }
+            buffer[offset] = (byte)(data >> 24);
+            buffer[offset + 1] = (byte)(data >> 16);
+            buffer[offset + 2] = (byte)(data >> 8);
+            buffer[offset + 3] = (byte)data;
         }
 
         public static void WriteUInt(ByteBuffer buffer, uint data)
@@ -196,17 +186,8 @@ namespace Amqp
 
         public static void WriteLong(ByteBuffer buffer, long data)
         {
-            if (Fx.IsLittleEndian)
-            {
-                WriteInt(buffer, (int)(data >> 32));
-                WriteInt(buffer, (int)data);
-            }
-            else
-            {
-                Fx.InsertValueIntoArray(buffer.Buffer, buffer.WritePos, FixedWidth.Int, (uint)(data >> 32));
-                Fx.InsertValueIntoArray(buffer.Buffer, buffer.WritePos, FixedWidth.Int, (uint)data);
-                buffer.Append(FixedWidth.Long);
-            }
+            WriteInt(buffer, (int)(data >> 32));
+            WriteInt(buffer, (int)data);
         }
 
         public static void WriteULong(ByteBuffer buffer, ulong data)
@@ -214,14 +195,16 @@ namespace Amqp
             WriteLong(buffer, (long)data);
         }
 
-        public static void WriteFloat(ByteBuffer buffer, float data)
+        public static unsafe void WriteFloat(ByteBuffer buffer, float data)
         {
-            Fx.WriteFloat(buffer, data);
+            int n = *((int*)&data);
+            WriteInt(buffer, n);
         }
 
-        public static void WriteDouble(ByteBuffer buffer, double data)
+        public static unsafe void WriteDouble(ByteBuffer buffer, double data)
         {
-            Fx.WriteDouble(buffer, data);
+            long n = *((long*)&data);
+            WriteLong(buffer, n);
         }
 
         public static void WriteUuid(ByteBuffer buffer, Guid data)
@@ -229,19 +212,26 @@ namespace Amqp
             buffer.Validate(true, FixedWidth.Uuid);
             byte[] p = data.ToByteArray();
             int pos = buffer.WritePos;
-            
-            buffer.Buffer[pos++] = p[3];
-            buffer.Buffer[pos++] = p[2];
-            buffer.Buffer[pos++] = p[1];
-            buffer.Buffer[pos++] = p[0];
 
-            buffer.Buffer[pos++] = p[5];
-            buffer.Buffer[pos++] = p[4];
+            if (AmqpBitConverter.IsLittleEndian)
+            {
+                buffer.Buffer[pos++] = p[3];
+                buffer.Buffer[pos++] = p[2];
+                buffer.Buffer[pos++] = p[1];
+                buffer.Buffer[pos++] = p[0];
 
-            buffer.Buffer[pos++] = p[7];
-            buffer.Buffer[pos++] = p[6];
+                buffer.Buffer[pos++] = p[5];
+                buffer.Buffer[pos++] = p[4];
 
-            Array.Copy(p, 8, buffer.Buffer, pos, 8);
+                buffer.Buffer[pos++] = p[7];
+                buffer.Buffer[pos++] = p[6];
+
+                Array.Copy(p, 8, buffer.Buffer, pos, 8);
+            }
+            else
+            {
+                Array.Copy(p, buffer.Buffer, FixedWidth.Uuid);
+            }
 
             buffer.Append(FixedWidth.Uuid);
         }

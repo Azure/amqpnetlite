@@ -14,6 +14,8 @@
 //  See the Apache Version 2.0 License for specific language governing permissions and 
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
+
+using System;
 using Amqp;
 #if !(NETMF || COMPACT_FRAMEWORK)
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -138,6 +140,79 @@ namespace Test.Amqp
             Assert.AreEqual("myhost", address.Host);
             Assert.AreEqual(1234, address.Port);
             Assert.AreEqual("/foo/bar", address.Path);          
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_AmqpBitConverter()
+        {
+            ByteBuffer buffer = new ByteBuffer(128, true);
+
+            AmqpBitConverter.WriteByte(buffer, 0x22);
+            AmqpBitConverter.WriteByte(buffer, -0x22);
+
+            AmqpBitConverter.WriteUByte(buffer, 0x22);
+            AmqpBitConverter.WriteUByte(buffer, 0xB2);
+
+            AmqpBitConverter.WriteShort(buffer, 0x22B7);
+            AmqpBitConverter.WriteShort(buffer, -0x22B7);
+
+            AmqpBitConverter.WriteUShort(buffer, 0x22B7);
+            AmqpBitConverter.WriteUShort(buffer, 0xC2B7);
+
+            AmqpBitConverter.WriteInt(buffer, 0x340da287);
+            AmqpBitConverter.WriteInt(buffer, -0x340da287);
+
+            AmqpBitConverter.WriteUInt(buffer, 0x340da287);
+            AmqpBitConverter.WriteUInt(buffer, 0xF40da287);
+
+            AmqpBitConverter.WriteLong(buffer, 0x5d00BB9A340da287);
+            AmqpBitConverter.WriteLong(buffer, -0x5d00BB9A340da287);
+
+            AmqpBitConverter.WriteULong(buffer, 0x5d00BB9A340da287);
+            AmqpBitConverter.WriteULong(buffer, 0xad00BB9A340da287);
+
+            AmqpBitConverter.WriteFloat(buffer, 12344.4434F);
+            AmqpBitConverter.WriteFloat(buffer, -12344.4434F);
+
+            AmqpBitConverter.WriteDouble(buffer, 39432123244.44352334);
+            AmqpBitConverter.WriteDouble(buffer, -39432123244.44352334);
+
+            Guid uuid = Guid.NewGuid();
+            AmqpBitConverter.WriteUuid(buffer, uuid);
+
+            sbyte b = AmqpBitConverter.ReadByte(buffer);
+            sbyte b2 = AmqpBitConverter.ReadByte(buffer);
+
+            byte ub = AmqpBitConverter.ReadUByte(buffer);
+            byte ub2 = AmqpBitConverter.ReadUByte(buffer);
+
+            short s = AmqpBitConverter.ReadShort(buffer);
+            short s2 = AmqpBitConverter.ReadShort(buffer);
+
+            ushort us = AmqpBitConverter.ReadUShort(buffer);
+            ushort us2 = AmqpBitConverter.ReadUShort(buffer);
+
+            int i = AmqpBitConverter.ReadInt(buffer);
+            int i2 = AmqpBitConverter.ReadInt(buffer);
+
+            uint ui = AmqpBitConverter.ReadUInt(buffer);
+            uint ui2 = AmqpBitConverter.ReadUInt(buffer);
+
+            long l = AmqpBitConverter.ReadLong(buffer);
+            long l2 = AmqpBitConverter.ReadLong(buffer);
+
+            ulong ul = AmqpBitConverter.ReadULong(buffer);
+            ulong ul2 = AmqpBitConverter.ReadULong(buffer);
+
+            float f = AmqpBitConverter.ReadFloat(buffer);
+            float f2 = AmqpBitConverter.ReadFloat(buffer);
+
+            double d = AmqpBitConverter.ReadDouble(buffer);
+            double d2 = AmqpBitConverter.ReadDouble(buffer);
+
+            Guid uuid2 = AmqpBitConverter.ReadUuid(buffer);
         }
     }
 }

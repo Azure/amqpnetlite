@@ -17,15 +17,12 @@
 
 namespace Amqp
 {
-    using System;
     using System.Diagnostics;
     using System.Threading;
 
     // Framework specific routines
     public static class Fx
     {
-        public static readonly bool IsLittleEndian = BitConverter.IsLittleEndian;
-
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
@@ -35,37 +32,6 @@ namespace Amqp
         public static bool WaitOne(this WaitHandle waithandle, int msTimeout, bool unused)
         {
             return waithandle.WaitOne(msTimeout);
-        }
-
-        public static uint ExtractValueFromArray(byte[] data, int pos, int size)
-        {
-            return size == 2 ? BitConverter.ToUInt16(data, pos) : BitConverter.ToUInt32(data, pos);
-        }
-
-        public static void InsertValueIntoArray(byte[] data, int pos, int size, uint val)
-        {
-            byte[] bytes = size == 2 ? BitConverter.GetBytes((ushort)val) : BitConverter.GetBytes(val);
-            Buffer.BlockCopy(bytes, 0, data, pos, size);
-        }
-
-        public static float ReadFloat(ByteBuffer buffer)
-        {
-            return BitConverter.ToSingle(BitConverter.GetBytes(AmqpBitConverter.ReadInt(buffer)), 0);
-        }
-
-        public static double ReadDouble(ByteBuffer buffer)
-        {
-            return BitConverter.ToDouble(BitConverter.GetBytes(AmqpBitConverter.ReadLong(buffer)), 0);
-        }
-
-        public static void WriteFloat(ByteBuffer buffer, float data)
-        {
-            AmqpBitConverter.WriteInt(buffer, BitConverter.ToInt32(BitConverter.GetBytes(data), 0));
-        }
-
-        public static void WriteDouble(ByteBuffer buffer, double data)
-        {
-            AmqpBitConverter.WriteLong(buffer, BitConverter.ToInt64(BitConverter.GetBytes(data), 0));
         }
 
         public static string Format(string format, params object[] args)

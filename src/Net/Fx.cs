@@ -17,53 +17,16 @@
 
 namespace Amqp
 {
-    using System;
     using System.Diagnostics;
     using System.Threading;
 
     // Framework specific routines
     public static class Fx
     {
-        public static readonly bool IsLittleEndian = BitConverter.IsLittleEndian;
-
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
             Debug.Assert(condition, message);
-        }
-
-        public static uint ExtractValueFromArray(byte[] data, int pos, int size)
-        {
-            throw new InvalidOperationException(".Net on Windows is always little endian");
-        }
-
-        public static void InsertValueIntoArray(byte[] data, int pos, int size, uint val)
-        {
-            throw new InvalidOperationException(".Net on Windows is always little endian");
-        }
-
-        public static unsafe float ReadFloat(ByteBuffer buffer)
-        {
-            float data;
-            *(int*)&data = AmqpBitConverter.ReadInt(buffer);
-            return data;
-        }
-
-        public static unsafe double ReadDouble(ByteBuffer buffer)
-        {
-            double data;
-            *(long*)&data = AmqpBitConverter.ReadLong(buffer);
-            return data;
-        }
-
-        public static unsafe void WriteFloat(ByteBuffer buffer, float data)
-        {
-            AmqpBitConverter.WriteInt(buffer, *(int*)&data);
-        }
-
-        public static unsafe void WriteDouble(ByteBuffer buffer, double data)
-        {
-            AmqpBitConverter.WriteLong(buffer, *(long*)&data);
         }
 
         public static string Format(string format, params object[] args)

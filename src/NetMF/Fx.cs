@@ -17,61 +17,19 @@
 
 namespace Amqp
 {
-    using Microsoft.SPOT;
-    using Microsoft.SPOT.Hardware;
+    using System;
     using System.Diagnostics;
     using System.Text;
     using System.Threading;
-    using System;
+    using Microsoft.SPOT;
 
     // Framework specific routines
     public static class Fx
     {
-        public static readonly bool IsLittleEndian = Fx.ExtractValueFromArray(new byte[] { 0x01, 0x02 }, 0, 2) == 0x0201u;
-
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
             Debug.Assert(condition, message);
-        }
-
-        public static uint ExtractValueFromArray(byte[] data, int pos, int size)
-        {
-            return Utility.ExtractValueFromArray(data, pos, size);
-        }
-
-        public static void InsertValueIntoArray(byte[] data, int pos, int size, uint val)
-        {
-            Utility.InsertValueIntoArray(data, pos, size, val);
-        }
-
-        public static unsafe float ReadFloat(ByteBuffer buffer)
-        {
-            float data;
-            *(int*)&data = AmqpBitConverter.ReadInt(buffer);
-            return data;
-        }
-
-        public static unsafe double ReadDouble(ByteBuffer buffer)
-        {
-            double data;
-            *(long*)&data = AmqpBitConverter.ReadLong(buffer);
-            return data;
-        }
-
-        public static unsafe void WriteFloat(ByteBuffer buffer, float data)
-        {
-            AmqpBitConverter.WriteInt(buffer, *(int*)&data);
-        }
-
-        public static unsafe void WriteDouble(ByteBuffer buffer, double data)
-        {
-#if MF_FRAMEWORK_VERSION_V4_2
-            var tempBuffer = Microsoft.SPOT.Reflection.Serialize(data, typeof(double));
-            AmqpBitConverter.WriteBytes(buffer, tempBuffer, 1, tempBuffer.Length-1);
-#else
-            AmqpBitConverter.WriteLong(buffer, *((long*)&data));
-#endif
         }
 
         public static string Format(string format, params object[] args)
