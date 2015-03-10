@@ -51,7 +51,13 @@ namespace Amqp
 
         public void Connect(Connection connection, Address address, bool noVerification)
         {
-            this.ConnectAsync(address, new ConnectionFactory()).Wait();
+            var factory = new ConnectionFactory();
+            if (noVerification)
+            {
+                factory.SSL.RemoteCertificateValidationCallback = noneCertValidator;
+            }
+
+            this.ConnectAsync(address, factory).Wait();
         }
 
         public async Task ConnectAsync(Address address, ConnectionFactory factory)
