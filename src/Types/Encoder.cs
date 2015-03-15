@@ -28,7 +28,7 @@ namespace Amqp.Types
 
     delegate object Decode(ByteBuffer buffer, byte formatCode);
 
-    static class Encoder
+    public static class Encoder
     {
         class Serializer
         {
@@ -37,7 +37,12 @@ namespace Amqp.Types
             public Decode Decoder;
         }
 
+#if NETMF
+        // NETMF DateTime ticks origin is 1601/1/1
+        const long epochTicks = 116444736000000000; // 1970-1-1 00:00:00 UTC
+#else
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
+#endif
         const long ticksPerMillisecond = 10000;
 
         static Serializer[] serializers;
@@ -53,7 +58,7 @@ namespace Amqp.Types
             }
         }
 
-        public static void Initialize()
+        internal static void Initialize()
         {
             knownDescrided = new Map();
 
@@ -70,7 +75,7 @@ namespace Amqp.Types
                 new Serializer()
                 {
                     Type = typeof(bool),
-                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteBoolean(b, (bool)o); },
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteBoolean(b, (bool)o, s); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadBoolean(b, c); }
                 },
                 // 2: ubyte
@@ -273,7 +278,7 @@ namespace Amqp.Types
             };
         }
 
-        public static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
+        internal static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
         {
             Serializer codec = (Serializer)codecByType[type];
             if (codec == null && type.IsArray)
@@ -304,7 +309,7 @@ namespace Amqp.Types
             }
         }
 
-        public static byte ReadFormatCode(ByteBuffer buffer)
+        internal static byte ReadFormatCode(ByteBuffer buffer)
         {
             return AmqpBitConverter.ReadUByte(buffer);
         }
@@ -335,9 +340,17 @@ namespace Amqp.Types
             }
         }
 
-        public static void WriteBoolean(ByteBuffer buffer, bool value)
+        public static void WriteBoolean(ByteBuffer buffer, bool value, bool smallEncoding)
         {
-            AmqpBitConverter.WriteUByte(buffer, value ? FormatCode.BooleanTrue : FormatCode.BooleanFalse);
+            if (smallEncoding)
+            {
+                AmqpBitConverter.WriteUByte(buffer, value ? FormatCode.BooleanTrue : FormatCode.BooleanFalse);
+            }
+            else
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Boolean);
+                AmqpBitConverter.WriteUByte(buffer, (byte)(value ? 1 : 0));
+            }
         }
 
         public static void WriteUByte(ByteBuffer buffer, byte value)
@@ -444,7 +457,6 @@ namespace Amqp.Types
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Double);
             AmqpBitConverter.WriteDouble(buffer, value);
-
         }
 
         public static void WriteTimestamp(ByteBuffer buffer, DateTime value)
