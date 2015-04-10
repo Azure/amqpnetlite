@@ -265,8 +265,8 @@ namespace Test.Amqp
             };
 
 #if NETMF
-            DateTime dt1 = new DateTime(1970, 1, 1, 0, 0, 1);
-            DateTime dt2 = new DateTime(1969, 12, 31, 23, 59, 59);
+            DateTime dt1 = new DateTime(116444736000000000 + 10000000, DateTimeKind.Utc); // 1970, 1, 1, 0, 0, 1;
+            DateTime dt2 = new DateTime(116444736000000000 - 10000000, DateTimeKind.Utc); // 1969, 12, 31, 23, 59, 59;
 #else
             DateTime dt1 = new DateTime(1970, 1, 1, 0, 0, 1, DateTimeKind.Utc);
             DateTime dt2 = new DateTime(1969, 12, 31, 23, 59, 59, DateTimeKind.Utc);
