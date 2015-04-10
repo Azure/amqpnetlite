@@ -14,7 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Amqp.Net.nuspec = Amqp.Net.nuspec
 		build.cmd = build.cmd
-		Performance1.psess = Performance1.psess
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "src\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
@@ -352,8 +351,5 @@ Global
 		{8FC90E46-024B-4089-9590-A7E8C2B092BE} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{43570F0D-DE6C-423E-A275-AC619A813B79} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{23F5A590-C6D6-4FF7-A787-5AEE6A9522A7} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
