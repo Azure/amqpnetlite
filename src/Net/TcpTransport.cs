@@ -150,11 +150,14 @@ namespace Amqp
             readonly TcpTransport transport;
             readonly Socket socket;
             readonly SocketAsyncEventArgs args;
+            readonly IopsTracker receiveTracker;
+            ByteBuffer receiveBuffer;
 
             public TcpSocket(TcpTransport transport, Socket socket)
             {
                 this.transport = transport;
                 this.socket = socket;
+                this.receiveTracker = new IopsTracker();
                 this.args = new SocketAsyncEventArgs();
                 this.args.Completed += onWriteComplete;
                 this.args.UserToken = this;
@@ -194,12 +197,44 @@ namespace Amqp
                 return this.socket.SendAsync(this.args);
             }
 
-            Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
+            async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
             {
-                return Task.Factory.FromAsync(
-                    (c, s) => ((TcpSocket)s).socket.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
+                if (this.receiveBuffer != null && this.receiveBuffer.Length > 0)
+                {
+                    return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                }
+
+                if (this.receiveTracker.TrackOne())
+                {
+                    if (this.receiveTracker.Level > 0)
+                    {
+                        this.receiveBuffer = new ByteBuffer(8 * 1024, false);
+                    }
+                    else
+                    {
+                        this.receiveBuffer = null;
+                    }
+                }
+
+                if (this.receiveBuffer == null)
+                {
+                    return await Task.Factory.FromAsync(
+                        (c, s) => ((TcpSocket)s).socket.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
+                        (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
+                        this);
+                }
+
+                int bytes = await Task.Factory.FromAsync(
+                    (c, s) =>
+                    {
+                        var thisPtr = (TcpSocket)s;
+                        return thisPtr.socket.BeginReceive(thisPtr.receiveBuffer.Buffer, 0, thisPtr.receiveBuffer.Size, SocketFlags.None, c, s);
+                    },
                     (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
                     this);
+
+                this.receiveBuffer.Append(bytes);
+                return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -209,7 +244,48 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                return this.socket.Receive(buffer, offset, count, SocketFlags.None);
+                if (this.receiveBuffer != null && this.receiveBuffer.Length > 0)
+                {
+                    return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                }
+
+                if (this.receiveTracker.TrackOne())
+                {
+                    if (this.receiveTracker.Level > 0)
+                    {
+                        this.receiveBuffer = new ByteBuffer(8 * 1024, false);
+                    }
+                    else
+                    {
+                        this.receiveBuffer = null;
+                    }
+                }
+
+                if (this.receiveBuffer == null)
+                {
+                    return this.socket.Receive(buffer, offset, count, SocketFlags.None);
+                }
+
+                int bytes = this.socket.Receive(this.receiveBuffer.Buffer, this.receiveBuffer.Offset, this.receiveBuffer.Size, SocketFlags.None);
+                this.receiveBuffer.Append(bytes);
+                return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+            }
+
+            static int ReceiveFromBuffer(ByteBuffer byteBuffer, byte[] buffer, int offset, int count)
+            {
+                int len = byteBuffer.Length;
+                if (len <= count)
+                {
+                    Buffer.BlockCopy(byteBuffer.Buffer, byteBuffer.Offset, buffer, offset, len);
+                    byteBuffer.Reset();
+                    return len;
+                }
+                else
+                {
+                    Buffer.BlockCopy(byteBuffer.Buffer, byteBuffer.Offset, buffer, offset, count);
+                    byteBuffer.Complete(count);
+                    return count;
+                }
             }
 
             void ITransport.Close()
@@ -381,6 +457,65 @@ namespace Amqp
                     }
                 }
                 while (true);
+            }
+        }
+
+        class IopsTracker
+        {
+            const long WindowTicks = 6 * 1000 * 10000;
+            static int[] thresholds = new int[] { 6000, 60000 };
+            DateTime windowStart;
+            int iops;
+            byte level0;
+            byte level1;
+
+            public IopsTracker()
+            {
+                this.windowStart = DateTime.UtcNow;
+            }
+
+            public byte Level
+            {
+                get { return this.level0; }
+            }
+
+            public bool TrackOne()
+            {
+                this.iops++;
+                var now = DateTime.UtcNow;
+                bool changed = false;
+                if (now.Ticks - this.windowStart.Ticks >= WindowTicks)
+                {
+                    int i = thresholds.Length;
+                    while (i >= 1 && this.iops < thresholds[i - 1])
+                    {
+                        i--;
+                    }
+
+                    byte level = (byte)i;
+                    if (this.level1 > this.level0)
+                    {
+                        if (level > this.level0)
+                        {
+                            this.level0 = Math.Min(level, this.level1);
+                            changed = true;
+                        }
+                    }
+                    else if (this.level1 < this.level0)
+                    {
+                        if (level < this.level0)
+                        {
+                            this.level0 = Math.Max(level0, this.level1);
+                            changed = true;
+                        }
+                    }
+
+                    this.level1 = level;
+                    this.iops = 0;
+                    this.windowStart = now;
+                }
+
+                return changed;
             }
         }
     }

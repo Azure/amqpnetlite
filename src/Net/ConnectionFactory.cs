@@ -36,6 +36,11 @@ namespace Amqp
 
         public ConnectionFactory()
         {
+            this.tcpSettings = new TcpSettings()
+            {
+                NoDelay = true
+            };
+
             this.amqpSettings = new AmqpSettings()
             {
                 MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
@@ -77,11 +82,6 @@ namespace Amqp
         public Task<Connection> CreateAsync(Address address)
         {
             return this.CreateAsync(address, null, null);
-        }
-
-        public Task<Connection> CreateAsync(Address address, OnOpened onOpened)
-        {
-            return this.CreateAsync(address, null, onOpened);
         }
 
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)

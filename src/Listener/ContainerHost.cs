@@ -183,7 +183,7 @@ namespace Amqp.Listener
                     throw new AmqpException(ErrorCode.NotAllowed, "Only sender link can be attached at " + address);
                 }
 
-                link.InitializeReceiver(300, dispatchMessage, this);
+                link.InitializeReceiver((uint)processor.Credit, dispatchMessage, this);
                 link.Closed += OnLinkClosed;
                 lock (this.links)
                 {

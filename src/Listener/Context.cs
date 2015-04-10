@@ -21,6 +21,8 @@ namespace Amqp.Listener
 
     public interface IMessageProcessor
     {
+        int Credit { get; }
+
         void Process(MessageContext messageContext);
     }
 

@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Amqp.Net.nuspec = Amqp.Net.nuspec
 		build.cmd = build.cmd
+		Performance1.psess = Performance1.psess
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "src\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
@@ -59,6 +60,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device.Controller", "Examples\Device\Device.Controller\Device.Controller.csproj", "{23F5A590-C6D6-4FF7-A787-5AEE6A9522A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.EventHub", "Examples\ServiceBus\ServiceBus.EventHub\ServiceBus.EventHub.csproj", "{36F33391-4918-4C6D-9CAE-1ECD32262257}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerfTest", "test\PerfTest\PerfTest.csproj", "{B23AC1B1-1551-41F3-8763-E68A53B172BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -320,6 +323,16 @@ Global
 		{36F33391-4918-4C6D-9CAE-1ECD32262257}.Release|ARM.ActiveCfg = Release|Any CPU
 		{36F33391-4918-4C6D-9CAE-1ECD32262257}.Release|x64.ActiveCfg = Release|Any CPU
 		{36F33391-4918-4C6D-9CAE-1ECD32262257}.Release|x86.ActiveCfg = Release|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Release|ARM.ActiveCfg = Release|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Release|x64.ActiveCfg = Release|Any CPU
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -339,5 +352,8 @@ Global
 		{8FC90E46-024B-4089-9590-A7E8C2B092BE} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{43570F0D-DE6C-423E-A275-AC619A813B79} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{23F5A590-C6D6-4FF7-A787-5AEE6A9522A7} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

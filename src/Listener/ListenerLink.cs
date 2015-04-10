@@ -218,6 +218,7 @@ namespace Amqp.Listener
             this.onMessage(this, delivery.Message, delivery.State, this.state);
             if (this.delivered++ >= this.credit / 2)
             {
+                this.delivered = 0;
                 this.SendFlow(this.deliveryCount, this.credit);
             }
         }

@@ -67,6 +67,11 @@ namespace PeerToPeer.Server
 
         class MessageProcessor : IMessageProcessor
         {
+            int IMessageProcessor.Credit
+            {
+                get { return 300; }
+            }
+
             void IMessageProcessor.Process(MessageContext messageContext)
             {
                 Console.WriteLine("Received a message.");

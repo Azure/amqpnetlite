@@ -34,6 +34,7 @@ namespace Amqp
         int credit;
 
         // outgoing queue
+        SenderSettleMode settleMode;
         LinkedList outgoingList;
         bool writing;
 
@@ -50,6 +51,7 @@ namespace Amqp
         public SenderLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
+            this.settleMode = attach.SndSettleMode;
             this.outgoingList = new LinkedList();
             this.SendAttach(false, this.deliveryCount, attach);
         }
@@ -97,13 +99,12 @@ namespace Amqp
 #if DOTNET
             deliveryState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
 #endif
-            this.Send(message, deliveryState, callback == null, callback, state);
+            this.Send(message, deliveryState, callback, state);
         }
 
-        internal void Send(Message message, DeliveryState deliveryState, bool settled, OutcomeCallback callback, object state)
+        internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
             this.ThrowIfDetaching("Send");
-
             Delivery delivery = new Delivery()
             {
                 Message = message,
@@ -112,7 +113,7 @@ namespace Amqp
                 Link = this,
                 OnOutcome = callback,
                 UserToken = state,
-                Settled = settled
+                Settled = this.settleMode == SenderSettleMode.Settled || callback == null
             };
 
             lock (this.ThisLock)
@@ -222,6 +223,10 @@ namespace Amqp
             {
                 delivery.Handle = this.Handle;
                 this.Session.SendDelivery(delivery);
+                if (delivery.Settled && delivery.OnOutcome != null)
+                {
+                    delivery.OnOutcome(delivery.Message, new Accepted(), delivery.UserToken);
+                }
 
                 lock (this.ThisLock)
                 {

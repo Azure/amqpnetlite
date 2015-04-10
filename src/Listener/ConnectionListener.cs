@@ -38,6 +38,7 @@ namespace Amqp.Listener
         readonly Address address;
 
         public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
+            : base()
         {
             this.connections = new HashSet<Connection>();
             this.saslMechanisms = CreateSaslMechanisms(userInfo);

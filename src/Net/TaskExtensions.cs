@@ -113,7 +113,6 @@ namespace Amqp
                 sender.Send(
                     message,
                     deliveryState,
-                    false,
                     (m, o, s) =>
                     {
                         var t = (TaskCompletionSource<object>)s;

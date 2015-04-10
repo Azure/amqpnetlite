@@ -33,7 +33,7 @@ namespace Amqp.Transactions
         {
             Message message = new Message(new Declare());
             TaskCompletionSource<byte[]> tcs = new TaskCompletionSource<byte[]>();
-            this.Send(message, null, false, OnOutcome, tcs);
+            this.Send(message, null, OnOutcome, tcs);
             return tcs.Task;
         }
 
@@ -41,7 +41,7 @@ namespace Amqp.Transactions
         {
             Message message = new Message(new Discharge() { TxnId = txnId, Fail = fail });
             TaskCompletionSource<byte[]> tcs = new TaskCompletionSource<byte[]>();
-            this.Send(message, null, false, OnOutcome, tcs);
+            this.Send(message, null, OnOutcome, tcs);
             return tcs.Task;
         }
 
