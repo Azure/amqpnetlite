@@ -28,5 +28,6 @@
     <file src="bin\Release\Amqp.NetMF43\be\*.p*" target="lib\netmf43\be" />
     <file src="bin\Release\Amqp.Store\*.*" target="lib\windows8" />
     <file src="bin\Release\Amqp.WP\*.*" target="lib\windowsphone8" />
+    <file src="bin\Release\Amqp.NetCore\*.*" target="lib\portable-netcore451+wpa81" />
   </files>
 </package>

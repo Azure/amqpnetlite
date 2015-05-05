@@ -18,12 +18,9 @@
 namespace Amqp
 {
     using System;
-    using Amqp.Framing;
-#if DOTNET
-    using Amqp.Transactions;
-#endif
-    using Amqp.Types;
     using System.Threading;
+    using Amqp.Framing;
+    using Amqp.Types;
 
     public delegate void OutcomeCallback(Message message, Outcome outcome, object state);
 
@@ -172,9 +169,9 @@ namespace Amqp
             {
                 Outcome outcome = delivery.State as Outcome;
 #if DOTNET
-                if (delivery.State != null && delivery.State is TransactionalState)
+                if (delivery.State != null && delivery.State is Amqp.Transactions.TransactionalState)
                 {
-                    outcome = ((TransactionalState)delivery.State).Outcome;
+                    outcome = ((Amqp.Transactions.TransactionalState)delivery.State).Outcome;
                 }
 #endif
                 delivery.OnOutcome(delivery.Message, outcome, delivery.UserToken);

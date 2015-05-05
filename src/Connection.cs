@@ -17,11 +17,11 @@
 
 namespace Amqp
 {
+    using System;
+    using System.Threading;
     using Amqp.Framing;
     using Amqp.Sasl;
     using Amqp.Types;
-    using System;
-    using System.Threading;
 
     public delegate void OnOpened(Connection connection, Open open);
 
@@ -80,7 +80,7 @@ namespace Amqp
             this.Connect(saslProfile, open);
         }
 
-#if DOTNET
+#if DOTNET || NETFX_CORE
         internal Connection(ConnectionFactory factory, Address address, IAsyncTransport transport, Open open, OnOpened onOpened)
             : this(factory.amqpSettings.MaxSessionsPerConnection)
         {

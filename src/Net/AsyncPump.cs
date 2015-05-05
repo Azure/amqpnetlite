@@ -18,7 +18,6 @@
 namespace Amqp
 {
     using System;
-    using System.Net.Sockets;
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Types;
@@ -86,10 +85,6 @@ namespace Amqp
             while (count > 0)
             {
                 int received = await this.transport.ReceiveAsync(buffer, offset, count);
-                if (received == 0)
-                {
-                    throw new SocketException((int)SocketError.ConnectionReset);
-                }
 
                 offset += received;
                 count -= received;

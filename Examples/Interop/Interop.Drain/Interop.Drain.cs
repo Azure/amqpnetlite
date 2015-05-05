@@ -49,7 +49,7 @@ namespace Examples.Interop {
                 Message message = new Message();
                 int nReceived = 0;
                 receiver.SetCredit(options.InitialCredit);
-                while ((message = receiver.Receive(null, timeout)) != null)
+                while ((message = receiver.Receive(timeout)) != null)
                 {
                     nReceived++;
                     if (!options.Quiet)

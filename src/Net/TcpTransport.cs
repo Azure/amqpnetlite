@@ -51,6 +51,7 @@ namespace Amqp
 
         public void Connect(Connection connection, Address address, bool noVerification)
         {
+            this.connection = connection;
             var factory = new ConnectionFactory();
             if (noVerification)
             {
@@ -119,9 +120,15 @@ namespace Amqp
             this.connection = connection;
         }
 
-        Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
+        async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
-            return this.socketTransport.ReceiveAsync(buffer, offset, count);
+            int received = await this.socketTransport.ReceiveAsync(buffer, offset, count);
+            if (received == 0)
+            {
+                throw new SocketException((int)SocketError.ConnectionReset);
+            }
+
+            return received;
         }
 
         bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
@@ -141,7 +148,13 @@ namespace Amqp
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
         {
-            return this.socketTransport.Receive(buffer, offset, count);
+            int received = this.socketTransport.Receive(buffer, offset, count);
+            if (received == 0)
+            {
+                throw new SocketException((int)SocketError.ConnectionReset);
+            }
+
+            return received;
         }
 
         class TcpSocket : IAsyncTransport

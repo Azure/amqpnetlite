@@ -17,9 +17,9 @@
 
 namespace Amqp
 {
+    using System.Threading;
     using Amqp.Framing;
     using Amqp.Types;
-    using System.Threading;
 
     public delegate void MessageCallback(ReceiverLink receiver, Message message);
 
@@ -92,18 +92,6 @@ namespace Amqp
         {
             return this.ReceiveInternal(null, timeout);
         }
-
-#if DOTNET
-        public Message Receive(MessageCallback callback, int timeout = 60000)
-        {
-            return this.ReceiveInternal(callback, timeout);
-        }
-
-        internal void SetInitialDeliveryCount(uint deliveryCount)
-        {
-            this.deliveryCount = deliveryCount;
-        }
-#endif
 
         public void Accept(Message message)
         {
@@ -256,7 +244,7 @@ namespace Amqp
             }
         }
 
-        Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
+        internal Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
         {
             this.ThrowIfDetaching("Receive");
             if (this.totalCredit < 0)
@@ -280,7 +268,7 @@ namespace Amqp
                     return null;
                 }
 
-#if DOTNET
+#if DOTNET || NETFX_CORE
                 waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
 #else
                 waiter = new SyncWaiter();
@@ -384,7 +372,7 @@ namespace Amqp
             }
         }
 
-#if DOTNET
+#if DOTNET || NETFX_CORE
         sealed class AsyncWaiter : Waiter
         {
             readonly static TimerCallback onTimer = OnTimer;

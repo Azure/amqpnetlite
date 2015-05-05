@@ -21,11 +21,11 @@ namespace Amqp
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
-    using Amqp.Transactions;
     using Amqp.Types;
 
     public static class TaskExtensions
     {
+#if DOTNET
         public static T GetBody<T>(this Message message)
         {
             if (message.BodySection != null && 
@@ -36,6 +36,17 @@ namespace Amqp
 
             return (T)message.Body;
         }
+
+        static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
+        {
+            return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);
+        }
+#else
+        static Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
+        {
+            return null;
+        }
+#endif
 
         public static Task CloseAsync(this AmqpObject amqpObject, int timeout = 60000)
         {
@@ -66,9 +77,31 @@ namespace Amqp
 
         public static async Task SendAsync(this SenderLink sender, Message message)
         {
-            var txnState = await ResourceManager.GetTransactionalStateAsync(sender);
+            var txnState = await TaskExtensions.GetTransactionalStateAsync(sender);
 
-            await sender.SendAsync(message, txnState);
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            sender.Send(
+                message,
+                txnState,
+                (m, o, s) =>
+                {
+                    var t = (TaskCompletionSource<object>)s;
+                    if (o.Descriptor.Code == Codec.Accepted.Code)
+                    {
+                        t.SetResult(null);
+                    }
+                    else if (o.Descriptor.Code == Codec.Rejected.Code)
+                    {
+                        t.SetException(new AmqpException(((Rejected)o).Error));
+                    }
+                    else
+                    {
+                        t.SetException(new AmqpException(ErrorCode.InternalError, o.Descriptor.Name));
+                    }
+                },
+                tcs);
+
+            await tcs.Task;
         }
 
         public static Task<Message> ReceiveAsync(this ReceiverLink receiver, int timeout = 60000)
@@ -76,7 +109,7 @@ namespace Amqp
             TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();
             try
             {
-                var message = receiver.Receive(
+                var message = receiver.ReceiveInternal(
                     (l, m) => tcs.SetResult(m),
                     timeout);
                 if (message != null)
@@ -103,40 +136,6 @@ namespace Amqp
                 b => { SaslCode code; return saslProfile.OnFrame(transport, b, out code); });
 
             return (IAsyncTransport)saslProfile.UpgradeTransportInternal(transport);
-        }
-
-        static Task SendAsync(this SenderLink sender, Message message, DeliveryState deliveryState)
-        {
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-            try
-            {
-                sender.Send(
-                    message,
-                    deliveryState,
-                    (m, o, s) =>
-                    {
-                        var t = (TaskCompletionSource<object>)s;
-                        if (o.Descriptor.Code == Codec.Accepted.Code)
-                        {
-                            t.SetResult(null);
-                        }
-                        else if (o.Descriptor.Code == Codec.Rejected.Code)
-                        {
-                            t.SetException(new AmqpException(((Rejected)o).Error));
-                        }
-                        else
-                        {
-                            t.SetException(new AmqpException(ErrorCode.InternalError, o.Descriptor.Name));
-                        }
-                    },
-                    tcs);
-            }
-            catch (Exception exception)
-            {
-                tcs.SetException(exception);
-            }
-
-            return tcs.Task;
         }
     }
 }
