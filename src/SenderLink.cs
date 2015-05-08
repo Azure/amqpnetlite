@@ -22,8 +22,17 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// A callback that is invoked when an outcome is received from peer for an outgoing message.
+    /// </summary>
+    /// <param name="message">The outgoing message.</param>
+    /// <param name="outcome">The received message.</param>
+    /// <param name="state">The user object specified in the Send method.</param>
     public delegate void OutcomeCallback(Message message, Outcome outcome, object state);
 
+    /// <summary>
+    /// The SenderLink represents a link that sends outgoing messages.
+    /// </summary>
     public class SenderLink : Link
     {
         // flow control
@@ -35,16 +44,36 @@ namespace Amqp
         LinkedList outgoingList;
         bool writing;
 
+        /// <summary>
+        /// Initializes a sender link.
+        /// </summary>
+        /// <param name="session">The session within which to create the link.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="adderss">The node address.</param>
         public SenderLink(Session session, string name, string adderss)
             : this(session, name, new Target() { Address = adderss }, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a sender link.
+        /// </summary>
+        /// <param name="session">The session within which to create the link.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="target">The target on attach that specifies the message target.</param>
+        /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
         public SenderLink(Session session, string name, Target target, OnAttached onAttached)
             : this(session, name, new Attach() { Source = new Source(), Target = target }, onAttached)
         {
         }
 
+        /// <summary>
+        /// Initializes a sender link.
+        /// </summary>
+        /// <param name="session">The session within which to create the link.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="attach">The attach frame to send for this link.</param>
+        /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
         public SenderLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
@@ -53,6 +82,11 @@ namespace Amqp
             this.SendAttach(false, this.deliveryCount, attach);
         }
         
+        /// <summary>
+        /// Sends a message and synchronously waits for an acknowledgement.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="millisecondsTimeout">The time in milliseconds to wait for the acknowledgement.</param>
         public void Send(Message message, int millisecondsTimeout = 60000)
         {
             ManualResetEvent acked = new ManualResetEvent(false);
@@ -90,6 +124,12 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Sends a message asynchronously. If callback is null, the message is sent without requesting for an acknowledgement (best effort).
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="callback">The callback to invoke when acknowledgement is received.</param>
+        /// <param name="state">The object that is passed back to the outcome callback.</param>
         public void Send(Message message, OutcomeCallback callback, object state)
         {
             DeliveryState deliveryState = null;

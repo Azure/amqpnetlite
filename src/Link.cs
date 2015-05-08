@@ -22,8 +22,16 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// The callback that is invoked when an attach frame is received from the peer.
+    /// </summary>
+    /// <param name="link">The link object.</param>
+    /// <param name="attach">The received attach frame.</param>
     public delegate void OnAttached(Link link, Attach attach);
 
+    /// <summary>
+    /// The Link class represents an AMQP link.
+    /// </summary>
     public abstract class Link : AmqpObject
     {
         enum State
@@ -44,6 +52,12 @@ namespace Amqp
         readonly OnAttached onAttached;
         State state;
 
+        /// <summary>
+        /// Initializes the link.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="onAttached">The callback to handle received attach.</param>
         protected Link(Session session, string name, OnAttached onAttached)
         {
             this.session = session;
@@ -53,11 +67,17 @@ namespace Amqp
             this.state = State.Start;
         }
 
+        /// <summary>
+        /// Gets the link name.
+        /// </summary>
         public string Name
         {
             get { return this.name; }
         }
 
+        /// <summary>
+        /// Gets the link handle.
+        /// </summary>
         public uint Handle
         {
             get { return this.handle; }
@@ -68,12 +88,12 @@ namespace Amqp
             get { return this.session; }
         }
 
-        protected object ThisLock
+        internal object ThisLock
         {
             get { return this; }
         }
 
-        protected bool IsDetaching
+        internal bool IsDetaching
         {
             get { return this.state >= State.DetachPipe; }
         }
@@ -145,8 +165,17 @@ namespace Amqp
 
         internal abstract void OnDeliveryStateChanged(Delivery delivery);
 
+        /// <summary>
+        /// Aborts the link.
+        /// </summary>
+        /// <param name="error"></param>
         protected abstract void OnAbort(Error error);
 
+        /// <summary>
+        /// Closes the link.
+        /// </summary>
+        /// <param name="error">The error.</param>
+        /// <returns></returns>
         protected override bool OnClose(Error error)
         {
             lock (this.ThisLock)
@@ -178,13 +207,13 @@ namespace Amqp
             }
         }
 
-        protected void SendFlow(uint deliveryCount, uint credit)
+        internal void SendFlow(uint deliveryCount, uint credit)
         {
             Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit };
             this.session.SendFlow(flow);
         }
 
-        protected void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
+        internal void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
         {
             Fx.Assert(this.state == State.Start, "state must be Start");
             this.state = State.AttachSent;
@@ -199,7 +228,7 @@ namespace Amqp
             this.session.SendCommand(attach);
         }
 
-        protected void ThrowIfDetaching(string operation)
+        internal void ThrowIfDetaching(string operation)
         {
             if (this.IsDetaching)
             {

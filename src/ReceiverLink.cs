@@ -21,8 +21,16 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// A callback that is invoked when a message is received.
+    /// </summary>
+    /// <param name="receiver">The receiver link.</param>
+    /// <param name="message">The received message.</param>
     public delegate void MessageCallback(ReceiverLink receiver, Message message);
 
+    /// <summary>
+    /// The ReceiverLink class represents a link that accepts incoming messages.
+    /// </summary>
     public class ReceiverLink : Link
     {
 #if DOTNET
@@ -44,16 +52,36 @@ namespace Amqp
         LinkedList waiterList;
         MessageCallback onMessage;
 
+        /// <summary>
+        /// Initializes a receiver link.
+        /// </summary>
+        /// <param name="session">The session within which to create the link.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="adderss">The node address.</param>
         public ReceiverLink(Session session, string name, string adderss)
             : this(session, name, new Source() { Address = adderss }, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a receiver link.
+        /// </summary>
+        /// <param name="session">The session within which to create the link.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="source">The source on attach that specifies the message source.</param>
+        /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
         public ReceiverLink(Session session, string name, Source source, OnAttached onAttached)
             : this(session, name, new Attach() { Source = source, Target = new Target() }, onAttached)
         {
         }
 
+        /// <summary>
+        /// Initializes a receiver link.
+        /// </summary>
+        /// <param name="session">The session within which to create the link.</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="attach">The attach frame to send for this link.</param>
+        /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
         public ReceiverLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
@@ -63,12 +91,22 @@ namespace Amqp
             this.SendAttach(true, 0, attach);
         }
 
+        /// <summary>
+        /// Starts the message pump.
+        /// </summary>
+        /// <param name="credit">The link credit to issue.</param>
+        /// <param name="onMessage">If specified, the callback to invoke when messages are received. If not specified, call Receive method to get the messages.</param>
         public void Start(int credit, MessageCallback onMessage = null)
         {
             this.onMessage = onMessage;
             this.SetCredit(credit, true);
         }
 
+        /// <summary>
+        /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted/rejected by the caller. If false, caller is responsible for manage link credits.</param>
         public void SetCredit(int credit, bool autoRestore = true)
         {
             uint dc;
@@ -88,23 +126,41 @@ namespace Amqp
             this.SendFlow(dc, (uint)credit);
         }
 
+        /// <summary>
+        /// Receives a message. The call is blocked for the timeout in seconds or a message is available.
+        /// </summary>
+        /// <param name="timeout">Number of seconds to wait.</param>
+        /// <returns></returns>
         public Message Receive(int timeout = 60000)
         {
             return this.ReceiveInternal(null, timeout);
         }
 
+        /// <summary>
+        /// Accepts a message. It sends an accepted outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to accept.</param>
         public void Accept(Message message)
         {
             this.ThrowIfDetaching("Accept");
             this.DisposeMessage(message, new Accepted());
         }
 
+        /// <summary>
+        /// Releases a message. It sends a released outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to release.</param>
         public void Release(Message message)
         {
             this.ThrowIfDetaching("Release");
             this.DisposeMessage(message, new Released());
         }
 
+        /// <summary>
+        /// Rejects a message. It sends a rejected outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to reject.</param>
+        /// <param name="error">The error, if any, for the rejection.</param>
         public void Reject(Message message, Error error = null)
         {
             this.ThrowIfDetaching("Reject");

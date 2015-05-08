@@ -21,25 +21,66 @@ namespace Amqp
     using Amqp.Types;
     using System;
 
+    /// <summary>
+    /// The Message class represents an AMQP message.
+    /// </summary>
     public class Message
     {
+        /// <summary>
+        /// The header section.
+        /// </summary>
         public Header Header;
-        public DeliveryAnnotations DeliveryAnnotations;
-        public MessageAnnotations MessageAnnotations;
-        public Properties Properties;
-        public ApplicationProperties ApplicationProperties;
-        public Footer Footer;
-        public RestrictedDescribed BodySection; // support single Data or AmqpSequence section only
 
+        /// <summary>
+        /// The delivery annotation section.
+        /// </summary>
+        public DeliveryAnnotations DeliveryAnnotations;
+
+        /// <summary>
+        /// The message annotation section.
+        /// </summary>
+        public MessageAnnotations MessageAnnotations;
+
+        /// <summary>
+        /// The properties section.
+        /// </summary>
+        public Properties Properties;
+
+        /// <summary>
+        /// The application properties section.
+        /// </summary>
+        public ApplicationProperties ApplicationProperties;
+
+        /// <summary>
+        /// The body section. The library supports one section only.
+        /// </summary>
+        public RestrictedDescribed BodySection;
+
+        /// <summary>
+        /// The footer section.
+        /// </summary>
+        public Footer Footer;
+
+        /// <summary>
+        /// Initializes an empty message.
+        /// </summary>
         public Message()
         {
         }
 
+        /// <summary>
+        /// Initializes a message with an AmqpValue body. The body must be a defined AMQP type.
+        /// </summary>
+        /// <param name="body">the object stored in the AmqpValue section.</param>
         public Message(object body)
         {
             this.BodySection = new AmqpValue() { Value = body };
         }
 
+        /// <summary>
+        /// Gets the object from the body. The returned value depends on the type of the body section.
+        /// Use the BodySection field if the entire section is needed.
+        /// </summary>
         public object Body
         {
             get
@@ -67,6 +108,9 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets the delivery tag associated with the message.
+        /// </summary>
         public byte[] DeliveryTag
         {
             get
@@ -81,6 +125,10 @@ namespace Amqp
             set;
         }
 
+        /// <summary>
+        /// Encodes the message into a buffer.
+        /// </summary>
+        /// <returns>The buffer.</returns>
         public ByteBuffer Encode()
         {
             ByteBuffer buffer = new ByteBuffer(128, true);
@@ -94,6 +142,11 @@ namespace Amqp
             return buffer;
         }
 
+        /// <summary>
+        /// Decodes a message from a buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        /// <returns></returns>
         public static Message Decode(ByteBuffer buffer)
         {
             Message message = new Message();

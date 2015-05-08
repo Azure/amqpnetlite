@@ -21,13 +21,33 @@ namespace Amqp
     using System.Collections.Generic;
     using System.Threading.Tasks;
    
+    /// <summary>
+    /// Provides asynchronous I/O calls.
+    /// </summary>
     public interface IAsyncTransport : ITransport
     {
+        /// <summary>
+        /// Sets a connection to the transport.
+        /// </summary>
+        /// <param name="connection"></param>
         void SetConnection(Connection connection);
 
-        // true: pending, false: completed
+        /// <summary>
+        /// Sends one or a list of buffers. Only one of buffer and bufferList can be non-null.
+        /// </summary>
+        /// <param name="buffer">The buffer to send.</param>
+        /// <param name="bufferList">The list of buffers to send.</param>
+        /// <param name="listSize">Number of bytes of all buffers in the list.</param>
+        /// <returns>true: pending, false: completed</returns>
         bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize);
 
+        /// <summary>
+        /// Reads bytes into a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to store data.</param>
+        /// <param name="offset">The offset.</param>
+        /// <param name="count">The number of bytes to read.</param>
+        /// <returns></returns>
         Task<int> ReceiveAsync(byte[] buffer, int offset, int count);
     }
 }

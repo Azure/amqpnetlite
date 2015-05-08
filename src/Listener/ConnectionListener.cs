@@ -29,6 +29,9 @@ namespace Amqp.Listener
     using Amqp.Sasl;
     using Amqp.Types;
 
+    /// <summary>
+    /// The conneciton listener accepts AMQP connections from an address.
+    /// </summary>
     public class ConnectionListener : ConnectionFactory
     {
         readonly IContainer container;
@@ -37,6 +40,12 @@ namespace Amqp.Listener
         readonly HashSet<Connection> connections;
         readonly Address address;
 
+        /// <summary>
+        /// Initializes the connection listener object.
+        /// </summary>
+        /// <param name="addressUri"></param>
+        /// <param name="userInfo"></param>
+        /// <param name="container"></param>
         public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
             : base()
         {
@@ -66,16 +75,25 @@ namespace Amqp.Listener
             }
         }
 
+        /// <summary>
+        /// Gets the AMQP container.
+        /// </summary>
         public IContainer Container
         {
             get { return this.container; }
         }
 
+        /// <summary>
+        /// Opens the listener.
+        /// </summary>
         public void Open()
         {
             this.listener.Open();
         }
 
+        /// <summary>
+        /// Closes the listener.
+        /// </summary>
         public void Close()
         {
             this.listener.Close();

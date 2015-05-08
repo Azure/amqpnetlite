@@ -19,46 +19,85 @@ namespace Amqp.Listener
 {
     using Amqp.Framing;
 
+    /// <summary>
+    /// Defines the property and methods of a message processor.
+    /// </summary>
     public interface IMessageProcessor
     {
+        /// <summary>
+        /// Gets the link credit to issue to the client.
+        /// </summary>
         int Credit { get; }
 
+        /// <summary>
+        /// Processes a received message.
+        /// </summary>
+        /// <param name="messageContext">Context of the received message.</param>
         void Process(MessageContext messageContext);
     }
 
+    /// <summary>
+    /// Defines the methods of a request processor.
+    /// </summary>
     public interface IRequestProcessor
     {
+        /// <summary>
+        /// Processes a received request.
+        /// </summary>
+        /// <param name="requestContext">Context of the received request.</param>
         void Process(RequestContext requestContext);
     }
 
+    /// <summary>
+    /// The base class of request context.
+    /// </summary>
     public abstract class Context
     {
-        protected static Accepted Accepted = new Accepted();
+        internal static Accepted Accepted = new Accepted();
 
+        /// <summary>
+        /// Initializes a context object.
+        /// </summary>
+        /// <param name="link">The link where the message was received.</param>
+        /// <param name="message">The received message.</param>
         protected Context(ListenerLink link, Message message)
         {
             this.Link = link;
             this.Message = message;
         }
 
+        /// <summary>
+        /// Gets the link associated with the context.
+        /// </summary>
         public ListenerLink Link
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the messages associated with the context.
+        /// </summary>
         public Message Message
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Disposes the request. If required, a disposition frame is sent to
+        /// the peer to acknowledge the message.
+        /// </summary>
+        /// <param name="deliveryState">The delivery state to send.</param>
         protected void Dispose(DeliveryState deliveryState)
         {
             this.Link.DisposeMessage(this.Message, deliveryState, true);
         }
     }
 
+    /// <summary>
+    /// Provides the context to a message processor to process the received message.
+    /// </summary>
     public class MessageContext : Context
     {
         internal MessageContext(ListenerLink link, Message message)
@@ -66,17 +105,27 @@ namespace Amqp.Listener
         {
         }
 
+        /// <summary>
+        /// Accepts the message.
+        /// </summary>
         public void Complete()
         {
             this.Dispose(Context.Accepted);
         }
 
+        /// <summary>
+        /// Rejects the message.
+        /// </summary>
+        /// <param name="error"></param>
         public void Complete(Error error)
         {
             this.Dispose(new Rejected() { Error = error });
         }
     }
 
+    /// <summary>
+    /// Provides the context to a request processor to process the received request.
+    /// </summary>
     public class RequestContext : Context
     {
         readonly ListenerLink responseLink;
@@ -87,6 +136,10 @@ namespace Amqp.Listener
             this.responseLink = responseLink;
         }
 
+        /// <summary>
+        /// Completes the request and sends the response message to the peer.
+        /// </summary>
+        /// <param name="response">The response message to send.</param>
         public void Complete(Message response)
         {
             if (response.Properties == null)

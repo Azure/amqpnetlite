@@ -22,11 +22,17 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Sasl;
 
+    /// <summary>
+    /// The factory to create connections asynchronously.
+    /// </summary>
     public class ConnectionFactory
     {
         internal SaslSettings saslSettings;
         internal AmqpSettings amqpSettings;
 
+        /// <summary>
+        /// Constructor to create a connection factory.
+        /// </summary>
         public ConnectionFactory()
         {
             this.amqpSettings = new AmqpSettings()
@@ -38,6 +44,9 @@ namespace Amqp
             };
         }
 
+        /// <summary>
+        /// Gets the SASL settings on the factory.
+        /// </summary>
         public SaslSettings SASL
         {
             get
@@ -46,16 +55,31 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets the AMQP settings on the factory.
+        /// </summary>
         public AmqpSettings AMQP
         {
             get { return this.amqpSettings; }
         }
 
+        /// <summary>
+        /// Creates a new connection.
+        /// </summary>
+        /// <param name="address">The address of remote endpoint to connect to.</param>
+        /// <returns></returns>
         public Task<Connection> CreateAsync(Address address)
         {
             return this.CreateAsync(address, null, null);
         }
 
+        /// <summary>
+        /// Creates a new connection with a custom open frame and a callback to handle remote open frame.
+        /// </summary>
+        /// <param name="address">The address of remote endpoint to connect to.</param>
+        /// <param name="open">If specified, it is sent to open the connection, otherwise an open frame created from the AMQP settings property is sent.</param>
+        /// <param name="onOpened">If specified, it is invoked when an open frame is received from the remote peer.</param>
+        /// <returns></returns>
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
@@ -89,8 +113,14 @@ namespace Amqp
             return connection;
         }
 
+        /// <summary>
+        /// Contains the SASL settings for a connection.
+        /// </summary>
         public class SaslSettings
         {
+            /// <summary>
+            /// The SASL profile to use for SASL negotiation.
+            /// </summary>
             public SaslProfile Profile
             {
                 get;
@@ -98,32 +128,50 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Contains the AMQP settings for a connection.
+        /// </summary>
         public class AmqpSettings
         {
+            /// <summary>
+            /// Gets or sets the open.max-frame-size field.
+            /// </summary>
             public int MaxFrameSize
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.container-id field.
+            /// </summary>
             public string ContainerId
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.hostname field.
+            /// </summary>
             public string HostName
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.channel-max field.
+            /// </summary>
             public ushort MaxSessionsPerConnection
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.idle-time-out field.
+            /// </summary>
             public int IdleTimeout
             {
                 get;

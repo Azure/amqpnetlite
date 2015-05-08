@@ -19,6 +19,10 @@ namespace Amqp
 {
     using System.Diagnostics;
 
+    /// <summary>
+    /// Defines the traces levels. Except Frame, levels are forward inclusive.
+    /// For example, Information level includes the Error and Warning levels.
+    /// </summary>
     public enum TraceLevel
     {
         Error = 0x01,
@@ -28,11 +32,26 @@ namespace Amqp
         Frame = 0x10
     }
 
+    /// <summary>
+    /// The callback to invoke to write traces.
+    /// </summary>
+    /// <param name="format"></param>
+    /// <param name="args"></param>
     public delegate void WriteTrace(string format, params object[] args);
 
+    /// <summary>
+    /// The Trace class for writing traces.
+    /// </summary>
     public static class Trace
     {
+        /// <summary>
+        /// Gets or sets the trace level.
+        /// </summary>
         public static TraceLevel TraceLevel;
+
+        /// <summary>
+        /// Gets or sets the trace callback.
+        /// </summary>
         public static WriteTrace TraceListener;
 
         [Conditional("DEBUG")]

@@ -23,8 +23,16 @@ namespace Amqp
     using Amqp.Sasl;
     using Amqp.Types;
 
+    /// <summary>
+    /// The callback that is invoked when an open frame is received from peer.
+    /// </summary>
+    /// <param name="connection">The connection.</param>
+    /// <param name="open">The received open frame.</param>
     public delegate void OnOpened(Connection connection, Open open);
 
+    /// <summary>
+    /// The Connection class represents an AMQP connection.
+    /// </summary>
     public class Connection : AmqpObject
     {
         enum State
@@ -44,6 +52,9 @@ namespace Amqp
             End
         }
 
+        /// <summary>
+        /// A flag to disable server certificate validation when TLS is used.
+        /// </summary>
         public static bool DisableServerCertValidation;
 
         internal const uint DefaultMaxFrameSize = 16 * 1024;
@@ -67,11 +78,22 @@ namespace Amqp
             this.maxFrameSize = DefaultMaxFrameSize;
         }
 
+        /// <summary>
+        /// Initializes a connection from the address.
+        /// </summary>
+        /// <param name="address">The address.</param>
         public Connection(Address address)
             : this(address, null, null, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a connection with SASL profile, open and open callback.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        /// <param name="saslProfile">The SASL profile to do authentication (optional).</param>
+        /// <param name="open">The open frame to send (optional).</param>
+        /// <param name="onOpened">The callback to handle remote open frame (optional).</param>
         public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
             : this(DefaultMaxSessions)
         {
@@ -105,6 +127,9 @@ namespace Amqp
             this.state = State.OpenPipe;
         }
 
+        /// <summary>
+        /// Gets a factory with default settings.
+        /// </summary>
         public static ConnectionFactory Factory
         {
             get { return new ConnectionFactory(); }
@@ -151,8 +176,13 @@ namespace Amqp
             this.transport.Send(buffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
         }
-       
-        protected override bool OnClose(Error error = null)
+
+        /// <summary>
+        /// Closes the connection.
+        /// </summary>
+        /// <param name="error"></param>
+        /// <returns></returns>
+        protected override bool OnClose(Error error)
         {
             lock (this.ThisLock)
             {

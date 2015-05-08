@@ -20,6 +20,15 @@ namespace Amqp
     using System;
     using Amqp.Types;
 
+    /// <summary>
+    /// Defines the address of an AMQP endpoint. An address has the following form:
+    ///   amqp[s] :// [user:[password]@] domain[:port] [/[path]
+    /// Where domain can be:
+    ///   host | ip | name
+    /// If "amqps" is specified, the connection uses TLS in the underlying transport.
+    /// When port is not specified, it is set to the standard based on scheme (amqp: 5672, amqps: 5671)
+    /// path is not used by the library.
+    /// </summary>
     public sealed class Address
     {
         internal const string Amqp = "AMQP";
@@ -27,6 +36,10 @@ namespace Amqp
         const int AmqpPort = 5672;
         const int AmqpsPort = 5671;
 
+        /// <summary>
+        /// Initializes a new instance of the Address class from a string.
+        /// </summary>
+        /// <param name="address">The string representation of the address.</param>
         public Address(string address)
         {
             this.Port = -1;
@@ -34,6 +47,15 @@ namespace Amqp
             this.SetDefault();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the Address class from individual components.
+        /// </summary>
+        /// <param name="host">The domain of the address.</param>
+        /// <param name="port">The port number of the address.</param>
+        /// <param name="user">User name for SASL PLAIN profile.</param>
+        /// <param name="password">Password for SASL PLAIN profile.</param>
+        /// <param name="path">The path of the address.</param>
+        /// <param name="scheme">Protocol scheme, which can be either "amqp" or "amqps".</param>
         public Address(string host, int port, string user = null, string password = null, string path = "/", string scheme = Amqps)
         {
             this.Host = host;
@@ -45,42 +67,63 @@ namespace Amqp
             this.SetDefault();
         }
 
+        /// <summary>
+        /// Gets the protocol scheme.
+        /// </summary>
         public string Scheme
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets a value indicating where TLS is enabled.
+        /// </summary>
         public bool UseSsl
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the host of the address.
+        /// </summary>
         public string Host
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the port number of the address.
+        /// </summary>
         public int Port
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the user name that is used for SASL PLAIN profile.
+        /// </summary>
         public string User
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the password that is used for SASL PLAIN profile.
+        /// </summary>
         public string Password
         {
             get;
             private set;
         }
 
+        /// <summary>
+        /// Gets the path of the address.
+        /// </summary>
         public string Path
         {
             get;

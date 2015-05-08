@@ -21,6 +21,9 @@ namespace Amqp.Listener
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// An AMQP session used by the listener.
+    /// </summary>
     public class ListenerSession : Session
     {
         internal ListenerSession(ListenerConnection connection, Begin begin)

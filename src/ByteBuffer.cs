@@ -20,11 +20,11 @@ namespace Amqp
     using Amqp.Types;
     using System;
 
+    /// <summary>
+    /// A byte array wrapper that has read and write cursors.
+    /// </summary>
     public sealed class ByteBuffer
     {
-        //
-        // A buffer has start and end and two cursors (read/write)
-        // All four are absolute values.
         //
         //   +---------+--------------+----------------+
         // start      read          write             end
@@ -41,11 +41,23 @@ namespace Amqp
         int end;
         bool autoGrow;
 
+        /// <summary>
+        /// Initializes a new buffer from a byte array.
+        /// </summary>
+        /// <param name="buffer">The byte array.</param>
+        /// <param name="offset">The start position.</param>
+        /// <param name="count">The number of bytes.</param>
+        /// <param name="capacity">The total size of the byte array from offset.</param>
         public ByteBuffer(byte[] buffer, int offset, int count, int capacity)
             : this(buffer, offset, count, capacity, false)
         {
         }
 
+        /// <summary>
+        /// Initializes a new buffer of a specified size.
+        /// </summary>
+        /// <param name="size">The size in bytes.</param>
+        /// <param name="autoGrow">If the buffer should auto-grow when a write size is larger than the buffer size.</param>
         public ByteBuffer(int size, bool autoGrow)
             : this(new byte[size], 0, 0, size, autoGrow)
         {
@@ -61,36 +73,59 @@ namespace Amqp
             this.autoGrow = autoGrow;
         }
 
+        /// <summary>
+        /// Gets the byte array.
+        /// </summary>
         public byte[] Buffer
         {
             get { return this.buffer; }
         }
 
+        /// <summary>
+        /// Gets the capacity.
+        /// </summary>
         public int Capacity
         {
             get { return this.end - this.start; }
         }
 
+        /// <summary>
+        /// Gets the current offset (read position).
+        /// </summary>
         public int Offset
         {
             get { return this.read; }
         }
 
+        /// <summary>
+        /// Gets the remaining size for write.
+        /// </summary>
         public int Size
         {
             get { return this.end - this.write; }
         }
 
+        /// <summary>
+        /// Gets the available size for read.
+        /// </summary>
         public int Length
         {
             get { return this.write - this.read; }
         }
 
+        /// <summary>
+        /// Gets the write position.
+        /// </summary>
         public int WritePos
         {
             get { return this.write; }
         }
 
+        /// <summary>
+        /// Verifies that if the buffer has enough bytes for read or enough room for write and grow the buffer if needed.
+        /// </summary>
+        /// <param name="write">Operation to verify. True for write and false for read.</param>
+        /// <param name="dataSize">The size to read or write.</param>
         public void Validate(bool write, int dataSize)
         {
             bool valid = false;
@@ -123,6 +158,10 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Advances the write position. As a result, length is increased by size.
+        /// </summary>
+        /// <param name="size">Size to advance.</param>
         public void Append(int size)
         {
             Fx.Assert(size >= 0, "size must be positive.");
@@ -130,6 +169,10 @@ namespace Amqp
             this.write += size;
         }
 
+        /// <summary>
+        /// Advances the read position.
+        /// </summary>
+        /// <param name="size">Size to advance.</param>
         public void Complete(int size)
         {
             Fx.Assert(size >= 0, "size must be positive.");
@@ -137,6 +180,10 @@ namespace Amqp
             this.read += size;
         }
 
+        /// <summary>
+        /// Sets the read position.
+        /// </summary>
+        /// <param name="seekPosition">Position to set.</param>
         public void Seek(int seekPosition)
         {
             Fx.Assert(seekPosition >= 0, "seekPosition must not be negative.");
@@ -144,18 +191,30 @@ namespace Amqp
             this.read = this.start + seekPosition;
         }
 
+        /// <summary>
+        /// Moves back the write position. As a result, length is decreased by size.
+        /// </summary>
+        /// <param name="size"></param>
         public void Shrink(int size)
         {
             Fx.Assert(size >= 0 && size <= this.Length, "size must be positive and not greater then length.");
             this.write -= size;
         }
 
+        /// <summary>
+        /// Resets read and write position to the initial state.
+        /// </summary>
         public void Reset()
         {
             this.read = this.start;
             this.write = this.start;
         }
 
+        /// <summary>
+        /// Adjusts the read and write position.
+        /// </summary>
+        /// <param name="offset">Read position to set.</param>
+        /// <param name="length">Length from read position to set the write position.</param>
         public void AdjustPosition(int offset, int length)
         {
             Fx.Assert(offset >= this.start, "Invalid offset!");

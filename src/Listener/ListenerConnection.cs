@@ -20,6 +20,9 @@ namespace Amqp.Listener
     using System.Threading;
     using Amqp.Framing;
 
+    /// <summary>
+    /// An AMQP connection used by the listener.
+    /// </summary>
     public class ListenerConnection : Connection
     {
         readonly ConnectionListener listener;

@@ -23,6 +23,12 @@ namespace Amqp.Listener
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// The ContainerHost class hosts an AMQP container. A container has one or more transport
+    /// listeners. Message processors can be registered to accept incoming messages (one-way).
+    /// Request processors can be registered to process request messages and send back response
+    /// messages (two-way).
+    /// </summary>
     public class ContainerHost : IContainer
     {
         readonly X509Certificate2 certificate;
@@ -30,11 +36,21 @@ namespace Amqp.Listener
         readonly Dictionary<string, MessageProcessor> messageProcessors;
         readonly Dictionary<string, RequestProcessor> requestProcessors;
 
+        /// <summary>
+        /// Initializes a container host object with one address.
+        /// </summary>
+        /// <param name="addressUri">The address Url. Only the scheme, host and port parts are used. Supported schema are "amqp", "amqps", "ws" and "wss".</param>
         public ContainerHost(Uri addressUri)
             : this(new Uri[] { addressUri }, null, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a container host object with multiple address.
+        /// </summary>
+        /// <param name="addressUriList">The list of listen addresses.</param>
+        /// <param name="certificate">The service certificate for TLS.</param>
+        /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of form "user:password".</param>
         public ContainerHost(IList<Uri> addressUriList, X509Certificate2 certificate, string userInfo)
         {
             this.certificate = certificate;
@@ -47,6 +63,9 @@ namespace Amqp.Listener
             }
         }
 
+        /// <summary>
+        /// Opens the container host object.
+        /// </summary>
         public void Open()
         {
             foreach (var listener in this.listeners)
@@ -55,6 +74,9 @@ namespace Amqp.Listener
             }
         }
 
+        /// <summary>
+        /// Closes the container host object.
+        /// </summary>
         public void Close()
         {
             foreach (var listener in this.listeners)
@@ -70,21 +92,42 @@ namespace Amqp.Listener
             }
         }
 
+        /// <summary>
+        /// Registers a message processor to accept incoming messages from the specified address.
+        /// When it is called, the container creates a node where the client can attach.
+        /// </summary>
+        /// <param name="address">The node name.</param>
+        /// <param name="messageProcessor">The message processor.</param>
         public void RegisterMessageProcessor(string address, IMessageProcessor messageProcessor)
         {
             AddProcessor(this.messageProcessors, address, new MessageProcessor(messageProcessor));
         }
 
+        /// <summary>
+        /// Registers a request processor from the specified address (node name). Client must create a pair of
+        /// links (sending and receiving) at the address. The source.address on the sending link should contain
+        /// an unique address in the client and it should be specified in target.address on the receiving link.
+        /// </summary>
+        /// <param name="address">The node name.</param>
+        /// <param name="requestProcessor">The request name.</param>
         public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor)
         {
             AddProcessor(this.requestProcessors, address, new RequestProcessor(requestProcessor));
         }
 
+        /// <summary>
+        /// Unregisters a message processor at the specified address.
+        /// </summary>
+        /// <param name="address">The address.</param>
         public void UnregisterMessageProcessor(string address)
         {
             RemoveProcessor(this.messageProcessors, address);
         }
 
+        /// <summary>
+        /// Unregisters a request process at the specified address.
+        /// </summary>
+        /// <param name="address">The address.</param>
         public void UnregisterRequestProcessor(string address)
         {
             RemoveProcessor(this.requestProcessors, address);

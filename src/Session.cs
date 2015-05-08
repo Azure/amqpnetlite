@@ -21,6 +21,9 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// The Session class represents an AMQP session.
+    /// </summary>
     public class Session : AmqpObject
     {
         enum State
@@ -54,6 +57,10 @@ namespace Amqp
         SequenceNumber nextOutgoingId;
         uint outgoingWindow;
 
+        /// <summary>
+        /// Initializes a session object.
+        /// </summary>
+        /// <param name="connection">The connection within which to create the session.</param>
         public Session(Connection connection)
             : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize })
         {
@@ -83,7 +90,7 @@ namespace Amqp
             get { return this; }
         }
 
-        public ushort Channel
+        internal ushort Channel
         {
             get { return this.channel; }
         }
@@ -273,6 +280,11 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Closes the session.
+        /// </summary>
+        /// <param name="error">The error.</param>
+        /// <returns></returns>
         protected override bool OnClose(Error error)
         {
             this.CancelPendingDeliveries(error);

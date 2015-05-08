@@ -19,14 +19,29 @@ namespace Amqp
 {
     using System;
 
+    /// <summary>
+    /// The transport interface used by a connection for network I/O.
+    /// </summary>
     public interface ITransport
     {
-        // if transport supports async write, it should perform async write with queued buffers
+        /// <summary>
+        /// Sends a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to send.</param>
         void Send(ByteBuffer buffer);
 
-        // this is called from the pump thread, so blocking is fine
+        /// <summary>
+        /// Receives a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to store the received bytes.</param>
+        /// <param name="offset">The start position.</param>
+        /// <param name="count">The number of bytes to receive.</param>
+        /// <returns></returns>
         int Receive(byte[] buffer, int offset, int count);
 
+        /// <summary>
+        /// Closes the transport.
+        /// </summary>
         void Close();
     }
 }

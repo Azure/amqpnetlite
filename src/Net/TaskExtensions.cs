@@ -23,9 +23,18 @@ namespace Amqp
     using Amqp.Sasl;
     using Amqp.Types;
 
+    /// <summary>
+    /// Provides extension methods.
+    /// </summary>
     public static class TaskExtensions
     {
 #if DOTNET
+        /// <summary>
+        /// Gets an object of type T from the message body.
+        /// </summary>
+        /// <typeparam name="T">The object type.</typeparam>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
         public static T GetBody<T>(this Message message)
         {
             if (message.BodySection != null && 
@@ -48,6 +57,12 @@ namespace Amqp
         }
 #endif
 
+        /// <summary>
+        /// Closes an AMQP object asynchronously.
+        /// </summary>
+        /// <param name="amqpObject">The object to close.</param>
+        /// <param name="timeout">The timeout in seconds.</param>
+        /// <returns></returns>
         public static Task CloseAsync(this AmqpObject amqpObject, int timeout = 60000)
         {
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
@@ -75,6 +90,12 @@ namespace Amqp
             return tcs.Task;
         }
 
+        /// <summary>
+        /// Sends a message asynchronously.
+        /// </summary>
+        /// <param name="sender">The link.</param>
+        /// <param name="message">The message.</param>
+        /// <returns></returns>
         public static async Task SendAsync(this SenderLink sender, Message message)
         {
             var txnState = await TaskExtensions.GetTransactionalStateAsync(sender);
@@ -104,6 +125,12 @@ namespace Amqp
             await tcs.Task;
         }
 
+        /// <summary>
+        /// Receives a message asynchronously.
+        /// </summary>
+        /// <param name="receiver">The link.</param>
+        /// <param name="timeout">The timeout in seconds.</param>
+        /// <returns></returns>
         public static Task<Message> ReceiveAsync(this ReceiverLink receiver, int timeout = 60000)
         {
             TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();

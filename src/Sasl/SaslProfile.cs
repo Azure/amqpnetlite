@@ -21,8 +21,15 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// The SaslProfile is the base class of an SASL profile implementation. It provides
+    /// the basic support for frame exchange during SASL authentication.
+    /// </summary>
     public abstract class SaslProfile
     {
+        /// <summary>
+        /// The SASL EXTERNAL profile.
+        /// </summary>
         public static SaslProfile External
         {
             get { return new SaslExternalProfile(); }
@@ -127,12 +134,28 @@ namespace Amqp.Sasl
             return this.UpgradeTransport(transport);
         }
 
-        // if a profile handles signing and/or encryption, it should create
-        // a new transport
+        /// <summary>
+        /// If a profile needs to change the buffer (e.g. encryption), it should
+        /// create a new ITransport object. Otherwise, it can simply return the
+        /// same transport object.
+        /// </summary>
+        /// <param name="transport">The current transport.</param>
+        /// <returns></returns>
         protected abstract ITransport UpgradeTransport(ITransport transport);
 
+        /// <summary>
+        /// The start SASL command.
+        /// </summary>
+        /// <param name="hostname">The hostname of the remote peer.</param>
+        /// <returns></returns>
         protected abstract DescribedList GetStartCommand(string hostname);
 
+        /// <summary>
+        /// Processes the received command and returns a response. If returns
+        /// null, the SASL handshake completes.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         protected abstract DescribedList OnCommand(DescribedList command);
 
         void SendCommand(ITransport transport, DescribedList command)

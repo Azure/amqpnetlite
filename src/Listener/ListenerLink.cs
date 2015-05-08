@@ -21,6 +21,10 @@ namespace Amqp.Listener
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// The listener link provides non-blocking methods that can be used by brokers/listener
+    /// applications.
+    /// </summary>
     public class ListenerLink : Link
     {
         bool role;
@@ -37,6 +41,11 @@ namespace Amqp.Listener
         Delivery deliveryCurrent;
         Action<ListenerLink, Message, DeliveryState, object> onMessage;
 
+        /// <summary>
+        /// Initializes a listener link object.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="attach">The received attach frame.</param>
         public ListenerLink(ListenerSession session, Attach attach)
             : base(session, attach.LinkName, null)
         {
@@ -44,21 +53,36 @@ namespace Amqp.Listener
             this.SettleOnSend = attach.SndSettleMode == SenderSettleMode.Settled;
         }
 
+        /// <summary>
+        /// Gets the sender (false) or receiver (true) role of the link.
+        /// </summary>
         public bool Role
         {
             get { return this.role; }
         }
 
+        /// <summary>
+        /// Gets the settled flag. If it is true, messages are sent settled.
+        /// </summary>
         public bool SettleOnSend
         {
             get; internal set;
         }
 
+        /// <summary>
+        /// Gets the user state attached to the link when it is initialized.
+        /// </summary>
         public object State
         {
             get { return this.state; }
         }
 
+        /// <summary>
+        /// Initializes the receiver state for the link.
+        /// </summary>
+        /// <param name="credit">The link credit.</param>
+        /// <param name="onMessage">The callback to invoke for received messages.</param>
+        /// <param name="state">The user state attached to the link.</param>
         public void InitializeReceiver(uint credit, Action<ListenerLink, Message, DeliveryState, object> onMessage, object state)
         {
             this.credit = credit;
@@ -66,6 +90,12 @@ namespace Amqp.Listener
             this.state = state;
         }
 
+        /// <summary>
+        /// Initializes the sender state for the link.
+        /// </summary>
+        /// <param name="onCredit">The callback to invoke when flow is received with more link credit.</param>
+        /// <param name="onDispose">The callback to invoke when disposition is received.</param>
+        /// <param name="state">The user state attached to the link.</param>
         public void InitializeSender(Action<int, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
         {
             this.onCredit = onCredit;
@@ -73,6 +103,11 @@ namespace Amqp.Listener
             this.state = state;
         }
 
+        /// <summary>
+        /// Sends a message. This call is non-blocking and it does not wait for acknowledgements.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="buffer"></param>
         public void SendMessage(Message message, ByteBuffer buffer)
         {
             Delivery delivery = new Delivery()
@@ -88,6 +123,12 @@ namespace Amqp.Listener
             this.deliveryCount++;
         }
 
+        /// <summary>
+        /// Sends a disposition for the message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="deliveryState">The delivery state to set on disposition.</param>
+        /// <param name="settled">The settled flag on disposition.</param>
         public void DisposeMessage(Message message, DeliveryState deliveryState, bool settled)
         {
             Delivery delivery = message.Delivery;
@@ -99,6 +140,11 @@ namespace Amqp.Listener
             this.Session.DisposeDelivery(this.role, delivery, deliveryState, settled);
         }
 
+        /// <summary>
+        /// Completes the link attach request.
+        /// </summary>
+        /// <param name="attach">The attach to send back.</param>
+        /// <param name="error">The error, if any, for the link.</param>
         public void CompleteAttach(Attach attach, Error error)
         {
             if (error != null)
@@ -207,6 +253,10 @@ namespace Amqp.Listener
             }
         }
 
+        /// <summary>
+        /// Aborts the link.
+        /// </summary>
+        /// <param name="error">The error.</param>
         protected override void OnAbort(Error error)
         {
         }

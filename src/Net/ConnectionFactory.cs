@@ -27,6 +27,9 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Sasl;
 
+    /// <summary>
+    /// The factory to create connections asynchronously.
+    /// </summary>
     public class ConnectionFactory
     {
         internal TcpSettings tcpSettings;
@@ -34,6 +37,9 @@ namespace Amqp
         internal SaslSettings saslSettings;
         internal AmqpSettings amqpSettings;
 
+        /// <summary>
+        /// Constructor to create a connection factory.
+        /// </summary>
         public ConnectionFactory()
         {
             this.tcpSettings = new TcpSettings()
@@ -50,6 +56,9 @@ namespace Amqp
             };
         }
 
+        /// <summary>
+        /// Gets the TCP settings on the factory.
+        /// </summary>
         public TcpSettings TCP
         {
             get
@@ -58,6 +67,9 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets the TLS/SSL settings on the factory.
+        /// </summary>
         public SslSettings SSL
         {
             get
@@ -66,6 +78,9 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets the SASL settings on the factory.
+        /// </summary>
         public SaslSettings SASL
         {
             get
@@ -74,16 +89,31 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets the AMQP settings on the factory.
+        /// </summary>
         public AmqpSettings AMQP
         {
             get { return this.amqpSettings; }
         }
 
+        /// <summary>
+        /// Creates a new connection.
+        /// </summary>
+        /// <param name="address">The address of remote endpoint to connect to.</param>
+        /// <returns></returns>
         public Task<Connection> CreateAsync(Address address)
         {
             return this.CreateAsync(address, null, null);
         }
 
+        /// <summary>
+        /// Creates a new connection with a custom open frame and a callback to handle remote open frame.
+        /// </summary>
+        /// <param name="address">The address of remote endpoint to connect to.</param>
+        /// <param name="open">If specified, it is sent to open the connection, otherwise an open frame created from the AMQP settings property is sent.</param>
+        /// <param name="onOpened">If specified, it is invoked when an open frame is received from the remote peer.</param>
+        /// <returns></returns>
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
@@ -117,6 +147,9 @@ namespace Amqp
             return connection;
         }
 
+        /// <summary>
+        /// Contains the TCP settings for a connection.
+        /// </summary>
         public class TcpSettings
         {
             const int DefaultBufferSize = 8192;
@@ -126,36 +159,54 @@ namespace Amqp
             int? sendBufferSize;
             int? sendTimeout;
 
+            /// <summary>
+            /// Specifies the LingerOption option of the TCP socket.
+            /// </summary>
             public LingerOption LingerOption
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Specifies the NoDelay option of the TCP socket.
+            /// </summary>
             public bool NoDelay
             {
                 get { return this.noDelay ?? false; }
                 set { this.noDelay = value; }
             }
 
+            /// <summary>
+            /// Specifies the ReceiveBufferSize option of the TCP socket.
+            /// </summary>
             public int ReceiveBufferSize
             {
                 get { return this.receiveBufferSize ?? DefaultBufferSize; }
                 set { this.receiveBufferSize = value; }
             }
 
+            /// <summary>
+            /// Specifies the ReceiveTimeout option of the TCP socket.
+            /// </summary>
             public int ReceiveTimeout
             {
                 get { return this.receiveTimeout ?? 0; }
                 set { this.receiveTimeout = value; }
             }
 
+            /// <summary>
+            /// Specifies the SendBufferSize option of the TCP socket.
+            /// </summary>
             public int SendBufferSize
             {
                 get { return this.sendBufferSize ?? DefaultBufferSize; }
                 set { this.sendBufferSize = value; }
             }
 
+            /// <summary>
+            /// Specifies the SendTimeout option of the TCP socket.
+            /// </summary>
             public int SendTimeout
             {
                 get { return this.sendTimeout ?? 0; }
@@ -173,32 +224,47 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Contains the TLS/SSL settings for a connection.
+        /// </summary>
         public class SslSettings
         {
-            public SslSettings()
+            internal SslSettings()
             {
                 this.Protocols = SslProtocols.Default;
                 this.ClientCertificates = new X509CertificateCollection();
             }
 
+            /// <summary>
+            /// Client certificates to use for mutual authentication.
+            /// </summary>
             public X509CertificateCollection ClientCertificates
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Supported protocols to use.
+            /// </summary>
             public SslProtocols Protocols
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Specifies whether certificate revocation should be performed during handshake.
+            /// </summary>
             public bool CheckCertificateRevocation
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets a certificate validation callback to validate remote certificate.
+            /// </summary>
             public RemoteCertificateValidationCallback RemoteCertificateValidationCallback
             {
                 get;
@@ -206,8 +272,14 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Contains the SASL settings for a connection.
+        /// </summary>
         public class SaslSettings
         {
+            /// <summary>
+            /// The SASL profile to use for SASL negotiation.
+            /// </summary>
             public SaslProfile Profile
             {
                 get;
@@ -215,32 +287,50 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Contains the AMQP settings for a connection.
+        /// </summary>
         public class AmqpSettings
         {
+            /// <summary>
+            /// Gets or sets the open.max-frame-size field.
+            /// </summary>
             public int MaxFrameSize
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.container-id field.
+            /// </summary>
             public string ContainerId
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.hostname field.
+            /// </summary>
             public string HostName
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.channel-max field.
+            /// </summary>
             public ushort MaxSessionsPerConnection
             {
                 get;
                 set;
             }
 
+            /// <summary>
+            /// Gets or sets the open.idle-time-out field.
+            /// </summary>
             public int IdleTimeout
             {
                 get;
