@@ -19,6 +19,9 @@ namespace Amqp.Types
 {
     using System.Collections;
 
+    /// <summary>
+    /// A Map class is an AMQP map.
+    /// </summary>
     public partial class Map : Hashtable
     {
         object GetValue(object key)

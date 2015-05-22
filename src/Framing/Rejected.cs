@@ -19,29 +19,40 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The rejected outcome is a terminal delivery state.
+    /// </summary>
     public sealed class Rejected : Outcome
     {
+        /// <summary>
+        /// Initializes a rejected object.
+        /// </summary>
         public Rejected()
             : base(Codec.Rejected, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the error field.
+        /// </summary>
         public Error Error
         {
             get { return (Error)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+#if TRACE
+        /// <summary>
+        /// Returns a string that represents the current rejected object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-#if TRACE
             return this.GetDebugString(
                 "rejected",
                 new object[] { "error" },
                 this.Fields);
-#else
-            return base.ToString();
-#endif
         }
+#endif
     }
 }

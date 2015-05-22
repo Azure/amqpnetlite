@@ -19,6 +19,9 @@ namespace Amqp.Types
 {
     using System.Collections;
 
+    /// <summary>
+    /// A List class is an AMQP list.
+    /// </summary>
     public class List : ArrayList
     {
     }

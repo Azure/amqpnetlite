@@ -20,13 +20,22 @@ namespace Amqp.Transactions
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// Message body for declaring a transaction id.
+    /// </summary>
     public sealed class Declare : DescribedList
     {
+        /// <summary>
+        /// Initializes a declare object.
+        /// </summary>
         public Declare()
             : base(Codec.Declare, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the global-id field.
+        /// </summary>
         public object GlobalId
         {
             get { return this.Fields[0]; }
@@ -34,6 +43,10 @@ namespace Amqp.Transactions
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.GetDebugString(

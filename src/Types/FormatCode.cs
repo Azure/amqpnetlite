@@ -17,7 +17,7 @@
 
 namespace Amqp.Types
 {
-    public static class FormatCode
+    static class FormatCode
     {
         public const byte
         

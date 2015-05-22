@@ -19,23 +19,31 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The released outcome is a terminal delivery state.
+    /// </summary>
     public sealed class Released : Outcome
     {
+        /// <summary>
+        /// Initializes a released object.
+        /// </summary>
         public Released()
             : base(Codec.Released, 0)
         {
         }
 
+#if TRACE
+        /// <summary>
+        /// Returns a string that represents the current released object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-#if TRACE
             return this.GetDebugString(
                 "released",
                 new object[0],
                 this.Fields);
-#else
-            return base.ToString();
-#endif
         }
+#endif
     }
 }

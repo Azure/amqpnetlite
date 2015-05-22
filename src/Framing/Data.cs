@@ -19,13 +19,22 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// A data section contains opaque binary data.
+    /// </summary>
     public sealed class Data : RestrictedDescribed
     {
+        /// <summary>
+        /// Initializes a Data object.
+        /// </summary>
         public Data()
             : base(Codec.Data)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the binary data in this section.
+        /// </summary>
         public byte[] Binary
         {
             get;

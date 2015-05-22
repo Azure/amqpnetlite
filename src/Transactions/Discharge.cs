@@ -20,19 +20,31 @@ namespace Amqp.Transactions
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// Message body for discharging a transaction.
+    /// </summary>
     public sealed class Discharge : DescribedList
     {
+        /// <summary>
+        /// Initializes a discharge object.
+        /// </summary>
         public Discharge()
             : base(Codec.Discharge, 2)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the txn-id field.
+        /// </summary>
         public byte[] TxnId
         {
             get { return (byte[])this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the fail field.
+        /// </summary>
         public bool Fail
         {
             get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
@@ -40,6 +52,10 @@ namespace Amqp.Transactions
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.GetDebugString(

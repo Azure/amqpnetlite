@@ -19,15 +19,24 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// An amqp-value section contains a single AMQP value.
+    /// </summary>
     public sealed class AmqpValue : RestrictedDescribed
     {
         object value;
 
+        /// <summary>
+        /// Initializes an AmqpValue object.
+        /// </summary>
         public AmqpValue()
             : base(Codec.AmqpValue)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the value in the body section.
+        /// </summary>
         public object Value
         {
             get { return this.value; }

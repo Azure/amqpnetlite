@@ -22,12 +22,19 @@ namespace Amqp.Types
     using System.Text;
     using System.Globalization;
 
+    /// <summary>
+    /// The delegate to create a decribed object.
+    /// </summary>
+    /// <returns></returns>
     public delegate Described CreateDescribed();
 
     delegate void Encode(ByteBuffer buffer, object value, bool smallEncoding);
 
     delegate object Decode(ByteBuffer buffer, byte formatCode);
 
+    /// <summary>
+    /// Encodes or decodes AMQP types.
+    /// </summary>
     public static class Encoder
     {
         class Serializer
@@ -300,6 +307,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Adds a factory for a custom described type, usually for decoding.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the type.</param>
+        /// <param name="ctor">The delegate to invoke to create the object.</param>
         public static void AddKnownDescribed(Descriptor descriptor, CreateDescribed ctor)
         {
             lock (knownDescrided)
@@ -314,6 +326,12 @@ namespace Amqp.Types
             return AmqpBitConverter.ReadUByte(buffer);
         }
 
+        /// <summary>
+        /// Writes an AMQP object to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The AMQP value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteObject(ByteBuffer buffer, object value, bool smallEncoding = true)
         {
             if (value == null)
@@ -340,6 +358,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a boolean value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The boolean value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteBoolean(ByteBuffer buffer, bool value, bool smallEncoding)
         {
             if (smallEncoding)
@@ -353,18 +377,34 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes an unsigned byte value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The unsigned byte value.</param>
         public static void WriteUByte(ByteBuffer buffer, byte value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.UByte);
             AmqpBitConverter.WriteUByte(buffer, value);
         }
 
+        /// <summary>
+        /// Writes an unsigned 16-bit integer value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The unsigned 16-bit integer value.</param>
         public static void WriteUShort(ByteBuffer buffer, ushort value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.UShort);
             AmqpBitConverter.WriteUShort(buffer, value);
         }
 
+        /// <summary>
+        /// Writes an unsigned 32-bit integer value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The unsigned 32-bit integer value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteUInt(ByteBuffer buffer, uint value, bool smallEncoding)
         {
             if (!smallEncoding || value > byte.MaxValue)
@@ -383,6 +423,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes an unsigned 64-bit integer value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The unsigned 64-bit integer value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteULong(ByteBuffer buffer, ulong value, bool smallEncoding)
         {
             if (!smallEncoding || value > byte.MaxValue)
@@ -401,18 +447,34 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a signed byte value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The signed byte value.</param>
         public static void WriteByte(ByteBuffer buffer, sbyte value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Byte);
             AmqpBitConverter.WriteByte(buffer, value);
         }
 
+        /// <summary>
+        /// Writes a signed 16-bit integer value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The signed 16-bit integer value.</param>
         public static void WriteShort(ByteBuffer buffer, short value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Short);
             AmqpBitConverter.WriteShort(buffer, value);
         }
 
+        /// <summary>
+        /// Writes a signed 32-bit integer value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The signed 32-bit integer value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteInt(ByteBuffer buffer, int value, bool smallEncoding)
         {
             if (smallEncoding && value >= sbyte.MinValue && value <= sbyte.MaxValue)
@@ -427,6 +489,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a signed 64-bit integer value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The signed 64-bit integer value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteLong(ByteBuffer buffer, long value, bool smallEncoding)
         {
             if (smallEncoding && value >= sbyte.MinValue && value <= sbyte.MaxValue)
@@ -441,36 +509,67 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a char value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The char value.</param>
         public static void WriteChar(ByteBuffer buffer, char value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Char);
             AmqpBitConverter.WriteInt(buffer, value);   // TODO: utf32
         }
 
+        /// <summary>
+        /// Writes a 32-bit floating-point value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The 32-bit floating-point value.</param>
         public static void WriteFloat(ByteBuffer buffer, float value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Float);
             AmqpBitConverter.WriteFloat(buffer, value);
         }
 
+        /// <summary>
+        /// Writes a 64-bit floating-point value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The 64-bit floating-point value.</param>
         public static void WriteDouble(ByteBuffer buffer, double value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Double);
             AmqpBitConverter.WriteDouble(buffer, value);
         }
 
+        /// <summary>
+        /// Writes a timestamp value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The timestamp value which is the milliseconds since UNIX epoch.</param>
         public static void WriteTimestamp(ByteBuffer buffer, DateTime value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.TimeStamp);
             AmqpBitConverter.WriteLong(buffer, (value.ToUniversalTime().Ticks - epochTicks) / ticksPerMillisecond);
         }
 
+        /// <summary>
+        /// Writes a uuid value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The uuid value.</param>
         public static void WriteUuid(ByteBuffer buffer, Guid value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Uuid);
             AmqpBitConverter.WriteUuid(buffer, value);
         }
 
+        /// <summary>
+        /// Writes a binary value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The binary value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteBinary(ByteBuffer buffer, byte[] value, bool smallEncoding)
         {
             if (value == null)
@@ -491,6 +590,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a string value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The string value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteString(ByteBuffer buffer, string value, bool smallEncoding)
         {
             if (value == null)
@@ -515,6 +620,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a symbol value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The symbol value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteSymbol(ByteBuffer buffer, Symbol value, bool smallEncoding)
         {
             if (value == null)
@@ -539,6 +650,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a list value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The list value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteList(ByteBuffer buffer, IList value, bool smallEncoding)
         {
             if (value == null)
@@ -591,6 +708,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes an array value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The array value.</param>
         public static void WriteArray(ByteBuffer buffer, Array value)
         {
             if (value == null)
@@ -642,6 +764,12 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Writes a map value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The map value.</param>
+        /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
         public static void WriteMap(ByteBuffer buffer, Map value, bool smallEncoding)
         {
             if (value == null)
@@ -681,12 +809,22 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads an object from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
         public static object ReadObject(ByteBuffer buffer)
         {
             byte formatCode = Encoder.ReadFormatCode(buffer);
             return ReadObject(buffer, formatCode);
         }
 
+        /// <summary>
+        /// Reads an object from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        /// <returns></returns>
         public static object ReadObject(ByteBuffer buffer, byte formatCode)
         {
             Serializer serializer = GetSerializer(formatCode);
@@ -703,6 +841,11 @@ namespace Amqp.Types
             throw DecodeException(formatCode, buffer.Offset);
         }
 
+        /// <summary>
+        /// Reads a described value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static object ReadDescribed(ByteBuffer buffer, byte formatCode)
         {
             Fx.Assert(formatCode == FormatCode.Described, "Format code must be described (0)");
@@ -723,6 +866,11 @@ namespace Amqp.Types
             return described;
         }
 
+        /// <summary>
+        /// Reads a boolean value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static bool ReadBoolean(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.BooleanTrue)
@@ -744,6 +892,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads an unsigned byte value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static byte ReadUByte(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.UByte)
@@ -756,6 +909,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads an unsigned 16-bit integer from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static ushort ReadUShort(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.UShort)
@@ -768,6 +926,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads an unsigned 32-bit integer from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static uint ReadUInt(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.UInt0)
@@ -788,6 +951,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads an unsigned 64-bit integer from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static ulong ReadULong(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.ULong0)
@@ -808,6 +976,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a signed byte from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static sbyte ReadByte(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Byte)
@@ -820,6 +993,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a signed 16-bit integer from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static short ReadShort(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Short)
@@ -832,6 +1010,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a signed 32-bit integer from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static int ReadInt(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.SmallInt)
@@ -848,6 +1031,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a signed 64-bit integer from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static long ReadLong(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.SmallLong)
@@ -864,6 +1052,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a char value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static char ReadChar(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Char)
@@ -876,6 +1069,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a 32-bit floating-point value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static float ReadFloat(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Float)
@@ -888,6 +1086,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a 64-bit floating-point value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static double ReadDouble(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Double)
@@ -900,6 +1103,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a timestamp value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static DateTime ReadTimestamp(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.TimeStamp)
@@ -912,6 +1120,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a uuid value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static Guid ReadUuid(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Uuid)
@@ -924,6 +1137,11 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Reads a binary value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static byte[] ReadBinary(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Null)
@@ -953,16 +1171,31 @@ namespace Amqp.Types
             return value;
         }
 
+        /// <summary>
+        /// Reads a string value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static string ReadString(ByteBuffer buffer, byte formatCode)
         {
             return ReadString(buffer, formatCode, FormatCode.String8Utf8, FormatCode.String32Utf8, "string");
         }
 
+        /// <summary>
+        /// Reads a symbol value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static Symbol ReadSymbol(ByteBuffer buffer, byte formatCode)
         {
             return ReadString(buffer, formatCode, FormatCode.Symbol8, FormatCode.Symbol32, "symbol");
         }
 
+        /// <summary>
+        /// Reads a list value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static List ReadList(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Null)
@@ -1000,6 +1233,11 @@ namespace Amqp.Types
             return value;
         }
 
+        /// <summary>
+        /// Reads an array value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static Array ReadArray(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Null)
@@ -1041,6 +1279,11 @@ namespace Amqp.Types
             return value;
         }
 
+        /// <summary>
+        /// Reads a map value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
         public static Map ReadMap(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.Null)

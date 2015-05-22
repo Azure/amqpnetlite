@@ -19,8 +19,17 @@ namespace Amqp.Types
 {
     using System;
 
+    /// <summary>
+    /// A mapping from field name to value. The keys are restricted to be of type symbol.
+    /// </summary>
     public class Fields : Map
     {
+        /// <summary>
+        /// Creates a field object from an object in the array at the specified index.
+        /// </summary>
+        /// <param name="array">The object array.</param>
+        /// <param name="index">The index of the object in the array.</param>
+        /// <returns></returns>
         public static Fields From(object[] array, int index)
         {
             object obj = array[index];
@@ -47,7 +56,7 @@ namespace Amqp.Types
             }
         }
 
-        protected override void CheckKeyType(Type keyType)
+        internal override void CheckKeyType(Type keyType)
         {
             Map.ValidateKeyType(typeof(Symbol), keyType);
         }

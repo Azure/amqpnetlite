@@ -19,17 +19,27 @@ namespace Amqp.Serialization
 {
     using System;
 
+    /// <summary>
+    /// Specifies that the current type can be set to the provided type.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct,
         Inherited = true, AllowMultiple = true)]
     public sealed class AmqpProvidesAttribute : Attribute
     {
         readonly Type type;
 
+        /// <summary>
+        /// Initializes the attribute object.
+        /// </summary>
+        /// <param name="type">The provided type.</param>
         public AmqpProvidesAttribute(Type type)
         {
             this.type = type;
         }
 
+        /// <summary>
+        /// Gets the provided type.
+        /// </summary>
         public Type Type
         {
             get { return this.type; }

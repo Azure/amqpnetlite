@@ -20,13 +20,22 @@ namespace Amqp.Transactions
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// Defines the target for communicating with a transaction coordinator.
+    /// </summary>
     public sealed class Coordinator : DescribedList
     {
+        /// <summary>
+        /// Initializes a coordinator object.
+        /// </summary>
         public Coordinator()
             : base(Codec.Coordinator, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the capabilities field.
+        /// </summary>
         public Symbol[] Capabilities
         {
             get { return Codec.GetSymbolMultiple(this.Fields, 0); }
@@ -34,6 +43,10 @@ namespace Amqp.Transactions
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.GetDebugString(

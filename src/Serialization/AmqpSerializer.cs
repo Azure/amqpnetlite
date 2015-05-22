@@ -25,41 +25,87 @@ namespace Amqp.Serialization
     using System.Runtime.Serialization;
     using Amqp.Types;
 
+    /// <summary>
+    /// Serializes and deserializes an instance of an AMQP type.
+    /// The descriptor (name and code) is scoped to and must be
+    /// uniqueue within an instance of the serializer.
+    /// When the static Serialize and Deserialize methods are called,
+    /// the default instance is used.
+    /// </summary>
     public sealed class AmqpSerializer
     {
         static readonly AmqpSerializer instance = new AmqpSerializer();
         readonly Dictionary<Type, SerializableType> typeCache;
 
+        /// <summary>
+        /// Initializes a new instance of the AmqpSerializer class.
+        /// </summary>
         public AmqpSerializer()
         {
             this.typeCache = new Dictionary<Type, SerializableType>();
         }
 
+        /// <summary>
+        /// Serializes an instance of an AMQP type into a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        /// <param name="graph">The serializable AMQP object.</param>
         public static void Serialize(ByteBuffer buffer, object graph)
         {
             WriteObject(instance, buffer, graph);
         }
 
+        /// <summary>
+        /// Deserializes an instance of an AMQP type from a buffer.
+        /// </summary>
+        /// <typeparam name="T">The serializable type.</typeparam>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
         public static T Deserialize<T>(ByteBuffer buffer)
         {
             return ReadObject<T, T>(instance, buffer);
         }
 
+        /// <summary>
+        /// Deserializes an instance of an AMQP type from a buffer.
+        /// </summary>
+        /// <typeparam name="T">The serializable type.</typeparam>
+        /// <typeparam name="TAs">The return type of the deserialized object.</typeparam>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
         public static TAs Deserialize<T, TAs>(ByteBuffer buffer)
         {
             return ReadObject<T, TAs>(instance, buffer);
         }
 
+        /// <summary>
+        /// Writes an serializable object into a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="graph">The serializable object.</param>
         public void WriteObject(ByteBuffer buffer, object graph)
         {
             WriteObject(this, buffer, graph);
         }
 
+        /// <summary>
+        /// Reads an serializable object from a buffer.
+        /// </summary>
+        /// <typeparam name="T">The type of the serializable object.</typeparam>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <returns></returns>
         public T ReadObject<T>(ByteBuffer buffer)
         {
             return ReadObject<T, T>(this, buffer);
         }
 
+        /// <summary>
+        /// Reads an serializable object from a buffer.
+        /// </summary>
+        /// <typeparam name="T">The type of the serializable object.</typeparam>
+        /// <typeparam name="TAs">The return type of the deserialized object.</typeparam>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <returns></returns>
         public TAs ReadObject<T, TAs>(ByteBuffer buffer)
         {
             return ReadObject<T, TAs>(this, buffer);

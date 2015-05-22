@@ -19,14 +19,25 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The delivery-annotations section is used for delivery-specific non-standard
+    /// properties at the head of the message.
+    /// </summary>
     public sealed class DeliveryAnnotations : DescribedMap
     {
+        /// <summary>
+        /// Initializes a delivery annotations section.
+        /// </summary>
         public DeliveryAnnotations()
             : base(Codec.DeliveryAnnotations, typeof(Symbol))
         {
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current delivery annotations object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "delivery-annotations:" + base.ToString();

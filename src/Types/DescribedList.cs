@@ -19,16 +19,27 @@ namespace Amqp.Types
 {
     using System;
 
+    /// <summary>
+    /// The DescribedList class consist of a descriptor and an AMQP list.
+    /// </summary>
     public abstract class DescribedList : RestrictedDescribed
     {
         readonly object[] fields;
 
+        /// <summary>
+        /// Initializes the described list object.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the concrete described list class.</param>
+        /// <param name="fieldCount">The number of fields of the concrete described list class.</param>
         protected DescribedList(Descriptor descriptor, int fieldCount)
             : base(descriptor)
         {
             this.fields = new object[fieldCount];
         }
 
+        /// <summary>
+        /// Gets the array of all fields.
+        /// </summary>
         protected object[] Fields
         {
             get { return this.fields; }
@@ -50,6 +61,13 @@ namespace Amqp.Types
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string representing the current object for tracing purpose.
+        /// </summary>
+        /// <param name="name">The object name.</param>
+        /// <param name="fieldNames">The field names.</param>
+        /// <param name="fieldValues">The field values.</param>
+        /// <returns></returns>
         protected string GetDebugString(string name, object[] fieldNames, object[] fieldValues)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

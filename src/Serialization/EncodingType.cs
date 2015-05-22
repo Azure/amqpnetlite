@@ -17,9 +17,19 @@
 
 namespace Amqp.Serialization
 {
+    /// <summary>
+    /// Defines the encoding type of an AMQP serializable type.
+    /// </summary>
     public enum EncodingType
     {
+        /// <summary>
+        /// The type is encoded as an AMQP described list.
+        /// </summary>
         List,
+
+        /// <summary>
+        /// The type is encoded as an AMQP described map.
+        /// </summary>
         Map
     }
 }

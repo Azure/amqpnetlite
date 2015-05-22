@@ -19,8 +19,16 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// Outcome is a terminal delivery-state of a delivery.
+    /// </summary>
     public abstract class Outcome : DeliveryState
     {
+        /// <summary>
+        /// Initializes the outcome object.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the concrete outcome class.</param>
+        /// <param name="fieldCount">The number of fields of the concrete outcome class.</param>
         protected Outcome(Descriptor descriptor, int fieldCount)
             : base(descriptor, fieldCount)
         {

@@ -20,13 +20,22 @@ namespace Amqp.Framing
     using System.Collections;
     using Amqp.Types;
 
+    /// <summary>
+    /// A sequence section contains an arbitrary number of structured data elements.
+    /// </summary>
     public sealed class AmqpSequence : RestrictedDescribed
     {
+        /// <summary>
+        /// Initializes an AmqpSequence object.
+        /// </summary>
         public AmqpSequence()
             : base(Codec.AmqpSequence)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the list (data elements) in the section.
+        /// </summary>
         public IList List
         {
             get;

@@ -19,10 +19,17 @@ namespace Amqp.Types
 {
     using System;
 
+    /// <summary>
+    /// Defines symbolic values from a constrained domain.
+    /// </summary>
     public class Symbol
     {
         string value;
 
+        /// <summary>
+        /// Initializes a symbol value.
+        /// </summary>
+        /// <param name="value">The string value./</param>
         public Symbol(string value)
         {
             if (value == null)
@@ -33,27 +40,50 @@ namespace Amqp.Types
             this.value = value;
         }
 
+        /// <summary>
+        /// Converts a string value to a symbol implicitly.
+        /// </summary>
+        /// <param name="value">The string value.</param>
+        /// <returns></returns>
         public static implicit operator Symbol(string value)
         {
             return value == null ? null : new Symbol(value);
         }
 
+        /// <summary>
+        /// Converts a symbol to a string value implicitly.
+        /// </summary>
+        /// <param name="value">the symbol value.</param>
+        /// <returns></returns>
         public static implicit operator string(Symbol value)
         {
             return value == null ? null : value.value;
         }
 
+        /// <summary>
+        /// Compares equality of an object with the current symbol.
+        /// </summary>
+        /// <param name="obj">The object to compare.</param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             Symbol other = obj as Symbol;
             return other != null ? this.value.Equals(other.value) : false;
         }
 
+        /// <summary>
+        /// Gets the hash code of the symbol object.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return this.value.GetHashCode();
         }
 
+        /// <summary>
+        /// Returns a string that represents the current map object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.value.ToString();

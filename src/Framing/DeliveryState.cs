@@ -19,8 +19,17 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The Messaging layer defines a concrete set of delivery states which can be used
+    /// to indicate the state of the message at the receiver.
+    /// </summary>
     public abstract class DeliveryState : DescribedList
     {
+        /// <summary>
+        /// Initializes the delivery state object.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the concrete delivery state class.</param>
+        /// <param name="fieldCount">The number of fields of the concrete delivery state class.</param>
         protected DeliveryState(Descriptor descriptor, int fieldCount)
             : base(descriptor, fieldCount)
         {

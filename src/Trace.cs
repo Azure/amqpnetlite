@@ -25,10 +25,29 @@ namespace Amqp
     /// </summary>
     public enum TraceLevel
     {
+        /// <summary>
+        /// Specifies that error events should be traced.
+        /// </summary>
         Error = 0x01,
+
+        /// <summary>
+        /// Specifies that warning events should be traced.
+        /// </summary>
         Warning = 0x03,
+
+        /// <summary>
+        /// Specifies that informational events should be traced.
+        /// </summary>
         Information = 0x07,
+
+        /// <summary>
+        /// Specifies that verbose events should be traced.
+        /// </summary>
         Verbose = 0x0F,
+
+        /// <summary>
+        /// Specifies that AMQP frames should be traced.
+        /// </summary>
         Frame = 0x10
     }
 
@@ -54,6 +73,11 @@ namespace Amqp
         /// </summary>
         public static WriteTrace TraceListener;
 
+        /// <summary>
+        /// Writes a debug trace.
+        /// </summary>
+        /// <param name="format">The format string.</param>
+        /// <param name="args">The argument list.</param>
         [Conditional("DEBUG")]
         public static void Debug(string format, params object[] args)
         {
@@ -63,6 +87,11 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Writes a trace if the specified level is enabled.
+        /// </summary>
+        /// <param name="level">The trace level.</param>
+        /// <param name="format">The content to trace.</param>
         [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format)
         {
@@ -72,6 +101,12 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Writes a trace if the specified level is enabled.
+        /// </summary>
+        /// <param name="level">The trace level.</param>
+        /// <param name="format">The format string.</param>
+        /// <param name="arg1">The first argument.</param>
         [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format, object arg1)
         {
@@ -81,6 +116,13 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Writes a trace if the specified level is enabled.
+        /// </summary>
+        /// <param name="level">The trace level.</param>
+        /// <param name="format">The format string.</param>
+        /// <param name="arg1">The first argument.</param>
+        /// <param name="arg2">The second argument.</param>
         [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format, object arg1, object arg2)
         {
@@ -90,6 +132,14 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Writes a trace if the specified level is enabled.
+        /// </summary>
+        /// <param name="level">The trace level.</param>
+        /// <param name="format">The format string.</param>
+        /// <param name="arg1">The first argument.</param>
+        /// <param name="arg2">The second argument.</param>
+        /// <param name="arg3">The third argument.</param>
         [Conditional("TRACE")]
         public static void WriteLine(TraceLevel level, string format, object arg1, object arg2, object arg3)
         {

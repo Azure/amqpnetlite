@@ -19,13 +19,23 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The accepted outcome.
+    /// </summary>
     public sealed class Accepted : Outcome
     {
+        /// <summary>
+        /// Initializes an accepted outcome.
+        /// </summary>
         public Accepted()
             : base(Codec.Accepted, 0)
         {
         }
 
+        /// <summary>
+        /// Returns a string that represents the current accepted outcome.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
 #if TRACE

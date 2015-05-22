@@ -17,15 +17,29 @@
 
 namespace Amqp.Serialization
 {
+    /// <summary>
+    /// Specifies that a type is serializable by the AMQP serializer.
+    /// </summary>
     public interface IAmqpSerializable
     {
+        /// <summary>
+        /// Gets the encode size in bytes of an instance.
+        /// </summary>
         int EncodeSize
         {
             get;
         }
 
+        /// <summary>
+        /// Encodes the serializable object into a buffer.
+        /// </summary>
+        /// <param name="buffer"></param>
         void Encode(ByteBuffer buffer);
 
+        /// <summary>
+        /// Decodes and initializes the serializable object from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
         void Decode(ByteBuffer buffer);
     }
 }

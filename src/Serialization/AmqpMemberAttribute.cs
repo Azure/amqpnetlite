@@ -19,18 +19,28 @@ namespace Amqp.Serialization
 {
     using System;
 
+    /// <summary>
+    /// Specifies that the member is part of an AMQP serializable type.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field,
         AllowMultiple = false, Inherited = true)]
     public sealed class AmqpMemberAttribute : Attribute
     {
         int? order;
 
+        /// <summary>
+        /// Gets or sets the field name of the member.
+        /// </summary>
         public string Name 
         {
             get; 
             set; 
         }
 
+        /// <summary>
+        /// Gets or sets the order of the member in the list when encoding type is
+        /// set to list.
+        /// </summary>
         public int Order 
         {
             get { return this.order.HasValue ? this.order.Value : 0; }

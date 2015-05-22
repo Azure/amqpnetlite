@@ -20,11 +20,19 @@ namespace Amqp.Types
     using System;
     using System.Collections;
 
+    /// <summary>
+    /// The DescribedMap class consist of a descriptor and an AMQP map.
+    /// </summary>
     public abstract class DescribedMap : RestrictedDescribed
     {
         readonly Type keyType;
         Map map;
 
+        /// <summary>
+        /// Initializes the described map object.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the concrete described map class.</param>
+        /// <param name="keyType">The allowed key type.</param>
         protected DescribedMap(Descriptor descriptor, Type keyType)
             : base(descriptor)
         {
@@ -32,8 +40,16 @@ namespace Amqp.Types
             this.map = new Map();
         }
 
+        /// <summary>
+        /// Gets the map value.
+        /// </summary>
         public Map Map { get { return this.map; } }
 
+        /// <summary>
+        /// Gets the object associated with the key.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         public object this[object key]
         {
             get
@@ -59,6 +75,10 @@ namespace Amqp.Types
             Encoder.WriteMap(buffer, this.map, true);
         }
 
+        /// <summary>
+        /// Returns a string that represents the current map.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.map.ToString();

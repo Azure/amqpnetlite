@@ -19,14 +19,24 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The class defines the application properties section of an AMQP messages.
+    /// </summary>
     public sealed class ApplicationProperties : DescribedMap
     {
+        /// <summary>
+        /// Initializes the application properties section.
+        /// </summary>
         public ApplicationProperties()
             : base(Codec.ApplicationProperties, typeof(string))
         {
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "app-properties:" + base.ToString();

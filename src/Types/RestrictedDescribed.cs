@@ -17,15 +17,26 @@
 
 namespace Amqp.Types
 {
+    /// <summary>
+    /// The RestrictedDescribed class is an AMQP described value, whose descriptor is
+    /// restricted to symbol or ulong.
+    /// </summary>
     public abstract class RestrictedDescribed : Described
     {
         readonly Descriptor descriptor;
 
+        /// <summary>
+        /// Initializes a described value.
+        /// </summary>
+        /// <param name="descriptor">The descriptor of the value.</param>
         protected RestrictedDescribed(Descriptor descriptor)
         {
             this.descriptor = descriptor;
         }
 
+        /// <summary>
+        /// Gets the descriptor.
+        /// </summary>
         public Descriptor Descriptor
         {
             get { return this.descriptor; }

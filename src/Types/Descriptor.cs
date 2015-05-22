@@ -17,11 +17,26 @@
 
 namespace Amqp.Types
 {
+    /// <summary>
+    /// The descriptor of a described type.
+    /// </summary>
     public sealed class Descriptor
     {
+        /// <summary>
+        /// The descriptor name.
+        /// </summary>
         public readonly string Name;
+
+        /// <summary>
+        /// The descriptor code.
+        /// </summary>
         public readonly ulong Code;
 
+        /// <summary>
+        /// Initializes a descriptor object.
+        /// </summary>
+        /// <param name="code">The descriptor code.</param>
+        /// <param name="name">The descriptor name.</param>
         public Descriptor(ulong code, string name)
         {
             this.Code = code;

@@ -19,14 +19,25 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// The message-annotations section is used for properties of the message which are
+    /// aimed at the infrastructure and should be propagated across every delivery step.
+    /// </summary>
     public sealed class MessageAnnotations : DescribedMap
     {
+        /// <summary>
+        /// Initializes a message annotations section.
+        /// </summary>
         public MessageAnnotations()
             : base(Codec.MessageAnnotations, typeof(Symbol))
         {
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current message annotations object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return "msg-annotations:" + base.ToString();

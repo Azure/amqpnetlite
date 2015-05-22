@@ -19,8 +19,16 @@ namespace Amqp.Types
 {
     using System;
 
+    /// <summary>
+    /// A Map class is an AMQP map.
+    /// </summary>
     public partial class Map
     {
+        /// <summary>
+        /// Gets or sets an item in the map.
+        /// </summary>
+        /// <param name="key">The key of the item.</param>
+        /// <returns></returns>
         public new object this[object key]
         {
             get
@@ -44,11 +52,15 @@ namespace Amqp.Types
             }
         }
 
-        protected virtual void CheckKeyType(Type keyType)
+        internal virtual void CheckKeyType(Type keyType)
         {
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current map object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             var sb = new System.Text.StringBuilder(64);

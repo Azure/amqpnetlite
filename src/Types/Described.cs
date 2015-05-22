@@ -17,8 +17,15 @@
 
 namespace Amqp.Types
 {
+    /// <summary>
+    /// A Described class represents an AMQP described value.
+    /// </summary>
     public abstract class Described
     {
+        /// <summary>
+        /// Encodes the current described value into a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
         public void Encode(ByteBuffer buffer)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Described);
@@ -26,6 +33,10 @@ namespace Amqp.Types
             this.EncodeValue(buffer);
         }
 
+        /// <summary>
+        /// Decodes the descriptor and the value of the current object from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
         public void Decode(ByteBuffer buffer)
         {
             Encoder.ReadFormatCode(buffer);

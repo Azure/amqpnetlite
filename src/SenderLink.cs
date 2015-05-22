@@ -218,6 +218,11 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Closes the sender link.
+        /// </summary>
+        /// <param name="error">The error for the closure.</param>
+        /// <returns></returns>
         protected override bool OnClose(Error error)
         {
             this.OnAbort(error);
@@ -225,6 +230,10 @@ namespace Amqp
             return base.OnClose(error);
         }
 
+        /// <summary>
+        /// Aborts the sender link.
+        /// </summary>
+        /// <param name="error">The error for the abort.</param>
         protected override void OnAbort(Error error)
         {
             Delivery toRelease = null;

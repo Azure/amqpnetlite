@@ -269,6 +269,11 @@ namespace Amqp
         {
         }
 
+        /// <summary>
+        /// Closes the receiver link.
+        /// </summary>
+        /// <param name="error">The error for the closure.</param>
+        /// <returns></returns>
         protected override bool OnClose(Error error)
         {
             this.OnAbort(error);
@@ -276,6 +281,10 @@ namespace Amqp
             return base.OnClose(error);
         }
 
+        /// <summary>
+        /// Aborts the receiver link.
+        /// </summary>
+        /// <param name="error">The error for the abort.</param>
         protected override void OnAbort(Error error)
         {
             Waiter waiter;

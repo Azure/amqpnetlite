@@ -19,22 +19,37 @@ namespace Amqp.Types
 {
     using System;
 
+    /// <summary>
+    /// A described value consist of a descriptor and a value. Both of them are valid
+    /// AMQP types.
+    /// </summary>
     public class DescribedValue : Described
     {
         object descriptor;
         object value;
 
+        /// <summary>
+        /// Initializes a described value.
+        /// </summary>
+        /// <param name="descriptor">The descriptor object.</param>
+        /// <param name="value">The value object.</param>
         public DescribedValue(object descriptor, object value)
         {
             this.descriptor = descriptor;
             this.value = value;
         }
 
+        /// <summary>
+        /// Gets the descriptor object.
+        /// </summary>
         public object Descriptor
         {
             get { return this.descriptor; }
         }
 
+        /// <summary>
+        /// Gets the value object.
+        /// </summary>
         public object Value
         {
             get { return this.value; }
@@ -61,6 +76,10 @@ namespace Amqp.Types
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.value == null ? "nil" : this.value.ToString();
