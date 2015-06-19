@@ -130,7 +130,7 @@
     <value>Operation '{0}' is not valid under state: {1}.</value>
   </data>
   <data name="AmqpInvalidFormatCode" xml:space="preserve">
-    <value>The format code '{0}' at frame buffer offset '{1}' is invalid (expected: {2}).</value>
+    <value>The format code '{0}' at frame buffer offset '{1}' is invalid.</value>
   </data>
   <data name="AmqpOperationNotSupported" xml:space="preserve">
     <value>{0} is not supported over AMQP.</value>
