@@ -15,38 +15,56 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Listener
+namespace Amqp
 {
-    using System.Threading;
-    using Amqp.Framing;
-
     /// <summary>
-    /// An AMQP connection used by the listener.
+    /// Contains the AMQP settings for a connection.
     /// </summary>
-    public class ListenerConnection : Connection
+    public class AmqpSettings
     {
-        readonly ConnectionListener listener;
-
-        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
-            : base(listener.AMQP, address, transport, null, null)
+        /// <summary>
+        /// Gets or sets the open.max-frame-size field.
+        /// </summary>
+        public int MaxFrameSize
         {
-            this.listener = listener;
+            get;
+            set;
         }
 
-        internal ConnectionListener Listener
+        /// <summary>
+        /// Gets or sets the open.container-id field.
+        /// </summary>
+        public string ContainerId
         {
-            get { return this.listener; }
+            get;
+            set;
         }
 
-        internal override void OnBegin(ushort remoteChannel, Begin begin)
+        /// <summary>
+        /// Gets or sets the open.hostname field.
+        /// </summary>
+        public string HostName
         {
-            // this sends a begin to the remote peer
-            begin.RemoteChannel = remoteChannel;
-            var session = new ListenerSession(this, begin);
+            get;
+            set;
+        }
 
-            // this updates the local session state
-            begin.RemoteChannel = session.Channel;
-            base.OnBegin(remoteChannel, begin);
+        /// <summary>
+        /// Gets or sets the open.channel-max field.
+        /// </summary>
+        public ushort MaxSessionsPerConnection
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the open.idle-time-out field.
+        /// </summary>
+        public int IdleTimeout
+        {
+            get;
+            set;
         }
     }
 }

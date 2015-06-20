@@ -23,6 +23,7 @@ namespace Amqp.Sasl
 
     sealed class SaslPlainProfile : SaslProfile
     {
+        public const string Name = "PLAIN";
         readonly string user;
         readonly string password;
         
@@ -47,7 +48,7 @@ namespace Amqp.Sasl
 
             SaslInit init = new SaslInit()
             {
-                Mechanism = "PLAIN",
+                Mechanism = Name,
                 InitialResponse = message,
                 HostName = hostname
             };

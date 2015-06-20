@@ -21,6 +21,27 @@ namespace Amqp.Sasl
     {
         public abstract string Name { get; }
 
+        public static SaslMechanism External
+        {
+            get
+            {
+                return new SaslExternalMechanism();
+            }
+        }
+
         public abstract SaslProfile CreateProfile();
+
+        class SaslExternalMechanism : SaslMechanism
+        {
+            public override string Name
+            {
+                get { return SaslExternalProfile.Name; }
+            }
+
+            public override SaslProfile CreateProfile()
+            {
+                return SaslProfile.External;
+            }
+        }
     }
 }

@@ -99,6 +99,7 @@
     <Compile Include="NetCore\ConnectionFactory.cs" />
     <Compile Include="NetCore\TcpTransport.cs" />
     <Compile Include="NetCore\WebSocketTransport.cs" />
+    <Compile Include="Net\AmqpSettings.cs" />
     <Compile Include="Net\AsyncPump.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
     <Compile Include="Net\TaskExtensions.cs">

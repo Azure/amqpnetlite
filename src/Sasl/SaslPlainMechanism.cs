@@ -35,7 +35,7 @@ namespace Amqp.Sasl
 
         public override string Name
         {
-	        get { return "PLAIN"; }
+            get { return Amqp.Sasl.SaslPlainProfile.Name; }
         }
 
         public override SaslProfile CreateProfile()

@@ -103,12 +103,12 @@ namespace Amqp
         }
 
 #if DOTNET || NETFX_CORE
-        internal Connection(ConnectionFactory factory, Address address, IAsyncTransport transport, Open open, OnOpened onOpened)
-            : this(factory.amqpSettings.MaxSessionsPerConnection)
+        internal Connection(AmqpSettings amqpSettings, Address address, IAsyncTransport transport, Open open, OnOpened onOpened)
+            : this(amqpSettings.MaxSessionsPerConnection)
         {
             this.address = address;
             this.onOpened = onOpened;
-            this.maxFrameSize = (uint)factory.amqpSettings.MaxFrameSize;
+            this.maxFrameSize = (uint)amqpSettings.MaxFrameSize;
             this.transport = transport;
             transport.SetConnection(this);
 
@@ -117,8 +117,8 @@ namespace Amqp
             {
                 open = new Open()
                 {
-                    ContainerId = factory.amqpSettings.ContainerId,
-                    HostName = factory.amqpSettings.HostName ?? this.address.Host
+                    ContainerId = amqpSettings.ContainerId,
+                    HostName = amqpSettings.HostName ?? this.address.Host
                 };
             }
 

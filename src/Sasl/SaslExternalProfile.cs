@@ -17,10 +17,13 @@
 
 namespace Amqp.Sasl
 {
+    using Amqp.Framing;
     using Amqp.Types;
 
     sealed class SaslExternalProfile : SaslProfile
     {
+        public const string Name = "EXTERNAL";
+
         public SaslExternalProfile()
         {
         }
@@ -32,12 +35,21 @@ namespace Amqp.Sasl
 
         protected override DescribedList GetStartCommand(string hostname)
         {
-            return new SaslInit() { Mechanism = "EXTERNAL" };
+            return new SaslInit() { Mechanism = Name };
         }
 
         protected override DescribedList OnCommand(DescribedList command)
         {
-            return null;
+            if (command.Descriptor.Code == Codec.SaslInit.Code)
+            {
+                return new SaslOutcome() { Code = SaslCode.Ok };
+            }
+            else if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
+            {
+                return null;
+            }
+
+            throw new AmqpException(ErrorCode.NotAllowed, command.ToString());
         }
     }
 }

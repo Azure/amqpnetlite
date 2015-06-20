@@ -64,6 +64,14 @@ namespace Amqp.Listener
         }
 
         /// <summary>
+        /// Gets a list of connection listeners in this container.
+        /// </summary>
+        public IList<ConnectionListener> Listeners
+        {
+            get { return this.listeners; }
+        }
+
+        /// <summary>
         /// Opens the container host object.
         /// </summary>
         public void Open()

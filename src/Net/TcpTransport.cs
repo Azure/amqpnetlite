@@ -91,7 +91,7 @@ namespace Amqp
             if (address.UseSsl)
             {
                 SslStream sslStream;
-                var ssl = factory.sslSettings;
+                var ssl = factory.SslInternal;
                 if (ssl == null)
                 {
                     sslStream = new SslStream(new NetworkStream(socket));

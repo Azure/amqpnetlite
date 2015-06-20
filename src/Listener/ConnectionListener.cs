@@ -23,6 +23,7 @@ namespace Amqp.Listener
     using System.Net.Security;
     using System.Net.Sockets;
     using System.Net.WebSockets;
+    using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Amqp.Framing;
@@ -32,13 +33,14 @@ namespace Amqp.Listener
     /// <summary>
     /// The conneciton listener accepts AMQP connections from an address.
     /// </summary>
-    public class ConnectionListener : ConnectionFactory
+    public class ConnectionListener : ConnectionFactoryBase
     {
         readonly IContainer container;
-        readonly TransportListener listener;
-        readonly SaslMechanism[] saslMechanisms;
         readonly HashSet<Connection> connections;
         readonly Address address;
+        TransportListener listener;
+        SslSettings sslSettings;
+        SaslSettings saslSettings;
 
         /// <summary>
         /// Initializes the connection listener object.
@@ -50,29 +52,22 @@ namespace Amqp.Listener
             : base()
         {
             this.connections = new HashSet<Connection>();
-            this.saslMechanisms = CreateSaslMechanisms(userInfo);
             this.container = container;
-            this.address = new Address(addressUri.Host, addressUri.Port, null, null, "/", addressUri.Scheme);
-            if (addressUri.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
+
+            string userName = null;
+            string password = null;
+            if (userInfo != null)
             {
-                this.listener = new TcpTransportListener(this, addressUri.Host, addressUri.Port);
+                string[] creds = userInfo.Split(':');
+                if (creds.Length != 2)
+                {
+                    throw new ArgumentException("userInfo");
+                }
+                userName = Uri.UnescapeDataString(creds[0]);
+                password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
             }
-            else if (addressUri.Scheme.Equals(Address.Amqps, StringComparison.OrdinalIgnoreCase))
-            {
-                this.listener = new TlsTransportListener(this, addressUri.Host, addressUri.Port, container.ServiceCertificate);
-            }
-            else if (addressUri.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
-            {
-                this.listener = new WebSocketTransportListener(this, addressUri.Host, address.Port, address.Path, null);
-            }
-            else if (addressUri.Scheme.Equals(WebSocketTransport.SecureWebSockets, StringComparison.OrdinalIgnoreCase))
-            {
-                this.listener = new WebSocketTransportListener(this, addressUri.Host, address.Port, address.Path, container.ServiceCertificate);
-            }
-            else
-            {
-                throw new NotSupportedException(addressUri.Scheme);
-            }
+
+            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, "/", addressUri.Scheme);
         }
 
         /// <summary>
@@ -84,10 +79,66 @@ namespace Amqp.Listener
         }
 
         /// <summary>
+        /// Gets the address the listener is listening on.
+        /// </summary>
+        public Address Address
+        {
+            get { return this.address; }
+        }
+
+        /// <summary>
+        /// Gets the TLS/SSL settings on the listener.
+        /// </summary>
+        public SslSettings SSL
+        {
+            get
+            {
+                return this.sslSettings ?? (this.sslSettings = new SslSettings());
+            }
+        }
+
+        /// <summary>
+        /// Gets the SASL settings on the listener.
+        /// </summary>
+        public SaslSettings SASL
+        {
+            get
+            {
+                return this.saslSettings ?? (this.saslSettings = new SaslSettings());
+            }
+        }
+
+        /// <summary>
         /// Opens the listener.
         /// </summary>
         public void Open()
         {
+            if (this.address.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
+            {
+                this.listener = new TcpTransportListener(this, this.address.Host, this.address.Port);
+            }
+            else if (this.address.Scheme.Equals(Address.Amqps, StringComparison.OrdinalIgnoreCase))
+            {
+                this.listener = new TlsTransportListener(this, this.address.Host, this.address.Port, this.GetServiceCertificate());
+            }
+            else if (this.address.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
+            {
+                this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, null);
+            }
+            else if (this.address.Scheme.Equals(WebSocketTransport.SecureWebSockets, StringComparison.OrdinalIgnoreCase))
+            {
+                this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, this.GetServiceCertificate());
+            }
+            else
+            {
+                throw new NotSupportedException(this.address.Scheme);
+            }
+
+            if (this.address.User != null)
+            {
+                this.SASL.EnablePlainMechanism(this.address.User, this.address.Password);
+            }
+
             this.listener.Open();
         }
 
@@ -99,22 +150,23 @@ namespace Amqp.Listener
             this.listener.Close();
         }
 
-        static SaslMechanism[] CreateSaslMechanisms(string userInfo)
+        X509Certificate2 GetServiceCertificate()
         {
-            if (string.IsNullOrEmpty(userInfo))
+            if (this.sslSettings != null && this.sslSettings.Certificate != null)
             {
-                return null;
+                return this.sslSettings.Certificate;
+            }
+            else if (this.container.ServiceCertificate != null)
+            {
+                return this.container.ServiceCertificate;
             }
 
-            string[] creds = userInfo.Split(':');
-            string userName = Uri.UnescapeDataString(creds[0]);
-            string password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
-            return new SaslPlainMechanism[] { new SaslPlainMechanism(userName, password) };
+            throw new ArgumentNullException("certificate");
         }
 
         async Task HandleTransportAsync(IAsyncTransport transport)
         {
-            if (this.saslMechanisms != null)
+            if (this.saslSettings != null)
             {
                 ListenerSasProfile profile = new ListenerSasProfile(this);
                 transport = await profile.OpenAsync(null, transport);
@@ -136,6 +188,121 @@ namespace Amqp.Listener
             lock (this.connections)
             {
                 this.connections.Remove((Connection)sender);
+            }
+        }
+
+        /// <summary>
+        /// Contains the TLS/SSL settings for a connection.
+        /// </summary>
+        public class SslSettings
+        {
+            internal SslSettings()
+            {
+                this.Protocols = SslProtocols.Default;
+            }
+
+            /// <summary>
+            /// Gets or sets the listener certificate.
+            /// </summary>
+            public X509Certificate2 Certificate
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets a a Boolean value that specifies whether the client must supply a certificate for authentication.
+            /// </summary>
+            public bool ClientCertificateRequired
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets the supported protocols to use.
+            /// </summary>
+            public SslProtocols Protocols
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Specifies whether certificate revocation should be performed during handshake.
+            /// </summary>
+            public bool CheckCertificateRevocation
+            {
+                get;
+                set;
+            }
+
+            /// <summary>
+            /// Gets or sets a certificate validation callback to validate remote certificate.
+            /// </summary>
+            public RemoteCertificateValidationCallback RemoteCertificateValidationCallback
+            {
+                get;
+                set;
+            }
+        }
+
+        /// <summary>
+        /// Contains the SASL settings for a connection.
+        /// </summary>
+        public class SaslSettings
+        {
+            Dictionary<Symbol, SaslMechanism> mechanisms;
+
+            internal SaslSettings()
+            {
+                this.mechanisms = new Dictionary<Symbol, SaslMechanism>();
+            }
+
+            internal Symbol[] Mechanisms
+            {
+                get
+                {
+                    return new List<Symbol>(this.mechanisms.Keys).ToArray();
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets a value indicating if SASL EXTERNAL mechanism is enabled.
+            /// </summary>
+            public bool EnableExternalMechanism
+            {
+                get
+                {
+                    return this.mechanisms.ContainsKey(SaslExternalProfile.Name);
+                }
+
+                set
+                {
+                    if (value)
+                    {
+                        this.mechanisms[SaslExternalProfile.Name] = SaslMechanism.External;
+                    }
+                    else
+                    {
+                        this.mechanisms.Remove(SaslExternalProfile.Name);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Enables SASL PLAIN mechanism.
+            /// </summary>
+            /// <param name="userName"></param>
+            /// <param name="password"></param>
+            public void EnablePlainMechanism(string userName, string password)
+            {
+                this.mechanisms[SaslPlainProfile.Name] = new SaslPlainMechanism(userName, password);
+            }
+
+            internal bool TryGetMechanism(Symbol name, out SaslMechanism mechanism)
+            {
+                return this.mechanisms.TryGetValue(name, out mechanism);
             }
         }
 
@@ -161,12 +328,7 @@ namespace Amqp.Listener
 
             protected override DescribedList GetStartCommand(string hostname)
             {
-                Symbol[] symbols = new Symbol[this.listener.saslMechanisms.Length];
-                for (int i = 0; i < symbols.Length; i++)
-                {
-                    symbols[i] = this.listener.saslMechanisms[i].Name;
-                }
-
+                Symbol[] symbols = this.listener.saslSettings.Mechanisms;
                 return new SaslMechanisms() { SaslServerMechanisms = symbols };
             }
 
@@ -177,19 +339,13 @@ namespace Amqp.Listener
                     if (command.Descriptor.Code == Codec.SaslInit.Code)
                     {
                         var init = (SaslInit)command;
-                        for (int i = 0; i < this.listener.saslMechanisms.Length; i++)
-                        {
-                            if (this.listener.saslMechanisms[i].Name == (string)init.Mechanism)
-                            {
-                                this.innerProfile = this.listener.saslMechanisms[i].CreateProfile();
-                                break;
-                            }
-                        }
-
-                        if (this.innerProfile == null)
+                        SaslMechanism saslMechanism;
+                        if (!this.listener.saslSettings.TryGetMechanism(init.Mechanism, out saslMechanism))
                         {
                             throw new AmqpException(ErrorCode.NotImplemented, init.Mechanism);
                         }
+
+                        this.innerProfile = saslMechanism.CreateProfile();
                     }
                     else
                     {
@@ -319,6 +475,10 @@ namespace Amqp.Listener
 
                         var task = this.HandleSocketAsync(acceptSocket);
                     }
+                    catch (ObjectDisposedException)
+                    {
+                        // listener is closed
+                    }
                     catch (Exception exception)
                     {
                         Trace.WriteLine(TraceLevel.Warning, exception.ToString());
@@ -341,14 +501,18 @@ namespace Amqp.Listener
 
             protected override async Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
-                var sslStream = new SslStream(new NetworkStream(socket));
+                SslStream sslStream;
                 if (this.Listener.sslSettings == null)
                 {
+                    sslStream = new SslStream(new NetworkStream(socket));
                     await sslStream.AuthenticateAsServerAsync(this.certificate);
                 }
                 else
                 {
-                    await sslStream.AuthenticateAsServerAsync(this.certificate, this.Listener.sslSettings.ClientCertificates.Count > 0,
+                    sslStream = new SslStream(new NetworkStream(socket), false,
+                        this.Listener.sslSettings.RemoteCertificateValidationCallback);
+
+                    await sslStream.AuthenticateAsServerAsync(this.certificate, this.Listener.sslSettings.ClientCertificateRequired,
                         this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation);
                 }
 

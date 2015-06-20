@@ -17,10 +17,7 @@
 
 namespace Amqp
 {
-    using System;
-    using System.Diagnostics;
     using System.Net.Security;
-    using System.Net.Sockets;
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
@@ -30,41 +27,17 @@ namespace Amqp
     /// <summary>
     /// The factory to create connections asynchronously.
     /// </summary>
-    public class ConnectionFactory
+    public class ConnectionFactory : ConnectionFactoryBase
     {
-        internal TcpSettings tcpSettings;
-        internal SslSettings sslSettings;
-        internal SaslSettings saslSettings;
-        internal AmqpSettings amqpSettings;
+        SslSettings sslSettings;
+        SaslSettings saslSettings;
 
         /// <summary>
         /// Constructor to create a connection factory.
         /// </summary>
         public ConnectionFactory()
+            : base()
         {
-            this.tcpSettings = new TcpSettings()
-            {
-                NoDelay = true
-            };
-
-            this.amqpSettings = new AmqpSettings()
-            {
-                MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
-                ContainerId = Process.GetCurrentProcess().ProcessName,
-                IdleTimeout = int.MaxValue,
-                MaxSessionsPerConnection = 8
-            };
-        }
-
-        /// <summary>
-        /// Gets the TCP settings on the factory.
-        /// </summary>
-        public TcpSettings TCP
-        {
-            get
-            {
-                return this.tcpSettings ?? (this.tcpSettings = new TcpSettings());
-            }
         }
 
         /// <summary>
@@ -89,12 +62,9 @@ namespace Amqp
             }
         }
 
-        /// <summary>
-        /// Gets the AMQP settings on the factory.
-        /// </summary>
-        public AmqpSettings AMQP
+        internal SslSettings SslInternal
         {
-            get { return this.amqpSettings; }
+            get { return this.sslSettings; }
         }
 
         /// <summary>
@@ -141,87 +111,10 @@ namespace Amqp
             }
 
             AsyncPump pump = new AsyncPump(transport);
-            Connection connection = new Connection(this, address, transport, open, onOpened);
+            Connection connection = new Connection(this.AMQP, address, transport, open, onOpened);
             pump.Start(connection);
 
             return connection;
-        }
-
-        /// <summary>
-        /// Contains the TCP settings for a connection.
-        /// </summary>
-        public class TcpSettings
-        {
-            const int DefaultBufferSize = 8192;
-            bool? noDelay;
-            int? receiveBufferSize;
-            int? receiveTimeout;
-            int? sendBufferSize;
-            int? sendTimeout;
-
-            /// <summary>
-            /// Specifies the LingerOption option of the TCP socket.
-            /// </summary>
-            public LingerOption LingerOption
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Specifies the NoDelay option of the TCP socket.
-            /// </summary>
-            public bool NoDelay
-            {
-                get { return this.noDelay ?? false; }
-                set { this.noDelay = value; }
-            }
-
-            /// <summary>
-            /// Specifies the ReceiveBufferSize option of the TCP socket.
-            /// </summary>
-            public int ReceiveBufferSize
-            {
-                get { return this.receiveBufferSize ?? DefaultBufferSize; }
-                set { this.receiveBufferSize = value; }
-            }
-
-            /// <summary>
-            /// Specifies the ReceiveTimeout option of the TCP socket.
-            /// </summary>
-            public int ReceiveTimeout
-            {
-                get { return this.receiveTimeout ?? 0; }
-                set { this.receiveTimeout = value; }
-            }
-
-            /// <summary>
-            /// Specifies the SendBufferSize option of the TCP socket.
-            /// </summary>
-            public int SendBufferSize
-            {
-                get { return this.sendBufferSize ?? DefaultBufferSize; }
-                set { this.sendBufferSize = value; }
-            }
-
-            /// <summary>
-            /// Specifies the SendTimeout option of the TCP socket.
-            /// </summary>
-            public int SendTimeout
-            {
-                get { return this.sendTimeout ?? 0; }
-                set { this.sendTimeout = value; }
-            }
-
-            internal void Configure(Socket socket)
-            {
-                if (this.noDelay != null) socket.NoDelay = this.noDelay.Value;
-                if (this.receiveBufferSize != null) socket.ReceiveBufferSize = this.receiveBufferSize.Value;
-                if (this.receiveTimeout != null) socket.ReceiveTimeout = this.receiveTimeout.Value;
-                if (this.sendBufferSize != null) socket.SendBufferSize = this.sendBufferSize.Value;
-                if (this.sendTimeout != null) socket.SendTimeout = this.sendTimeout.Value;
-                if (this.LingerOption != null) socket.LingerState = this.LingerOption;
-            }
         }
 
         /// <summary>
@@ -281,57 +174,6 @@ namespace Amqp
             /// The SASL profile to use for SASL negotiation.
             /// </summary>
             public SaslProfile Profile
-            {
-                get;
-                set;
-            }
-        }
-
-        /// <summary>
-        /// Contains the AMQP settings for a connection.
-        /// </summary>
-        public class AmqpSettings
-        {
-            /// <summary>
-            /// Gets or sets the open.max-frame-size field.
-            /// </summary>
-            public int MaxFrameSize
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.container-id field.
-            /// </summary>
-            public string ContainerId
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.hostname field.
-            /// </summary>
-            public string HostName
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.channel-max field.
-            /// </summary>
-            public ushort MaxSessionsPerConnection
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.idle-time-out field.
-            /// </summary>
-            public int IdleTimeout
             {
                 get;
                 set;

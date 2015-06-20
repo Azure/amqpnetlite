@@ -107,7 +107,7 @@ namespace Amqp
             }
 
             AsyncPump pump = new AsyncPump(transport);
-            Connection connection = new Connection(this, address, transport, open, onOpened);
+            Connection connection = new Connection(this.AMQP, address, transport, open, onOpened);
             pump.Start(connection);
 
             return connection;
@@ -122,57 +122,6 @@ namespace Amqp
             /// The SASL profile to use for SASL negotiation.
             /// </summary>
             public SaslProfile Profile
-            {
-                get;
-                set;
-            }
-        }
-
-        /// <summary>
-        /// Contains the AMQP settings for a connection.
-        /// </summary>
-        public class AmqpSettings
-        {
-            /// <summary>
-            /// Gets or sets the open.max-frame-size field.
-            /// </summary>
-            public int MaxFrameSize
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.container-id field.
-            /// </summary>
-            public string ContainerId
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.hostname field.
-            /// </summary>
-            public string HostName
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.channel-max field.
-            /// </summary>
-            public ushort MaxSessionsPerConnection
-            {
-                get;
-                set;
-            }
-
-            /// <summary>
-            /// Gets or sets the open.idle-time-out field.
-            /// </summary>
-            public int IdleTimeout
             {
                 get;
                 set;

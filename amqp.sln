@@ -68,6 +68,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetCore", "src\Amqp.Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device.Controller2", "Examples\Device\Device.Controller2\Device.Controller2.csproj", "{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.Certificate", "Examples\PeerToPeer\PeerToPeer.Certificate\PeerToPeer.Certificate.csproj", "{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -368,6 +370,16 @@ Global
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C}.Release|x86.ActiveCfg = Release|x86
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C}.Release|x86.Build.0 = Release|x86
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C}.Release|x86.Deploy.0 = Release|x86
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|ARM.ActiveCfg = Release|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|x64.ActiveCfg = Release|Any CPU
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -388,5 +400,6 @@ Global
 		{23F5A590-C6D6-4FF7-A787-5AEE6A9522A7} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{36F33391-4918-4C6D-9CAE-1ECD32262257} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
+		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 	EndGlobalSection
 EndGlobal
