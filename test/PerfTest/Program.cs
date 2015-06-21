@@ -18,7 +18,7 @@
 namespace PerfTest
 {
     using System;
-    using System.Reflection;
+    using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using Amqp;
     using Amqp.Framing;
@@ -110,6 +110,17 @@ namespace PerfTest
 
             public abstract void Run();
 
+            protected Connection CreateConnection(Address address)
+            {
+                var factory = new ConnectionFactory();
+                if (address.Scheme.Equals("amqps", StringComparison.OrdinalIgnoreCase))
+                {
+                    factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+                }
+
+                return factory.CreateAsync(address).Result;
+            }
+
             protected bool OnStart()
             {
                 return Interlocked.Increment(ref this.started) <= this.count || this.count == 0;
@@ -167,7 +178,7 @@ namespace PerfTest
 
             public override void Run()
             {
-                Connection connection = new Connection(new Address(this.Args.Address));
+                Connection connection = this.CreateConnection(new Address(this.Args.Address));
                 Session session = new Session(connection);
 
                 Attach attach = new Attach()
@@ -218,7 +229,7 @@ namespace PerfTest
 
             public override void Run()
             {
-                Connection connection = new Connection(new Address(this.Args.Address));
+                Connection connection = this.CreateConnection(new Address(this.Args.Address));
                 Session session = new Session(connection);
 
                 Attach attach = new Attach()
@@ -259,7 +270,8 @@ namespace PerfTest
             public override void Run()
             {
                 Uri addressUri = new Uri(this.Args.Address);
-                ContainerHost host = new ContainerHost(new Uri[] { addressUri }, null, addressUri.UserInfo);
+                X509Certificate2 certificate = Extensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
+                ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
                 host.Open();
                 Console.WriteLine("Container host is listening on {0}:{1}", addressUri.Host, addressUri.Port);
 
@@ -304,6 +316,13 @@ namespace PerfTest
                 protected set;
             }
 
+            [Argument(Name = "cert", Shortcut = "f", Description = "certificate for SSL authentication. Default to address.host")]
+            public string CertValue
+            {
+                get;
+                protected set;
+            }
+
             [Argument(Name = "node", Shortcut = "n", Description = "name of the AMQP node", Default = "q1")]
             public string Node
             {
@@ -311,7 +330,7 @@ namespace PerfTest
                 protected set;
             }
 
-            [Argument(Name = "count", Shortcut = "c", Description = "total number of messages to send or receive", Default = 100000)]
+            [Argument(Name = "count", Shortcut = "c", Description = "total number of messages to send or receive (0: infinite)", Default = 100000)]
             public int Count
             {
                 get;
@@ -325,14 +344,14 @@ namespace PerfTest
                 protected set;
             }
 
-            [Argument(Name = "queue", Shortcut = "q", Description = "outgoing queue depth", Default = 1000)]
+            [Argument(Name = "queue", Shortcut = "q", Description = "outgoing queue depth (link credit)", Default = 1000)]
             public int Queue
             {
                 get;
                 protected set;
             }
 
-            [Argument(Name = "progess", Shortcut = "p", Description = "report progess for every this number of messages")]
+            [Argument(Name = "progess", Shortcut = "p", Description = "report progess for every this number of messages", Default = 1000)]
             public int Progress
             {
                 get;

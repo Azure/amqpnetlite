@@ -19,10 +19,11 @@ namespace PerfTest
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
+    using System.Security.Cryptography.X509Certificates;
     using System.Text;
     using Amqp;
     using Amqp.Framing;
-    using System.Reflection;
 
     static class Extensions
     {
@@ -41,6 +42,48 @@ namespace PerfTest
         {
             ushort tuple = GetSettleModeMapping()[mode];
             return (ReceiverSettleMode)(tuple & 0xFF);
+        }
+
+        public static X509Certificate2 GetCertificate(string scheme, string host, string certFindValue)
+        {
+            if (!scheme.Equals("amqps", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            if (certFindValue == null)
+            {
+                certFindValue = host;
+            }
+
+            StoreLocation[] locations = new StoreLocation[] { StoreLocation.LocalMachine, StoreLocation.CurrentUser };
+            foreach (StoreLocation location in locations)
+            {
+                X509Store store = new X509Store(StoreName.My, location);
+                store.Open(OpenFlags.OpenExistingOnly);
+
+                X509Certificate2Collection collection = store.Certificates.Find(
+                    X509FindType.FindBySubjectName,
+                    certFindValue,
+                    false);
+
+                if (collection.Count == 0)
+                {
+                    collection = store.Certificates.Find(
+                        X509FindType.FindByThumbprint,
+                        certFindValue,
+                        false);
+                }
+
+                store.Close();
+
+                if (collection.Count > 0)
+                {
+                    return collection[0];
+                }
+            }
+
+            throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
         }
 
         public static void PrintArguments(this Type type)
