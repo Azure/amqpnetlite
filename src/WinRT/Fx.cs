@@ -42,7 +42,9 @@ namespace Amqp
 #if WINDOWS_PHONE
         public static void StartThread(ThreadStart threadStart)
         {
-            new Thread(threadStart).Start();
+            ThreadPool.QueueUserWorkItem(
+                o => { ((ThreadStart)o)(); },
+                threadStart);
         }
 #else
         public delegate void ThreadStart();

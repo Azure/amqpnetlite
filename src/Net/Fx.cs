@@ -53,7 +53,9 @@ namespace Amqp
         /// <param name="threadStart">The thread start callback.</param>
         public static void StartThread(ThreadStart threadStart)
         {
-            new Thread(threadStart).Start();
+            ThreadPool.QueueUserWorkItem(
+                o => { ((ThreadStart)o)(); },
+                threadStart);
         }
     }
 }

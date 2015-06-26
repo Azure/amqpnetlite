@@ -36,7 +36,9 @@ namespace Amqp
 
         public static void StartThread(ThreadStart threadStart)
         {
-            new Thread(threadStart).Start();
+            ThreadPool.QueueUserWorkItem(
+                o => { ((ThreadStart)o)(); },
+                threadStart);
         }
     }
 }
