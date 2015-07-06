@@ -40,7 +40,7 @@ namespace Amqp
         {
             this.connection = connection;
             var factory = new ConnectionFactory();
-            this.ConnectAsync(address, factory).Wait();
+            this.ConnectAsync(address, factory).GetAwaiter().GetResult();
         }
 
         public void SetConnection(Connection connection)

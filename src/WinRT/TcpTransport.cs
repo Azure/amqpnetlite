@@ -42,7 +42,7 @@ namespace Amqp
             this.socket.ConnectAsync(
                 new HostName(address.Host),
                 address.Port.ToString(),
-                address.UseSsl ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket).AsTask().Wait();
+                address.UseSsl ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket).AsTask().GetAwaiter().GetResult();
         }
 
         public void Close()
