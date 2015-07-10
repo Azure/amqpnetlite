@@ -70,6 +70,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device.Controller2", "Examp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.Certificate", "Examples\PeerToPeer\PeerToPeer.Certificate\PeerToPeer.Certificate.csproj", "{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.MessageSession", "Examples\ServiceBus\ServiceBus.MessageSession\ServiceBus.MessageSession.csproj", "{D1E69C74-4A33-4079-9665-8818A8479FFB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -380,6 +382,16 @@ Global
 		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|ARM.ActiveCfg = Release|Any CPU
 		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|x64.ActiveCfg = Release|Any CPU
 		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE}.Release|x86.ActiveCfg = Release|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|ARM.ActiveCfg = Release|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|x64.ActiveCfg = Release|Any CPU
+		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -401,5 +413,6 @@ Global
 		{36F33391-4918-4C6D-9CAE-1ECD32262257} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
+		{D1E69C74-4A33-4079-9665-8818A8479FFB} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 	EndGlobalSection
 EndGlobal
