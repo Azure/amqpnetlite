@@ -44,8 +44,18 @@ namespace Amqp
             set;
         }
 
+        /// <summary>
+        /// Gets the last error, if any, of the object.
+        /// </summary>
+        public Error Error
+        {
+            get;
+            private set;
+        }
+
         internal void NotifyClosed(Error error)
         {
+            this.Error = error;
             ManualResetEvent temp = this.endEvent;
             if (temp != null)
             {

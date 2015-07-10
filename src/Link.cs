@@ -232,8 +232,12 @@ namespace Amqp
         {
             if (this.IsDetaching)
             {
-                throw new AmqpException(ErrorCode.IllegalState,
-                    Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state));
+                throw new AmqpException(this.Error ??
+                    new Error()
+                    {
+                        Condition = ErrorCode.IllegalState,
+                        Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
+                    });
             }
         }
 
