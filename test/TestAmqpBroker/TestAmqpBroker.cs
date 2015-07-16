@@ -54,10 +54,15 @@ namespace TestAmqpBroker
 
             this.certificate = certValue == null ? null : GetCertificate(certValue);
 
+            string containerId = "TestAmqpBroker:" + Guid.NewGuid().ToString().Substring(0, 8);
             this.listeners = new ConnectionListener[endpoints.Count];
             for (int i = 0; i < endpoints.Count; i++)
             {
                 this.listeners[i] = new ConnectionListener(endpoints[i], userInfo, this);
+                this.listeners[i].AMQP.MaxSessionsPerConnection = 1000;
+                this.listeners[i].AMQP.ContainerId = containerId;
+                this.listeners[i].AMQP.IdleTimeout = 4 * 60 * 1000;
+                this.listeners[i].AMQP.MaxFrameSize = 64 * 1024;
             }
         }
 

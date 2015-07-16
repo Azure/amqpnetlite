@@ -126,6 +126,9 @@
   <data name="AmqpHandleNotFound" xml:space="preserve">
     <value>The link handle '{0}' cannot be found in session '{1}'.</value>
   </data>
+  <data name="AmqpHandleInUse" xml:space="preserve">
+    <value>The handle '{0}' is already allocated for '{1}'.</value>
+  </data>
   <data name="AmqpIllegalOperationState" xml:space="preserve">
     <value>Operation '{0}' is not valid under state: {1}.</value>
   </data>

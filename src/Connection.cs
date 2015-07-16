@@ -58,24 +58,26 @@ namespace Amqp
         public static bool DisableServerCertValidation;
 
         internal const uint DefaultMaxFrameSize = 16 * 1024;
-        internal const ushort DefaultMaxSessions = 4;
+        internal const ushort DefaultMaxSessions = 256;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         readonly Address address;
         readonly OnOpened onOpened;
-        readonly Session[] localSessions;
-        readonly Session[] remoteSessions;
+        Session[] localSessions;
+        Session[] remoteSessions;
+        ushort channelMax;
         State state;
         ITransport transport;
         uint maxFrameSize;
         Pump reader;
         Timer heartBeatTimer;
 
-        Connection(ushort channelMax)
+        Connection(ushort channelMax, uint maxFrameSize)
         {
-            this.localSessions = new Session[channelMax];
-            this.remoteSessions = new Session[channelMax];
-            this.maxFrameSize = DefaultMaxFrameSize;
+            this.channelMax = channelMax;
+            this.maxFrameSize = maxFrameSize;
+            this.localSessions = new Session[1];
+            this.remoteSessions = new Session[1];
         }
 
         /// <summary>
@@ -91,20 +93,36 @@ namespace Amqp
         /// Initializes a connection with SASL profile, open and open callback.
         /// </summary>
         /// <param name="address">The address.</param>
-        /// <param name="saslProfile">The SASL profile to do authentication (optional).</param>
-        /// <param name="open">The open frame to send (optional).</param>
+        /// <param name="saslProfile">The SASL profile to do authentication (optional). If it is null and address has user info, SASL PLAIN profile is used.</param>
+        /// <param name="open">The open frame to send (optional). If not null, all mandatory fields must be set. Ensure that other fields are set to desired values.</param>
         /// <param name="onOpened">The callback to handle remote open frame (optional).</param>
         public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
-            : this(DefaultMaxSessions)
+            : this(DefaultMaxSessions, DefaultMaxFrameSize)
         {
             this.address = address;
             this.onOpened = onOpened;
+            if (open != null)
+            {
+                this.maxFrameSize = open.MaxFrameSize;
+                this.channelMax = open.ChannelMax;
+            }
+            else
+            {
+                open = new Open()
+                {
+                    ContainerId = Guid.NewGuid().ToString(),
+                    HostName = this.address.Host,
+                    MaxFrameSize = this.maxFrameSize,
+                    ChannelMax = this.channelMax
+                };
+            }
+
             this.Connect(saslProfile, open);
         }
 
 #if DOTNET || NETFX_CORE
         internal Connection(AmqpSettings amqpSettings, Address address, IAsyncTransport transport, Open open, OnOpened onOpened)
-            : this(amqpSettings.MaxSessionsPerConnection)
+            : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
         {
             this.address = address;
             this.onOpened = onOpened;
@@ -118,7 +136,9 @@ namespace Amqp
                 open = new Open()
                 {
                     ContainerId = amqpSettings.ContainerId,
-                    HostName = amqpSettings.HostName ?? this.address.Host
+                    HostName = amqpSettings.HostName ?? this.address.Host,
+                    ChannelMax = this.channelMax,
+                    MaxFrameSize = this.maxFrameSize
                 };
             }
 
@@ -143,10 +163,11 @@ namespace Amqp
 
         internal ushort AddSession(Session session)
         {
+            this.ThrowIfClosed("AddSession");
             lock (this.ThisLock)
             {
-                this.ThrowIfClosed("AddSession");
-                for (int i = 0; i < this.localSessions.Length; ++i)
+                int count = this.localSessions.Length;
+                for (int i = 0; i < count; ++i)
                 {
                     if (this.localSessions[i] == null)
                     {
@@ -155,8 +176,18 @@ namespace Amqp
                     }
                 }
 
+                if (count - 1 < this.channelMax)
+                {
+                    int size = Math.Min(count * 2, this.channelMax + 1);
+                    Session[] expanded = new Session[size];
+                    Array.Copy(this.localSessions, expanded, count);
+                    this.localSessions = expanded;
+                    this.localSessions[count] = session;
+                    return (ushort)count;
+                }
+
                 throw new AmqpException(ErrorCode.NotAllowed,
-                    Fx.Format(SRAmqp.AmqpHandleExceeded, DefaultMaxSessions));
+                    Fx.Format(SRAmqp.AmqpHandleExceeded, this.channelMax));
             }
         }
 
@@ -246,11 +277,6 @@ namespace Amqp
             this.transport = transport;
 
             // after getting the transport, move state to open pipe before starting the pump
-            if (open == null)
-            {
-                open = new Open() { ContainerId = Guid.NewGuid().ToString(), HostName = this.address.Host };
-            }
-
             this.SendHeader();
             this.SendOpen(open);
             this.state = State.OpenPipe;
@@ -281,8 +307,6 @@ namespace Amqp
 
         void SendOpen(Open open)
         {
-            open.ChannelMax = DefaultMaxSessions - 1;
-            open.MaxFrameSize = this.maxFrameSize;
             this.SendCommand(0, open);
         }
 
@@ -308,6 +332,11 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnOpen", this.state));
                 }
+            }
+
+            if (open.ChannelMax < this.channelMax)
+            {
+                this.channelMax = open.ChannelMax;
             }
 
             if (open.MaxFrameSize < this.maxFrameSize)
@@ -359,8 +388,31 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
+                if (remoteChannel > this.channelMax)
+                {
+                    throw new AmqpException(ErrorCode.NotAllowed,
+                        Fx.Format(SRAmqp.AmqpHandleExceeded, this.channelMax + 1));
+                }
+
                 Session session = this.GetSession(this.localSessions, begin.RemoteChannel);
                 session.OnBegin(remoteChannel, begin);
+
+                int count = this.remoteSessions.Length;
+                if (count - 1 < remoteChannel)
+                {
+                    int size = Math.Min(count * 2, this.channelMax + 1);
+                    Session[] expanded = new Session[size];
+                    Array.Copy(this.remoteSessions, expanded, count);
+                    this.remoteSessions = expanded;
+                }
+
+                var remoteSession = this.remoteSessions[remoteChannel];
+                if (remoteSession != null)
+                {
+                    throw new AmqpException(ErrorCode.HandleInUse,
+                        Fx.Format(SRAmqp.AmqpHandleInUse, remoteChannel, remoteSession.GetType().Name));
+                }
+
                 this.remoteSessions[remoteChannel] = session;
             }
         }
