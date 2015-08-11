@@ -12,8 +12,8 @@ AMQP.Net Lite is a lightweight AMQP 1.0 client library for the .Net Micro Framew
 ## API Overview
 |            | net45 | net35 | netmf | netcf | win8/wp8 | netcore451 |
 |------------|:-----:|:-----:|:-----:|:-----:|:--------:|:----------:|
-| TLS        |  +    |   +   |   +1  |   +   |    +     |     +      |
-| SASL2      |  +    |   +   |   +   |   +   |    +     |     +      |
+| TLS        |  +    |   +   |   +<sup>1</sup>  |   +   |    +     |     +      |
+| SASL<sup>2</sup>      |  +    |   +   |   +   |   +   |    +     |     +      |
 | AMQP Core  |  +    |   +   |   +   |   +   |    +     |     +      |
 | Txn        |  +    |       |       |       |          |            |
 | Async API  |  +    |       |       |       |          |     +      |
