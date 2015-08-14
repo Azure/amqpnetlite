@@ -31,6 +31,12 @@ namespace Amqp.Listener
         uint credit;
         object state;
 
+        // caller can initialize the link for an endpoint, a sender or a receiver
+        // based on its needs.
+
+        // link endpoint
+        LinkEndpoint linkEndpoint;
+
         // send
         Action<int, object> onCredit;
         Action<Message, DeliveryState, bool, object> onDispose;
@@ -80,11 +86,13 @@ namespace Amqp.Listener
         /// <summary>
         /// Initializes the receiver state for the link.
         /// </summary>
-        /// <param name="credit">The link credit.</param>
-        /// <param name="onMessage">The callback to invoke for received messages.</param>
+        /// <param name="credit">The link credit to send to the peer.</param>
+        /// <param name="onMessage">The callback to be invoked for received messages.</param>
         /// <param name="state">The user state attached to the link.</param>
         public void InitializeReceiver(uint credit, Action<ListenerLink, Message, DeliveryState, object> onMessage, object state)
         {
+            ThrowIfNotNull(this.linkEndpoint, "endpoint");
+            ThrowIfNotNull(this.onMessage, "receiver");
             this.credit = credit;
             this.onMessage = onMessage;
             this.state = state;
@@ -93,11 +101,14 @@ namespace Amqp.Listener
         /// <summary>
         /// Initializes the sender state for the link.
         /// </summary>
-        /// <param name="onCredit">The callback to invoke when flow is received with more link credit.</param>
-        /// <param name="onDispose">The callback to invoke when disposition is received.</param>
+        /// <param name="onCredit">The callback to be invoked when delivery limit changes (by received flow performatives).</param>
+        /// <param name="onDispose">The callback to be invoked when disposition is received.</param>
         /// <param name="state">The user state attached to the link.</param>
         public void InitializeSender(Action<int, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
         {
+            ThrowIfNotNull(this.linkEndpoint, "endpoint");
+            ThrowIfNotNull(this.onCredit, "sender");
+            ThrowIfNotNull(this.onDispose, "sender");
             this.onCredit = onCredit;
             this.onDispose = onDispose;
             this.state = state;
@@ -106,15 +117,15 @@ namespace Amqp.Listener
         /// <summary>
         /// Sends a message. This call is non-blocking and it does not wait for acknowledgements.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="buffer"></param>
+        /// <param name="message">The message to be sent.</param>
+        /// <param name="buffer">The serialized buffer of the message. It is null, the message is serialized.</param>
         public void SendMessage(Message message, ByteBuffer buffer)
         {
             Delivery delivery = new Delivery()
             {
                 Handle = this.Handle,
                 Message = message,
-                Buffer = buffer,
+                Buffer = buffer ?? message.Encode(),
                 Link = this,
                 Settled = this.SettleOnSend
             };
@@ -126,7 +137,7 @@ namespace Amqp.Listener
         /// <summary>
         /// Sends a disposition for the message.
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message to be disposed (a disposition performative will be sent for this message).</param>
         /// <param name="deliveryState">The delivery state to set on disposition.</param>
         /// <param name="settled">The settled flag on disposition.</param>
         public void DisposeMessage(Message message, DeliveryState deliveryState, bool settled)
@@ -141,7 +152,8 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Completes the link attach request.
+        /// Completes the link attach request. This should be called when the IContainer.AttachLink implementation returns false
+        /// and the asynchrounous processing completes. 
         /// </summary>
         /// <param name="attach">The attach to send back.</param>
         /// <param name="error">The error, if any, for the link.</param>
@@ -169,6 +181,16 @@ namespace Amqp.Listener
                     this.SendFlow(this.deliveryCount, credit);
                 }
             }
+        }
+
+        internal void InitializeLinkEndpoint(LinkEndpoint linkEndpoint, uint credit)
+        {
+            ThrowIfNotNull(this.linkEndpoint, "endpoint");
+            ThrowIfNotNull(this.onMessage, "receiver");
+            ThrowIfNotNull(this.onCredit, "sender");
+            ThrowIfNotNull(this.onDispose, "sender");
+            this.credit = credit;
+            this.linkEndpoint = linkEndpoint;
         }
 
         internal override void OnAttach(uint remoteHandle, Attach attach)
@@ -199,15 +221,16 @@ namespace Amqp.Listener
 
         internal override void OnFlow(Flow flow)
         {
-            if (this.onCredit != null)
+            var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
+            var myLimit = (SequenceNumber)((uint)this.deliveryCount + this.credit);
+            int delta = theirLimit - myLimit;
+            if (this.linkEndpoint != null)
             {
-                var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
-                var myLimit = (SequenceNumber)((uint)this.deliveryCount + this.credit);
-                int delta = theirLimit - myLimit;
-                if (delta > 0)
-                {
-                    this.onCredit(delta, this.state);
-                }
+                this.linkEndpoint.OnFlow(new FlowContext(this, delta, flow.Properties));
+            }
+            else if (delta > 0 && this.onCredit != null)
+            {
+                this.onCredit(delta, this.state);
             }
         }
 
@@ -216,6 +239,10 @@ namespace Amqp.Listener
             if (this.onDispose != null)
             {
                 this.onDispose(delivery.Message, delivery.State, delivery.Settled, this.state);
+            }
+            else if (this.linkEndpoint != null)
+            {
+                this.linkEndpoint.OnDisposition(new DispositionContext(this, delivery.Message, delivery.State, delivery.Settled));
             }
         }
 
@@ -261,11 +288,27 @@ namespace Amqp.Listener
         {
         }
 
+        static void ThrowIfNotNull(object obj, string name)
+        {
+            if (obj != null)
+            {
+                throw new InvalidOperationException("The " + name + " has been already initialized for this link.");
+            }
+        }
+
         void DeliverMessage(Delivery delivery)
         {
             var container = ((ListenerConnection)this.Session.Connection).Listener.Container;
             delivery.Message = container.CreateMessage(delivery.Buffer);
-            this.onMessage(this, delivery.Message, delivery.State, this.state);
+            if (this.onMessage != null)
+            {
+                this.onMessage(this, delivery.Message, delivery.State, this.state);
+            }
+            else if (this.linkEndpoint != null)
+            {
+                this.linkEndpoint.OnMessage(new MessageContext(this, delivery.Message));
+            }
+
             if (this.delivered++ >= this.credit / 2)
             {
                 this.delivered = 0;

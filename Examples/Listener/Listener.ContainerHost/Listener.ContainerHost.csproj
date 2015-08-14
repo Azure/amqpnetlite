@@ -4,21 +4,21 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}</ProjectGuid>
+    <ProjectGuid>{E8D670D3-B1B4-45CA-9440-9630529599B2}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestAmqpBroker</RootNamespace>
-    <AssemblyName>TestAmqpBroker</AssemblyName>
+    <RootNamespace>Listener.ContainerHost</RootNamespace>
+    <AssemblyName>Listener.ContainerHost</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <IntermediateOutputPath>..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <IntermediateOutputPath>..\..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>..\..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,27 +27,26 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>..\..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Examples\Listener\Listener.IContainer\Listener.IContainer.csproj">
-      <Project>{4b7bfdb9-406a-4ebe-93c3-5d40d6a986f4}</Project>
-      <Name>Listener.IContainer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Amqp.Net.csproj">
+    <ProjectReference Include="..\..\..\src\Amqp.Net.csproj">
       <Project>{92153715-1d99-43b1-b291-470cf91a156d}</Project>
       <Name>Amqp.Net</Name>
     </ProjectReference>

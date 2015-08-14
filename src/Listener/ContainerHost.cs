@@ -35,6 +35,7 @@ namespace Amqp.Listener
         readonly ConnectionListener[] listeners;
         readonly Dictionary<string, MessageProcessor> messageProcessors;
         readonly Dictionary<string, RequestProcessor> requestProcessors;
+        ILinkProcessor linkProcessor;
 
         /// <summary>
         /// Initializes a container host object with one address.
@@ -98,6 +99,23 @@ namespace Amqp.Listener
                     Trace.WriteLine(TraceLevel.Error, exception.ToString());
                 }
             }
+        }
+
+        /// <summary>
+        /// Registers a link process to handle received attach performatives. The registered message
+        /// processor(s) and request processor(s) are checked first. If a processor matches the address
+        /// on the received attach performative, it is invoked to handle the command. Otherwise, the
+        /// registered link processor is invoked to handle the command.
+        /// </summary>
+        /// <param name="linkProcessor"></param>
+        public void RegisterLinkProcessor(ILinkProcessor linkProcessor)
+        {
+            if (this.linkProcessor != null)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed, this.linkProcessor.GetType().Name + " already registered");
+            }
+
+            this.linkProcessor = linkProcessor;
         }
 
         /// <summary>
@@ -210,6 +228,12 @@ namespace Amqp.Listener
             {
                 requestProcessor.AddLink(listenerLink, address, attach);
                 return true;
+            }
+
+            if (this.linkProcessor != null)
+            {
+                this.linkProcessor.Process(new AttachContext(listenerLink, attach));
+                return false;
             }
 
             throw new AmqpException(ErrorCode.NotFound, "No processor was found at " + address);

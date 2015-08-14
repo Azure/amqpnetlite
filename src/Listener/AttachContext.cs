@@ -20,21 +20,14 @@ namespace Amqp.Listener
     using Amqp.Framing;
 
     /// <summary>
-    /// The base class of request context.
+    /// Provides the context to an attach processor to process the received performative.
     /// </summary>
-    public abstract class Context
+    public class AttachContext
     {
-        internal static Accepted Accepted = new Accepted();
-
-        /// <summary>
-        /// Initializes a context object.
-        /// </summary>
-        /// <param name="link">The link where the message was received.</param>
-        /// <param name="message">The received message.</param>
-        protected Context(ListenerLink link, Message message)
+        internal AttachContext(ListenerLink link, Attach attach)
         {
             this.Link = link;
-            this.Message = message;
+            this.Attach = attach;
         }
 
         /// <summary>
@@ -47,22 +40,32 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Gets the messages associated with the context.
+        /// Gets the attach performative associated with the context.
         /// </summary>
-        public Message Message
+        public Attach Attach
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Disposes the request. If required, a disposition frame is sent to
-        /// the peer to acknowledge the message.
+        /// Completes the processing of the attach performative with success.
         /// </summary>
-        /// <param name="deliveryState">The delivery state to send.</param>
-        protected void Dispose(DeliveryState deliveryState)
+        /// <param name="linkEndpoint">The attached link endpoint.</param>
+        /// <param name="initialCredit">The initial credit to send to peer for a receiving link endpoint. It is ignored for a sending endpoint.</param>
+        public void Complete(LinkEndpoint linkEndpoint, int initialCredit)
         {
-            this.Link.DisposeMessage(this.Message, deliveryState, true);
+            this.Link.InitializeLinkEndpoint(linkEndpoint, (uint)initialCredit);
+            this.Link.CompleteAttach(this.Attach, null);
+        }
+
+        /// <summary>
+        /// Completes the processing of the attach performative with an error.
+        /// </summary>
+        /// <param name="error">The error to be sent to the remote peer.</param>
+        public void Complete(Error error)
+        {
+            this.Link.CompleteAttach(this.Attach, error);
         }
     }
 }

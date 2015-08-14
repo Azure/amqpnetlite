@@ -15,7 +15,7 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace TestAmqpBroker
+namespace Listener.IContainer
 {
     using System;
     using System.Collections.Generic;

@@ -20,49 +20,40 @@ namespace Amqp.Listener
     using Amqp.Framing;
 
     /// <summary>
-    /// The base class of request context.
+    /// Provides the context to a message processor to process the received message.
     /// </summary>
-    public abstract class Context
+    public class MessageContext : Context
     {
-        internal static Accepted Accepted = new Accepted();
-
-        /// <summary>
-        /// Initializes a context object.
-        /// </summary>
-        /// <param name="link">The link where the message was received.</param>
-        /// <param name="message">The received message.</param>
-        protected Context(ListenerLink link, Message message)
+        internal MessageContext(ListenerLink link, Message message)
+            : base(link, message)
         {
-            this.Link = link;
-            this.Message = message;
+            this.DeliveryState = message.Delivery.State;
         }
 
         /// <summary>
-        /// Gets the link associated with the context.
+        /// Gets the delivery state associated with the message.
         /// </summary>
-        public ListenerLink Link
+        public DeliveryState DeliveryState
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Gets the messages associated with the context.
+        /// Accepts the message.
         /// </summary>
-        public Message Message
+        public void Complete()
         {
-            get;
-            private set;
+            this.Dispose(Context.Accepted);
         }
 
         /// <summary>
-        /// Disposes the request. If required, a disposition frame is sent to
-        /// the peer to acknowledge the message.
+        /// Rejects the message.
         /// </summary>
-        /// <param name="deliveryState">The delivery state to send.</param>
-        protected void Dispose(DeliveryState deliveryState)
+        /// <param name="error"></param>
+        public void Complete(Error error)
         {
-            this.Link.DisposeMessage(this.Message, deliveryState, true);
+            this.Dispose(new Rejected() { Error = error });
         }
     }
 }

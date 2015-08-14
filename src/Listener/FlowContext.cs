@@ -17,24 +17,18 @@
 
 namespace Amqp.Listener
 {
-    using Amqp.Framing;
+    using Amqp.Types;
 
     /// <summary>
-    /// The base class of request context.
+    /// Provides the context to a link endpoint to process a received flow.
     /// </summary>
-    public abstract class Context
+    public class FlowContext
     {
-        internal static Accepted Accepted = new Accepted();
-
-        /// <summary>
-        /// Initializes a context object.
-        /// </summary>
-        /// <param name="link">The link where the message was received.</param>
-        /// <param name="message">The received message.</param>
-        protected Context(ListenerLink link, Message message)
+        internal FlowContext(ListenerLink link, int messages, Fields properties)
         {
             this.Link = link;
-            this.Message = message;
+            this.Messages = messages;
+            this.Properties = properties;
         }
 
         /// <summary>
@@ -47,22 +41,21 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Gets the messages associated with the context.
+        /// Gets the number of messages allowed to send by the peer.
         /// </summary>
-        public Message Message
+        public int Messages
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Disposes the request. If required, a disposition frame is sent to
-        /// the peer to acknowledge the message.
+        /// Gets the properties associated with the flow performative.
         /// </summary>
-        /// <param name="deliveryState">The delivery state to send.</param>
-        protected void Dispose(DeliveryState deliveryState)
+        public Fields Properties
         {
-            this.Link.DisposeMessage(this.Message, deliveryState, true);
+            get;
+            private set;
         }
     }
 }
