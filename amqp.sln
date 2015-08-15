@@ -72,7 +72,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.Certificate", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.MessageSession", "Examples\ServiceBus\ServiceBus.MessageSession\ServiceBus.MessageSession.csproj", "{D1E69C74-4A33-4079-9665-8818A8479FFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomType", "PeerToPeer.CustomType\PeerToPeer.CustomType.csproj", "{30536F8F-E4DA-46B3-B0D0-082632AD74B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomType", "Examples\PeerToPeer.CustomType\PeerToPeer.CustomType.csproj", "{30536F8F-E4DA-46B3-B0D0-082632AD74B4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
