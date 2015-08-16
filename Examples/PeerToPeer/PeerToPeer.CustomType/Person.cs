@@ -18,7 +18,7 @@ namespace PeerToPeer.CustomType
         public override string ToString()
         {
             return string.Format(
-                "Weight: {0}\n, Height: {0}\n, EyeColor: {0}",
+                "Weight: {0},\nHeight: {1},\nEyeColor: {2}",
                 Weight,
                 Height,
                 EyeColor);
