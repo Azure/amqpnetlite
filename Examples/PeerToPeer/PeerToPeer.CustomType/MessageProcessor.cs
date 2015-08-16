@@ -1,4 +1,5 @@
 ﻿using System;
+using Amqp;
 using Amqp.Listener;
 
 namespace PeerToPeer.CustomType
@@ -12,7 +13,8 @@ namespace PeerToPeer.CustomType
 
         public void Process(MessageContext messageContext)
         {
-            //TODO - how to deserialize the body to type Person?
+            var person = messageContext.Message.GetBody<Person>();
+            Console.WriteLine(person.ToString());
 
             messageContext.Complete();
         }
