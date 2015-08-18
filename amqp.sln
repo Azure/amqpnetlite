@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF42", "src\Amqp.NetMF42.csproj", "{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}"
 EndProject
@@ -70,7 +70,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.Certificate", "E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.MessageSession", "Examples\ServiceBus\ServiceBus.MessageSession\ServiceBus.MessageSession.csproj", "{D1E69C74-4A33-4079-9665-8818A8479FFB}"
 EndProject
-<<<<<<< HEAD
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Listener", "Listener", "{89F13102-4826-4406-844B-7B21C47885E7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.ContainerHost", "Examples\Listener\Listener.ContainerHost\Listener.ContainerHost.csproj", "{E8D670D3-B1B4-45CA-9440-9630529599B2}"
@@ -78,9 +77,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Listener.IContainer", "Examples\Listener\Listener.IContainer\Listener.IContainer.csproj", "{4B7BFDB9-406A-4EBE-93C3-5D40D6A986F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAmqpBroker", "test\TestAmqpBroker\TestAmqpBroker.csproj", "{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}"
-=======
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomType", "Examples\PeerToPeer\PeerToPeer.CustomType\PeerToPeer.CustomType.csproj", "{30536F8F-E4DA-46B3-B0D0-082632AD74B4}"
->>>>>>> pr/3
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -392,7 +390,6 @@ Global
 		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|ARM.ActiveCfg = Release|Any CPU
 		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|x64.ActiveCfg = Release|Any CPU
 		{D1E69C74-4A33-4079-9665-8818A8479FFB}.Release|x86.ActiveCfg = Release|Any CPU
-<<<<<<< HEAD
 		{E8D670D3-B1B4-45CA-9440-9630529599B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E8D670D3-B1B4-45CA-9440-9630529599B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8D670D3-B1B4-45CA-9440-9630529599B2}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -423,7 +420,6 @@ Global
 		{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}.Release|ARM.ActiveCfg = Release|Any CPU
 		{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}.Release|x64.ActiveCfg = Release|Any CPU
 		{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}.Release|x86.ActiveCfg = Release|Any CPU
-=======
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -434,7 +430,6 @@ Global
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Release|ARM.ActiveCfg = Release|Any CPU
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Release|x64.ActiveCfg = Release|Any CPU
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Release|x86.ActiveCfg = Release|Any CPU
->>>>>>> pr/3
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -457,12 +452,9 @@ Global
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{D1E69C74-4A33-4079-9665-8818A8479FFB} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
-<<<<<<< HEAD
 		{89F13102-4826-4406-844B-7B21C47885E7} = {8F701234-EC60-485C-BCDB-8EE233246832}
 		{E8D670D3-B1B4-45CA-9440-9630529599B2} = {89F13102-4826-4406-844B-7B21C47885E7}
 		{4B7BFDB9-406A-4EBE-93C3-5D40D6A986F4} = {89F13102-4826-4406-844B-7B21C47885E7}
-=======
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
->>>>>>> pr/3
 	EndGlobalSection
 EndGlobal
