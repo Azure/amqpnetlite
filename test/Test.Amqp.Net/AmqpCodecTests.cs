@@ -532,6 +532,26 @@ namespace Test.Amqp
             Assert.AreEqual(teacher.Classes[205], ((Teacher)p6).Classes[205]);
         }
 
+        [TestMethod]
+        public void AmqpSerializerMessageBodyTest()
+        {
+            MessageBodyTest<long>(
+                1234567L,
+                (x, y) => Assert.AreEqual(x, y));
+
+            MessageBodyTest<string>(
+                "tHis iS A sTrIng",
+                (x, y) => Assert.AreEqual(x, y));
+
+            MessageBodyTest<List<string>>(
+                new List<string>() { "abc", "1k90" },
+                (x, y) => CollectionAssert.AreEqual(x, y));
+
+            MessageBodyTest<Dictionary<Symbol, string>>(
+                new Dictionary<Symbol, string>() { { "product", "computer" }, { "company", "contoso" } },
+                (x, y) => CollectionAssert.AreEqual(x, y));
+        }
+
         [TestMethod()]
         public void AmqpCodecFramingTypeTest()
         {
@@ -883,6 +903,15 @@ namespace Test.Amqp
 
             var array2 = AmqpSerializer.Deserialize<T[]>(buffer);
             Assert.AreEqual(array.Length, array2.Length);
+        }
+
+        static void MessageBodyTest<T>(T value, Action<T, T> validator)
+        {
+            var inputMessage = new Message(value);
+            var buffer = inputMessage.Encode();
+            var outputMessage = Message.Decode(buffer);
+            var value2 = outputMessage.GetBody<T>();
+            validator(value, value2);
         }
 
         static void EnsureEqual(byte[] data1, int offset1, int count1, byte[] data2, int offset2, int count2)

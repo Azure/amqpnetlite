@@ -52,7 +52,7 @@ namespace Amqp.Framing
             {
                 return default(T);
             }
-            else if (typeof(T) == typeof(object) || typeof(T) == this.value.GetType())
+            else if (typeof(T).IsAssignableFrom(this.value.GetType()))
             {
                 return (T)this.value;
             }
@@ -71,11 +71,9 @@ namespace Amqp.Framing
         {
             int offset = buffer.Offset;
             this.value = Encoder.ReadObject(buffer);
-            if (this.value is DescribedValue)
-            {
-                int count = buffer.Offset - offset;
-                this.valueBuffer = new ByteBuffer(buffer.Buffer, offset, count, count);
-            }
+
+            int count = buffer.Offset - offset;
+            this.valueBuffer = new ByteBuffer(buffer.Buffer, offset, count, count);
         }
 #else
         internal override void EncodeValue(ByteBuffer buffer)
