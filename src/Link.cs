@@ -83,7 +83,10 @@ namespace Amqp
             get { return this.handle; }
         }
 
-        internal Session Session
+        /// <summary>
+        /// Gets the session where the link was created.
+        /// </summary>
+        public Session Session
         {
             get { return this.session; }
         }

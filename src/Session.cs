@@ -85,6 +85,14 @@ namespace Amqp
             this.SendBegin(begin);
         }
 
+        /// <summary>
+        /// Gets the connection where the session was created.
+        /// </summary>
+        public Connection Connection
+        {
+            get { return this.connection; }
+        }
+
         object ThisLock
         {
             get { return this; }
@@ -93,11 +101,6 @@ namespace Amqp
         internal ushort Channel
         {
             get { return this.channel; }
-        }
-
-        internal Connection Connection
-        {
-            get { return this.connection; }
         }
 
         internal void Abort(Error error)
