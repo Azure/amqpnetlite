@@ -134,9 +134,9 @@ namespace Amqp.Listener
         /// </summary>
         /// <param name="address">The node name.</param>
         /// <param name="messageProcessor">The message processor.</param>
-        public void RegisterMessageProcessor(string address, IMessageProcessor messageProcessor, Action<Link> onLinkAttached = null)
+        public void RegisterMessageProcessor(string address, IMessageProcessor messageProcessor)
         {
-            AddProcessor(this.messageProcessors, address, new MessageProcessor(messageProcessor, onLinkAttached));
+            AddProcessor(this.messageProcessors, address, new MessageProcessor(messageProcessor));
         }
 
         /// <summary>
@@ -265,13 +265,11 @@ namespace Amqp.Listener
             static readonly Action<ListenerLink, Message, DeliveryState, object> dispatchMessage = DispatchMessage;
             readonly IMessageProcessor processor;
             readonly List<ListenerLink> links;
-            readonly Action<Link> onLinkAttached;
 
-            public MessageProcessor(IMessageProcessor processor, Action<Link> onLinkAttached)
+            public MessageProcessor(IMessageProcessor processor)
             {
                 this.processor = processor;
                 this.links = new List<ListenerLink>();
-                this.onLinkAttached = onLinkAttached;
             }
 
             public void AddLink(ListenerLink link, string address)
@@ -286,11 +284,6 @@ namespace Amqp.Listener
                 lock (this.links)
                 {
                     this.links.Add(link);
-
-                    if (onLinkAttached != null)
-                    {
-                        onLinkAttached(link);
-                    }
                 }
             }
 
