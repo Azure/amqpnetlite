@@ -86,7 +86,11 @@ namespace Amqp.Listener
         /// <summary>
         /// Closes the container host object.
         /// </summary>
-        public void Close()
+        /// <param name="removeProcessors">
+        /// If true this will remove all message and request processors associated with the container.
+        /// This will detach all links associated with the processors.
+        /// </param>
+        public void Close(bool removeProcessors = false)
         {
             foreach (var listener in this.listeners)
             {
@@ -98,6 +102,12 @@ namespace Amqp.Listener
                 {
                     Trace.WriteLine(TraceLevel.Error, exception.ToString());
                 }
+            }
+
+            if (removeProcessors)
+            {
+                RemoveAllProcessors(this.messageProcessors);
+                RemoveAllProcessors(this.requestProcessors);
             }
         }
 
@@ -184,6 +194,17 @@ namespace Amqp.Listener
                     {
                         ((IDisposable)processor).Dispose();
                     }
+                }
+            }
+        }
+
+        static void RemoveAllProcessors<T>(Dictionary<string, T> processors)
+        {
+            lock (processors)
+            {
+                foreach (var key in new List<string>(processors.Keys))
+                {
+                    RemoveProcessor(processors, key);
                 }
             }
         }
