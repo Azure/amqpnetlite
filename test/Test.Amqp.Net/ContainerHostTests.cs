@@ -15,12 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
+using Amqp.Framing;
 using Amqp.Listener;
 using Amqp;
 #if !(NETMF || COMPACT_FRAMEWORK)
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using Amqp.Framing;
 #endif
 
 namespace Test.Amqp.Net
