@@ -155,6 +155,8 @@ namespace Amqp.Listener
                 {
                     connection.Close();
                 }
+
+                connections.Clear();
             }
         }
 
