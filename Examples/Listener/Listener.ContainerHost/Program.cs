@@ -46,7 +46,7 @@ namespace Listener.ContainerHost
             host.RegisterLinkProcessor(new LinkProcessor());
             Console.WriteLine("Link processor is registered");
 
-            Console.WriteLine("Press enter key to exist...");
+            Console.WriteLine("Press enter key to exit...");
             Console.ReadLine();
 
             host.Close();
