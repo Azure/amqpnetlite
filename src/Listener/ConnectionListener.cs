@@ -148,6 +148,16 @@ namespace Amqp.Listener
         public void Close()
         {
             this.listener.Close();
+
+            lock (this.connections)
+            {
+                foreach (var connection in this.connections)
+                {
+                    connection.Close();
+                }
+
+                connections.Clear();
+            }
         }
 
         X509Certificate2 GetServiceCertificate()
