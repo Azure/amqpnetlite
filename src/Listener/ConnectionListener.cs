@@ -168,7 +168,7 @@ namespace Amqp.Listener
         {
             if (this.saslSettings != null)
             {
-                ListenerSasProfile profile = new ListenerSasProfile(this);
+                ListenerSaslProfile profile = new ListenerSaslProfile(this);
                 transport = await profile.OpenAsync(null, transport);
             }
 
@@ -306,12 +306,12 @@ namespace Amqp.Listener
             }
         }
 
-        class ListenerSasProfile : SaslProfile
+        class ListenerSaslProfile : SaslProfile
         {
             readonly ConnectionListener listener;
             SaslProfile innerProfile;
 
-            public ListenerSasProfile(ConnectionListener listener)
+            public ListenerSaslProfile(ConnectionListener listener)
             {
                 this.listener = listener;
             }
