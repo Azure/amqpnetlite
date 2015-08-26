@@ -650,5 +650,32 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
         }
+
+        /// <summary>
+        /// This test proves that issue #14 is fixed.
+        /// https://github.com/Azure/amqpnetlite/issues/14
+        /// </summary>
+ #if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod, ExpectedException(typeof(ArgumentException))]
+#endif
+        public void TestMethod_SendNoBody()
+        {
+            string testName = "NoMessageBody";
+
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+
+            try
+            {
+                sender.Send(new Message());
+            }
+            finally
+            {
+                sender.Close();
+                session.Close();
+                connection.Close();
+            }
+        }
     }
 }

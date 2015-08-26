@@ -153,6 +153,11 @@ namespace Amqp
                 Settled = this.settleMode == SenderSettleMode.Settled || callback == null
             };
 
+            if (delivery.Buffer.Length < 1)
+            {
+                throw new ArgumentException("The message is completely empty. There is nothing to send.", "message");
+            }
+
             lock (this.ThisLock)
             {
                 if (this.credit <= 0 || this.writing)
