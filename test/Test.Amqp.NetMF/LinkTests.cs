@@ -656,7 +656,7 @@ namespace Test.Amqp
         /// https://github.com/Azure/amqpnetlite/issues/14
         /// </summary>
  #if !(NETMF || COMPACT_FRAMEWORK)
-        [TestMethod, ExpectedException(typeof(ArgumentException))]
+        [TestMethod]
 #endif
         public void TestMethod_SendEmptyMessage()
         {
@@ -666,9 +666,14 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
+            bool threwArgEx = false;
             try
             {
                 sender.Send(new Message());
+            }
+            catch (ArgumentException)
+            {
+                threwArgEx = true;
             }
             finally
             {
@@ -676,6 +681,8 @@ namespace Test.Amqp
                 session.Close();
                 connection.Close();
             }
+
+            Assert.IsTrue(threwArgEx, "Sending a message with no body did not throw an argument exception.");
         }
     }
 }
