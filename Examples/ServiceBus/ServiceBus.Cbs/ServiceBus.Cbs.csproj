@@ -43,6 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Scenarios\CbsAsyncExample.cs">
+      <Link>CbsAsyncExample.cs</Link>
+    </Compile>
+    <Compile Include="..\Scenarios\Example.cs">
+      <Link>Example.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

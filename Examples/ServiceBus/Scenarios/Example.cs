@@ -15,27 +15,23 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace ServiceBus.EventHub
+namespace ServiceBus.Scenarios
 {
-    using System;
     using Amqp;
-    using ServiceBus.Scenarios;
 
-    class Program
+    abstract class Example
     {
-        static void Main(string[] args)
-        {
-            Trace.TraceLevel = TraceLevel.Information;
-            Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+        // update the following with valid Service Bus namespace and SAS key info
+        public string Namespace = "contoso.servicebus.windows.net";
+        public string KeyName = "key1";
+        public string KeyValue = "5znwNTZDYC39dqhFOTDtnaikd1hiuRa4XaAj3Y9kJhQ=";
+        public string Entity = "myEntity";
 
-            try
-            {
-                new EventHubsExample().Run();
-            }
-            catch (Exception e)
-            {
-                Trace.WriteLine(TraceLevel.Error, e.ToString());
-            }
+        public Address GetAddress()
+        {
+            return new Address(this.Namespace, 5671, this.KeyName, this.KeyValue);
         }
+
+        public abstract void Run();
     }
 }

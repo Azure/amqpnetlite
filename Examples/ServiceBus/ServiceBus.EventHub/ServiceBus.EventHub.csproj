@@ -36,6 +36,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Scenarios\EventHubsExample.cs">
+      <Link>EventHubsExample.cs</Link>
+    </Compile>
+    <Compile Include="..\Scenarios\Example.cs">
+      <Link>Example.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

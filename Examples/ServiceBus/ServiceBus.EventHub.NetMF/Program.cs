@@ -15,18 +15,20 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace ServiceBus.EventHub
-{
-    using System;
-    using Amqp;
-    using ServiceBus.Scenarios;
+using System;
+using Amqp;
+using Microsoft.SPOT;
+using ServiceBus.Scenarios;
+using AmqpTrace = Amqp.Trace;
 
-    class Program
+namespace ServiceBus.EventHub.NetMF
+{
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main()
         {
-            Trace.TraceLevel = TraceLevel.Information;
-            Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            AmqpTrace.TraceLevel = TraceLevel.Information;
+            AmqpTrace.TraceListener = (f, a) => Debug.Print(Fx.Format(f, a));
 
             try
             {
@@ -34,7 +36,7 @@ namespace ServiceBus.EventHub
             }
             catch (Exception e)
             {
-                Trace.WriteLine(TraceLevel.Error, e.ToString());
+                AmqpTrace.WriteLine(TraceLevel.Error, e.ToString());
             }
         }
     }

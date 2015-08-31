@@ -42,5 +42,16 @@ namespace Amqp.Types
             this.Code = code;
             this.Name = name;
         }
+
+#if TRACE
+        /// <summary>
+        /// Returns a string that represents the current descriptor object.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+ 	         return this.Name ?? this.Code.ToString();
+        }
+#endif
     }
 }

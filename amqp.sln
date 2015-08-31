@@ -80,6 +80,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAmqpBroker", "test\Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomType", "Examples\PeerToPeer\PeerToPeer.CustomType\PeerToPeer.CustomType.csproj", "{30536F8F-E4DA-46B3-B0D0-082632AD74B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.EventHub.NetMF43", "Examples\ServiceBus\ServiceBus.EventHub.NetMF\ServiceBus.EventHub.NetMF43.csproj", "{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -430,6 +432,18 @@ Global
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Release|ARM.ActiveCfg = Release|Any CPU
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Release|x64.ActiveCfg = Release|Any CPU
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4}.Release|x86.ActiveCfg = Release|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -456,5 +470,6 @@ Global
 		{E8D670D3-B1B4-45CA-9440-9630529599B2} = {89F13102-4826-4406-844B-7B21C47885E7}
 		{4B7BFDB9-406A-4EBE-93C3-5D40D6A986F4} = {89F13102-4826-4406-844B-7B21C47885E7}
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
+		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 	EndGlobalSection
 EndGlobal

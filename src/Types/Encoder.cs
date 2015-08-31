@@ -321,6 +321,26 @@ namespace Amqp.Types
             }
         }
 
+        /// <summary>
+        /// Converts a DateTime value to AMQP timestamp (milliseconds from Unix epoch)
+        /// </summary>
+        /// <param name="dateTime">The DateTime value to convert.</param>
+        /// <returns></returns>
+        public static long DateTimeToTimestamp(DateTime dateTime)
+        {
+            return (long)((dateTime.ToUniversalTime().Ticks - epochTicks) / ticksPerMillisecond);
+        }
+
+        /// <summary>
+        /// Converts an AMQP timestamp ((milliseconds from Unix epoch)) to a DateTime.
+        /// </summary>
+        /// <param name="timestamp">The AMQP timestamp to convert.</param>
+        /// <returns></returns>
+        public static DateTime TimestampToDateTime(long timestamp)
+        {
+            return new DateTime(epochTicks + timestamp * ticksPerMillisecond, DateTimeKind.Utc);
+        }
+
         internal static byte ReadFormatCode(ByteBuffer buffer)
         {
             return AmqpBitConverter.ReadUByte(buffer);
@@ -550,7 +570,7 @@ namespace Amqp.Types
         public static void WriteTimestamp(ByteBuffer buffer, DateTime value)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.TimeStamp);
-            AmqpBitConverter.WriteLong(buffer, (value.ToUniversalTime().Ticks - epochTicks) / ticksPerMillisecond);
+            AmqpBitConverter.WriteLong(buffer, DateTimeToTimestamp(value));
         }
 
         /// <summary>
@@ -1112,7 +1132,7 @@ namespace Amqp.Types
         {
             if (formatCode == FormatCode.TimeStamp)
             {
-                return new DateTime(epochTicks + AmqpBitConverter.ReadLong(buffer) * ticksPerMillisecond, DateTimeKind.Utc);
+                return TimestampToDateTime(AmqpBitConverter.ReadLong(buffer));
             }
             else
             {
