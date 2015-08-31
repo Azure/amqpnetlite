@@ -658,9 +658,9 @@ namespace Test.Amqp
  #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod, ExpectedException(typeof(ArgumentException))]
 #endif
-        public void TestMethod_SendNoBody()
+        public void TestMethod_SendEmptyMessage()
         {
-            string testName = "NoMessageBody";
+            string testName = "SendEmptyMessage";
 
             Connection connection = new Connection(address);
             Session session = new Session(connection);
