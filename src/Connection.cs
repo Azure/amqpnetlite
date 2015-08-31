@@ -595,6 +595,15 @@ namespace Amqp
                 this.transport.Close();
             }
 
+            for (int i = 0; i < this.localSessions.Length; i++)
+            {
+                var session = this.localSessions[i];
+                if (session != null)
+                {
+                    session.Abort(error);
+                }
+            }
+            
             this.NotifyClosed(error);
         }
 
