@@ -141,8 +141,6 @@ namespace Amqp
 
         internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
-            this.ThrowIfDetaching("Send");
-
             var buffer = message.Encode();
             if (buffer.Length < 1)
             {
@@ -162,6 +160,8 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
+                this.ThrowIfDetaching("Send");
+
                 if (this.credit <= 0 || this.writing)
                 {
                     this.outgoingList.Add(delivery);
