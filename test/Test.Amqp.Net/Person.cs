@@ -23,7 +23,7 @@ namespace Test.Amqp
     using global::Amqp.Types;
     using global::Amqp;
 
-    [AmqpContract(Name = "person", Code = 0)]
+    [AmqpContract(Name = "test.amqp:person", Code = 0x0000123400000000)]
     [AmqpProvides(typeof(Student))]
     [AmqpProvides(typeof(Teacher))]
     class Person
@@ -73,7 +73,7 @@ namespace Test.Amqp
         }
     }
 
-    [AmqpContract(Name = "student", Code = 1)]
+    [AmqpContract(Name = "test.amqp:student", Code = 0x0000123400000001)]
     class Student : Person
     {
         Student() : base(null) { }
@@ -90,7 +90,7 @@ namespace Test.Amqp
         public List<int> Grades { get; set; }
     }
 
-    [AmqpContract(Name = "teacher", Code = 2)]
+    [AmqpContract(Name = "test.amqp:teacher", Code = 0x0000123400000002)]
     class Teacher : Person
     {
         public Teacher(string name)
@@ -123,7 +123,7 @@ namespace Test.Amqp
         }
     }
 
-    [AmqpContract(Name = "address", Code = 3)]
+    [AmqpContract(Name = "test.amqp:address", Code = 0x0000123400000003)]
     class StreetAddress
     {
         [AmqpMember]

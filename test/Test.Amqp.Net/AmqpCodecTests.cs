@@ -476,14 +476,14 @@ namespace Test.Amqp
             // Inter-op: it should be an AMQP described list as other clients see it
             buffer.Seek(0);
             DescribedValue dl1 = AmqpSerializer.Deserialize<DescribedValue>(buffer);
-            Assert.AreEqual(dl1.Descriptor, 1ul);
+            Assert.AreEqual(dl1.Descriptor, 0x0000123400000001UL);
             List lv = dl1.Value as List;
             Assert.IsTrue(lv != null);
             Assert.AreEqual(p.Name, lv[0]);
             Assert.AreEqual(p.Age, lv[1]);
             Assert.AreEqual(p.DateOfBirth.Value, lv[2]);
             Assert.IsTrue(lv[3] is DescribedValue, "Address is decribed type");
-            Assert.AreEqual(((DescribedValue)lv[3]).Descriptor, 3ul);
+            Assert.AreEqual(((DescribedValue)lv[3]).Descriptor, 0x0000123400000003UL);
             Assert.AreEqual(((List)((DescribedValue)lv[3]).Value)[0], ((Student)p).Address.FullAddress);
             Assert.IsTrue(lv[4] is Map, "Properties should be map");
             Assert.AreEqual(((Map)lv[4])["height"], p.Properties["height"]);
@@ -501,7 +501,7 @@ namespace Test.Amqp
 
             // Extensible: more items in the payload should not break
             DescribedValue dl2 = new DescribedValue(
-                new Symbol("teacher"),
+                new Symbol("test.amqp:teacher"),
                 new List() { "Jerry", 40, null, 50000, lv[4], null, null, "unknown-string", true, new Symbol("unknown-symbol") });
             ByteBuffer bf2 = new ByteBuffer(1024, true);
             serializer.WriteObject(bf2, dl2);
