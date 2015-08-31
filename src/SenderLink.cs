@@ -142,21 +142,23 @@ namespace Amqp
         internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
             this.ThrowIfDetaching("Send");
+
+            var buffer = message.Encode();
+            if (buffer.Length < 1)
+            {
+                throw new ArgumentException("Cannot send an empty message.");
+            }
+
             Delivery delivery = new Delivery()
             {
                 Message = message,
-                Buffer = message.Encode(),
+                Buffer = buffer,
                 State = deliveryState,
                 Link = this,
                 OnOutcome = callback,
                 UserToken = state,
                 Settled = this.settleMode == SenderSettleMode.Settled || callback == null
             };
-
-            if (delivery.Buffer.Length < 1)
-            {
-                throw new ArgumentException("The message is completely empty. There is nothing to send.", "message");
-            }
 
             lock (this.ThisLock)
             {
