@@ -655,7 +655,9 @@ namespace Test.Amqp
         /// This test proves that issue #14 is fixed.
         /// https://github.com/Azure/amqpnetlite/issues/14
         /// </summary>
+#if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
+#endif
         public void TestMethod_SendEmptyMessage()
         {
             string testName = "SendEmptyMessage";
