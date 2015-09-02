@@ -63,19 +63,7 @@ namespace Amqp
 
         public async Task ConnectAsync(Address address, ConnectionFactory factory)
         {
-            Socket socket;
-            IPAddress[] ipAddresses;
-            IPAddress ipAddress;
-            if (IPAddress.TryParse(address.Host, out ipAddress))
-            {
-                socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                ipAddresses = new IPAddress[] { ipAddress };
-            }
-            else
-            {
-                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                ipAddresses = Dns.GetHostEntry(address.Host).AddressList;
-            }
+            Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
 
             if (factory.tcpSettings != null)
             {
@@ -83,7 +71,7 @@ namespace Amqp
             }
 
             await Task.Factory.FromAsync(
-                (c, s) => ((Socket)s).BeginConnect(ipAddresses, address.Port, c, s),
+                (c, s) => ((Socket)s).BeginConnect(address.Host, address.Port, c, s),
                 (r) => ((Socket)r.AsyncState).EndConnect(r),
                 socket);
 

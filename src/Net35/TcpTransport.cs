@@ -29,40 +29,8 @@ namespace Amqp
 
         public void Connect(Connection connection, Address address, bool noVerification)
         {
-            var ipHostEntry = Dns.GetHostEntry(address.Host);
-            Exception exception = null;
-            TcpSocket socket = null;
-
-            foreach (var ipAddress in ipHostEntry.AddressList)
-            {
-                if (ipAddress == null)
-                {
-                    continue;
-                }
-
-                try
-                {
-                    socket = new TcpSocket();
-                    socket.Connect(new IPEndPoint(ipAddress, address.Port));
-                    exception = null;
-                    break;
-                }
-                catch (SocketException socketException)
-                {
-                    if (socket != null)
-                    {
-                        socket.Close();
-                        socket = null;
-                    }
-
-                    exception = socketException;
-                }
-            }
-
-            if (exception != null)
-            {
-                throw exception;
-            }
+            TcpSocket socket = new TcpSocket();
+            socket.Connect(address.Host, address.Port);
 
             if (address.UseSsl)
             {
@@ -78,7 +46,10 @@ namespace Amqp
 
         public void Close()
         {
-            this.socketTransport.Close();
+            if (this.socketTransport != null)
+            {
+                this.socketTransport.Close();
+            }
         }
 
         public void Send(ByteBuffer buffer)
