@@ -130,6 +130,19 @@ namespace Test.Amqp
         public string FullAddress;
     }
 
+    [AmqpContract(Name = "test.amqp:product", Encoding = EncodingType.Map)]
+    class Product
+    {
+        [AmqpMember]
+        public string Name;
+
+        [AmqpMember]
+        public double Price;
+
+        [AmqpMember]
+        public long Weight;
+    }
+
     class EmployeeId : IAmqpSerializable
     {
         Guid uuid;

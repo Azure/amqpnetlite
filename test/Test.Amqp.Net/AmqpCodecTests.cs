@@ -532,6 +532,19 @@ namespace Test.Amqp
             Assert.AreEqual(teacher.Classes[205], ((Teacher)p6).Classes[205]);
         }
 
+        [TestMethod()]
+        public void AmqpSerializerMapEncodingTest()
+        {
+            var product = new Product() { Name = "Computer", Price = 499.98, Weight = 30 };
+            var buffer = new ByteBuffer(1024, true);
+            AmqpSerializer.Serialize(buffer, product);
+
+            var product2 = AmqpSerializer.Deserialize<Product>(buffer);
+            Assert.AreEqual(product.Name, product2.Name);
+            Assert.AreEqual(product.Price, product2.Price);
+            Assert.AreEqual(product.Weight, product2.Weight);
+        }
+
         [TestMethod]
         public void AmqpSerializerMessageBodyTest()
         {

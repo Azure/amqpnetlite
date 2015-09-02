@@ -795,7 +795,7 @@ namespace Amqp.Serialization
                     object memberValue = member.Accessor.Get(container);
                     if (memberValue != null)
                     {
-                        Encoder.WriteSymbol(buffer, (Symbol)memberValue, true);
+                        Encoder.WriteSymbol(buffer, (Symbol)member.Name, true);
 
                         SerializableType effectiveType = member.Type;
                         if (memberValue.GetType() != effectiveType.type)
