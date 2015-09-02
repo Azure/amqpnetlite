@@ -35,7 +35,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestAmqpBroker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -44,6 +43,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Examples\Listener\Listener.IContainer\Listener.IContainer.csproj">
+      <Project>{4b7bfdb9-406a-4ebe-93c3-5d40d6a986f4}</Project>
+      <Name>Listener.IContainer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Amqp.Net.csproj">
       <Project>{92153715-1d99-43b1-b291-470cf91a156d}</Project>
       <Name>Amqp.Net</Name>

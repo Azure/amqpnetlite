@@ -71,8 +71,9 @@ namespace Amqp.Types
                 if (i++ > 0) sb.Append(',');
                 sb.Append(key);
                 sb.Append(':');
-                sb.Append(this[key]);
+                sb.Append(Trace.GetTraceObject(this[key]));
             }
+
             sb.Append(']');
 
             return sb.ToString();

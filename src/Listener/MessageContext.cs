@@ -1,0 +1,59 @@
+﻿//  ------------------------------------------------------------------------------------
+//  Copyright (c) Microsoft Corporation
+//  All rights reserved. 
+//  
+//  Licensed under the Apache License, Version 2.0 (the ""License""); you may not use this 
+//  file except in compliance with the License. You may obtain a copy of the License at 
+//  http://www.apache.org/licenses/LICENSE-2.0  
+//  
+//  THIS CODE IS PROVIDED *AS IS* BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+//  EITHER EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION ANY IMPLIED WARRANTIES OR 
+//  CONDITIONS OF TITLE, FITNESS FOR A PARTICULAR PURPOSE, MERCHANTABLITY OR 
+//  NON-INFRINGEMENT. 
+// 
+//  See the Apache Version 2.0 License for specific language governing permissions and 
+//  limitations under the License.
+//  ------------------------------------------------------------------------------------
+
+namespace Amqp.Listener
+{
+    using Amqp.Framing;
+
+    /// <summary>
+    /// Provides the context to a message processor to process the received message.
+    /// </summary>
+    public class MessageContext : Context
+    {
+        internal MessageContext(ListenerLink link, Message message)
+            : base(link, message)
+        {
+            this.DeliveryState = message.Delivery.State;
+        }
+
+        /// <summary>
+        /// Gets the delivery state associated with the message.
+        /// </summary>
+        public DeliveryState DeliveryState
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Accepts the message.
+        /// </summary>
+        public void Complete()
+        {
+            this.Dispose(Context.Accepted);
+        }
+
+        /// <summary>
+        /// Rejects the message.
+        /// </summary>
+        /// <param name="error"></param>
+        public void Complete(Error error)
+        {
+            this.Dispose(new Rejected() { Error = error });
+        }
+    }
+}

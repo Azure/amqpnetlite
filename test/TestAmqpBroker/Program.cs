@@ -17,10 +17,10 @@
 
 namespace TestAmqpBroker
 {
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
     using Amqp;
+    using Listener.IContainer;
+    using System;
+    using System.Collections.Generic;
 
     class Program
     {

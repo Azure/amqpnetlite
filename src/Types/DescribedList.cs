@@ -72,7 +72,7 @@ namespace Amqp.Types
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();
             sb.Append(name);
-            sb.Append("(");
+            sb.Append('(');
             bool addComma = false;
             for (int i = 0; i < fieldValues.Length; i++)
             {
@@ -85,47 +85,14 @@ namespace Amqp.Types
 
                     sb.Append(fieldNames[i]);
                     sb.Append(":");
-                    sb.Append(GetStringObject(fieldValues[i]));
+                    sb.Append(Trace.GetTraceObject(fieldValues[i]));
                     addComma = true;
                 }
             }
-            sb.Append(")");
+
+            sb.Append(')');
 
             return sb.ToString();
-        }
-
-        object GetStringObject(object value)
-        {
-            byte[] binary = value as byte[];
-            if (binary != null)
-            {
-                string hexChars = "0123456789ABCDEF";
-                System.Text.StringBuilder sb = new System.Text.StringBuilder(binary.Length * 2);
-                for (int i = 0; i < binary.Length; ++i)
-                {
-                    sb.Append(hexChars[binary[i] >> 4]);
-                    sb.Append(hexChars[binary[i] & 0x0F]);
-                }
-
-                return sb.ToString();
-            }
-
-            var list = value as System.Collections.IList;
-            if (list != null)
-            {
-                System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                sb.Append('[');
-                for (int i = 0; i < list.Count; ++i)
-                {
-                    if (i > 0) sb.Append(',');
-                    sb.Append(list[i]);
-                }
-                sb.Append(']');
-
-                return sb.ToString();
-            }
-
-            return value;
         }
 #endif
     }

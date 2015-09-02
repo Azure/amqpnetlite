@@ -32,7 +32,7 @@ namespace Amqp
     /// </summary>
     public abstract class AmqpObject
     {
-        const int DefaultCloseTimeout = 60000;
+        internal const int DefaultCloseTimeout = 60000;
         ManualResetEvent endEvent;
 
         /// <summary>
@@ -44,8 +44,18 @@ namespace Amqp
             set;
         }
 
+        /// <summary>
+        /// Gets the last error, if any, of the object.
+        /// </summary>
+        public Error Error
+        {
+            get;
+            private set;
+        }
+
         internal void NotifyClosed(Error error)
         {
+            this.Error = error;
             ManualResetEvent temp = this.endEvent;
             if (temp != null)
             {

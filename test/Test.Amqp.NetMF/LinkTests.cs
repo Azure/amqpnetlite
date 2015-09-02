@@ -16,6 +16,7 @@
 //  ------------------------------------------------------------------------------------
 using Amqp;
 using Amqp.Framing;
+using Amqp.Sasl;
 using Amqp.Types;
 using System;
 using System.Text;
@@ -112,6 +113,36 @@ namespace Test.Amqp
             sender.Close();
             receiver.Close();
             session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_ConnectionChannelMax()
+        {
+            ushort channelMax = 5;
+            Connection connection = new Connection(
+                address,
+                null,
+                new Open() { ContainerId = "ConnectionChannelMax", HostName = address.Host, ChannelMax = channelMax },
+                (c, o) => Trace.WriteLine(TraceLevel.Information, "{0}", o));
+
+            for (int i = 0; i <= channelMax; i++)
+            {
+                Session session = new Session(connection);
+            }
+
+            try
+            {
+                Session session = new Session(connection);
+                Fx.Assert(false, "Created more sessions than allowed.");
+            }
+            catch (AmqpException exception)
+            {
+                Fx.Assert(exception.Error.Condition.Equals((Symbol)ErrorCode.NotAllowed), "Wrong error code");
+            }
+
             connection.Close();
         }
 
@@ -618,6 +649,40 @@ namespace Test.Amqp
             receiver2.Close();
             session.Close();
             connection.Close();
+        }
+
+        /// <summary>
+        /// This test proves that issue #14 is fixed.
+        /// https://github.com/Azure/amqpnetlite/issues/14
+        /// </summary>
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
+        public void TestMethod_SendEmptyMessage()
+        {
+            string testName = "SendEmptyMessage";
+
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+
+            bool threwArgEx = false;
+            try
+            {
+                sender.Send(new Message());
+            }
+            catch (ArgumentException)
+            {
+                threwArgEx = true;
+            }
+            finally
+            {
+                sender.Close();
+                session.Close();
+                connection.Close();
+            }
+
+            Assert.IsTrue(threwArgEx, "Should throw an argument exception when sending an empty message.");
         }
     }
 }

@@ -38,12 +38,13 @@ namespace Amqp
             End
         }
 
-        const int MaxLinks = 8;
+        const int DefaultMaxLinks = 64;
         const uint defaultWindowSize = 2048;
         readonly Connection connection;
-        readonly Link[] localLinks;
-        readonly Link[] remoteLinks;
         readonly ushort channel;
+        uint handleMax;
+        Link[] localLinks;
+        Link[] remoteLinks;
         State state;
 
         // incoming flow control
@@ -62,7 +63,7 @@ namespace Amqp
         /// </summary>
         /// <param name="connection">The connection within which to create the session.</param>
         public Session(Connection connection)
-            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize })
+            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize, HandleMax = DefaultMaxLinks - 1 })
         {
         }
 
@@ -70,19 +71,26 @@ namespace Amqp
         {
             this.connection = connection;
             this.channel = connection.AddSession(this);
-            this.localLinks = new Link[MaxLinks];
-            this.remoteLinks = new Link[MaxLinks];
+            this.handleMax = begin.HandleMax;
+            this.localLinks = new Link[1];
+            this.remoteLinks = new Link[1];
             this.incomingList = new LinkedList();
             this.outgoingList = new LinkedList();
             this.nextOutgoingId = uint.MaxValue - 2u;
             this.outgoingWindow = begin.IncomingWindow;
             this.incomingDeliveryId = uint.MaxValue;
 
-            begin.IncomingWindow = defaultWindowSize;
-            begin.HandleMax = MaxLinks - 1;
             begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
+        }
+
+        /// <summary>
+        /// Gets the connection where the session was created.
+        /// </summary>
+        public Connection Connection
+        {
+            get { return this.connection; }
         }
 
         object ThisLock
@@ -93,11 +101,6 @@ namespace Amqp
         internal ushort Channel
         {
             get { return this.channel; }
-        }
-
-        internal Connection Connection
-        {
-            get { return this.connection; }
         }
 
         internal void Abort(Error error)
@@ -121,10 +124,11 @@ namespace Amqp
 
         internal uint AddLink(Link link)
         {
+            this.ThrowIfEnded("AddLink");
             lock (this.ThisLock)
             {
-                this.ThrowIfEnded("AddLink");
-                for (int i = 0; i < this.localLinks.Length; ++i)
+                int count = this.localLinks.Length;
+                for (int i = 0; i < count; ++i)
                 {
                     if (this.localLinks[i] == null)
                     {
@@ -133,8 +137,18 @@ namespace Amqp
                     }
                 }
 
+                if (count - 1 < this.handleMax)
+                {
+                    int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                    Link[] expanded = new Link[size];
+                    Array.Copy(this.localLinks, expanded, count);
+                    this.localLinks = expanded;
+                    this.localLinks[count] = link;
+                    return (ushort)count;
+                }
+
                 throw new AmqpException(ErrorCode.NotAllowed,
-                    Fx.Format(SRAmqp.AmqpHandleExceeded, MaxLinks));
+                    Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
             }
         }
 
@@ -222,6 +236,11 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnBegin", this.state));
                 }
+            }
+
+            if (begin.HandleMax < this.handleMax)
+            {
+                this.handleMax = begin.HandleMax;
             }
         }
 
@@ -322,12 +341,35 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
+                if (attach.Handle > this.handleMax)
+                {
+                    throw new AmqpException(ErrorCode.NotAllowed,
+                        Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
+                }
+
                 for (int i = 0; i < this.localLinks.Length; ++i)
                 {
                     Link link = this.localLinks[i];
                     if (link != null && string.Compare(link.Name, attach.LinkName) == 0)
                     {
                         link.OnAttach(attach.Handle, attach);
+
+                        int count = this.remoteLinks.Length;
+                        if (count - 1 < attach.Handle)
+                        {
+                            int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                            Link[] expanded = new Link[size];
+                            Array.Copy(this.remoteLinks, expanded, count);
+                            this.remoteLinks = expanded;
+                        }
+
+                        var remoteLink = this.remoteLinks[attach.Handle];
+                        if (remoteLink != null)
+                        {
+                            throw new AmqpException(ErrorCode.HandleInUse,
+                                Fx.Format(SRAmqp.AmqpHandleInUse, attach.Handle, remoteLink.Name));
+                        }
+
                         this.remoteLinks[attach.Handle] = link;
                         return;
                     }
@@ -465,8 +507,12 @@ namespace Amqp
         {
             if (this.state >= State.EndPipe)
             {
-                throw new AmqpException(ErrorCode.IllegalState,
-                    Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state));
+                throw new AmqpException(this.Error ??
+                    new Error()
+                    {
+                        Condition = ErrorCode.IllegalState,
+                        Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
+                    });
             }
         }
 

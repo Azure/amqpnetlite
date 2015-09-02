@@ -69,6 +69,11 @@ namespace Amqp
             get { return SRAmqp.GetString(StringResources.AmqpHandleNotFound); }
         }
 
+        public static string AmqpHandleInUse
+        {
+            get { return SRAmqp.GetString(StringResources.AmqpHandleInUse); }
+        }
+
         public static string InvalidFrameSize
         {
             get { return SRAmqp.GetString(StringResources.InvalidFrameSize); }

@@ -41,6 +41,7 @@ namespace Amqp.Listener
         TransportListener listener;
         SslSettings sslSettings;
         SaslSettings saslSettings;
+        bool closed;
 
         /// <summary>
         /// Initializes the connection listener object.
@@ -63,6 +64,7 @@ namespace Amqp.Listener
                 {
                     throw new ArgumentException("userInfo");
                 }
+
                 userName = Uri.UnescapeDataString(creds[0]);
                 password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
             }
@@ -113,6 +115,11 @@ namespace Amqp.Listener
         /// </summary>
         public void Open()
         {
+            if (this.closed)
+            {
+                throw new ObjectDisposedException(this.GetType().Name);
+            }
+
             if (this.address.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
             {
                 this.listener = new TcpTransportListener(this, this.address.Host, this.address.Port);
@@ -148,6 +155,19 @@ namespace Amqp.Listener
         public void Close()
         {
             this.listener.Close();
+
+            var snapshot = new List<Connection>();
+            lock (this.connections)
+            {
+                this.closed = true;
+                snapshot.AddRange(this.connections);
+                connections.Clear();
+            }
+
+            foreach (var connection in snapshot)
+            {
+                connection.Close(AmqpObject.DefaultCloseTimeout, new Error() { Condition = ErrorCode.ConnectionForced });
+            }
         }
 
         X509Certificate2 GetServiceCertificate()
@@ -168,19 +188,34 @@ namespace Amqp.Listener
         {
             if (this.saslSettings != null)
             {
-                ListenerSasProfile profile = new ListenerSasProfile(this);
+                ListenerSaslProfile profile = new ListenerSaslProfile(this);
                 transport = await profile.OpenAsync(null, transport);
             }
 
             Connection connection = new ListenerConnection(this, this.address, transport);
-            connection.Closed += this.OnConnectionClosed;
+            bool shouldClose = false;
             lock (this.connections)
             {
-                this.connections.Add(connection);
+                if (!this.closed)
+                {
+                    connection.Closed += this.OnConnectionClosed;
+                    this.connections.Add(connection);
+                }
+                else
+                {
+                    shouldClose = true;
+                }
             }
 
-            AsyncPump pump = new AsyncPump(transport);
-            pump.Start(connection);
+            if (shouldClose)
+            {
+                await connection.CloseAsync();
+            }
+            else
+            {
+                AsyncPump pump = new AsyncPump(transport);
+                pump.Start(connection);
+            }
         }
 
         void OnConnectionClosed(AmqpObject sender, Error error)
@@ -306,12 +341,12 @@ namespace Amqp.Listener
             }
         }
 
-        class ListenerSasProfile : SaslProfile
+        class ListenerSaslProfile : SaslProfile
         {
             readonly ConnectionListener listener;
             SaslProfile innerProfile;
 
-            public ListenerSasProfile(ConnectionListener listener)
+            public ListenerSaslProfile(ConnectionListener listener)
             {
                 this.listener = listener;
             }

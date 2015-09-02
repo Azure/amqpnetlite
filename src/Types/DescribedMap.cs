@@ -75,13 +75,20 @@ namespace Amqp.Types
             Encoder.WriteMap(buffer, this.map, true);
         }
 
+#if TRACE
         /// <summary>
         /// Returns a string that represents the current map.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return this.map.ToString();
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            sb.Append(this.Descriptor.ToString());
+            sb.Append('(');
+            sb.Append(this.map.ToString());
+            sb.Append(')');
+            return sb.ToString();
         }
+#endif
     }
 }

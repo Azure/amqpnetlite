@@ -20,35 +20,6 @@ namespace Amqp.Listener
     using Amqp.Framing;
 
     /// <summary>
-    /// Defines the property and methods of a message processor.
-    /// </summary>
-    public interface IMessageProcessor
-    {
-        /// <summary>
-        /// Gets the link credit to issue to the client.
-        /// </summary>
-        int Credit { get; }
-
-        /// <summary>
-        /// Processes a received message.
-        /// </summary>
-        /// <param name="messageContext">Context of the received message.</param>
-        void Process(MessageContext messageContext);
-    }
-
-    /// <summary>
-    /// Defines the methods of a request processor.
-    /// </summary>
-    public interface IRequestProcessor
-    {
-        /// <summary>
-        /// Processes a received request.
-        /// </summary>
-        /// <param name="requestContext">Context of the received request.</param>
-        void Process(RequestContext requestContext);
-    }
-
-    /// <summary>
     /// The base class of request context.
     /// </summary>
     public abstract class Context
@@ -92,63 +63,6 @@ namespace Amqp.Listener
         protected void Dispose(DeliveryState deliveryState)
         {
             this.Link.DisposeMessage(this.Message, deliveryState, true);
-        }
-    }
-
-    /// <summary>
-    /// Provides the context to a message processor to process the received message.
-    /// </summary>
-    public class MessageContext : Context
-    {
-        internal MessageContext(ListenerLink link, Message message)
-            : base(link, message)
-        {
-        }
-
-        /// <summary>
-        /// Accepts the message.
-        /// </summary>
-        public void Complete()
-        {
-            this.Dispose(Context.Accepted);
-        }
-
-        /// <summary>
-        /// Rejects the message.
-        /// </summary>
-        /// <param name="error"></param>
-        public void Complete(Error error)
-        {
-            this.Dispose(new Rejected() { Error = error });
-        }
-    }
-
-    /// <summary>
-    /// Provides the context to a request processor to process the received request.
-    /// </summary>
-    public class RequestContext : Context
-    {
-        readonly ListenerLink responseLink;
-
-        internal RequestContext(ListenerLink requestLink, ListenerLink responseLink, Message request)
-            : base(requestLink, request)
-        {
-            this.responseLink = responseLink;
-        }
-
-        /// <summary>
-        /// Completes the request and sends the response message to the peer.
-        /// </summary>
-        /// <param name="response">The response message to send.</param>
-        public void Complete(Message response)
-        {
-            if (response.Properties == null)
-            {
-                response.Properties = new Properties();
-            }
-
-            response.Properties.CorrelationId = this.Message.Properties.MessageId;
-            this.responseLink.SendMessage(response, response.Encode());
         }
     }
 }

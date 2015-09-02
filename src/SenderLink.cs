@@ -49,9 +49,9 @@ namespace Amqp
         /// </summary>
         /// <param name="session">The session within which to create the link.</param>
         /// <param name="name">The link name.</param>
-        /// <param name="adderss">The node address.</param>
-        public SenderLink(Session session, string name, string adderss)
-            : this(session, name, new Target() { Address = adderss }, null)
+        /// <param name="address">The node address.</param>
+        public SenderLink(Session session, string name, string address)
+            : this(session, name, new Target() { Address = address }, null)
         {
         }
 
@@ -141,11 +141,16 @@ namespace Amqp
 
         internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
-            this.ThrowIfDetaching("Send");
+            var buffer = message.Encode();
+            if (buffer.Length < 1)
+            {
+                throw new ArgumentException("Cannot send an empty message.");
+            }
+
             Delivery delivery = new Delivery()
             {
                 Message = message,
-                Buffer = message.Encode(),
+                Buffer = buffer,
                 State = deliveryState,
                 Link = this,
                 OnOutcome = callback,
@@ -155,6 +160,8 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
+                this.ThrowIfDetaching("Send");
+
                 if (this.credit <= 0 || this.writing)
                 {
                     this.outgoingList.Add(delivery);

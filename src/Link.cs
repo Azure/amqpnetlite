@@ -83,7 +83,10 @@ namespace Amqp
             get { return this.handle; }
         }
 
-        internal Session Session
+        /// <summary>
+        /// Gets the session where the link was created.
+        /// </summary>
+        public Session Session
         {
             get { return this.session; }
         }
@@ -232,8 +235,12 @@ namespace Amqp
         {
             if (this.IsDetaching)
             {
-                throw new AmqpException(ErrorCode.IllegalState,
-                    Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state));
+                throw new AmqpException(this.Error ??
+                    new Error()
+                    {
+                        Condition = ErrorCode.IllegalState,
+                        Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
+                    });
             }
         }
 

@@ -77,7 +77,18 @@ namespace Amqp {
                 return ResourceManager.GetString("AmqpHandleExceeded", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to The handle &apos;{0}&apos; is already allocated for &apos;{1}&apos;..
+        /// </summary>
+        internal static string AmqpHandleInUse
+        {
+            get
+            {
+                return ResourceManager.GetString("AmqpHandleInUse", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to The link handle &apos;{0}&apos; cannot be found in session &apos;{1}&apos;..
         /// </summary>
