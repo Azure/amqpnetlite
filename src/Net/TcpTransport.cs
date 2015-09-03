@@ -87,7 +87,7 @@ namespace Amqp
                 }
                 else
                 {
-                    sslStream = new SslStream(new NetworkStream(socket), false, ssl.RemoteCertificateValidationCallback);
+                    sslStream = new SslStream(new NetworkStream(socket), false, ssl.RemoteCertificateValidationCallback, ssl.LocalCertificateSelectionCallback);
                     await sslStream.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
                         ssl.Protocols, ssl.CheckCertificateRevocation);
                 }
