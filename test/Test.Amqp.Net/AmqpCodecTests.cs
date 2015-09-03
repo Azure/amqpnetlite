@@ -533,6 +533,18 @@ namespace Test.Amqp
         }
 
         [TestMethod()]
+        public void AmqpSerializerOnSerializedTest()
+        {
+            var person = new PersonWithOnSerialized("Methuselah") { Age = 99 };
+            var buffer = new ByteBuffer(1024, true);
+            AmqpSerializer.Serialize(buffer, person);
+
+            var person2 = AmqpSerializer.Deserialize<PersonWithOnSerialized>(buffer);
+            Assert.AreEqual(person.Name, person2.Name);
+            Assert.Equals(person2.Age, 42);
+        }
+
+        [TestMethod()]
         public void AmqpSerializerMapEncodingTest()
         {
             var product = new Product() { Name = "Computer", Price = 499.98, Weight = 30 };

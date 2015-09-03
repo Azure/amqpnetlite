@@ -104,10 +104,11 @@ namespace Amqp.Serialization
             ulong? descriptorCode,
             SerialiableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
-            MethodAccessor onDesrialized)
+            MethodAccessor onDeserialized,
+            MethodAccessor onSerialized)
         {
             return new DescribedListType(serializer, type, baseType, descriptorName,
-                descriptorCode, members, knownTypes, onDesrialized);
+                descriptorCode, members, knownTypes, onDeserialized, onSerialized);
         }
 
         public static SerializableType CreateDescribedMapType(
@@ -118,10 +119,11 @@ namespace Amqp.Serialization
             ulong? descriptorCode,
             SerialiableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
-            MethodAccessor onDesrialized)
+            MethodAccessor onDeserialized,
+            MethodAccessor onSerialized)
         {
             return new DescribedMapType(serializer, type, baseType, descriptorName, descriptorCode,
-                members, knownTypes, onDesrialized);
+                members, knownTypes, onDeserialized, onSerialized);
         }
 
         public virtual void ValidateType(SerializableType otherType)
@@ -527,6 +529,7 @@ namespace Amqp.Serialization
             readonly ulong? descriptorCode;
             readonly SerialiableMember[] members;
             readonly MethodAccessor onDeserialized;
+            readonly MethodAccessor onSerialized;
             readonly KeyValuePair<Type, SerializableType>[] knownTypes;
 
             protected DescribedCompoundType(
@@ -537,14 +540,16 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
+                MethodAccessor onDeserialized,
+                MethodAccessor onSerialized)
                 : base(serializer, type)
             {
                 this.baseType = (DescribedCompoundType)baseType;
                 this.descriptorName = descriptorName;
                 this.descriptorCode = descriptorCode;
                 this.members = members;
-                this.onDeserialized = onDesrialized;
+                this.onDeserialized = onDeserialized;
+                this.onSerialized = onSerialized;
                 this.knownTypes = GetKnownTypes(knownTypes);
             }
 
@@ -649,7 +654,20 @@ namespace Amqp.Serialization
                     this.onDeserialized.Invoke(container, new object[] { default(StreamingContext) });
                 }
             }
-            
+
+            protected void InvokeSerialized(object container)
+            {
+                if (this.baseType != null)
+                {
+                    this.baseType.InvokeSerialized(container);
+                }
+
+                if (this.onSerialized != null)
+                {
+                    this.onSerialized.Invoke(container, new object[] { default(StreamingContext) });
+                }
+            }
+
             static KeyValuePair<Type, SerializableType>[] GetKnownTypes(Dictionary<Type, SerializableType> types)
             {
                 if (types == null || types.Count == 0)
@@ -693,8 +711,9 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
-                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDesrialized)
+                MethodAccessor onDeserialized,
+                MethodAccessor onSerialized)
+                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDeserialized, onSerialized)
             {
             }
 
@@ -759,8 +778,9 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
-                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDesrialized)
+                MethodAccessor onDeserialized,
+                MethodAccessor onSerialized)
+                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDeserialized, onSerialized)
             {
                 this.membersMap = new Dictionary<string, SerialiableMember>();
                 foreach(SerialiableMember member in members)
@@ -807,6 +827,8 @@ namespace Amqp.Serialization
                         count += 2;
                     }
                 }
+
+                this.InvokeSerialized(container);
 
                 return count;
             }

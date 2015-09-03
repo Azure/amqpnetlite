@@ -73,6 +73,27 @@ namespace Test.Amqp
         }
     }
 
+    [AmqpContract(Name = "test.amqp:person", Code = 0x0000123400000000)]
+    class PersonWithOnSerialized
+    {
+        public PersonWithOnSerialized(string name)
+        {
+            this.Name = name;
+        }
+
+        [AmqpMember(Order = 1)]
+        public string Name { get; private set; }
+
+        [AmqpMember(Order = 2)]
+        public int Age { get; set; }
+
+        [System.Runtime.Serialization.OnSerialized]
+        void OnSerialized()
+        {
+            this.Age = 42;
+        }
+    }
+
     [AmqpContract(Name = "test.amqp:student", Code = 0x0000123400000001)]
     class Student : Person
     {
