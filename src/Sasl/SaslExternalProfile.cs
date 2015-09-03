@@ -17,6 +17,7 @@
 
 namespace Amqp.Sasl
 {
+    using System.Text;
     using Amqp.Framing;
     using Amqp.Types;
 
@@ -47,6 +48,10 @@ namespace Amqp.Sasl
             else if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
             {
                 return null;
+            }
+            else if (command.Descriptor.Code == Codec.SaslChallenge.Code)
+            {
+                return new SaslResponse() { Response = Encoding.UTF8.GetBytes("") };
             }
 
             throw new AmqpException(ErrorCode.NotAllowed, command.ToString());
