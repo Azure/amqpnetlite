@@ -204,6 +204,7 @@ namespace Amqp.Serialization
             int lastOrder = memberList.Count + 1;
             MemberInfo[] memberInfos = type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             MethodAccessor onDeserialized = null;
+            MethodAccessor onSerialized = null;
             foreach (MemberInfo memberInfo in memberInfos)
             {
                 if (memberInfo.DeclaringType != type)
@@ -239,6 +240,12 @@ namespace Amqp.Serialization
                     if (memberAttributes.Length == 1)
                     {
                         onDeserialized = MethodAccessor.Create((MethodInfo)memberInfo);
+                    }
+
+                    memberAttributes = memberInfo.GetCustomAttributes(typeof(OnSerializedAttribute), false);
+                    if (memberAttributes.Length == 1)
+                    {
+                        onSerialized = MethodAccessor.Create((MethodInfo)memberInfo);
                     }
                 }
             }
@@ -279,12 +286,12 @@ namespace Amqp.Serialization
             if (contractAttribute.Encoding == EncodingType.List)
             {
                 return SerializableType.CreateDescribedListType(this, type, baseType, descriptorName, 
-                    descriptorCode, members, knownTypes, onDeserialized);
+                    descriptorCode, members, knownTypes, onDeserialized, onSerialized);
             }
             else if (contractAttribute.Encoding == EncodingType.Map)
             {
                 return SerializableType.CreateDescribedMapType(this, type, baseType, descriptorName,
-                    descriptorCode, members, knownTypes, onDeserialized);
+                    descriptorCode, members, knownTypes, onDeserialized, onSerialized);
             }
             else
             {
