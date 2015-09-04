@@ -108,6 +108,25 @@ namespace Amqp
             }
         }
 
+
+#if (DOTNET || DOTNET35)
+        /// <summary>
+        /// Gets an object of type T from the message body.
+        /// </summary>
+        /// <typeparam name="T">The object type.</typeparam>
+        /// <returns></returns>
+        public T GetBody<T>()
+        {
+            if (this.BodySection != null &&
+                this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
+            {
+                return ((AmqpValue)this.BodySection).GetValue<T>();
+            }
+
+            return (T)this.Body;
+        }
+#endif
+
         /// <summary>
         /// Gets the delivery tag associated with the message.
         /// </summary>
