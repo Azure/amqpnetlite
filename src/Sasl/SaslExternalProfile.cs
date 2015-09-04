@@ -36,7 +36,11 @@ namespace Amqp.Sasl
 
         protected override DescribedList GetStartCommand(string hostname)
         {
-            return new SaslInit() { Mechanism = Name };
+            return new SaslInit()
+            {
+                Mechanism = Name,
+                InitialResponse = Encoding.UTF8.GetBytes("")
+            };
         }
 
         protected override DescribedList OnCommand(DescribedList command)
@@ -48,10 +52,6 @@ namespace Amqp.Sasl
             else if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
             {
                 return null;
-            }
-            else if (command.Descriptor.Code == Codec.SaslChallenge.Code)
-            {
-                return new SaslResponse() { Response = Encoding.UTF8.GetBytes("") };
             }
 
             throw new AmqpException(ErrorCode.NotAllowed, command.ToString());
