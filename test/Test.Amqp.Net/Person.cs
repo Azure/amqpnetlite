@@ -33,6 +33,12 @@ namespace Test.Amqp
             this.Name = name;
         }
 
+        public int Version
+        {
+            get;
+            protected set;
+        }
+
         [AmqpMember(Order = 1)]
         public string Name
         {
@@ -88,6 +94,30 @@ namespace Test.Amqp
 
         [AmqpMember(Name = "grades", Order = 10)]
         public List<int> Grades { get; set; }
+
+        [System.Runtime.Serialization.OnSerializing]
+        void OnSerializing()
+        {
+            this.Version++;
+        }
+
+        [System.Runtime.Serialization.OnSerialized]
+        void OnSerialized()
+        {
+            this.Version++;
+        }
+
+        [System.Runtime.Serialization.OnDeserializing]
+        void OnDeserializing()
+        {
+            this.Version++;
+        }
+
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnDeserialized()
+        {
+            this.Version++;
+        }
     }
 
     [AmqpContract(Name = "test.amqp:teacher", Code = 0x0000123400000002)]
@@ -141,6 +171,42 @@ namespace Test.Amqp
 
         [AmqpMember]
         public long Weight;
+
+        public Dictionary<string, string> Properties;
+
+        [System.Runtime.Serialization.OnSerializing]
+        void OnSerializing()
+        {
+            if (this.Properties == null)
+            {
+                this.Properties = new Dictionary<string, string>();
+            }
+
+            this.Properties["OnSerializing"] = "true";
+        }
+
+        [System.Runtime.Serialization.OnSerialized]
+        void OnSerialized()
+        {
+            this.Properties["OnSerialized"] = "true";
+        }
+
+        [System.Runtime.Serialization.OnDeserializing]
+        void OnDeserializing()
+        {
+            if (this.Properties == null)
+            {
+                this.Properties = new Dictionary<string, string>();
+            }
+
+            this.Properties["OnDeserializing"] = "true";
+        }
+
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnDeserialized()
+        {
+            this.Properties["OnDeserialized"] = "true";
+        }
     }
 
     class EmployeeId : IAmqpSerializable

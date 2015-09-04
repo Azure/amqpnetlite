@@ -23,6 +23,16 @@ namespace Amqp.Serialization
     using System.Runtime.Serialization;
     using Amqp.Types;
 
+    static class SerializationCallback
+    {
+        public const int OnSerializing = 0;
+        public const int OnSerialized = 1;
+        public const int OnDeserializing = 2;
+        public const int OnDeserialized = 3;
+
+        public const int Size = 4;
+    }
+
     abstract class SerializableType
     {
         readonly AmqpSerializer serializer;
@@ -104,10 +114,10 @@ namespace Amqp.Serialization
             ulong? descriptorCode,
             SerialiableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
-            MethodAccessor onDesrialized)
+            MethodAccessor[] serializationCallbacks)
         {
             return new DescribedListType(serializer, type, baseType, descriptorName,
-                descriptorCode, members, knownTypes, onDesrialized);
+                descriptorCode, members, knownTypes, serializationCallbacks);
         }
 
         public static SerializableType CreateDescribedMapType(
@@ -118,10 +128,10 @@ namespace Amqp.Serialization
             ulong? descriptorCode,
             SerialiableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
-            MethodAccessor onDesrialized)
+            MethodAccessor[] serializationCallbacks)
         {
             return new DescribedMapType(serializer, type, baseType, descriptorName, descriptorCode,
-                members, knownTypes, onDesrialized);
+                members, knownTypes, serializationCallbacks);
         }
 
         public virtual void ValidateType(SerializableType otherType)
@@ -526,7 +536,7 @@ namespace Amqp.Serialization
             readonly Symbol descriptorName;
             readonly ulong? descriptorCode;
             readonly SerialiableMember[] members;
-            readonly MethodAccessor onDeserialized;
+            readonly MethodAccessor[] serializationCallbacks;
             readonly KeyValuePair<Type, SerializableType>[] knownTypes;
 
             protected DescribedCompoundType(
@@ -537,14 +547,14 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
+                MethodAccessor[] serializationCallbacks)
                 : base(serializer, type)
             {
                 this.baseType = (DescribedCompoundType)baseType;
                 this.descriptorName = descriptorName;
                 this.descriptorCode = descriptorCode;
                 this.members = members;
-                this.onDeserialized = onDesrialized;
+                this.serializationCallbacks = serializationCallbacks;
                 this.knownTypes = GetKnownTypes(knownTypes);
             }
 
@@ -637,16 +647,17 @@ namespace Amqp.Serialization
                 ReadSizeAndCount(buffer, formatCode, out size, out count, out encodeWidth);
             }
 
-            protected void InvokeDeserialized(object container)
+            protected void InvokeSerializationCallback(int callbackIndex, object container)
             {
                 if (this.baseType != null)
                 {
-                    this.baseType.InvokeDeserialized(container);
+                    this.baseType.InvokeSerializationCallback(callbackIndex, container);
                 }
 
-                if (this.onDeserialized != null)
+                var callback = this.serializationCallbacks[callbackIndex];
+                if (callback != null)
                 {
-                    this.onDeserialized.Invoke(container, new object[] { default(StreamingContext) });
+                    callback.Invoke(container, new object[] { default(StreamingContext) });
                 }
             }
             
@@ -693,8 +704,8 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
-                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDesrialized)
+                MethodAccessor[] serializationCallbacks)
+                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
             }
 
@@ -713,6 +724,8 @@ namespace Amqp.Serialization
 
             public override int WriteMembers(ByteBuffer buffer, object container)
             {
+                this.InvokeSerializationCallback(SerializationCallback.OnSerializing, container);
+
                 foreach (SerialiableMember member in this.Members)
                 {
                     object memberValue = member.Accessor.Get(container);
@@ -732,18 +745,22 @@ namespace Amqp.Serialization
                     }
                 }
 
+                this.InvokeSerializationCallback(SerializationCallback.OnSerialized, container);
+
                 return this.Members.Length;
             }
 
             public override void ReadMembers(ByteBuffer buffer, object container, ref int count)
             {
+                this.InvokeSerializationCallback(SerializationCallback.OnDeserializing, container);
+
                 for (int i = 0; i < this.Members.Length && count > 0; ++i, --count)
                 {
                     object value = this.Members[i].Type.ReadObject(buffer);
                     this.Members[i].Accessor.Set(container, value);
                 }
 
-                this.InvokeDeserialized(container);
+                this.InvokeSerializationCallback(SerializationCallback.OnDeserialized, container);
             }
         }
 
@@ -759,8 +776,8 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
-                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDesrialized)
+                MethodAccessor[] serializationCallbacks)
+                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
                 this.membersMap = new Dictionary<string, SerialiableMember>();
                 foreach(SerialiableMember member in members)
@@ -790,6 +807,8 @@ namespace Amqp.Serialization
                     this.BaseType.WriteMembers(buffer, container);
                 }
 
+                this.InvokeSerializationCallback(SerializationCallback.OnSerializing, container);
+
                 foreach (SerialiableMember member in this.Members)
                 {
                     object memberValue = member.Accessor.Get(container);
@@ -808,6 +827,8 @@ namespace Amqp.Serialization
                     }
                 }
 
+                this.InvokeSerializationCallback(SerializationCallback.OnSerialized, container);
+
                 return count;
             }
 
@@ -817,6 +838,8 @@ namespace Amqp.Serialization
                 {
                     this.BaseType.ReadMembers(buffer, container, ref count);
                 }
+
+                this.InvokeSerializationCallback(SerializationCallback.OnDeserializing, container);
 
                 for (int i = 0; i < this.membersMap.Count && count > 0; ++i, count -= 2)
                 {
@@ -829,7 +852,7 @@ namespace Amqp.Serialization
                     }
                 }
 
-                this.InvokeDeserialized(container);
+                this.InvokeSerializationCallback(SerializationCallback.OnDeserialized, container);
             }
         }
     }

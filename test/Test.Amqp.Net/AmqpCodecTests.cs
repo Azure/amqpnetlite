@@ -466,9 +466,11 @@ namespace Test.Amqp
             ByteBuffer buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length);
 
             AmqpSerializer.Serialize(buffer, p);
+            Assert.AreEqual(2, p.Version);
 
             // Deserialize and verify
             Person p3 = AmqpSerializer.Deserialize<Person>(buffer);
+            Assert.AreEqual(2, p.Version);
             personValidator(p, p3);
             Assert.AreEqual(((Student)p).Address.FullAddress, ((Student)p3).Address.FullAddress);
             gradesValidator(((Student)p).Grades, ((Student)p3).Grades);
@@ -538,8 +540,12 @@ namespace Test.Amqp
             var product = new Product() { Name = "Computer", Price = 499.98, Weight = 30 };
             var buffer = new ByteBuffer(1024, true);
             AmqpSerializer.Serialize(buffer, product);
+            Assert.AreEqual(product.Properties["OnSerializing"], "true");
+            Assert.AreEqual(product.Properties["OnSerialized"], "true");
 
             var product2 = AmqpSerializer.Deserialize<Product>(buffer);
+            Assert.AreEqual(product2.Properties["OnDeserializing"], "true");
+            Assert.AreEqual(product2.Properties["OnDeserialized"], "true");
             Assert.AreEqual(product.Name, product2.Name);
             Assert.AreEqual(product.Price, product2.Price);
             Assert.AreEqual(product.Weight, product2.Weight);
