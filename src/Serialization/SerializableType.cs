@@ -804,7 +804,7 @@ namespace Amqp.Serialization
                 int count = 0;
                 if (this.BaseType != null)
                 {
-                    this.BaseType.WriteMembers(buffer, container);
+                    count += this.BaseType.WriteMembers(buffer, container);
                 }
 
                 this.InvokeSerializationCallback(SerializationCallback.OnSerializing, container);

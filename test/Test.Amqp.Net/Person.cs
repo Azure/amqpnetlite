@@ -160,6 +160,35 @@ namespace Test.Amqp
         public string FullAddress;
     }
 
+    [AmqpContract(Name = "test.amqp:specification", Encoding = EncodingType.Map)]
+    [AmqpProvides(typeof(ComputerSpecification))]
+    [AmqpProvides(typeof(CarSpecification))]
+    abstract class Specification
+    {
+        [AmqpMember]
+        public string Description { get; set; }
+    }
+
+    [AmqpContract(Name = "test.amqp:computer-specification", Encoding = EncodingType.Map)]
+    class ComputerSpecification : Specification
+    {
+        [AmqpMember]
+        public int Cores;
+
+        [AmqpMember]
+        public int RamSize;
+    }
+
+    [AmqpContract(Name = "test.amqp:automotive-specification", Encoding = EncodingType.Map)]
+    class CarSpecification : Specification
+    {
+        [AmqpMember]
+        public string Engine;
+
+        [AmqpMember]
+        public int HorsePower;
+    }
+
     [AmqpContract(Name = "test.amqp:product", Encoding = EncodingType.Map)]
     class Product
     {
@@ -171,6 +200,9 @@ namespace Test.Amqp
 
         [AmqpMember]
         public long Weight;
+
+        [AmqpMember]
+        public Specification Specification { get; set; }
 
         public Dictionary<string, string> Properties;
 
