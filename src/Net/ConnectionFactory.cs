@@ -163,6 +163,15 @@ namespace Amqp
                 get;
                 set;
             }
+
+            /// <summary>
+            /// Gets or sets a local certificate selection callback to select the certificate which should be used for authentication.
+            /// </summary>
+            public LocalCertificateSelectionCallback LocalCertificateSelectionCallback
+            {
+                get;
+                set;
+            }
         }
 
         /// <summary>
