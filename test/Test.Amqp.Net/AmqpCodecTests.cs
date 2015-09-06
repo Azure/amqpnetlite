@@ -19,12 +19,10 @@ namespace Test.Amqp
 {
     using System;
     using System.Collections;
-    using System.Collections.Generic;
     using System.Reflection;
     using global::Amqp;
-    using global::Amqp.Serialization;
-    using global::Amqp.Types;
     using global::Amqp.Framing;
+    using global::Amqp.Types;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [TestClass]
@@ -179,11 +177,11 @@ namespace Test.Amqp
             RunSingleValueTest(workBuffer, strValue, str8Utf8ValueBin, "UTF8 string8 string value is not equal.");
 
             // symbol 32
-            Symbol symbol32v = AmqpSerializer.Deserialize<Symbol>(new ByteBuffer(sym32ValueBin, 0, sym32ValueBin.Length, sym32ValueBin.Length));
+            Symbol symbol32v = (Symbol)Encoder.ReadObject(new ByteBuffer(sym32ValueBin, 0, sym32ValueBin.Length, sym32ValueBin.Length));
             Assert.IsTrue((string)symbol32v == strValue, "Symbol32 string value is not equal.");
 
             // string 32 UTF8
-            string str32Utf8 = AmqpSerializer.Deserialize<string>(new ByteBuffer(str32Utf8ValueBin, 0, str32Utf8ValueBin.Length, str32Utf8ValueBin.Length));
+            string str32Utf8 = (string)Encoder.ReadObject(new ByteBuffer(str32Utf8ValueBin, 0, str32Utf8ValueBin.Length, str32Utf8ValueBin.Length));
             Assert.IsTrue(str32Utf8 == strValue, "UTF8 string32 string value is not equal.");
         }
 
@@ -223,14 +221,14 @@ namespace Test.Amqp
             list.Add(described3);
             list.Add(described4);
 
-            AmqpSerializer.Serialize(buffer, list);
+            Encoder.WriteObject(buffer, list);
 
             // make sure the size written is correct (it has to be List32)
             // the first byte is FormatCode.List32
             int listSize = (workBuffer[1] << 24) | (workBuffer[2] << 16) | (workBuffer[3] << 8) | workBuffer[4];
             Assert.AreEqual(buffer.Length - 5, listSize);
 
-            IList decList = AmqpSerializer.Deserialize<List>(buffer);
+            IList decList = (IList)Encoder.ReadObject(buffer);
             int index = 0;
 
             Assert.IsTrue(decList[index++].Equals(true), "Boolean true expected.");
@@ -288,10 +286,10 @@ namespace Test.Amqp
             ByteBuffer buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length);
 
             List list0 = new List();
-            AmqpSerializer.Serialize(buffer, list0);
+            Encoder.WriteObject(buffer, list0);
             EnsureEqual(list0Bin, 0, list0Bin.Length, buffer.Buffer, buffer.Offset, buffer.Length);
 
-            IList list0v = AmqpSerializer.Deserialize<List>(buffer);
+            IList list0v = (IList)Encoder.ReadObject(buffer);
             Assert.IsTrue(list0v.Count == 0, "The list should contain 0 items.");
         }
 
@@ -338,14 +336,14 @@ namespace Test.Amqp
             map.Add(new Symbol("string32"), strBig);
             map.Add(new Symbol("described1"), described1);
 
-            AmqpSerializer.Serialize(buffer, map);
+            Encoder.WriteObject(buffer, map);
 
             // make sure the size written is correct (it has to be Map32)
             // the first byte is FormatCode.Map32
             int mapSize = (workBuffer[1] << 24) | (workBuffer[2] << 16) | (workBuffer[3] << 8) | workBuffer[4];
             Assert.AreEqual(buffer.Length - 5, mapSize);
 
-            Map decMap = AmqpSerializer.Deserialize<Map>(buffer);
+            Map decMap = (Map)Encoder.ReadObject(buffer);
 
             Assert.IsTrue(decMap[new Symbol("boolTrue")].Equals(true), "Boolean true expected.");
             Assert.IsTrue(decMap[new Symbol("boolFalse")].Equals(false), "Boolean false expected.");
@@ -394,8 +392,8 @@ namespace Test.Amqp
             {
                 var dv = new DescribedValue(d, v);
                 ByteBuffer buffer;
-                AmqpSerializer.Serialize(buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length), dv);
-                var dv2 = AmqpSerializer.Deserialize<DescribedValue>(buffer);
+                Encoder.WriteObject(buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length), dv);
+                var dv2 = (DescribedValue)Encoder.ReadObject(buffer);
 
                 Assert.AreEqual(dv.Descriptor, dv2.Descriptor);
                 if (dv.Value == null)
@@ -416,140 +414,6 @@ namespace Test.Amqp
             runTest(long.MaxValue, (Symbol)"abcd", workBuffer);
             runTest("descriptor", new List() { 0, "x" }, workBuffer);
             runTest((Symbol)"null", null, workBuffer);
-        }
-
-        [TestMethod()]
-        public void AmqpSerializerListEncodingTest()
-        {
-            Action<Person, Person> personValidator = (p1, p2) =>
-            {
-                Assert.IsTrue(p2 != null);
-                Assert.AreEqual(21, p2.Age, "Age should be increased by OnDeserialized");
-                Assert.AreEqual(p1.GetType().Name, p2.GetType().Name);
-                Assert.AreEqual(p1.DateOfBirth.Value, p2.DateOfBirth.Value);
-                Assert.AreEqual(p1.Properties.Count, p2.Properties.Count);
-                foreach (var k in p1.Properties.Keys)
-                {
-                    Assert.AreEqual(p1.Properties[k], p2.Properties[k]);
-                }
-            };
-
-            Action<List<int>, List<int>> gradesValidator = (l1, l2) =>
-            {
-                if (l1 == null || l2 == null)
-                {
-                    Assert.IsTrue(l1 == null && l2 == null);
-                    return;
-                }
-
-                Assert.AreEqual(l1.Count, l2.Count);
-                for (int i = 0; i < l1.Count; ++i)
-                {
-                    Assert.AreEqual(l1[i], l2[i]);
-                }
-            };
-
-            // Create an object to be serialized
-            Person p = new Student("Tom")
-            {
-                Address = new StreetAddress() { FullAddress = new string('B', 1024) },
-                Grades = new List<int>() { 1, 2, 3, 4, 5 }
-            };
-
-            p.Age = 20;
-            p.DateOfBirth = new DateTime(1980, 5, 12, 10, 2, 45, DateTimeKind.Utc);
-            p.Properties.Add("height", 6.1);
-            p.Properties.Add("male", true);
-            p.Properties.Add("nick-name", "big foot");
-
-            byte[] workBuffer = new byte[4096];
-            ByteBuffer buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length);
-
-            AmqpSerializer.Serialize(buffer, p);
-
-            // Deserialize and verify
-            Person p3 = AmqpSerializer.Deserialize<Person>(buffer);
-            personValidator(p, p3);
-            Assert.AreEqual(((Student)p).Address.FullAddress, ((Student)p3).Address.FullAddress);
-            gradesValidator(((Student)p).Grades, ((Student)p3).Grades);
-
-            // Inter-op: it should be an AMQP described list as other clients see it
-            buffer.Seek(0);
-            DescribedValue dl1 = AmqpSerializer.Deserialize<DescribedValue>(buffer);
-            Assert.AreEqual(dl1.Descriptor, 0x0000123400000001UL);
-            List lv = dl1.Value as List;
-            Assert.IsTrue(lv != null);
-            Assert.AreEqual(p.Name, lv[0]);
-            Assert.AreEqual(p.Age, lv[1]);
-            Assert.AreEqual(p.DateOfBirth.Value, lv[2]);
-            Assert.IsTrue(lv[3] is DescribedValue, "Address is decribed type");
-            Assert.AreEqual(((DescribedValue)lv[3]).Descriptor, 0x0000123400000003UL);
-            Assert.AreEqual(((List)((DescribedValue)lv[3]).Value)[0], ((Student)p).Address.FullAddress);
-            Assert.IsTrue(lv[4] is Map, "Properties should be map");
-            Assert.AreEqual(((Map)lv[4])["height"], p.Properties["height"]);
-            Assert.AreEqual(((Map)lv[4])["male"], p.Properties["male"]);
-            Assert.AreEqual(((Map)lv[4])["nick-name"], p.Properties["nick-name"]);
-            Assert.IsTrue(lv[5] is List);
-
-            // Non-default serializer
-            AmqpSerializer serializer = new AmqpSerializer();
-            ByteBuffer bf1 = new ByteBuffer(1024, true);
-            serializer.WriteObject(bf1, p);
-
-            Person p4 = serializer.ReadObject<Person>(bf1);
-            personValidator(p, p4);
-
-            // Extensible: more items in the payload should not break
-            DescribedValue dl2 = new DescribedValue(
-                new Symbol("test.amqp:teacher"),
-                new List() { "Jerry", 40, null, 50000, lv[4], null, null, "unknown-string", true, new Symbol("unknown-symbol") });
-            ByteBuffer bf2 = new ByteBuffer(1024, true);
-            serializer.WriteObject(bf2, dl2);
-            serializer.WriteObject(bf2, 100ul);
-
-            Person p5 = serializer.ReadObject<Person>(bf2);
-            Assert.IsTrue(p5 is Teacher);
-            Assert.IsTrue(p5.DateOfBirth == null);  // nullable should work
-            Assert.AreEqual(100ul, serializer.ReadObject<object>(bf2));   // unknowns should be skipped
-            Assert.AreEqual(0, bf2.Length);
-
-            // teacher
-            Teacher teacher = new Teacher("Han");
-            teacher.Age = 30;
-            teacher.Sallary = 60000;
-            teacher.Classes = new Dictionary<int, string>() { { 101, "CS" }, { 102, "Math" }, { 205, "Project" } };
-
-            ByteBuffer bf3 = new ByteBuffer(1024, true);
-            serializer.WriteObject(bf3, teacher);
-
-            Person p6 = serializer.ReadObject<Person>(bf3);
-            Assert.IsTrue(p6 is Teacher);
-            Assert.AreEqual(teacher.Age + 1, p6.Age);
-            Assert.AreEqual(teacher.Sallary * 2, ((Teacher)p6).Sallary);
-            Assert.AreEqual(teacher.Id, ((Teacher)p6).Id);
-            Assert.AreEqual(teacher.Classes[101], ((Teacher)p6).Classes[101]);
-            Assert.AreEqual(teacher.Classes[102], ((Teacher)p6).Classes[102]);
-            Assert.AreEqual(teacher.Classes[205], ((Teacher)p6).Classes[205]);
-        }
-
-        [TestMethod]
-        public void AmqpSerializerMessageBodyTest()
-        {
-            MessageBodyTest<long>(
-                1234567L,
-                (x, y) => Assert.AreEqual(x, y));
-
-            MessageBodyTest<string>(
-                "tHis iS A sTrIng",
-                (x, y) => Assert.AreEqual(x, y));
-
-            MessageBodyTest<List<string>>(
-                new List<string>() { "abc", "1k90" },
-                (x, y) => CollectionAssert.AreEqual(x, y));
-
-            MessageBodyTest<Dictionary<Symbol, string>>(
-                new Dictionary<Symbol, string>() { { "product", "computer" }, { "company", "contoso" } },
-                (x, y) => CollectionAssert.AreEqual(x, y));
         }
 
         [TestMethod()]
@@ -876,9 +740,9 @@ namespace Test.Amqp
         static void RunSingleValueTest<T>(byte[] workBuffer, T value, byte[] result, string message)
         {
             ByteBuffer buffer;
-            AmqpSerializer.Serialize(buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length), value);
+            Encoder.WriteObject(buffer = new ByteBuffer(workBuffer, 0, 0, workBuffer.Length), value);
             EnsureEqual(result, 0, result.Length, buffer.Buffer, buffer.Offset, buffer.Length);
-            T decodeValue = AmqpSerializer.Deserialize<T>(new ByteBuffer(result, 0, result.Length, result.Length));
+            T decodeValue = (T)Encoder.ReadObject(new ByteBuffer(result, 0, result.Length, result.Length));
             if (typeof(T) == typeof(byte[]))
             {
                 byte[] b1 = (byte[])(object)value;
@@ -899,19 +763,10 @@ namespace Test.Amqp
 
             T[] array = new T[count];
             for (int i = 0; i < count; i++) array[i] = generator(i);
-            AmqpSerializer.Serialize(buffer, array);
+            Encoder.WriteObject(buffer, array);
 
-            var array2 = AmqpSerializer.Deserialize<T[]>(buffer);
+            var array2 = (T[])Encoder.ReadObject(buffer);
             Assert.AreEqual(array.Length, array2.Length);
-        }
-
-        static void MessageBodyTest<T>(T value, Action<T, T> validator)
-        {
-            var inputMessage = new Message(value);
-            var buffer = inputMessage.Encode();
-            var outputMessage = Message.Decode(buffer);
-            var value2 = outputMessage.GetBody<T>();
-            validator(value, value2);
         }
 
         static void EnsureEqual(byte[] data1, int offset1, int count1, byte[] data2, int offset2, int count2)

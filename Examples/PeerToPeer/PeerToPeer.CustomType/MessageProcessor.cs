@@ -18,6 +18,7 @@
 using System;
 using Amqp;
 using Amqp.Listener;
+using System.Reflection;
 
 namespace PeerToPeer.CustomType
 {
@@ -30,8 +31,31 @@ namespace PeerToPeer.CustomType
 
         public void Process(MessageContext messageContext)
         {
-            var person = messageContext.Message.GetBody<Person>();
-            Console.WriteLine(person.ToString());
+            object body = null;
+            var subject = messageContext.Message.Properties.Subject;
+            switch(subject)
+            {
+                case "Person":
+                    body = messageContext.Message.GetBody<Person>();
+                    break;
+                case "MapAddress":
+                    body = messageContext.Message.GetBody<MapAddress>();
+                    break;
+                case "InternationalAddress":
+                    body = messageContext.Message.GetBody<InternationalAddress>();
+                    break;
+                default:
+                    break;
+            }
+
+            if (body == null)
+            {
+                Console.WriteLine("Received a message with unknown type {0} in subject.", subject);
+            }
+            else
+            {
+                Console.WriteLine("Received a message with body {0}", body.GetType().Name);
+            }
 
             messageContext.Complete();
         }

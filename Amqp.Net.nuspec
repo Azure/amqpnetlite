@@ -3,14 +3,14 @@
   <metadata>
     <id>AMQPNetLite</id>
     <title>AMQP.Net Lite: AMQP 1.0 client library for .Net and WinRT</title>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <licenseUrl>http://amqpnetlite.codeplex.com/license</licenseUrl>
     <projectUrl>http://amqpnetlite.codeplex.com/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is a lightweight AMQP 1.0 client library for use on .Net frameworks (including .Net Framework, .Net Micro Framework and .Net Compact Framework) and WinRT (Windows Phone and Windows Store).</description>
-    <releaseNotes>This is the beta release of AMQP.Net Lite. It can be used on the following platforms: .Net Framework (up to 4.5), .NET Micro Framework 4.2 and 4.3, .NET Compact Framework 3.9, Windows Phone 8, and Mono on Linux.</releaseNotes>
+    <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>Azure ServiceBus AMQP Micro-Framework netmf netcf embedded iot winrt WindowsPhone</tags>
     <dependencies>

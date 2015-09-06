@@ -23,6 +23,16 @@ namespace Amqp.Serialization
     using System.Runtime.Serialization;
     using Amqp.Types;
 
+    static class SerializationCallback
+    {
+        public const int OnSerializing = 0;
+        public const int OnSerialized = 1;
+        public const int OnDeserializing = 2;
+        public const int OnDeserialized = 3;
+
+        public const int Size = 4;
+    }
+
     abstract class SerializableType
     {
         readonly AmqpSerializer serializer;
@@ -104,10 +114,10 @@ namespace Amqp.Serialization
             ulong? descriptorCode,
             SerialiableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
-            MethodAccessor onDesrialized)
+            MethodAccessor[] serializationCallbacks)
         {
             return new DescribedListType(serializer, type, baseType, descriptorName,
-                descriptorCode, members, knownTypes, onDesrialized);
+                descriptorCode, members, knownTypes, serializationCallbacks);
         }
 
         public static SerializableType CreateDescribedMapType(
@@ -118,10 +128,20 @@ namespace Amqp.Serialization
             ulong? descriptorCode,
             SerialiableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
-            MethodAccessor onDesrialized)
+            MethodAccessor[] serializationCallbacks)
         {
             return new DescribedMapType(serializer, type, baseType, descriptorName, descriptorCode,
-                members, knownTypes, onDesrialized);
+                members, knownTypes, serializationCallbacks);
+        }
+
+        public static SerializableType CreateDescribedSimpleMapType(
+            AmqpSerializer serializer,
+            Type type,
+            SerializableType baseType,
+            SerialiableMember[] members,
+            MethodAccessor[] serializationCallbacks)
+        {
+            return new DescribedSimpleMapType(serializer, type, baseType, members, serializationCallbacks);
         }
 
         public virtual void ValidateType(SerializableType otherType)
@@ -301,9 +321,9 @@ namespace Amqp.Serialization
             {
             }
 
-            public abstract int WriteMembers(ByteBuffer buffer, object container);
+            protected abstract int WriteMembers(ByteBuffer buffer, object container);
 
-            public abstract void ReadMembers(ByteBuffer buffer, object container, ref int count);
+            protected abstract void ReadMembers(ByteBuffer buffer, object container, ref int count);
 
             protected abstract bool WriteFormatCode(ByteBuffer buffer);
 
@@ -387,7 +407,6 @@ namespace Amqp.Serialization
                 {
                     throw new AmqpException(ErrorCode.InvalidField, Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset));
                 }
-
             }
         }
 
@@ -409,7 +428,7 @@ namespace Amqp.Serialization
                 return true;
             }
 
-            public override int WriteMembers(ByteBuffer buffer, object container)
+            protected override int WriteMembers(ByteBuffer buffer, object container)
             {
                 int count = 0;
                 foreach (object item in (IEnumerable)container)
@@ -442,7 +461,7 @@ namespace Amqp.Serialization
                 ReadSizeAndCount(buffer, formatCode, out size, out count, out encodeWidth);
             }
 
-            public override void ReadMembers(ByteBuffer buffer, object container, ref int count)
+            protected override void ReadMembers(ByteBuffer buffer, object container, ref int count)
             {
                 for (; count > 0; count--)
                 {
@@ -477,7 +496,7 @@ namespace Amqp.Serialization
                 return true;
             }
 
-            public override int WriteMembers(ByteBuffer buffer, object container)
+            protected override int WriteMembers(ByteBuffer buffer, object container)
             {
                 int count = 0;
                 foreach (object item in (IEnumerable)container)
@@ -509,7 +528,7 @@ namespace Amqp.Serialization
                 ReadSizeAndCount(buffer, formatCode, out size, out count, out encodeWidth);
             }
 
-            public override void ReadMembers(ByteBuffer buffer, object container, ref int count)
+            protected override void ReadMembers(ByteBuffer buffer, object container, ref int count)
             {
                 for (; count > 0; count -= 2)
                 {
@@ -526,7 +545,7 @@ namespace Amqp.Serialization
             readonly Symbol descriptorName;
             readonly ulong? descriptorCode;
             readonly SerialiableMember[] members;
-            readonly MethodAccessor onDeserialized;
+            readonly MethodAccessor[] serializationCallbacks;
             readonly KeyValuePair<Type, SerializableType>[] knownTypes;
 
             protected DescribedCompoundType(
@@ -537,14 +556,14 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
+                MethodAccessor[] serializationCallbacks)
                 : base(serializer, type)
             {
                 this.baseType = (DescribedCompoundType)baseType;
                 this.descriptorName = descriptorName;
                 this.descriptorCode = descriptorCode;
                 this.members = members;
-                this.onDeserialized = onDesrialized;
+                this.serializationCallbacks = serializationCallbacks;
                 this.knownTypes = GetKnownTypes(knownTypes);
             }
 
@@ -562,6 +581,44 @@ namespace Amqp.Serialization
             {
                 get { return this.baseType; }
             }
+
+            protected override int WriteMembers(ByteBuffer buffer, object container)
+            {
+                this.InvokeSerializationCallback(SerializationCallback.OnSerializing, container);
+
+                int count = 0;
+                foreach (SerialiableMember member in this.members)
+                {
+                    object memberValue = member.Accessor.Get(container);
+                    SerializableType effectiveType = member.Type;
+                    if (memberValue != null && memberValue.GetType() != effectiveType.type)
+                    {
+                        effectiveType = this.serializer.GetType(memberValue.GetType());
+                    }
+
+                    count += this.WriteMemberValue(buffer, member.Name, memberValue, effectiveType);
+                }
+
+                this.InvokeSerializationCallback(SerializationCallback.OnSerialized, container);
+
+                return count;
+            }
+
+            protected override void ReadMembers(ByteBuffer buffer, object container, ref int count)
+            {
+                this.InvokeSerializationCallback(SerializationCallback.OnDeserializing, container);
+
+                for (int i = 0; i < this.members.Length && count > 0; ++i)
+                {
+                    count -= this.ReadMemberValue(buffer, this.members[i], container);
+                }
+
+                this.InvokeSerializationCallback(SerializationCallback.OnDeserialized, container);
+            }
+
+            protected abstract int WriteMemberValue(ByteBuffer buffer, string memberName, object memberValue, SerializableType effectiveType);
+
+            protected abstract int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container);
 
             protected override bool WriteFormatCode(ByteBuffer buffer)
             {
@@ -637,16 +694,17 @@ namespace Amqp.Serialization
                 ReadSizeAndCount(buffer, formatCode, out size, out count, out encodeWidth);
             }
 
-            protected void InvokeDeserialized(object container)
+            void InvokeSerializationCallback(int callbackIndex, object container)
             {
                 if (this.baseType != null)
                 {
-                    this.baseType.InvokeDeserialized(container);
+                    this.baseType.InvokeSerializationCallback(callbackIndex, container);
                 }
 
-                if (this.onDeserialized != null)
+                var callback = this.serializationCallbacks[callbackIndex];
+                if (callback != null)
                 {
-                    this.onDeserialized.Invoke(container, new object[] { default(StreamingContext) });
+                    callback.Invoke(container, new object[] { default(StreamingContext) });
                 }
             }
             
@@ -693,8 +751,8 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
-                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDesrialized)
+                MethodAccessor[] serializationCallbacks)
+                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
             }
 
@@ -711,39 +769,25 @@ namespace Amqp.Serialization
                 get { return FormatCode.List32; }
             }
 
-            public override int WriteMembers(ByteBuffer buffer, object container)
+            protected override int WriteMemberValue(ByteBuffer buffer, string memberName, object memberValue, SerializableType effectiveType)
             {
-                foreach (SerialiableMember member in this.Members)
+                if (memberValue == null)
                 {
-                    object memberValue = member.Accessor.Get(container);
-                    if (memberValue == null)
-                    {
-                        Encoder.WriteObject(buffer, null);
-                    }
-                    else
-                    {
-                        SerializableType effectiveType = member.Type;
-                        if (memberValue.GetType() != effectiveType.type)
-                        {
-                            effectiveType = this.serializer.GetType(memberValue.GetType());
-                        }
-
-                        effectiveType.WriteObject(buffer, memberValue);
-                    }
+                    Encoder.WriteObject(buffer, null);
+                }
+                else
+                {
+                    effectiveType.WriteObject(buffer, memberValue);
                 }
 
-                return this.Members.Length;
+                return 1;
             }
 
-            public override void ReadMembers(ByteBuffer buffer, object container, ref int count)
+            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
             {
-                for (int i = 0; i < this.Members.Length && count > 0; ++i, --count)
-                {
-                    object value = this.Members[i].Type.ReadObject(buffer);
-                    this.Members[i].Accessor.Set(container, value);
-                }
-
-                this.InvokeDeserialized(container);
+                object value = serialiableMember.Type.ReadObject(buffer);
+                serialiableMember.Accessor.Set(container, value);
+                return 1;
             }
         }
 
@@ -759,8 +803,8 @@ namespace Amqp.Serialization
                 ulong? descriptorCode,
                 SerialiableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
-                MethodAccessor onDesrialized)
-                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, onDesrialized)
+                MethodAccessor[] serializationCallbacks)
+                : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
                 this.membersMap = new Dictionary<string, SerialiableMember>();
                 foreach(SerialiableMember member in members)
@@ -782,54 +826,101 @@ namespace Amqp.Serialization
                 get { return FormatCode.Map32; }
             }
 
-            public override int WriteMembers(ByteBuffer buffer, object container)
+            protected override int WriteMemberValue(ByteBuffer buffer, string memberName, object memberValue, SerializableType effectiveType)
             {
-                int count = 0;
-                if (this.BaseType != null)
+                if (memberValue != null)
                 {
-                    this.BaseType.WriteMembers(buffer, container);
+                    Encoder.WriteSymbol(buffer, (Symbol)memberName, true);
+                    effectiveType.WriteObject(buffer, memberValue);
+                    return 2;
                 }
 
-                foreach (SerialiableMember member in this.Members)
-                {
-                    object memberValue = member.Accessor.Get(container);
-                    if (memberValue != null)
-                    {
-                        Encoder.WriteSymbol(buffer, (Symbol)memberValue, true);
-
-                        SerializableType effectiveType = member.Type;
-                        if (memberValue.GetType() != effectiveType.type)
-                        {
-                            effectiveType = this.serializer.GetType(memberValue.GetType());
-                        }
-
-                        effectiveType.WriteObject(buffer, memberValue);
-                        count += 2;
-                    }
-                }
-
-                return count;
+                return 0;
             }
 
-            public override void ReadMembers(ByteBuffer buffer, object container, ref int count)
+            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
             {
-                if (this.BaseType != null)
+                string key = Encoder.ReadSymbol(buffer, Encoder.ReadFormatCode(buffer));
+                SerialiableMember member = null;
+                if (!this.membersMap.TryGetValue(key, out member))
                 {
-                    this.BaseType.ReadMembers(buffer, container, ref count);
+                    throw new SerializationException("Unknown key name " + key);
                 }
 
-                for (int i = 0; i < this.membersMap.Count && count > 0; ++i, count -= 2)
+                object value = member.Type.ReadObject(buffer);
+                member.Accessor.Set(container, value);
+                return 2;
+            }
+        }
+
+        sealed class DescribedSimpleMapType : DescribedCompoundType
+        {
+            readonly Dictionary<string, SerialiableMember> membersMap;
+
+            public DescribedSimpleMapType(
+                AmqpSerializer serializer,
+                Type type,
+                SerializableType baseType,
+                SerialiableMember[] members,
+                MethodAccessor[] serializationCallbacks)
+                : base(serializer, type, baseType, null, null, members, null, serializationCallbacks)
+            {
+                this.membersMap = new Dictionary<string, SerialiableMember>();
+                foreach (SerialiableMember member in members)
                 {
-                    Symbol key = Encoder.ReadSymbol(buffer, Encoder.ReadFormatCode(buffer));
-                    SerialiableMember member;
-                    if (this.membersMap.TryGetValue((string)key, out member))
-                    {
-                        object value = member.Type.ReadObject(buffer);
-                        member.Accessor.Set(container, value);
-                    }
+                    this.membersMap.Add(member.Name, member);
+                }
+            }
+
+            public override EncodingType Encoding
+            {
+                get
+                {
+                    return EncodingType.SimpleMap;
+                }
+            }
+
+            protected override byte Code
+            {
+                get { return FormatCode.Map32; }
+            }
+
+            protected override bool WriteFormatCode(ByteBuffer buffer)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Map32);
+                return true;
+            }
+
+            protected override void Initialize(ByteBuffer buffer, byte formatCode, out int size, out int count, out int encodeWidth, out CollectionType effectiveType)
+            {
+                effectiveType = this;
+                ReadSizeAndCount(buffer, formatCode, out size, out count, out encodeWidth);
+            }
+
+            protected override int WriteMemberValue(ByteBuffer buffer, string memberName, object memberValue, SerializableType effectiveType)
+            {
+                if (memberValue != null)
+                {
+                    Encoder.WriteString(buffer, memberName, true);
+                    effectiveType.WriteObject(buffer, memberValue);
+                    return 2;
                 }
 
-                this.InvokeDeserialized(container);
+                return 0;
+            }
+
+            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
+            {
+                string key = Encoder.ReadString(buffer, Encoder.ReadFormatCode(buffer));
+                SerialiableMember member = null;
+                if (!this.membersMap.TryGetValue(key, out member))
+                {
+                    throw new SerializationException("Unknown key name " + key);
+                }
+
+                object value = member.Type.ReadObject(buffer);
+                member.Accessor.Set(container, value);
+                return 2;
             }
         }
     }

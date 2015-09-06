@@ -196,14 +196,14 @@ namespace Amqp.Serialization
             }
 
             List<SerialiableMember> memberList = new List<SerialiableMember>();
-            if (contractAttribute.Encoding == EncodingType.List && baseType != null)
+            if (baseType != null)
             {
                 memberList.AddRange(baseType.Members);
             }
 
             int lastOrder = memberList.Count + 1;
             MemberInfo[] memberInfos = type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            MethodAccessor onDeserialized = null;
+            MethodAccessor[] serializationCallbacks = new MethodAccessor[SerializationCallback.Size];
             foreach (MemberInfo memberInfo in memberInfos)
             {
                 if (memberInfo.DeclaringType != type)
@@ -235,10 +235,23 @@ namespace Amqp.Serialization
                 }
                 else if (memberInfo.MemberType == MemberTypes.Method)
                 {
-                    object[] memberAttributes = memberInfo.GetCustomAttributes(typeof(OnDeserializedAttribute), false);
-                    if (memberAttributes.Length == 1)
+                    MethodInfo methodInfo = (MethodInfo)memberInfo;
+                    MethodAccessor methodAccessor;
+                    if (this.TryCreateMethodAccessor(methodInfo, typeof(OnSerializingAttribute), out methodAccessor))
                     {
-                        onDeserialized = MethodAccessor.Create((MethodInfo)memberInfo);
+                        serializationCallbacks[SerializationCallback.OnSerializing] = methodAccessor;
+                    }
+                    else if (this.TryCreateMethodAccessor(methodInfo, typeof(OnSerializedAttribute), out methodAccessor))
+                    {
+                        serializationCallbacks[SerializationCallback.OnSerialized] = methodAccessor;
+                    }
+                    else if (this.TryCreateMethodAccessor(methodInfo, typeof(OnDeserializingAttribute), out methodAccessor))
+                    {
+                        serializationCallbacks[SerializationCallback.OnDeserializing] = methodAccessor;
+                    }
+                    else if (this.TryCreateMethodAccessor(methodInfo, typeof(OnDeserializedAttribute), out methodAccessor))
+                    {
+                        serializationCallbacks[SerializationCallback.OnDeserialized] = methodAccessor;
                     }
                 }
             }
@@ -261,7 +274,14 @@ namespace Amqp.Serialization
             SerialiableMember[] members = memberList.ToArray();
 
             Dictionary<Type, SerializableType> knownTypes = null;
-            foreach (object o in type.GetCustomAttributes(typeof(AmqpProvidesAttribute), false))
+            var providesAttributes = type.GetCustomAttributes(typeof(AmqpProvidesAttribute), false);
+            if (contractAttribute.Encoding == EncodingType.SimpleMap && providesAttributes.Length > 0)
+            {
+                throw new SerializationException(
+                    Fx.Format("{0}: SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
+            }
+
+            foreach (object o in providesAttributes)
             {
                 AmqpProvidesAttribute knownAttribute = (AmqpProvidesAttribute)o;
                 if (knownAttribute.Type.GetCustomAttributes(typeof(AmqpContractAttribute), false).Length > 0)
@@ -278,18 +298,35 @@ namespace Amqp.Serialization
 
             if (contractAttribute.Encoding == EncodingType.List)
             {
-                return SerializableType.CreateDescribedListType(this, type, baseType, descriptorName, 
-                    descriptorCode, members, knownTypes, onDeserialized);
+                return SerializableType.CreateDescribedListType(this, type, baseType, descriptorName,
+                    descriptorCode, members, knownTypes, serializationCallbacks);
             }
             else if (contractAttribute.Encoding == EncodingType.Map)
             {
                 return SerializableType.CreateDescribedMapType(this, type, baseType, descriptorName,
-                    descriptorCode, members, knownTypes, onDeserialized);
+                    descriptorCode, members, knownTypes, serializationCallbacks);
+            }
+            else if (contractAttribute.Encoding == EncodingType.SimpleMap)
+            {
+                return SerializableType.CreateDescribedSimpleMapType(this, type, baseType, members, serializationCallbacks);
             }
             else
             {
                 throw new NotSupportedException(contractAttribute.Encoding.ToString());
             }
+        }
+
+        bool TryCreateMethodAccessor(MethodInfo methodInfo, Type attributeType, out MethodAccessor methodAccessor)
+        {
+            object[] memberAttributes = methodInfo.GetCustomAttributes(attributeType, false);
+            if (memberAttributes.Length == 1)
+            {
+                methodAccessor = MethodAccessor.Create((MethodInfo)methodInfo);
+                return true;
+            }
+
+            methodAccessor = null;
+            return false;
         }
 
         SerializableType CompileNonContractTypes(Type type)

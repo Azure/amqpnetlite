@@ -149,6 +149,41 @@ namespace Test.Amqp
 #if !(NETMF || COMPACT_FRAMEWORK)
         [TestMethod]
 #endif
+        public void TestMethod_ConnectionWithIPAddress()
+        {
+            string testName = "ConnectionWithIPAddress";
+            const int nMsgs = 20;
+            Address address = new Address("127.0.0.1", 5672, "guest", "guest", "/", "amqp");
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if !(NETMF || COMPACT_FRAMEWORK)
+        [TestMethod]
+#endif
         public void TestMethod_ConnectionRemoteProperties()
         {
             string testName = "ConnectionRemoteProperties";            

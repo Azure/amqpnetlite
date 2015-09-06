@@ -58,12 +58,21 @@
     <Compile Include="..\Test.Amqp.NetMF\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>
+    <Compile Include="AmqpSerializerTests.cs" />
     <Compile Include="AmqpCodecTests.cs" />
     <Compile Include="Assert.cs" />
     <Compile Include="TransactionTests.cs" />
     <Compile Include="PerfTests.cs" />
     <Compile Include="TaskTests.cs" />
-    <Compile Include="Person.cs" />
+    <Compile Include="Types\EmployeeId.cs" />
+    <Compile Include="Types\Product.cs" />
+    <Compile Include="Types\Operation.cs" />
+    <Compile Include="Types\Negative.cs" />
+    <Compile Include="Types\Specification.cs" />
+    <Compile Include="Types\StreetAddress.cs" />
+    <Compile Include="Types\Teacher.cs" />
+    <Compile Include="Types\Student.cs" />
+    <Compile Include="Types\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ContainerHostTests.cs" />
   </ItemGroup>

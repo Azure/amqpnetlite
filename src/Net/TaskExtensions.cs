@@ -29,23 +29,6 @@ namespace Amqp
     public static class TaskExtensions
     {
 #if DOTNET
-        /// <summary>
-        /// Gets an object of type T from the message body.
-        /// </summary>
-        /// <typeparam name="T">The object type.</typeparam>
-        /// <param name="message">The message.</param>
-        /// <returns></returns>
-        public static T GetBody<T>(this Message message)
-        {
-            if (message.BodySection != null && 
-                message.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
-            {
-                return ((AmqpValue)message.BodySection).GetValue<T>();
-            }
-
-            return (T)message.Body;
-        }
-
         static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
             return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);

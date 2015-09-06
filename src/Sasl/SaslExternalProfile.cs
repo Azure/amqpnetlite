@@ -17,6 +17,7 @@
 
 namespace Amqp.Sasl
 {
+    using System.Text;
     using Amqp.Framing;
     using Amqp.Types;
 
@@ -35,7 +36,11 @@ namespace Amqp.Sasl
 
         protected override DescribedList GetStartCommand(string hostname)
         {
-            return new SaslInit() { Mechanism = Name };
+            return new SaslInit()
+            {
+                Mechanism = Name,
+                InitialResponse = Encoding.UTF8.GetBytes("")
+            };
         }
 
         protected override DescribedList OnCommand(DescribedList command)

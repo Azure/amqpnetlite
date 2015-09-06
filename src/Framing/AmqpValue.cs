@@ -43,7 +43,7 @@ namespace Amqp.Framing
             set { this.value = value; }
         }
 
-#if DOTNET
+#if (DOTNET || DOTNET35)
         ByteBuffer valueBuffer;
 
         internal T GetValue<T>()

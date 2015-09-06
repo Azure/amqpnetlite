@@ -15,26 +15,41 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Serialization
+namespace Test.Amqp
 {
-    /// <summary>
-    /// Defines the encoding type of an AMQP serializable type.
-    /// </summary>
-    public enum EncodingType
+    using System.Collections.Generic;
+    using global::Amqp.Serialization;
+
+    [AmqpContract(Name = "test.amqp:teacher", Code = 0x0000123400000002)]
+    class Teacher : Person
     {
-        /// <summary>
-        /// The type is encoded as an AMQP described list.
-        /// </summary>
-        List,
+        public Teacher(string name)
+            : base(name)
+        {
+            this.Id = EmployeeId.New();
+        }
 
-        /// <summary>
-        /// The type is encoded as an AMQP described map.
-        /// </summary>
-        Map,
+        [AmqpMember(Name = "sallary", Order = 4)]
+        public int Sallary;
 
-        /// <summary>
-        /// The type is encoded as an AMQP map with string keys.
-        /// </summary>
-        SimpleMap,
+        [AmqpMember(Order = 10)]
+        public EmployeeId Id
+        {
+            get;
+            private set;
+        }
+
+        [AmqpMember(Order = 11)]
+        public Dictionary<int, string> Classes
+        {
+            get;
+            set;
+        }
+
+        [System.Runtime.Serialization.OnDeserialized]
+        void OnDesrialized()
+        {
+            this.Sallary *= 2;
+        }
     }
 }
