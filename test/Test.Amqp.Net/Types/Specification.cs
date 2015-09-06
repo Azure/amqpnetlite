@@ -15,26 +15,36 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Serialization
+namespace Test.Amqp
 {
-    /// <summary>
-    /// Defines the encoding type of an AMQP serializable type.
-    /// </summary>
-    public enum EncodingType
+    using global::Amqp.Serialization;
+
+    [AmqpContract(Name = "test.amqp:specification", Encoding = EncodingType.Map)]
+    [AmqpProvides(typeof(ComputerSpecification))]
+    [AmqpProvides(typeof(CarSpecification))]
+    abstract class Specification
     {
-        /// <summary>
-        /// The type is encoded as an AMQP described list.
-        /// </summary>
-        List,
+        [AmqpMember]
+        public string Description { get; set; }
+    }
 
-        /// <summary>
-        /// The type is encoded as an AMQP described map.
-        /// </summary>
-        Map,
+    [AmqpContract(Name = "test.amqp:computer-specification", Encoding = EncodingType.Map)]
+    class ComputerSpecification : Specification
+    {
+        [AmqpMember]
+        public int Cores;
 
-        /// <summary>
-        /// The type is encoded as an AMQP map with string keys.
-        /// </summary>
-        SimpleMap,
+        [AmqpMember]
+        public int RamSize;
+    }
+
+    [AmqpContract(Name = "test.amqp:automotive-specification", Encoding = EncodingType.Map)]
+    class CarSpecification : Specification
+    {
+        [AmqpMember]
+        public string Engine;
+
+        [AmqpMember]
+        public int HorsePower;
     }
 }

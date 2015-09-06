@@ -15,26 +15,14 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Serialization
+namespace Test.Amqp
 {
-    /// <summary>
-    /// Defines the encoding type of an AMQP serializable type.
-    /// </summary>
-    public enum EncodingType
+    using global::Amqp.Serialization;
+
+    [AmqpContract(Name = "test.amqp:address", Code = 0x0000123400000003)]
+    class StreetAddress
     {
-        /// <summary>
-        /// The type is encoded as an AMQP described list.
-        /// </summary>
-        List,
-
-        /// <summary>
-        /// The type is encoded as an AMQP described map.
-        /// </summary>
-        Map,
-
-        /// <summary>
-        /// The type is encoded as an AMQP map with string keys.
-        /// </summary>
-        SimpleMap,
+        [AmqpMember]
+        public string FullAddress;
     }
 }

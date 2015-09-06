@@ -196,7 +196,7 @@ namespace Amqp.Serialization
             }
 
             List<SerialiableMember> memberList = new List<SerialiableMember>();
-            if (contractAttribute.Encoding == EncodingType.List && baseType != null)
+            if (baseType != null)
             {
                 memberList.AddRange(baseType.Members);
             }
@@ -274,7 +274,14 @@ namespace Amqp.Serialization
             SerialiableMember[] members = memberList.ToArray();
 
             Dictionary<Type, SerializableType> knownTypes = null;
-            foreach (object o in type.GetCustomAttributes(typeof(AmqpProvidesAttribute), false))
+            var providesAttributes = type.GetCustomAttributes(typeof(AmqpProvidesAttribute), false);
+            if (contractAttribute.Encoding == EncodingType.SimpleMap && providesAttributes.Length > 0)
+            {
+                throw new SerializationException(
+                    Fx.Format("{0}: SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
+            }
+
+            foreach (object o in providesAttributes)
             {
                 AmqpProvidesAttribute knownAttribute = (AmqpProvidesAttribute)o;
                 if (knownAttribute.Type.GetCustomAttributes(typeof(AmqpContractAttribute), false).Length > 0)
@@ -298,6 +305,10 @@ namespace Amqp.Serialization
             {
                 return SerializableType.CreateDescribedMapType(this, type, baseType, descriptorName,
                     descriptorCode, members, knownTypes, serializationCallbacks);
+            }
+            else if (contractAttribute.Encoding == EncodingType.SimpleMap)
+            {
+                return SerializableType.CreateDescribedSimpleMapType(this, type, baseType, members, serializationCallbacks);
             }
             else
             {

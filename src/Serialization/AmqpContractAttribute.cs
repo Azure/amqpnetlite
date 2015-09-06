@@ -22,17 +22,49 @@ namespace Amqp.Serialization
     /// <summary>
     /// Specifies that the type is serializable by the AMQP serializer.
     /// </summary>
+    /// <remarks>
+    /// The object is serialized as an AMQP described list, a described map,
+    /// or a simple map, as determined by the Encoding property. The default value is List.
+    /// 
+    /// The Name or Code property specifies the symbol descriptor or the ulong descriptor
+    /// of the described value, respectively. If both are set, the Code property
+    /// (ulong descriptor) takes precedence. If none is set, the class's full name is used
+    /// as the symbol descriptor. It is recommended to include a domain name/code in the
+    /// descriptor to avoid collision. For example, Name can be "com.microsoft:my-class",
+    /// and Code can be 0x0000013700000001 (domain code is the company number defined at
+    /// http://www.iana.org/assignments/enterprise-numbers/enterprise-numbers)
+    /// 
+    /// List or Map encoding encodes the object as a described type, which contains the above
+    /// mentioned descriptor and the value (a list or a map). SimpleMap encodes the object
+    /// as a map value without a descriptor. How the value is encoded depends on EncodingType.
+    /// List: the value is encoded as an AMQP List that contains all fields/properties of
+    /// the class decorated with AmqpMemberAttribute. The Order property of the AmqpMember
+    /// attribute determines the relative positions of the members in the list. Duplicate
+    /// Order values are not allowed. If the class is derived from a base class, the
+    /// AmqpMember fields/properties of the base class, if any, are also included in the list.
+    /// The list is flatterned.
+    /// Map: the value is encoded as an AMQP map that contains all fields/properties of
+    /// the class decorated with AmqpMemberAttribute. The key type is AMQP symbol. The key
+    /// values are determined by the Name property of each AmqpMember attribute. If the class
+    /// is derived from a base class, the AmqpMember fields/properties of the base class,
+    /// if any, are also included in the map. Though the items in an AMQP map are ordered,
+    /// the serializer ignores the Order property of the AmqpMember attribute.
+    /// SimpleMap: value encoding is the same as Map except that the keys are AMQP string.
+    /// Because this encoding does not have descriptors, decoding an object with a base type
+    /// decorated with AmqpProvidesAttribute is not supported.
+    /// </remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct,
         AllowMultiple = false, Inherited = true)]
     public sealed class AmqpContractAttribute : Attribute
     {
+        ulong? internalCode;
+
         /// <summary>
         /// Initializes a new instance of the AmqpContractAttribute class.
         /// </summary>
         public AmqpContractAttribute()
         {
             this.Encoding = EncodingType.List;
-            this.Code = -1;
         }
 
         /// <summary>
@@ -49,8 +81,8 @@ namespace Amqp.Serialization
         /// </summary>
         public long Code
         {
-            get;
-            set;
+            get { return (long)(this.internalCode ?? 0UL); }
+            set { this.internalCode = (ulong)value; }
         }
 
         /// <summary>
@@ -64,7 +96,7 @@ namespace Amqp.Serialization
 
         internal ulong? InternalCode
         {
-            get { return this.Code >= 0 ? (ulong?)this.Code : null; }
+            get { return this.internalCode; }
         }
     }
 }
