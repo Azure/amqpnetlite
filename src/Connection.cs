@@ -57,7 +57,7 @@ namespace Amqp
         /// </summary>
         public static bool DisableServerCertValidation;
 
-        internal const uint DefaultMaxFrameSize = 16 * 1024;
+        internal const uint DefaultMaxFrameSize = 256 * 1024;
         internal const ushort DefaultMaxSessions = 256;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
