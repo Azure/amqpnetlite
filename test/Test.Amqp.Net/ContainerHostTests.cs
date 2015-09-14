@@ -273,13 +273,42 @@ namespace Test.Amqp
             sender.Send(new Message("Hello"), SendTimeout);
             connection.Close();
         }
+
+        [TestMethod]
+        public void ContainerHostSessionFlowControlTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
+
+            // this test assumes that nMsgs is greater than session's window size
+            int nMsgs = 10000;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+            for (int i = 0; i < nMsgs; i++)
+            {
+                var message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = name };
+                sender.Send(message, SendTimeout);
+            }
+
+            sender.Close();
+            session.Close();
+            connection.Close();
+        }
     }
 
     class TestMessageProcessor : IMessageProcessor
     {
         public TestMessageProcessor()
+            : this(20, new List<Message>())
         {
-            this.Messages = new List<Message>();
+        }
+
+        public TestMessageProcessor(int credit, List<Message> messages)
+        {
+            this.Credit = credit;
+            this.Messages = messages;
         }
 
         public List<Message> Messages
@@ -290,12 +319,17 @@ namespace Test.Amqp
 
         public int Credit
         {
-            get { return 20; }
+            get;
+            private set;
         }
 
         public void Process(MessageContext messageContext)
         {
-            this.Messages.Add(messageContext.Message);
+            if (this.Messages != null)
+            {
+                this.Messages.Add(messageContext.Message);
+            }
+
             messageContext.Complete();
         }
     }

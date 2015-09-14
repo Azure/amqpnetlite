@@ -51,6 +51,7 @@ namespace Amqp
         SequenceNumber incomingDeliveryId;
         LinkedList incomingList;
         SequenceNumber nextIncomingId;
+        uint incomingWindow;
 
         // outgoing delivery tracking & flow control
         SequenceNumber outgoingDeliveryId;
@@ -70,16 +71,18 @@ namespace Amqp
         internal Session(Connection connection, Begin begin)
         {
             this.connection = connection;
-            this.channel = connection.AddSession(this);
             this.handleMax = begin.HandleMax;
+            this.nextOutgoingId = uint.MaxValue - 2u;
+            this.incomingWindow = defaultWindowSize;
+            this.outgoingWindow = begin.IncomingWindow;
+            this.incomingDeliveryId = uint.MaxValue;
             this.localLinks = new Link[1];
             this.remoteLinks = new Link[1];
             this.incomingList = new LinkedList();
             this.outgoingList = new LinkedList();
-            this.nextOutgoingId = uint.MaxValue - 2u;
-            this.outgoingWindow = begin.IncomingWindow;
-            this.incomingDeliveryId = uint.MaxValue;
+            this.channel = connection.AddSession(this);
 
+            begin.IncomingWindow = this.incomingWindow;
             begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
@@ -205,10 +208,11 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
+                this.incomingWindow = defaultWindowSize;
                 flow.NextOutgoingId = this.nextOutgoingId;
                 flow.OutgoingWindow = this.outgoingWindow;
                 flow.NextIncomingId = this.nextIncomingId;
-                flow.IncomingWindow = defaultWindowSize;
+                flow.IncomingWindow = this.incomingWindow;
 
                 this.SendCommand(flow);
             }
@@ -236,6 +240,8 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnBegin", this.state));
                 }
+
+                this.outgoingWindow = begin.IncomingWindow;
             }
 
             if (begin.HandleMax < this.handleMax)
@@ -445,6 +451,11 @@ namespace Amqp
             bool newDelivery;
             lock (this.ThisLock)
             {
+                if (this.incomingWindow-- == 0)
+                {
+                    this.SendFlow(new Flow());
+                }
+
                 this.nextIncomingId++;
                 newDelivery = transfer.HasDeliveryId && transfer.DeliveryId > this.incomingDeliveryId;
                 if (newDelivery)

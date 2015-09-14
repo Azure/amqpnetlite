@@ -113,6 +113,7 @@ namespace PerfTest
             protected Connection CreateConnection(Address address)
             {
                 var factory = new ConnectionFactory();
+                factory.AMQP.MaxFrameSize = this.perfArgs.MaxFrameSize;
                 if (address.Scheme.Equals("amqps", StringComparison.OrdinalIgnoreCase))
                 {
                     factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
@@ -272,6 +273,11 @@ namespace PerfTest
                 Uri addressUri = new Uri(this.Args.Address);
                 X509Certificate2 certificate = Extensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
                 ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
+                foreach (var listener in host.Listeners)
+                {
+                    listener.AMQP.MaxFrameSize = this.Args.MaxFrameSize;
+                }
+
                 host.Open();
                 Console.WriteLine("Container host is listening on {0}:{1}", addressUri.Host, addressUri.Port);
 
@@ -339,6 +345,13 @@ namespace PerfTest
 
             [Argument(Name = "body-size", Shortcut = "b", Description = "message body size (bytes)", Default = 64)]
             public int BodySize
+            {
+                get;
+                protected set;
+            }
+
+            [Argument(Name = "max-frame-size", Shortcut = "m", Description = "connection max frame size (bytes)", Default = 256*1024)]
+            public int MaxFrameSize
             {
                 get;
                 protected set;
