@@ -84,9 +84,17 @@ namespace PeerToPeer.Client
             sender.Send(request, null, null);
             Console.WriteLine("Sent request {0} body {1}", request.Properties, request.Body);
 
-            Message response = receiver.Receive();
-            Console.WriteLine("Received response: {0} body {1}", response.Properties, response.Body);
-            receiver.Accept(response);
+            while (true)
+            {
+                Message response = receiver.Receive();
+                Console.WriteLine("Received response: {0} body {1}", response.Properties, response.Body);
+                receiver.Accept(response);
+
+                if (string.Equals("done", response.Body))
+                {
+                    break;
+                }
+            }
 
             receiver.Close();
             sender.Close();

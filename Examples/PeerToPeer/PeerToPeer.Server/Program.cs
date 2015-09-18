@@ -18,6 +18,7 @@
 namespace PeerToPeer.Server
 {
     using System;
+    using System.Threading.Tasks;
     using Amqp;
     using Amqp.Listener;
 
@@ -88,8 +89,20 @@ namespace PeerToPeer.Server
                 Console.WriteLine("Received a request.");
                 PrintMessage(requestContext.Message);
 
-                Message response = new Message("welcome");
-                requestContext.Complete(response);
+                var task = this.ReplyAsync(requestContext);
+            }
+
+            async Task ReplyAsync(RequestContext requestContext)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    Message response = new Message("reply" + i);
+                    requestContext.Complete(response);
+
+                    await Task.Delay(1000);
+                }
+
+                requestContext.Complete(new Message("done"));
             }
         }
     }
