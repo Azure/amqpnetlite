@@ -97,7 +97,7 @@ namespace PeerToPeer.Server
                 for (int i = 0; i < 10; i++)
                 {
                     Message response = new Message("reply" + i);
-                    requestContext.Complete(response);
+                    requestContext.ResponseLink.SendMessage(response, null);
 
                     await Task.Delay(1000);
                 }

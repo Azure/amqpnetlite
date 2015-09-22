@@ -121,6 +121,11 @@ namespace Amqp.Listener
         /// <param name="buffer">The serialized buffer of the message. It is null, the message is serialized.</param>
         public void SendMessage(Message message, ByteBuffer buffer)
         {
+            if (this.role)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed, "Cannot send a message over a receiving link.");
+            }
+
             Delivery delivery = new Delivery()
             {
                 Handle = this.Handle,

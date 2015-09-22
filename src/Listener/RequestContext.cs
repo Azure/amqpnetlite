@@ -33,6 +33,14 @@ namespace Amqp.Listener
         }
 
         /// <summary>
+        /// Gets the response (sending) link associated with the request context.
+        /// </summary>
+        public ListenerLink ResponseLink
+        {
+            get { return this.responseLink; }
+        }
+
+        /// <summary>
         /// Completes the request and sends the response message to the peer.
         /// </summary>
         /// <param name="response">The response message to send.</param>
@@ -45,6 +53,12 @@ namespace Amqp.Listener
 
             response.Properties.CorrelationId = this.Message.Properties.MessageId;
             this.responseLink.SendMessage(response, response.Encode());
+            this.State = ContextState.Completed;
+        }
+
+        internal override ContextState GetState()
+        {
+            return this.ResponseLink.IsDetaching ? ContextState.Aborted : base.GetState();
         }
     }
 }
