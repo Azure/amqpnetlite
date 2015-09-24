@@ -106,7 +106,7 @@ namespace Listener.ContainerHost
                 {
                     var message = new Message("Hello!");
                     message.Properties = new Properties() { Subject = "Welcome Message" };
-                    flowContext.Link.SendMessage(message, null);
+                    flowContext.Link.SendMessage(message);
                 }
             }
 

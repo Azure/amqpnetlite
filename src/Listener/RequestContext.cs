@@ -52,7 +52,7 @@ namespace Amqp.Listener
             }
 
             response.Properties.CorrelationId = this.Message.Properties.MessageId;
-            this.responseLink.SendMessage(response, response.Encode());
+            this.responseLink.SendMessage(response);
             this.State = ContextState.Completed;
         }
 

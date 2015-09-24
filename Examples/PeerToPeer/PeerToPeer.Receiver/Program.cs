@@ -119,7 +119,7 @@ namespace PeerToPeer.Server
 
                     try
                     {
-                        thisPtr.link.SendMessage(message, null);
+                        thisPtr.link.SendMessage(message);
                     }
                     catch (Exception exception)
                     {

@@ -76,7 +76,7 @@ namespace PeerToPeer.Server
                         Message response = new Message("reply" + this.offset);
                         response.ApplicationProperties = new ApplicationProperties();
                         response.ApplicationProperties["offset"] = this.offset;
-                        requestContext.ResponseLink.SendMessage(response, null);
+                        requestContext.ResponseLink.SendMessage(response);
                         this.offset++;
                     }
                     catch (Exception exception)
