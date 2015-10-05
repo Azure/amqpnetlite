@@ -42,6 +42,18 @@ namespace Amqp.Framing
             set;
         }
 
+#if SMALL_MEMORY
+        internal override void EncodeValue(ref ByteBuffer buffer)
+        {
+            Encoder.WriteList(ref buffer, this.List, true);
+        }
+
+        internal override void DecodeValue(ref ByteBuffer buffer)
+        {
+            byte formatCode = Encoder.ReadFormatCode(ref buffer);
+            this.List = Encoder.ReadList(ref buffer, formatCode);
+        }
+#else
         internal override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteList(buffer, this.List, true);
@@ -51,5 +63,7 @@ namespace Amqp.Framing
         {
             this.List = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
         }
+#endif
+
     }
 }

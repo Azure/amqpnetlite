@@ -21,6 +21,7 @@ namespace Amqp
     using Amqp.Types;
     using System;
 
+#if SMALL_MEMORY
     /// <summary>
     /// The Message class represents an AMQP message.
     /// </summary>
@@ -108,6 +109,194 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets the delivery tag associated with the message.
+        /// </summary>
+        public byte[] DeliveryTag
+        {
+            get
+            {
+                return this.Delivery != null ? this.Delivery.Tag : null;
+            }
+        }
+
+        internal Delivery Delivery
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets an object of type T from the message body.
+        /// </summary>
+        /// <typeparam name="T">The object type.</typeparam>
+        /// <returns>The buffer.</returns>
+        public ByteBuffer Encode()
+        {
+            ByteBuffer buffer = new ByteBuffer(128, true);
+
+            EncodeIfNotNull(this.Header, ref buffer);
+            EncodeIfNotNull(this.DeliveryAnnotations, ref buffer);
+            EncodeIfNotNull(this.MessageAnnotations, ref buffer);
+            EncodeIfNotNull(this.Properties, ref buffer);
+            EncodeIfNotNull(this.ApplicationProperties, ref buffer);
+            EncodeIfNotNull(this.BodySection, ref buffer);
+            EncodeIfNotNull(this.Footer, ref buffer);
+
+            return buffer;
+        }
+
+        /// <summary>
+        /// Decodes a message from a buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer.</param>
+        /// <returns></returns>
+        public static Message Decode(ref ByteBuffer buffer)
+        {
+            Message message = new Message();
+
+            while (buffer.Length > 0)
+            {
+                var described = (RestrictedDescribed)Encoder.ReadObject(ref buffer);
+
+                if (described.Descriptor.Code == Codec.Header.Code)
+                {
+                    message.Header = (Header)described;
+                }
+                else if (described.Descriptor.Code == Codec.DeliveryAnnotations.Code)
+                {
+                    message.DeliveryAnnotations = (DeliveryAnnotations)described;
+                }
+                else if (described.Descriptor.Code == Codec.MessageAnnotations.Code)
+                {
+                    message.MessageAnnotations = (MessageAnnotations)described;
+                }
+                else if (described.Descriptor.Code == Codec.Properties.Code)
+                {
+                    message.Properties = (Properties)described;
+                }
+                else if (described.Descriptor.Code == Codec.ApplicationProperties.Code)
+                {
+                    message.ApplicationProperties = (ApplicationProperties)described;
+                }
+                else if (described.Descriptor.Code == Codec.AmqpValue.Code ||
+                    described.Descriptor.Code == Codec.Data.Code ||
+                    described.Descriptor.Code == Codec.AmqpSequence.Code)
+                {
+                    message.BodySection = described;
+                }
+                else if (described.Descriptor.Code == Codec.Footer.Code)
+                {
+                    message.Footer = (Footer)described;
+                }
+                else
+                {
+                    throw new AmqpException(ErrorCode.UnknownDescriptor, described.Descriptor.Name);
+                }
+
+                described = null;
+                //Microsoft.SPOT.Debug.GC(true);
+            }
+
+            return message;
+        }
+
+        static void EncodeIfNotNull(RestrictedDescribed section, ref ByteBuffer buffer)
+        {
+            if (section != null)
+            {
+                section.Encode(ref buffer);
+            }
+        }
+    }
+
+#else
+    /// <summary>
+    /// The Message class represents an AMQP message.
+    /// </summary>
+    public class Message
+    {
+        /// <summary>
+        /// The header section.
+        /// </summary>
+        public Header Header;
+
+        /// <summary>
+        /// The delivery annotation section.
+        /// </summary>
+        public DeliveryAnnotations DeliveryAnnotations;
+
+        /// <summary>
+        /// The message annotation section.
+        /// </summary>
+        public MessageAnnotations MessageAnnotations;
+
+        /// <summary>
+        /// The properties section.
+        /// </summary>
+        public Properties Properties;
+
+        /// <summary>
+        /// The application properties section.
+        /// </summary>
+        public ApplicationProperties ApplicationProperties;
+
+        /// <summary>
+        /// The body section. The library supports one section only.
+        /// </summary>
+        public RestrictedDescribed BodySection;
+
+        /// <summary>
+        /// The footer section.
+        /// </summary>
+        public Footer Footer;
+
+        /// <summary>
+        /// Initializes an empty message.
+        /// </summary>
+        public Message()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a message with an AmqpValue body. The body must be a defined AMQP type.
+        /// </summary>
+        /// <param name="body">the object stored in the AmqpValue section.</param>
+        public Message(object body)
+        {
+            this.BodySection = new AmqpValue() { Value = body };
+        }
+
+        /// <summary>
+        /// Gets the object from the body. The returned value depends on the type of the body section.
+        /// Use the BodySection field if the entire section is needed.
+        /// </summary>
+        public object Body
+        {
+            get
+            {
+                if (this.BodySection == null)
+                {
+                    return null;
+                }
+                else if (this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
+                {
+                    return ((AmqpValue)this.BodySection).Value;
+                }
+                else if (this.BodySection.Descriptor.Code == Codec.Data.Code)
+                {
+                    return ((Data)this.BodySection).Binary;
+                }
+                else if (this.BodySection.Descriptor.Code == Codec.AmqpSequence.Code)
+                {
+                    return ((AmqpSequence)this.BodySection).List;
+                }
+                else
+                {
+                    throw new AmqpException(ErrorCode.DecodeError, "The body section is invalid.");
+                }
+            }
+        }
 
 #if (DOTNET || DOTNET35)
         /// <summary>
@@ -220,5 +409,7 @@ namespace Amqp
                 section.Encode(buffer);
             }
         }
+
     }
+#endif
 }

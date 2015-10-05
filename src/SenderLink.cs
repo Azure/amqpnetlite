@@ -81,13 +81,17 @@ namespace Amqp
             this.outgoingList = new LinkedList();
             this.SendAttach(false, this.deliveryCount, attach);
         }
-        
+
         /// <summary>
         /// Sends a message and synchronously waits for an acknowledgement.
         /// </summary>
         /// <param name="message">The message to send.</param>
         /// <param name="millisecondsTimeout">The time in milliseconds to wait for the acknowledgement.</param>
+#if SMALL_MEMORY
         public void Send(Message message, int millisecondsTimeout = 60000)
+#else
+        public void Send(Message message, int millisecondsTimeout = 60000)
+#endif
         {
             ManualResetEvent acked = new ManualResetEvent(false);
             Outcome outcome = null;
@@ -97,7 +101,11 @@ namespace Amqp
                 acked.Set();
             };
 
+#if SMALL_MEMORY
             this.Send(message, callback, acked);
+#else
+            this.Send(message, callback, acked);
+#endif
 
 #if !COMPACT_FRAMEWORK
             bool signaled = acked.WaitOne(millisecondsTimeout, true);
@@ -106,7 +114,11 @@ namespace Amqp
 #endif
             if (!signaled)
             {
+#if SMALL_MEMORY
+                throw new AmqpException(ErrorCode.TransactionTimeout);
+#else
                 throw new TimeoutException();
+#endif
             }
 
             if (outcome != null)
@@ -130,16 +142,28 @@ namespace Amqp
         /// <param name="message">The message to send.</param>
         /// <param name="callback">The callback to invoke when acknowledgement is received.</param>
         /// <param name="state">The object that is passed back to the outcome callback.</param>
+#if SMALL_MEMORY
         public void Send(Message message, OutcomeCallback callback, object state)
+#else
+        public void Send(Message message, OutcomeCallback callback, object state)
+#endif
         {
             DeliveryState deliveryState = null;
 #if DOTNET
             deliveryState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
 #endif
+#if SMALL_MEMORY
             this.Send(message, deliveryState, callback, state);
+#else
+            this.Send(message, deliveryState, callback, state);
+#endif
         }
 
+#if SMALL_MEMORY
         internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
+#else
+        internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
+#endif
         {
             var buffer = message.Encode();
             if (buffer.Length < 1)
@@ -174,7 +198,11 @@ namespace Amqp
                 this.writing = true;
             }
 
+#if SMALL_MEMORY
+            this.WriteDelivery(ref delivery);
+#else
             this.WriteDelivery(delivery);
+#endif
         }
 
         internal override void OnFlow(Flow flow)
@@ -196,7 +224,11 @@ namespace Amqp
                 this.writing = true;
             }
 
+#if SMALL_MEMORY
+            this.WriteDelivery(ref delivery);
+#else
             this.WriteDelivery(delivery);
+#endif
         }
 
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
@@ -270,7 +302,11 @@ namespace Amqp
             return buffer;
         }
 
+#if SMALL_MEMORY
+        void WriteDelivery(ref Delivery delivery)
+#else
         void WriteDelivery(Delivery delivery)
+#endif
         {
             while (delivery != null)
             {

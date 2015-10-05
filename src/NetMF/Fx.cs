@@ -24,8 +24,10 @@ namespace Amqp
     using Microsoft.SPOT;
 
     // Framework specific routines
+#if !SMALL_MEMORY
     public static class Fx
     {
+
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
@@ -69,6 +71,7 @@ namespace Amqp
             new Thread(threadStart).Start();
         }
     }
+#endif
 
     class Uri
     {

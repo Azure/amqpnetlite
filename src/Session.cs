@@ -38,8 +38,15 @@ namespace Amqp
             End
         }
 
+#if SMALL_MEMORY
+        const int DefaultMaxLinks = 2;
+        const uint defaultWindowSize = 256;
+        const int MaxLinks = 2;
+#else
         const int DefaultMaxLinks = 64;
         const uint defaultWindowSize = 2048;
+        const int MaxLinks = 8;
+#endif
         readonly Connection connection;
         readonly ushort channel;
         uint handleMax;
@@ -86,6 +93,9 @@ namespace Amqp
             begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
+#if !SMALL_MEMORY
+            Trace.WriteLine(TraceLevel.Information, "session begin");
+#endif
         }
 
         /// <summary>
@@ -150,8 +160,12 @@ namespace Amqp
                     return (ushort)count;
                 }
 
+#if SMALL_MEMORY
+                throw new AmqpException(ErrorCode.AmqpHandleExceeded);
+#else
                 throw new AmqpException(ErrorCode.NotAllowed,
                     Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
+#endif
             }
         }
 
@@ -237,8 +251,12 @@ namespace Amqp
                 }
                 else
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnBegin, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnBegin", this.state));
+#endif
                 }
 
                 this.outgoingWindow = begin.IncomingWindow;
@@ -265,8 +283,12 @@ namespace Amqp
                 }
                 else
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnEnd, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnEnd", this.state));
+#endif
                 }
 
                 this.OnClose(end.Error);
@@ -277,7 +299,9 @@ namespace Amqp
 
         internal void OnCommand(DescribedList command, ByteBuffer buffer)
         {
+#if !SMALL_MEMORY
             Fx.Assert(this.state < State.EndReceived, "Session is ending or ended and cannot receive commands.");
+#endif
             if (command.Descriptor.Code == Codec.Attach.Code)
             {
                 this.OnAttach((Attach)command);
@@ -300,9 +324,14 @@ namespace Amqp
             }
             else
             {
+#if SMALL_MEMORY
+                throw new NotImplementedException(command.Descriptor.Name);
+#else
                 throw new AmqpException(ErrorCode.NotImplemented,
                     Fx.Format(SRAmqp.AmqpOperationNotSupported, command.Descriptor.Name));
+#endif
             }
+
         }
 
         /// <summary>
@@ -334,8 +363,12 @@ namespace Amqp
                 }
                 else
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.IllegalOperationStateClose, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
+#endif
                 }
 
                 this.SendEnd();
@@ -349,8 +382,12 @@ namespace Amqp
             {
                 if (attach.Handle > this.handleMax)
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.AmqpHandleExceeded);
+#else
                     throw new AmqpException(ErrorCode.NotAllowed,
                         Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
+#endif
                 }
 
                 for (int i = 0; i < this.localLinks.Length; ++i)
@@ -372,8 +409,12 @@ namespace Amqp
                         var remoteLink = this.remoteLinks[attach.Handle];
                         if (remoteLink != null)
                         {
+#if SMALL_MEMORY
+                            throw new AmqpException(ErrorCode.HandleInUse, attach.Handle + " "+  remoteLink.Name);
+#else
                             throw new AmqpException(ErrorCode.HandleInUse,
                                 Fx.Format(SRAmqp.AmqpHandleInUse, attach.Handle, remoteLink.Name));
+#endif
                         }
 
                         this.remoteLinks[attach.Handle] = link;
@@ -382,8 +423,12 @@ namespace Amqp
                 }
             }
 
+#if SMALL_MEMORY
+            throw new AmqpException(ErrorCode.LinkNotFound, attach.LinkName);
+#else
             throw new AmqpException(ErrorCode.NotFound,
                 Fx.Format(SRAmqp.LinkNotFound, attach.LinkName));
+#endif
         }
 
         void CancelPendingDeliveries(Error error)
@@ -512,18 +557,23 @@ namespace Amqp
                     delivery = next;
                 }
             }
+
         }
 
         void ThrowIfEnded(string operation)
         {
             if (this.state >= State.EndPipe)
             {
+#if SMALL_MEMORY
+                throw new AmqpException(ErrorCode.IllegalOperationState, operation + " @ " + this.state.ToString());
+#else
                 throw new AmqpException(this.Error ??
                     new Error()
                     {
                         Condition = ErrorCode.IllegalState,
                         Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
                     });
+#endif
             }
         }
 
@@ -539,8 +589,12 @@ namespace Amqp
 
                 if (link == null)
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.HandleNotFound, remoteHandle.ToString() + ":" + this.channel.ToString());
+#else
                     throw new AmqpException(ErrorCode.NotFound,
                         Fx.Format(SRAmqp.AmqpHandleNotFound, remoteHandle, this.channel));
+#endif
                 }
 
                 return link;

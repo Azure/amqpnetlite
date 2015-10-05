@@ -42,6 +42,17 @@ namespace Amqp.Types
             get { return this.descriptor; }
         }
 
+#if SMALL_MEMORY
+        internal override void EncodeDescriptor(ref ByteBuffer buffer)
+        {
+            Encoder.WriteULong(ref buffer, this.descriptor.Code, true);
+        }
+
+        internal override void DecodeDescriptor(ref ByteBuffer buffer)
+        {
+            Encoder.ReadObject(ref buffer);
+        }
+#else
         internal override void EncodeDescriptor(ByteBuffer buffer)
         {
             Encoder.WriteULong(buffer, this.descriptor.Code, true);
@@ -51,5 +62,6 @@ namespace Amqp.Types
         {
             Encoder.ReadObject(buffer);
         }
+#endif
     }
 }

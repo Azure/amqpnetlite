@@ -171,8 +171,12 @@ namespace Amqp
                         }
                         else
                         {
+#if SMALL_MEMORY
+                            throw new AmqpException(ErrorCode.InvalidAddressFormat);
+#else
                             throw new AmqpException(ErrorCode.InvalidField,
                                 Fx.Format(SRAmqp.InvalidAddressFormat));
+#endif
                         }
                         break;
                     case '/':
@@ -215,8 +219,12 @@ namespace Amqp
                         }
                         else
                         {
+#if SMALL_MEMORY
+                            throw new AmqpException(ErrorCode.InvalidAddressFormat);
+#else
                             throw new AmqpException(ErrorCode.InvalidField,
                                 Fx.Format(SRAmqp.InvalidAddressFormat));
+#endif
                         }
                         break;
                     default:

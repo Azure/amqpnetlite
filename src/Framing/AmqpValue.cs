@@ -76,6 +76,18 @@ namespace Amqp.Framing
             this.valueBuffer = new ByteBuffer(buffer.Buffer, offset, count, count);
         }
 #else
+
+#if SMALL_MEMORY
+        internal override void EncodeValue(ref ByteBuffer buffer)
+        {
+            Encoder.WriteObject(ref buffer, this.value);
+        }
+
+        internal override void DecodeValue(ref ByteBuffer buffer)
+        {
+            this.value = Encoder.ReadObject(ref buffer);
+        }
+#else
         internal override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteObject(buffer, this.value);
@@ -85,6 +97,8 @@ namespace Amqp.Framing
         {
             this.value = Encoder.ReadObject(buffer);
         }
+#endif
+
 #endif
     }
 }

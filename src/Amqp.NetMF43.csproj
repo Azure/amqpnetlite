@@ -22,6 +22,21 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <Choose>
+    <When Condition=" !$(DefineConstants.Contains('SMALL_MEMORY'))">
+      <ItemGroup>
+        <Compile Include="NetMF\SRAmqp.cs" />
+        <Compile Include="NetMF\SRAmqp.Designer.cs">
+          <DependentUpon>SRAmqp.cs</DependentUpon>
+        </Compile>
+        <Compile Include="NetMF\TimeoutException.cs" />
+        <Compile Include="Trace.cs" />
+      </ItemGroup>
+      <ItemGroup>
+        <EmbeddedResource Include="SRAmqp.resx" Condition="!$(DefineConstants.Contains('SMALL_MEMORY'))" />
+      </ItemGroup>
+    </When>
+  </Choose>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -81,11 +96,6 @@
     <Compile Include="NetMF\Fx.cs" />
     <Compile Include="NetMF\List.cs" />
     <Compile Include="NetMF\Map.cs" />
-    <Compile Include="NetMF\SRAmqp.cs" />
-    <Compile Include="NetMF\SRAmqp.Designer.cs">
-      <DependentUpon>SRAmqp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NetMF\TimeoutException.cs" />
     <Compile Include="NetMF\TcpTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiverLink.cs" />
@@ -101,7 +111,6 @@
     <Compile Include="SenderLink.cs" />
     <Compile Include="SequenceNumber.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="Trace.cs" />
     <Compile Include="Types\Described.cs" />
     <Compile Include="Types\DescribedList.cs" />
     <Compile Include="Types\DescribedMap.cs" />
@@ -122,8 +131,5 @@
     <Reference Include="Microsoft.SPOT.Net.Security" />
     <Reference Include="System" />
     <Reference Include="System.Net.Security" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SRAmqp.resx" />
   </ItemGroup>
 </Project>

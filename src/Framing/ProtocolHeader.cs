@@ -51,7 +51,11 @@ namespace Amqp.Framing
 #if TRACE
         public override string ToString()
         {
+#if SMALL_MEMORY
+            return this.Id + "." + this.Major + "." + this.Minor + "." + this.Revision;
+#else
             return Fx.Format("{0} {1} {2} {3}", this.Id, this.Major, this.Minor, this.Revision);
+#endif
         }
 #endif
     }

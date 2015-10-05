@@ -89,6 +89,9 @@ namespace Amqp
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(true, 0, attach);
+#if !SMALL_MEMORY
+            Trace.WriteLine(TraceLevel.Information, "link rcvr att");
+#endif
         }
 
         /// <summary>
@@ -100,6 +103,9 @@ namespace Amqp
         {
             this.onMessage = onMessage;
             this.SetCredit(credit, true);
+#if !SMALL_MEMORY
+            Trace.WriteLine(TraceLevel.Information, "links msg pump start");
+#endif
         }
 
         /// <summary>
@@ -136,6 +142,38 @@ namespace Amqp
             return this.ReceiveInternal(null, timeout);
         }
 
+#if SMALL_MEMORY
+        /// <summary>
+        /// Accepts a message. It sends an accepted outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to accept.</param>
+        public void Accept(Message message)
+        {
+            this.ThrowIfDetaching("Accept");
+            this.DisposeMessage(message.Delivery, new Accepted());
+        }
+
+        /// <summary>
+        /// Releases a message. It sends a released outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to release.</param>
+        public void Release(Message message)
+        {
+            this.ThrowIfDetaching("Release");
+            this.DisposeMessage(message.Delivery, new Released());
+        }
+
+        /// <summary>
+        /// Rejects a message. It sends a rejected outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to reject.</param>
+        /// <param name="error">The error, if any, for the rejection.</param>
+        public void Reject(Message message, Error error = null)
+        {
+            this.ThrowIfDetaching("Reject");
+            this.DisposeMessage(message.Delivery, new Rejected() { Error = error });
+        }
+#else
         /// <summary>
         /// Accepts a message. It sends an accepted outcome to the peer.
         /// </summary>
@@ -166,11 +204,118 @@ namespace Amqp
             this.ThrowIfDetaching("Reject");
             this.DisposeMessage(message, new Rejected() { Error = error });
         }
+#endif
 
         internal override void OnFlow(Flow flow)
         {
         }
 
+#if SMALL_MEMORY
+        internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
+        {
+            if (!transfer.More)
+            {
+                Waiter waiter;
+                MessageCallback callback = null;
+                lock (this.ThisLock)
+                {
+                    if (delivery == null)
+                    {
+                        // multi-transfer delivery
+                        delivery = this.deliveryCurrent;
+                        this.deliveryCurrent = null;
+                        //Fx.Assert(delivery != null, "Must have a delivery in the queue");
+                        AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
+                        buffer = null;
+                        delivery.Message = Message.Decode(ref delivery.Buffer);
+                        delivery.Buffer = null;
+                    }
+                    else
+                    {
+                        // single tranfer delivery
+                        this.OnDelivery(transfer.DeliveryId);
+#if NETMF
+                        //Microsoft.SPOT.Debug.GC(true);
+#endif
+                        delivery.Message = Message.Decode(ref buffer);
+                        buffer = null;
+                        delivery.Buffer = null;
+                    }
+                    callback = this.onMessage;
+
+                    waiter = (Waiter)this.waiterList.First;
+                    if (waiter != null)
+                    {
+                        this.waiterList.Remove(waiter);
+#if NETMF
+                        //Microsoft.SPOT.Debug.GC(true);
+#endif
+                    }
+
+                    if (waiter == null && callback == null)
+                    {
+                        this.receivedMessages.Add(new MessageNode() { Message = delivery.Message });
+                        return;
+                    }
+                }
+
+                while (waiter != null)
+                {
+                    if (waiter.Signal(delivery.Message))
+                    {
+                        this.OnDeliverMessage();
+                        return;
+                    }
+
+                    lock (this.ThisLock)
+                    {
+                        waiter = (Waiter)this.waiterList.First;
+                        if (waiter != null)
+                        {
+                            this.waiterList.Remove(waiter);
+#if NETMF
+                            //Microsoft.SPOT.Debug.GC(true);
+#endif
+                        }
+                        else if (callback == null)
+                        {
+                            this.receivedMessages.Add(new MessageNode() { Message = delivery.Message });
+                            return;
+                        }
+                    }
+                }
+
+#if !SMALL_MEMORY
+                Fx.Assert(waiter == null, "waiter must be null now");
+                Fx.Assert(callback != null, "callback must not be null now");
+#endif
+                callback(this, delivery.Message);
+
+                this.OnDeliverMessage();
+            }
+            else
+            {
+                lock (this.ThisLock)
+                {
+                    if (delivery == null)
+                    {
+                        delivery = this.deliveryCurrent;
+#if !SMALL_MEMORY
+                        Fx.Assert(delivery != null, "Must have a current delivery");
+#endif
+                        AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
+                    }
+                    else
+                    {
+                        this.OnDelivery(transfer.DeliveryId);
+                        delivery.Buffer = new ByteBuffer(buffer.Length * 2, true);
+                        AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
+                        this.deliveryCurrent = delivery;
+                    }
+                }
+            }
+        }
+#else
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
         {
             if (!transfer.More)
@@ -258,6 +403,7 @@ namespace Amqp
                 }
             }
         }
+#endif
 
         internal override void OnAttach(uint remoteHandle, Attach attach)
         {
@@ -343,10 +489,17 @@ namespace Amqp
 
             return waiter.Wait(timeout);
         }
-        
+
+#if SMALL_MEMORY
+        void DisposeMessage(Delivery delivery, Outcome outcome)
+        {
+
+#else
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;
+#endif
+
             if (delivery == null || delivery.Settled)
             {
                 return;
@@ -371,8 +524,12 @@ namespace Amqp
             // called with lock held
             if (this.credit <= 0)
             {
+#if SMALL_MEMORY
+                throw new AmqpException(ErrorCode.TransferLimitExceeded, deliveryId.ToString());
+#else
                 throw new AmqpException(ErrorCode.TransferLimitExceeded,
                     Fx.Format(SRAmqp.DeliveryLimitExceeded, deliveryId));
+#endif
             }
 
             this.deliveryCount++;

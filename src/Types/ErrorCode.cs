@@ -20,6 +20,205 @@ namespace Amqp.Types
     /// <summary>
     /// Defines the conditions of AMQP errors.
     /// </summary>
+#if SMALL_MEMORY
+    public enum ErrorCode
+    {
+        Success = 0,
+
+        // amqp errors
+
+        /// <summary>
+        /// An internal error occurred. Operator intervention may be required to resume
+        /// normal operation.
+        /// </summary>
+        InternalError = 1000,
+
+        /// <summary>
+        /// A peer attempted to work with a remote entity that does not exist.
+        /// </summary>
+        NotFound = 1000 + 1,
+
+        /// <summary>
+        /// A peer attempted to work with a remote entity to which it has no access
+        /// due to security settings.
+        /// </summary>
+        UnauthorizedAccess = 1000 + 2,
+
+        /// <summary>
+        /// Data could not be decoded.
+        /// </summary>
+        DecodeError = 1000 + 3,
+
+        /// <summary>
+        /// Data could not be decoded.
+        /// </summary>
+        ResourceLimitExceeded = 1000 + 4,
+
+        /// <summary>
+        /// The peer tried to use a frame in a manner that is inconsistent with
+        /// the semantics defined in the specification.
+        /// </summary>
+        NotAllowed = 1000 + 5,
+
+        /// <summary>
+        /// An invalid field was passed in a frame body, and the operation could not proceed.
+        /// </summary>
+        InvalidField = 1000 + 6,
+
+        /// <summary>
+        /// The peer tried to use functionality that is not implemented in its partner.
+        /// </summary>
+        NotImplemented = 1000 + 7,
+
+        /// <summary>
+        /// The client attempted to work with a server entity to which it has no access
+        /// because another client is working with it.
+        /// </summary>
+        ResourceLocked = 1000 + 8,
+
+        /// <summary>
+        /// The client made a request that was not allowed because some precondition failed.
+        /// </summary>
+        PreconditionFailed = 1000 + 9,
+
+        /// <summary>
+        /// A server entity the client is working with has been deleted.
+        /// </summary>
+        ResourceDeleted = 1000 + 10,
+
+        /// <summary>
+        /// The peer sent a frame that is not permitted in the current state of the Session.
+        /// </summary>
+        IllegalState = 1000 + 11,
+
+        /// <summary>
+        /// The peer cannot send a frame because the smallest encoding of the performative
+        /// with the currently valid values would be too large to fit within a frame of
+        /// the agreed maximum frame size. 
+        /// </summary>
+        FrameSizeTooSmall = 1000 + 12,
+
+        UnknownDescriptor = 1000 + 13,
+        SaslNegoFailed = 1000 + 14,
+        InvalidAddressFormat = 1000 + 15,
+        InvalidFrameSize = 1000 + 16,
+        InvalidMapKeyType = 1000 + 17,
+        InvalidSequenceNumberComparison = 1000 + 18,
+        EncodingTypeNotSupported = 1000 + 19,
+        ChannelNotFound = 1000 + 20,
+        InvalidMapCount = 1000 + 21,
+
+        // connection errors
+
+        /// <summary>
+        /// An operator intervened to close the Connection for some reason.
+        /// The client may retry at some later date.
+        /// </summary>
+        ConnectionForced = 1100,
+
+        /// <summary>
+        /// A valid frame header cannot be formed from the incoming byte stream.
+        /// </summary>
+        FramingError = 1100 + 1,
+
+        /// <summary>
+        /// The container is no longer available on the current connection. 
+        /// </summary>
+        ConnectionRedirect = 1100 + 2,
+
+
+        // connection errors
+        AmqpHandleExceeded = 1100 + 3,
+
+        // session errors
+
+        /// <summary>
+        /// The peer violated incoming window for the session.
+        /// </summary>
+        WindowViolation = 1100 + 3,
+
+        /// <summary>
+        /// Input was received for a link that was detached with an error.
+        /// </summary>
+        ErrantLink = 1100 + 4,
+
+        /// <summary>
+        /// An attach was received using a handle that is already in use for an attached Link.
+        /// </summary>
+        HandleInUse = 1100 + 5,
+
+        /// <summary>
+        /// A frame (other than attach) was received referencing a handle which is not currently
+        /// in use of an attached Link.
+        /// </summary>
+        UnattachedHandle = 1100 + 6,
+
+        IllegalOperationState = 1100 + 7,
+        IllegalOperationStateOnBegin = 1100 + 8,
+        IllegalOperationStateClose = 1100 + 9,
+        IllegalOperationStateOnEnd = 1100 + 10,
+        IllegalOperationStateOnAttach = 1100 + 11,
+        IllegalOperationStateOnOpen = 1100 + 12,
+        IllegalOperationStateOnClose = 1100 + 13,
+        IllegalOperationStateOnHeader = 1100 + 14,
+        IllegalOperationStateOnDetach = 1100 + 15,
+        HandleNotFound = 1100 + 16,
+
+        // link errors
+
+        /// <summary>
+        /// An operator intervened to detach for some reason.
+        /// </summary>
+        DetachForced = 1200,
+
+        /// <summary>
+        /// The peer sent more Message transfers than currently allowed on the link.
+        /// </summary>
+        TransferLimitExceeded = 1200 + 1,
+
+        /// <summary>
+        /// The peer sent a larger message than is supported on the link.
+        /// </summary>
+        MessageSizeExceeded = 1200 + 2,
+
+        /// <summary>
+        /// The address provided cannot be resolved to a terminus at the current container.
+        /// </summary>
+        LinkRedirect = 1200 + 3,
+
+        /// <summary>
+        /// The link has been attached elsewhere, causing the existing attachment
+        /// to be forcibly closed.
+        /// </summary>
+        Stolen = 1200 + 4,
+
+        LinkNotFound = 1200 + 5,
+
+        // tx error conditions
+
+        /// <summary>
+        /// The specified txn-id does not exist.
+        /// </summary>
+        TransactionUnknownId = 1300,
+
+        /// <summary>
+        /// The transaction was rolled back for an unspecified reason.
+        /// </summary>
+        TransactionRollback = 1300 + 1,
+
+        /// <summary>
+        /// The work represented by this transaction took too long.
+        /// </summary>
+        TransactionTimeout = 1300 + 2,
+
+        // messaging
+
+        /// <summary>
+        /// The message has been released by the peer.
+        /// </summary>
+        MessageReleased = 1400
+    }
+#else
     public static class ErrorCode
     {
         // amqp errors
@@ -188,4 +387,5 @@ namespace Amqp.Types
         /// </summary>
         public const string MessageReleased = "amqp:message:released";
     }
+#endif
 }

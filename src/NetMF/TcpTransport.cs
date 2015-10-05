@@ -84,14 +84,26 @@ namespace Amqp
             this.socketTransport.Close();
         }
 
+#if SMALL_MEMORY
+        public void Send(ref ByteBuffer buffer)
+        {
+            this.socketTransport.Send(ref buffer);
+#else
         public void Send(ByteBuffer buffer)
         {
             this.socketTransport.Send(buffer);
+#endif
         }
 
+#if SMALL_MEMORY
+        public int Receive(ref byte[] buffer, int offset, int count)
+        {
+            return this.socketTransport.Receive(ref buffer, offset, count);
+#else
         public int Receive(byte[] buffer, int offset, int count)
         {
             return this.socketTransport.Receive(buffer, offset, count);
+#endif
         }
 
         class TcpSocket : Socket, ITransport
@@ -101,12 +113,20 @@ namespace Amqp
             {
             }
 
+#if SMALL_MEMORY
+            void ITransport.Send(ref ByteBuffer buffer)
+#else
             void ITransport.Send(ByteBuffer buffer)
+#endif
             {
                 base.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
             }
 
+#if SMALL_MEMORY
+            int ITransport.Receive(ref byte[] buffer, int offset, int count)
+#else
             int ITransport.Receive(byte[] buffer, int offset, int count)
+#endif
             {
                 return base.Receive(buffer, offset, count, SocketFlags.None);
             }
@@ -127,12 +147,20 @@ namespace Amqp
                 this.socket = socket;
             }
 
+#if SMALL_MEMORY
+            void ITransport.Send(ref ByteBuffer buffer)
+#else
             void ITransport.Send(ByteBuffer buffer)
+#endif
             {
                 base.Write(buffer.Buffer, buffer.Offset, buffer.Length);
             }
 
+#if SMALL_MEMORY
+            int ITransport.Receive(ref byte[] buffer, int offset, int count)
+#else
             int ITransport.Receive(byte[] buffer, int offset, int count)
+#endif
             {
                 //if (this.socket.Available <= 0) System.Threading.Thread.Sleep(20);
                 //Trace.WriteLine(TraceLevel.Information, "Data Available: {0}", this.DataAvailable);

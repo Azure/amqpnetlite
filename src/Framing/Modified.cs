@@ -70,7 +70,7 @@ namespace Amqp.Framing
                 "modified",
                 new object[] { "delivery-failed", "undeliverable-here", "message-annotations" },
                 this.Fields);
-#endif
         }
-    }
-}
+#endif 
+    } 
+} 

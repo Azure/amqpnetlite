@@ -20,11 +20,80 @@ namespace Amqp
     using System;
     using Amqp.Framing;
 
+#if SMALL_MEMORY
+    using Amqp.Types;
+#endif
+
     /// <summary>
     /// The exception that is thrown when an AMQP error occurs.
     /// </summary>
     public sealed class AmqpException : Exception
     {
+#if SMALL_MEMORY
+        /// <summary>
+        /// Initializes a new instance of the AmqpException class with the AMQP error.
+        /// </summary>
+        /// <param name="error">The AMQP error.</param>
+        public AmqpException(Error error)
+        {
+            this.Error = error;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AmqpException class with the AMQP error.
+        /// </summary>
+        /// <param name="error">The AMQP error.</param>
+        /// <param name="description">The error description.</param>
+        public AmqpException(Error error, string description)
+        {
+            this.Error = error;
+        }
+
+        /// <summary>
+        /// Gets the AMQP error stored in this exception.
+        /// </summary>
+        public Error Error
+        {
+            get;
+            private set;
+        }
+        /// <summary>
+        /// Initializes a new instance of the AmqpException class with the AMQP error code.
+        /// </summary>
+        /// <param name="error">The AMQP error code.</param>
+        public AmqpException(ErrorCode error)
+        {
+            this.ErrorCode = error;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AmqpException class with the AMQP error code and a description.
+        /// </summary>
+        /// <param name="error">The AMQP error code.</param>
+        /// <param name="description">The error description.</param>
+        public AmqpException(ErrorCode error, string description)
+        {
+            this.ErrorCode = error;
+        }
+        
+        /// <summary>
+        /// Gets the AMQP error codestored in this exception.
+        /// </summary>
+        public ErrorCode ErrorCode
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the description for the error stored in this exception.
+        /// </summary>
+        public string Description
+        {
+            get;
+            private set;
+        }
+#else
         /// <summary>
         /// Initializes a new instance of the AmqpException class with the AMQP error.
         /// </summary>
@@ -53,5 +122,6 @@ namespace Amqp
             get;
             private set;
         }
+#endif
     }
 }

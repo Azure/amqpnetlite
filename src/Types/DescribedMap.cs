@@ -65,6 +65,18 @@ namespace Amqp.Types
             }
         }
 
+#if SMALL_MEMORY
+        internal override void DecodeValue(ref ByteBuffer buffer)
+        {
+            byte formatedCode = Encoder.ReadFormatCode(ref buffer);
+            this.map = Encoder.ReadMap(ref buffer, formatedCode);
+        }
+
+        internal override void EncodeValue(ref ByteBuffer buffer)
+        {
+            Encoder.WriteMap(ref buffer, this.map, true);
+        }
+#else
         internal override void DecodeValue(ByteBuffer buffer)
         {
             this.map = Encoder.ReadMap(buffer, Encoder.ReadFormatCode(buffer));
@@ -74,6 +86,7 @@ namespace Amqp.Types
         {
             Encoder.WriteMap(buffer, this.map, true);
         }
+#endif
 
 #if TRACE
         /// <summary>

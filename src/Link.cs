@@ -126,8 +126,12 @@ namespace Amqp
                 }
                 else
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnAttach, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnAttach", this.state));
+#endif
                 }
             }
 
@@ -152,8 +156,12 @@ namespace Amqp
                 }
                 else
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnDetach, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnDetach", this.state));
+#endif
                 }
 
                 this.OnClose(detach.Error);
@@ -201,8 +209,12 @@ namespace Amqp
                 }
                 else
                 {
+#if SMALL_MEMORY
+                    throw new AmqpException(ErrorCode.IllegalOperationStateClose, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
+#endif
                 }
 
                 this.SendDetach(error);
@@ -218,7 +230,9 @@ namespace Amqp
 
         internal void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
         {
+#if !SMALL_MEMORY
             Fx.Assert(this.state == State.Start, "state must be Start");
+#endif
             this.state = State.AttachSent;
             attach.LinkName = this.name;
             attach.Handle = this.handle;
@@ -235,12 +249,16 @@ namespace Amqp
         {
             if (this.IsDetaching)
             {
+#if SMALL_MEMORY
+                throw new AmqpException(ErrorCode.IllegalOperationState, operation + " @ " + this.state.ToString());
+#else
                 throw new AmqpException(this.Error ??
                     new Error()
                     {
                         Condition = ErrorCode.IllegalState,
                         Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
                     });
+#endif
             }
         }
 
