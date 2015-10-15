@@ -114,11 +114,15 @@ namespace Amqp
 #endif
             if (!signaled)
             {
-#if !TRACE
-                throw new AmqpException(ErrorCode.TransactionTimeout);
-#else
-                throw new TimeoutException();
-#endif
+                lock (this.ThisLock)
+                {
+                    this.outgoingList.Remove(message.Delivery);
+                }
+
+                if (message.Delivery.BytesTransfered > 0)
+                {
+                    this.Session.DisposeDelivery(false, message.Delivery, new Released(), true);
+                }
             }
 
             if (outcome != null)

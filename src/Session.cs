@@ -516,6 +516,7 @@ namespace Amqp
                 delivery = new Delivery()
                 {
                     DeliveryId = transfer.DeliveryId,
+                    Link = link,
                     Tag = transfer.DeliveryTag,
                     Settled = transfer.Settled,
                     State = transfer.State
@@ -539,7 +540,8 @@ namespace Amqp
             SequenceNumber last = dispose.Last;
             lock (this.ThisLock)
             {
-                Delivery delivery = (Delivery)this.outgoingList.First;
+                LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
+                Delivery delivery = (Delivery)linkedList.First;
                 while (delivery != null && delivery.DeliveryId <= last)
                 {
                     Delivery next = (Delivery)delivery.Next;
@@ -550,7 +552,7 @@ namespace Amqp
                         delivery.OnStateChange(dispose.State);
                         if (delivery.Settled)
                         {
-                            this.outgoingList.Remove(delivery);
+                            linkedList.Remove(delivery);
                         }
                     }
 
