@@ -20,7 +20,7 @@ namespace Amqp
     using System;
     using Amqp.Framing;
 
-#if SMALL_MEMORY
+#if !TRACE
     using Amqp.Types;
 #endif
 
@@ -29,7 +29,7 @@ namespace Amqp
     /// </summary>
     public sealed class AmqpException : Exception
     {
-#if SMALL_MEMORY
+#if !TRACE
         /// <summary>
         /// Initializes a new instance of the AmqpException class with the AMQP error.
         /// </summary>

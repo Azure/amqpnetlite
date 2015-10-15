@@ -175,7 +175,7 @@ namespace Amqp.Framing
 #if SMALL_MEMORY
         public static void Encode(RestrictedDescribed command, ref ByteBuffer buffer)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(command != null, "command is null!");
 #endif
             command.Encode(ref buffer);
@@ -189,7 +189,9 @@ namespace Amqp.Framing
 #else
         public static void Encode(RestrictedDescribed command, ByteBuffer buffer)
         {
+#if TRACE
             Fx.Assert(command != null, "command is null!");
+#endif
             command.Encode(buffer);
         }
 
@@ -220,7 +222,7 @@ namespace Amqp.Framing
                 return symbols;
             }
 
-#if SMALL_MEMORY
+#if !TRACE
             throw new AmqpException(ErrorCode.InvalidField, index.ToString() + " : " + fields[index].GetType().Name);
 #else
             throw new AmqpException(ErrorCode.InvalidField, Fx.Format("{0} {1}", index, fields[index].GetType().Name));

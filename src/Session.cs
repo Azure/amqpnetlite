@@ -93,7 +93,7 @@ namespace Amqp
             begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
-#if !SMALL_MEMORY
+#if TRACE
             Trace.WriteLine(TraceLevel.Information, "session begin");
 #endif
         }
@@ -160,7 +160,7 @@ namespace Amqp
                     return (ushort)count;
                 }
 
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.AmqpHandleExceeded);
 #else
                 throw new AmqpException(ErrorCode.NotAllowed,
@@ -251,7 +251,7 @@ namespace Amqp
                 }
                 else
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.IllegalOperationStateOnBegin, this.state.ToString());
 #else
                     throw new AmqpException(ErrorCode.IllegalState,
@@ -283,7 +283,7 @@ namespace Amqp
                 }
                 else
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.IllegalOperationStateOnEnd, this.state.ToString());
 #else
                     throw new AmqpException(ErrorCode.IllegalState,
@@ -299,7 +299,7 @@ namespace Amqp
 
         internal void OnCommand(DescribedList command, ByteBuffer buffer)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(this.state < State.EndReceived, "Session is ending or ended and cannot receive commands.");
 #endif
             if (command.Descriptor.Code == Codec.Attach.Code)
@@ -324,7 +324,7 @@ namespace Amqp
             }
             else
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new NotImplementedException(command.Descriptor.Name);
 #else
                 throw new AmqpException(ErrorCode.NotImplemented,
@@ -363,7 +363,7 @@ namespace Amqp
                 }
                 else
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.IllegalOperationStateClose, this.state.ToString());
 #else
                     throw new AmqpException(ErrorCode.IllegalState,
@@ -382,7 +382,7 @@ namespace Amqp
             {
                 if (attach.Handle > this.handleMax)
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.AmqpHandleExceeded);
 #else
                     throw new AmqpException(ErrorCode.NotAllowed,
@@ -409,7 +409,7 @@ namespace Amqp
                         var remoteLink = this.remoteLinks[attach.Handle];
                         if (remoteLink != null)
                         {
-#if SMALL_MEMORY
+#if !TRACE
                             throw new AmqpException(ErrorCode.HandleInUse, attach.Handle + " "+  remoteLink.Name);
 #else
                             throw new AmqpException(ErrorCode.HandleInUse,
@@ -423,7 +423,7 @@ namespace Amqp
                 }
             }
 
-#if SMALL_MEMORY
+#if !TRACE
             throw new AmqpException(ErrorCode.LinkNotFound, attach.LinkName);
 #else
             throw new AmqpException(ErrorCode.NotFound,
@@ -564,7 +564,7 @@ namespace Amqp
         {
             if (this.state >= State.EndPipe)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.IllegalOperationState, operation + " @ " + this.state.ToString());
 #else
                 throw new AmqpException(this.Error ??
@@ -589,7 +589,7 @@ namespace Amqp
 
                 if (link == null)
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.HandleNotFound, remoteHandle.ToString() + ":" + this.channel.ToString());
 #else
                     throw new AmqpException(ErrorCode.NotFound,

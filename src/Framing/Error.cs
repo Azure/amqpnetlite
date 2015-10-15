@@ -59,7 +59,7 @@ namespace Amqp.Framing
             set { this.Fields[2] = value; }
         }
 
-#if SMALL_MEMORY
+#if !TRACE
         public ErrorCode ErrorCode
         {
             get;

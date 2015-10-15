@@ -196,15 +196,12 @@ namespace Amqp.Types
                 // 21: invalid
                 else
                 {
-                    // try if this is a described 
-                    if (value is Described)
-                    {
-                        ((Described)value).Encode(ref buffer);
-                    }
-                    else
-                    {
-                        throw new AmqpException(ErrorCode.EncodingTypeNotSupported, value.GetType().ToString());
-                    }
+#if !TRACE
+                    throw new AmqpException(ErrorCode.EncodingTypeNotSupported, value.GetType().ToString());
+#else
+                    throw new AmqpException(ErrorCode.NotImplemented,
+                        Fx.Format(SRAmqp.EncodingTypeNotSupported, value.GetType()));
+#endif
                 }
             }
         }
@@ -1325,7 +1322,12 @@ namespace Amqp.Types
 
             if (count % 2 > 0)
             {
+#if !TRACE
                 throw new AmqpException(ErrorCode.InvalidMapCount, count.ToString());
+#else
+                throw new AmqpException(ErrorCode.DecodeError, 
+                    Fx.Format(SRAmqp.InvalidMapCount, count)); 
+#endif
             }
 
             Map value = new Map();
@@ -1843,8 +1845,13 @@ namespace Amqp.Types
                 }
                 else
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.EncodingTypeNotSupported, value.GetType().ToString());
+#else
                     throw new AmqpException(ErrorCode.NotImplemented,
                         Fx.Format(SRAmqp.EncodingTypeNotSupported, value.GetType()));
+#endif
+
                 }
             }
         }
@@ -2213,7 +2220,9 @@ namespace Amqp.Types
             else
             {
                 int count = value.Length;
+#if TRACE
                 Fx.Assert(count > 0, "must have at least 1 element in array");
+#endif
                 int pos = buffer.WritePos;
                 AmqpBitConverter.WriteUByte(buffer, 0);
                 AmqpBitConverter.WriteUInt(buffer, 0);
@@ -2339,7 +2348,9 @@ namespace Amqp.Types
         /// <param name="formatCode">The format code of the value.</param>
         public static object ReadDescribed(ByteBuffer buffer, byte formatCode)
         {
+#if TRACE
             Fx.Assert(formatCode == FormatCode.Described, "Format code must be described (0)");
+#endif
             Described described;
             object descriptor = Encoder.ReadObject(buffer);
             CreateDescribed create = null;
@@ -2801,8 +2812,13 @@ namespace Amqp.Types
 
             if (count % 2 > 0)
             {
+#if !TRACE
+                throw new AmqpException(ErrorCode.InvalidMapCount, count.ToString());
+#else
                 throw new AmqpException(ErrorCode.DecodeError,
                     Fx.Format(SRAmqp.InvalidMapCount, count));
+#endif
+
             }
 
             Map value = new Map();
@@ -2859,8 +2875,13 @@ namespace Amqp.Types
 
         static AmqpException DecodeException(byte formatCode, int offset)
         {
+#if !TRACE
+            throw new AmqpException(ErrorCode.AmqpInvalidFormatCode, formatCode.ToString());
+
+#else
             return new AmqpException(ErrorCode.DecodeError,
                 Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, offset));
+#endif
         }
 
     }

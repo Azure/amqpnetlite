@@ -89,7 +89,7 @@ namespace Amqp
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(true, 0, attach);
-#if !SMALL_MEMORY
+#if TRACE
             Trace.WriteLine(TraceLevel.Information, "link rcvr att");
 #endif
         }
@@ -103,7 +103,7 @@ namespace Amqp
         {
             this.onMessage = onMessage;
             this.SetCredit(credit, true);
-#if !SMALL_MEMORY
+#if TRACE
             Trace.WriteLine(TraceLevel.Information, "links msg pump start");
 #endif
         }
@@ -285,7 +285,7 @@ namespace Amqp
                     }
                 }
 
-#if !SMALL_MEMORY
+#if TRACE
                 Fx.Assert(waiter == null, "waiter must be null now");
                 Fx.Assert(callback != null, "callback must not be null now");
 #endif
@@ -300,7 +300,7 @@ namespace Amqp
                     if (delivery == null)
                     {
                         delivery = this.deliveryCurrent;
-#if !SMALL_MEMORY
+#if TRACE
                         Fx.Assert(delivery != null, "Must have a current delivery");
 #endif
                         AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
@@ -329,7 +329,9 @@ namespace Amqp
                         // multi-transfer delivery
                         delivery = this.deliveryCurrent;
                         this.deliveryCurrent = null;
+#if TRACE
                         Fx.Assert(delivery != null, "Must have a delivery in the queue");
+#endif
                         AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
                         delivery.Message = Message.Decode(delivery.Buffer);
                         delivery.Buffer = null;
@@ -378,8 +380,10 @@ namespace Amqp
                     }
                 }
 
+#if TRACE
                 Fx.Assert(waiter == null, "waiter must be null now");
                 Fx.Assert(callback != null, "callback must not be null now");
+#endif
                 callback(this, delivery.Message);
                 this.OnDeliverMessage();
             }
@@ -390,7 +394,9 @@ namespace Amqp
                     if (delivery == null)
                     {
                         delivery = this.deliveryCurrent;
+#if TRACE
                         Fx.Assert(delivery != null, "Must have a current delivery");
+#endif
                         AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
                     }
                     else
@@ -524,7 +530,7 @@ namespace Amqp
             // called with lock held
             if (this.credit <= 0)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.TransferLimitExceeded, deliveryId.ToString());
 #else
                 throw new AmqpException(ErrorCode.TransferLimitExceeded,

@@ -44,7 +44,7 @@ namespace Amqp.Framing
             int size = AmqpBitConverter.ReadInt(sizeBuffer, 0);
             if ((uint)size > maxFrameSize)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.InvalidFrameSize);
 #else
                 throw new AmqpException(ErrorCode.InvalidField,

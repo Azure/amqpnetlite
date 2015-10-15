@@ -23,17 +23,16 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <Choose>
-    <When Condition=" !$(DefineConstants.Contains('SMALL_MEMORY'))">
+    <When Condition=" $(DefineConstants.Contains('TRACE'))">
       <ItemGroup>
         <Compile Include="NetMF\SRAmqp.cs" />
         <Compile Include="NetMF\SRAmqp.Designer.cs">
           <DependentUpon>SRAmqp.cs</DependentUpon>
         </Compile>
-        <Compile Include="NetMF\TimeoutException.cs" />
         <Compile Include="Trace.cs" />
       </ItemGroup>
       <ItemGroup>
-        <EmbeddedResource Include="SRAmqp.resx" Condition="!$(DefineConstants.Contains('SMALL_MEMORY'))" />
+        <EmbeddedResource Include="SRAmqp.resx" Condition="$(DefineConstants.Contains('TRACE'))" />
       </ItemGroup>
     </When>
   </Choose>
@@ -124,6 +123,7 @@
     <Compile Include="Types\Map.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
+    <Compile Include="NetMF\TimeoutException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">

@@ -20,7 +20,7 @@ namespace Amqp.Types
     /// <summary>
     /// Defines the conditions of AMQP errors.
     /// </summary>
-#if SMALL_MEMORY
+#if !TRACE
     public enum ErrorCode
     {
         Success = 0,
@@ -98,7 +98,7 @@ namespace Amqp.Types
         /// </summary>
         FrameSizeTooSmall = 1000 + 12,
 
-        UnknownDescriptor = 1000 + 13,
+        AmqpUnknownDescriptor = 1000 + 13,
         SaslNegoFailed = 1000 + 14,
         InvalidAddressFormat = 1000 + 15,
         InvalidFrameSize = 1000 + 16,
@@ -107,6 +107,7 @@ namespace Amqp.Types
         EncodingTypeNotSupported = 1000 + 19,
         ChannelNotFound = 1000 + 20,
         InvalidMapCount = 1000 + 21,
+        AmqpInvalidFormatCode = 1000 + 22,
 
         // connection errors
 

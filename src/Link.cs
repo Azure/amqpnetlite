@@ -126,7 +126,7 @@ namespace Amqp
                 }
                 else
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.IllegalOperationStateOnAttach, this.state.ToString());
 #else
                     throw new AmqpException(ErrorCode.IllegalState,
@@ -156,7 +156,7 @@ namespace Amqp
                 }
                 else
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.IllegalOperationStateOnDetach, this.state.ToString());
 #else
                     throw new AmqpException(ErrorCode.IllegalState,
@@ -209,7 +209,7 @@ namespace Amqp
                 }
                 else
                 {
-#if SMALL_MEMORY
+#if !TRACE
                     throw new AmqpException(ErrorCode.IllegalOperationStateClose, this.state.ToString());
 #else
                     throw new AmqpException(ErrorCode.IllegalState,
@@ -230,7 +230,7 @@ namespace Amqp
 
         internal void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(this.state == State.Start, "state must be Start");
 #endif
             this.state = State.AttachSent;
@@ -249,7 +249,7 @@ namespace Amqp
         {
             if (this.IsDetaching)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.IllegalOperationState, operation + " @ " + this.state.ToString());
 #else
                 throw new AmqpException(this.Error ??

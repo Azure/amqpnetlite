@@ -44,7 +44,7 @@ namespace Amqp.Sasl
 #endif
 
             ProtocolHeader theirHeader = Reader.ReadHeader(transport);
-#if !SMALL_MEMORY
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", theirHeader);
 #endif
             this.OnHeader(myHeader, theirHeader);
@@ -74,7 +74,7 @@ namespace Amqp.Sasl
 
             if (code != SaslCode.Ok)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.SaslNegoFailed, code.ToString());
 #else
                 throw new AmqpException(ErrorCode.UnauthorizedAccess,
@@ -103,7 +103,9 @@ namespace Amqp.Sasl
             transport.Send(ref headerBuffer);
 #else
             transport.Send(headerBuffer);
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP {0}", myHeader);
+#endif
 #endif
 
             DescribedList command = this.GetStartCommand(hostname);
@@ -138,7 +140,7 @@ namespace Amqp.Sasl
             Frame.GetFrame(buffer, out channel, out command);
 #endif
 
-#if !SMALL_MEMORY
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
 #endif
 
@@ -211,7 +213,9 @@ namespace Amqp.Sasl
             transport.Send(ref buffer);
 #else
             transport.Send(buffer);
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND {0}", command);
+#endif
 #endif
         }
     }

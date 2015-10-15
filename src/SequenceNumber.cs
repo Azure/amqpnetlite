@@ -48,7 +48,7 @@ namespace Amqp
             {
                 // Behavior of comparing 0u-2147483648u, 1u-2147483649u, ...
                 // is undefined, so we do not allow it.
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.InvalidSequenceNumberComparison);
 #else
                 throw new AmqpException(ErrorCode.NotAllowed,

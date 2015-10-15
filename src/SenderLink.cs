@@ -114,7 +114,7 @@ namespace Amqp
 #endif
             if (!signaled)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(ErrorCode.TransactionTimeout);
 #else
                 throw new TimeoutException();

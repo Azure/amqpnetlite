@@ -171,7 +171,7 @@ namespace Amqp
                         }
                         else
                         {
-#if SMALL_MEMORY
+#if !TRACE
                             throw new AmqpException(ErrorCode.InvalidAddressFormat);
 #else
                             throw new AmqpException(ErrorCode.InvalidField,
@@ -219,7 +219,7 @@ namespace Amqp
                         }
                         else
                         {
-#if SMALL_MEMORY
+#if !TRACE
                             throw new AmqpException(ErrorCode.InvalidAddressFormat);
 #else
                             throw new AmqpException(ErrorCode.InvalidField,

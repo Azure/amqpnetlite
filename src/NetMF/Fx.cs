@@ -23,8 +23,8 @@ namespace Amqp
     using System.Threading;
     using Microsoft.SPOT;
 
+#if TRACE
     // Framework specific routines
-#if !SMALL_MEMORY
     public static class Fx
     {
 
@@ -71,6 +71,7 @@ namespace Amqp
             new Thread(threadStart).Start();
         }
     }
+
 #endif
 
     class Uri

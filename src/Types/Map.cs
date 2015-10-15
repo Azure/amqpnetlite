@@ -48,7 +48,7 @@ namespace Amqp.Types
         {
             if (expected != actual)
             {
-#if SMALL_MEMORY
+#if !TRACE
                 throw new AmqpException(Amqp.Types.ErrorCode.InvalidMapKeyType);
 #else
                 throw new InvalidOperationException(Fx.Format(SRAmqp.InvalidMapKeyType, actual.Name, expected.Name));

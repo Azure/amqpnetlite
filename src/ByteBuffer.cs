@@ -164,7 +164,7 @@ namespace Amqp
         /// <param name="size">Size to advance.</param>
         public void Append(int size)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(size >= 0, "size must be positive.");
             Fx.Assert((this.write + size) <= this.end, "Append size too large.");
 #endif
@@ -177,7 +177,7 @@ namespace Amqp
         /// <param name="size">Size to advance.</param>
         public void Complete(int size)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(size >= 0, "size must be positive.");
             Fx.Assert((this.read + size) <= this.write, "Complete size too large.");
 #endif
@@ -190,7 +190,7 @@ namespace Amqp
         /// <param name="seekPosition">Position to set.</param>
         public void Seek(int seekPosition)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(seekPosition >= 0, "seekPosition must not be negative.");
             Fx.Assert((this.start + seekPosition) <= this.write, "seekPosition too large.");
 #endif
@@ -203,7 +203,7 @@ namespace Amqp
         /// <param name="size"></param>
         public void Shrink(int size)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(size >= 0 && size <= this.Length, "size must be positive and not greater then length.");
 #endif
             this.write -= size;
@@ -225,7 +225,7 @@ namespace Amqp
         /// <param name="length">Length from read position to set the write position.</param>
         public void AdjustPosition(int offset, int length)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(offset >= this.start, "Invalid offset!");
             Fx.Assert(offset + length <= this.end, "length too large!");
 #endif

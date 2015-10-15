@@ -33,19 +33,19 @@ namespace Amqp
 
         public void Add(INode node)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(node.Previous == null && node.Next == null, "node is already in a list");
 #endif
             if (this.head == null)
             {
-#if !SMALL_MEMORY
+#if TRACE
                 Fx.Assert(this.tail == null, "tail must be null");
 #endif
                 this.head = this.tail = node;
             }
             else
             {
-#if !SMALL_MEMORY
+#if TRACE
                 Fx.Assert(this.tail != null, "tail must not be null");
 #endif
                 this.tail.Next = node;
@@ -56,7 +56,7 @@ namespace Amqp
 
         public void Remove(INode node)
         {
-#if !SMALL_MEMORY
+#if TRACE
             Fx.Assert(node != null, "node cannot be null");
 #endif
             if (node == this.head)
