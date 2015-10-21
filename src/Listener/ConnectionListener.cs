@@ -189,7 +189,7 @@ namespace Amqp.Listener
             if (this.saslSettings != null)
             {
                 ListenerSaslProfile profile = new ListenerSaslProfile(this);
-                transport = await profile.OpenAsync(null, transport);
+                transport = await profile.OpenAsync(null, this.BufferManager, transport);
             }
 
             Connection connection = new ListenerConnection(this, this.address, transport);
@@ -213,7 +213,7 @@ namespace Amqp.Listener
             }
             else
             {
-                AsyncPump pump = new AsyncPump(transport);
+                AsyncPump pump = new AsyncPump(this.BufferManager, transport);
                 pump.Start(connection);
             }
         }

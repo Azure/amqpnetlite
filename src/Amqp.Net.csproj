@@ -58,6 +58,10 @@
     <Compile Include="Listener\IMessageProcessor.cs" />
     <Compile Include="Listener\Context.cs" />
     <Compile Include="Listener\ListenerLink.cs" />
+    <Compile Include="Net\BufferManager.cs" />
+    <Compile Include="Net\WrappedByteBuffer.cs" />
+    <Compile Include="Net\RefCountedByteBuffer.cs" />
+    <Compile Include="Net\IBufferManager.cs" />
     <Compile Include="Net\TcpSettings.cs" />
     <Compile Include="Net\AmqpSettings.cs" />
     <Compile Include="Net\ConnectionFactoryBase.cs" />

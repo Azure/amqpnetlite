@@ -101,7 +101,7 @@ namespace Amqp.Sasl
         {
             ushort channel;
             DescribedList command;
-            Frame.GetFrame(buffer, out channel, out command);
+            Frame.Decode(buffer, out channel, out command);
             Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
 
             bool shouldContinue = true;
@@ -160,7 +160,8 @@ namespace Amqp.Sasl
 
         void SendCommand(ITransport transport, DescribedList command)
         {
-            ByteBuffer buffer = Frame.Encode(FrameType.Sasl, 0, command);
+            ByteBuffer buffer = new ByteBuffer(Frame.CmdBufferSize, true);
+            Frame.Encode(buffer, FrameType.Sasl, 0, command);
             transport.Send(buffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND {0}", command);
         }

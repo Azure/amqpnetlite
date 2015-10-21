@@ -17,13 +17,13 @@
 
 namespace Amqp
 {
-    using Amqp.Types;
     using System;
+    using Amqp.Types;
 
     /// <summary>
     /// A byte array wrapper that has read and write cursors.
     /// </summary>
-    public sealed class ByteBuffer
+    public class ByteBuffer
     {
         //
         //   +---------+--------------+----------------+
@@ -63,7 +63,7 @@ namespace Amqp
         {
         }
 
-        ByteBuffer(byte[] buffer, int offset, int count, int capacity, bool autoGrow)
+        internal ByteBuffer(byte[] buffer, int offset, int count, int capacity, bool autoGrow)
         {
             this.buffer = buffer;
             this.start = offset;
@@ -134,15 +134,17 @@ namespace Amqp
                 if (this.Size < dataSize && this.autoGrow)
                 {
                     int newSize = Math.Max(this.Capacity * 2, this.Capacity + dataSize);
-                    byte[] newBuffer = new byte[newSize];
-                    Array.Copy(this.buffer, this.start, newBuffer, 0, this.Length);
+                    byte[] newBuffer;
+                    int offset;
+                    int count;
+                    this.DuplicateBuffer(newSize, this.write - this.start, out newBuffer, out offset, out count);
+
+                    int bufferOffset = this.start - offset;
                     this.buffer = newBuffer;
-                    int consumed = this.read - this.start;
-                    int written = this.write - this.start;
-                    this.start = 0;
-                    this.read = consumed;
-                    this.write = written;
-                    this.end = newSize;
+                    this.start = offset;
+                    this.read -= bufferOffset;
+                    this.write -= bufferOffset;
+                    this.end = offset + count;
                 }
 
                 valid = this.Size >= dataSize;
@@ -222,5 +224,41 @@ namespace Amqp
             this.read = offset;
             this.write = this.read + length;
         }
+
+        internal virtual void DuplicateBuffer(int bufferSize, int dataSize, out byte[] buffer, out int offset, out int count)
+        {
+            buffer = new byte[bufferSize];
+            offset = 0;
+            count = bufferSize;
+            Array.Copy(this.buffer, this.start, buffer, 0, dataSize);
+        }
+
+#if DOTNET || NETFX_CORE
+        internal int Start
+        {
+            get { return this.start; }
+        }
+
+        internal ArraySegment<byte> ToArraySegment()
+        {
+            return new ArraySegment<byte>(this.buffer, this.start, this.Capacity);
+        }
+
+        internal virtual void AddReference()
+        {
+        }
+
+        internal virtual void ReleaseReference()
+        {
+        }
+#else
+        internal void AddReference()
+        {
+        }
+
+        internal void ReleaseReference()
+        {
+        }
+#endif
     }
 }
