@@ -24,10 +24,12 @@ namespace Amqp
 
     class AsyncPump
     {
+        readonly IBufferManager bufferManager;
         readonly IAsyncTransport transport;
 
-        public AsyncPump(IAsyncTransport transport)
+        public AsyncPump(IBufferManager bufferManager, IAsyncTransport transport)
         {
+            this.bufferManager = bufferManager;
             this.transport = transport;
         }
 
@@ -55,14 +57,22 @@ namespace Amqp
             {
                 await this.ReceiveBufferAsync(header, 0, FixedWidth.UInt);
                 int frameSize = AmqpBitConverter.ReadInt(header, 0);
+                ByteBuffer buffer = this.bufferManager.GetByteBuffer(frameSize);
 
-                byte[] buffer = new byte[frameSize];
-                Buffer.BlockCopy(header, 0, buffer, 0, FixedWidth.UInt);
-
-                await this.ReceiveBufferAsync(buffer, FixedWidth.UInt, frameSize - FixedWidth.UInt);
-                if (!onBuffer(new ByteBuffer(buffer, 0, frameSize, frameSize)))
+                try
                 {
-                    break;
+                    Buffer.BlockCopy(header, 0, buffer.Buffer, buffer.Offset, FixedWidth.UInt);
+                    await this.ReceiveBufferAsync(buffer.Buffer, buffer.Offset + FixedWidth.UInt, frameSize - FixedWidth.UInt);
+                    buffer.Append(frameSize);
+
+                    if (!onBuffer(buffer))
+                    {
+                        break;
+                    }
+                }
+                finally
+                {
+                    buffer.ReleaseReference();
                 }
             }
         }

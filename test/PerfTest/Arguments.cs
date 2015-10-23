@@ -84,6 +84,10 @@ namespace PerfTest
             {
                 obj = int.Parse(value);
             }
+            else if (type == typeof(bool))
+            {
+                return true;
+            }
             else
             {
                 throw new NotSupportedException(type.Name);

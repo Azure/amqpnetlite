@@ -173,37 +173,36 @@ namespace Amqp
 
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
         {
-            if (!transfer.More)
+            if (delivery == null)
             {
-                Waiter waiter;
-                MessageCallback callback;
+                delivery = this.deliveryCurrent;
+                AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
+            }
+            else
+            {
+                buffer.AddReference();
+                delivery.Buffer = buffer;
                 lock (this.ThisLock)
                 {
-                    if (delivery == null)
-                    {
-                        // multi-transfer delivery
-                        delivery = this.deliveryCurrent;
-                        this.deliveryCurrent = null;
-                        Fx.Assert(delivery != null, "Must have a delivery in the queue");
-                        AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                        delivery.Message = Message.Decode(delivery.Buffer);
-                        delivery.Buffer = null;
-                    }
-                    else
-                    {
-                        // single tranfer delivery
-                        this.OnDelivery(transfer.DeliveryId);
-                        delivery.Message = Message.Decode(buffer);
-                    }
+                    this.OnDelivery(transfer.DeliveryId);
+                }
+            }
 
-                    callback = this.onMessage;
+            if (!transfer.More)
+            {
+                this.deliveryCurrent = null;
+                delivery.Message = Message.Decode(delivery.Buffer);
+
+                Waiter waiter;
+                MessageCallback callback = this.onMessage;
+                lock (this.ThisLock)
+                {
                     waiter = (Waiter)this.waiterList.First;
                     if (waiter != null)
                     {
                         this.waiterList.Remove(waiter);
                     }
-
-                    if (waiter == null && callback == null)
+                    else if (callback == null)
                     {
                         this.receivedMessages.Add(new MessageNode() { Message = delivery.Message });
                         return;
@@ -240,22 +239,7 @@ namespace Amqp
             }
             else
             {
-                lock (this.ThisLock)
-                {
-                    if (delivery == null)
-                    {
-                        delivery = this.deliveryCurrent;
-                        Fx.Assert(delivery != null, "Must have a current delivery");
-                        AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                    }
-                    else
-                    {
-                        this.OnDelivery(transfer.DeliveryId);
-                        delivery.Buffer = new ByteBuffer(buffer.Length * 2, true);
-                        AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                        this.deliveryCurrent = delivery;
-                    }
-                }
+                this.deliveryCurrent = delivery;
             }
         }
 

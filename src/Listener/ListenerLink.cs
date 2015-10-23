@@ -264,33 +264,23 @@ namespace Amqp.Listener
         {
             if (delivery != null)
             {
+                buffer.AddReference();
+                delivery.Buffer = buffer;
                 this.deliveryCount++;
-                if (!transfer.More)
-                {
-                    // single transfer message - the most common case
-                    delivery.Buffer = buffer;
-                    this.DeliverMessage(delivery);
-                }
-                else
-                {
-                    delivery.Buffer = new ByteBuffer(buffer.Length * 2, true);
-                    AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                    this.deliveryCurrent = delivery;
-                }
             }
             else
             {
                 delivery = this.deliveryCurrent;
-                if (!transfer.More)
-                {
-                    AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                    this.deliveryCurrent = null;
-                    this.DeliverMessage(delivery);
-                }
-                else
-                {
-                    AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                }
+                AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
+            }
+
+            if (!transfer.More)
+            {
+                this.DeliverMessage(delivery);
+            }
+            else
+            {
+                this.deliveryCurrent = delivery;
             }
         }
 
