@@ -18,7 +18,6 @@
 namespace Amqp
 {
     using System;
-    using Amqp.Types;
 
     /// <summary>
     /// A byte array wrapper that has read and write cursors.
@@ -156,7 +155,7 @@ namespace Amqp
 
             if (!valid)
             {
-                throw new AmqpException(ErrorCode.DecodeError, "buffer too small");
+                throw new InvalidOperationException("buffer too small");
             }
         }
 
