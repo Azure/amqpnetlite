@@ -64,7 +64,7 @@ namespace Amqp
         public void Close()
         {
             this.state |= DetachSent;
-            this.client.transport.WriteFrame(0, 0, 0x12, Detach(0x00u));
+            this.client.transport.WriteFrame(0, 0, 0x16, Detach(0x00u));
             this.client.Wait(o => (((Sender)o).state & DetachReceived) == 0, this, 60000);
         }
 

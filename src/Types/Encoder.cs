@@ -242,6 +242,9 @@ namespace Amqp.Types
                 { typeof(Symbol),   serializers[17] },
                 { typeof(List),     serializers[18] },
                 { typeof(Map),      serializers[19] },
+#if !NETMF_LITE
+                { typeof(Fields),      serializers[19] },
+#endif
             };
 
             codecIndexTable = new byte[][]
@@ -292,10 +295,6 @@ namespace Amqp.Types
                 if (type.IsArray)
                 {
                     codec = serializers[20];
-                }
-                else if (type.IsSubclassOf(typeof(Map)))
-                {
-                    codec = serializers[19];
                 }
             }
 

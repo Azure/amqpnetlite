@@ -40,7 +40,8 @@ namespace Amqp
             AmqpBitConverter.WriteUShort(buffer, channel);
 
             // command
-            AmqpBitConverter.WriteULong(buffer, code);
+            AmqpBitConverter.WriteUByte(buffer, FormatCode.Described);
+            Encoder.WriteULong(buffer, code, true);
             AmqpBitConverter.WriteUByte(buffer, FormatCode.List32);
             int sizeOffset = buffer.WritePos;
             buffer.Append(8);
@@ -112,17 +113,17 @@ namespace Amqp
             byte[] headerBuffer = stream.ReadFixedSizeBuffer(8);
             int size = AmqpBitConverter.ReadInt(headerBuffer, 0);
             frameType = headerBuffer[5];    // TOOD: header EXT
-            channel = (ushort)(headerBuffer[5] << 8 | headerBuffer[7]);
+            channel = (ushort)(headerBuffer[6] << 8 | headerBuffer[7]);
 
             size -= 8;
             if (size > 0)
             {
                 byte[] frameBuffer = stream.ReadFixedSizeBuffer(size);
                 ByteBuffer buffer = new ByteBuffer(frameBuffer, 0, size, size);
-                Fx.AssertAndThrow(1001, AmqpBitConverter.ReadUByte(buffer) == FormatCode.Described);
+                Fx.AssertAndThrow(1001, Encoder.ReadFormatCode(buffer) == FormatCode.Described);
 
-                code = AmqpBitConverter.ReadULong(buffer);   // TODO: symbol
-                fields = Encoder.ReadList(buffer, AmqpBitConverter.ReadUByte(buffer));
+                code = Encoder.ReadULong(buffer, Encoder.ReadFormatCode(buffer));
+                fields = Encoder.ReadList(buffer,Encoder.ReadFormatCode(buffer));
                 if (buffer.Length > 0)
                 {
                     payload = new ByteBuffer(buffer.Buffer, buffer.Offset, buffer.Length, buffer.Length);
@@ -180,6 +181,8 @@ namespace Amqp
             SocketException exception = null;
             foreach (var ipAddress in ipHostEntry.AddressList)
             {
+                if (ipAddress == null) continue;
+
                 socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {

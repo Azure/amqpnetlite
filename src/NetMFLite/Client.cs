@@ -50,7 +50,7 @@ namespace Amqp
         internal int maxFrameSize = MaxFrameSize;
 
         Sender sender;
-        uint outWindow;
+        uint outWindow = 50;
 
         public Client(string host, int port, bool useSsl, string userName, string password)
         {
@@ -76,6 +76,7 @@ namespace Amqp
             this.state |= CloseSent;
             this.transport.WriteFrame(0, 0, 0x18ul, new List());
             this.Wait(o => (((Client)o).state & CloseReceived) == 0, this, 60000);
+            this.transport.Close();
         }
 
         internal void Wait(Condition condition, object state, int millisecondsTimeout)
@@ -95,12 +96,11 @@ namespace Amqp
 
             while (buffer.Length > 0)
             {
-                if (this.outWindow == 0)
+                this.Wait(o => ((Client)o).outWindow == 0, this, 60000);
+                lock (this)
                 {
-                    this.Wait(o => ((Client)o).outWindow == 0, this, 60000);
+                    this.outWindow--;
                 }
-
-                this.outWindow--;
                 this.transport.WriteTransferFrame(deliveryId, settled, buffer, this.maxFrameSize);
             }
         }
@@ -113,16 +113,17 @@ namespace Amqp
             {
                 header[4] = 3;
                 this.transport.Write(header, 0, 8);
-                this.transport.WriteFrame(3, 0, 0x41, SaslInit("PLAIN", this.userName, this.password));
+                this.transport.WriteFrame(1, 0, 0x41, SaslInit("PLAIN", this.userName, this.password));
+                this.transport.Flush();
 
                 retHeader = this.transport.ReadFixedSizeBuffer(8);
                 Fx.AssertAndThrow(2000, AreHeaderEqual(header, retHeader));
-                List body = this.transport.ReadFrameBody(3, 0, 0x40);
+                List body = this.transport.ReadFrameBody(1, 0, 0x40);
                 Fx.AssertAndThrow(2001, body.Count > 0);
                 Symbol[] mechanisms = Extensions.GetSymbolMultiple(body[0]);
                 Fx.AssertAndThrow(2002, Array.IndexOf(mechanisms, new Symbol("PLAIN")) >= 0);
 
-                body = this.transport.ReadFrameBody(3, 0, 0x44);
+                body = this.transport.ReadFrameBody(1, 0, 0x44);
                 Fx.AssertAndThrow(2003, body.Count > 0);
                 Fx.AssertAndThrow(2004, body[0].Equals((byte)0));   // sasl-outcome.code = OK
 
@@ -151,16 +152,8 @@ namespace Amqp
                 try
                 {
                     this.transport.ReadFrame(out frameType, out channel, out code, out fields, out payload);
-                }
-                catch (Exception)
-                {
-                    this.transport.Close();
-                    this.state = 0;
-                }
-
-                try
-                {
                     this.OnFrame(code, fields, payload);
+                    this.signal.Set();
                 }
                 catch (Exception)
                 {
@@ -193,6 +186,10 @@ namespace Amqp
                 }
                 case 0x13:  // flow
                 {
+                    lock(this)
+                    {
+
+                    }
                     if (fields[4] != null)
                     {
                         uint handle = (uint)fields[4];
@@ -209,7 +206,7 @@ namespace Amqp
                 case 0x15:  // disposition
                 {
                     bool role = (bool)fields[0];
-                    if (!role)
+                    if (role)
                     {
                         this.sender.OnDisposition(fields);
                     }
@@ -245,7 +242,12 @@ namespace Amqp
 
         static List SaslInit(string mechanism, string userName, string password)
         {
-            return new List() { "PLAIN", Encoding.UTF8.GetBytes("\0" + userName + "\0" + (password ?? string.Empty)) };
+            byte[] b1 = Encoding.UTF8.GetBytes(userName);
+            byte[] b2 = Encoding.UTF8.GetBytes(password ?? string.Empty);
+            byte[] b = new byte[1 + b1.Length + 1 + b2.Length];
+            Array.Copy(b1, 0, b, 1, b1.Length);
+            Array.Copy(b2, 0, b, b1.Length + 2, b2.Length);
+            return new List() { new Symbol("PLAIN"), b };
         }
 
         static List Open(string containerId, string hostName, uint maxFrameSize, ushort channelMax)
