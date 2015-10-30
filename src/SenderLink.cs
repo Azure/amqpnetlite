@@ -106,6 +106,16 @@ namespace Amqp
 #endif
             if (!signaled)
             {
+                lock (this.ThisLock)
+                {
+                    this.outgoingList.Remove(message.Delivery);
+                }
+
+                if (message.Delivery.BytesTransfered > 0)
+                {
+                    this.Session.DisposeDelivery(false, message.Delivery, new Released(), true);
+                }
+
                 throw new TimeoutException();
             }
 
