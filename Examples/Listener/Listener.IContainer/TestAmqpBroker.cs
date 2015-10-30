@@ -224,15 +224,23 @@ namespace Listener.IContainer
 
         sealed class BrokerMessage : Message
         {
+            ByteBuffer buffer;
             int messageOffset;
 
             public BrokerMessage(ByteBuffer buffer)
             {
-                this.Buffer = buffer;
+                this.buffer = buffer;
                 this.messageOffset = buffer.Offset;
             }
 
-            public ByteBuffer Buffer { get; private set; }
+            public ByteBuffer Buffer
+            {
+                get
+                {
+                    this.buffer.Seek(this.messageOffset);
+                    return this.buffer;
+                }
+            }
 
             public object LockedBy { get; set; }
 
@@ -241,7 +249,6 @@ namespace Listener.IContainer
             public void Unlock()
             {
                 this.LockedBy = null;
-                this.Buffer.Seek(this.messageOffset);
             }
         }
 

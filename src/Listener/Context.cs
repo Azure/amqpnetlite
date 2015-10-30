@@ -81,6 +81,7 @@ namespace Amqp.Listener
         protected void Dispose(DeliveryState deliveryState)
         {
             this.Link.DisposeMessage(this.Message, deliveryState, true);
+            this.Message.Dispose();
             this.state = ContextState.Completed;
         }
 

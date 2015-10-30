@@ -25,6 +25,8 @@ namespace Amqp
 
         public ByteBuffer Buffer;
 
+        public int ReservedBufferSize;
+
         public uint Handle;
 
         public byte[] Tag;
@@ -72,6 +74,7 @@ namespace Amqp
                     delivery.OnOutcome(delivery.Message, outcome, delivery.UserToken);
                 }
 
+                delivery.Buffer.ReleaseReference();
                 delivery = (Delivery)delivery.Next;
             }
         }
