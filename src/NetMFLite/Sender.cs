@@ -22,13 +22,7 @@ namespace Amqp
 
     public class Sender
     {
-        const byte Created = 0;
-        const byte AttachSent = 1;
-        const byte AttachReceived = 2;
-        const byte DetachSent = 4;
-        const byte DetachReceived = 8;
-        const byte Closed = 0xFF;
-
+        internal uint remoteHandle;
         Client client;
         byte state;
         uint credit;
@@ -37,17 +31,23 @@ namespace Amqp
 
         internal Sender(Client client, string address)
         {
+            this.state |= Client.AttachSent;
+            this.remoteHandle = uint.MaxValue;
             this.client = client;
-            this.client.transport.WriteFrame(0, 0, 0x12, Attach(Client.Name + "-" + this.GetType().Name, address));
+            this.client.transport.WriteFrame(0, 0, 0x12, Client.Attach(Client.Name + "-" + this.GetType().Name, 0u, false, null, address));
         }
 
-        public void Send(object message)
+        public void Send(Message message)
         {
+            Fx.AssertAndThrow(1000, this.state > 0);
             this.client.Wait(o => ((Sender)o).credit == 0, this, 60000);
 
             lock (this)
             {
-                this.credit--;
+                if (this.credit < uint.MaxValue)
+                {
+                    this.credit--;
+                }
             }
 
             this.deliveryState = null;
@@ -63,14 +63,19 @@ namespace Amqp
 
         public void Close()
         {
-            this.state |= DetachSent;
-            this.client.transport.WriteFrame(0, 0, 0x16, Detach(0x00u));
-            this.client.Wait(o => (((Sender)o).state & DetachReceived) == 0, this, 60000);
+            this.state |= Client.DetachSent;
+            this.client.transport.WriteFrame(0, 0, 0x16, Client.Detach(0x00u));
+            this.client.Wait(o => (((Sender)o).state & Client.DetachReceived) == 0, this, 60000);
+            this.state = 0;
+            this.client.sender = null;
+            this.client.outWindow = 0;
+            this.client.nextOutgoingId = 0;
         }
 
         internal void OnAttach(List attach)
         {
-            this.state |= AttachReceived;
+            this.remoteHandle = (uint)attach[1];
+            this.state |= Client.AttachReceived;
         }
 
         internal void OnFlow(List flow)
@@ -90,18 +95,7 @@ namespace Amqp
 
         internal void OnDetach(List detach)
         {
-            this.state |= DetachReceived;
-        }
-
-        static List Attach(string name, string address)
-        {
-            return new List() { name, 0u, false, null, null, new DescribedValue(0x28ul, new List()),
-                new DescribedValue(0x29ul, new List() { address })};
-        }
-
-        static List Detach(uint handle)
-        {
-            return new List { handle, true };
+            this.state |= Client.DetachReceived;
         }
     }
 }
