@@ -17,6 +17,7 @@
 
 namespace Amqp.Framing
 {
+    using System;
     using Amqp.Types;
 
     /// <summary>
@@ -24,6 +25,8 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Data : RestrictedDescribed
     {
+        byte[] binary;
+
         /// <summary>
         /// Initializes a Data object.
         /// </summary>
@@ -32,10 +35,33 @@ namespace Amqp.Framing
         {
         }
 
+#if (DOTNET || DOTNET35)
         /// <summary>
         /// Gets or sets the binary data in this section.
         /// </summary>
         public byte[] Binary
+        {
+            get
+            {
+                if (this.Buffer != null)
+                {
+                    byte[] temp = new byte[this.Buffer.Length];
+                    Array.Copy(this.Buffer.Buffer, this.Buffer.Offset, temp, 0, temp.Length);
+                    return temp;
+                }
+
+                return this.binary;
+            }
+            set
+            {
+                this.binary = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the binary data contained in a buffer in this section.
+        /// </summary>
+        public ByteBuffer Buffer
         {
             get;
             set;
@@ -54,12 +80,35 @@ namespace Amqp.Framing
 #else
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            Encoder.WriteBinary(buffer, this.Binary, true);
+            if (this.Buffer != null)
+            {
+                Encoder.WriteBinaryBuffer(buffer, this.Buffer);
+            }
+            else
+            {
+                Encoder.WriteBinary(buffer, this.binary, true);
+            }
         }
 
         internal override void DecodeValue(ByteBuffer buffer)
         {
-            this.Binary = Encoder.ReadBinary(buffer, Encoder.ReadFormatCode(buffer));
+            this.Buffer = Encoder.ReadBinaryBuffer(buffer);
+        }
+#else
+        public byte[] Binary
+        {
+            get { return this.binary; }
+            set { this.binary = value; }
+        }
+
+        internal override void EncodeValue(ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(buffer, this.binary, true);
+        }
+
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            this.binary = Encoder.ReadBinary(buffer, Encoder.ReadFormatCode(buffer));
         }
 #endif
     }

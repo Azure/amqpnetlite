@@ -116,10 +116,24 @@ namespace Amqp
         /// <returns></returns>
         public T GetBody<T>()
         {
-            if (this.BodySection != null &&
-                this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
+            if (this.BodySection != null)
             {
+                if (this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
+                {
                 return ((AmqpValue)this.BodySection).GetValue<T>();
+            }
+                else if (this.BodySection.Descriptor.Code == Codec.Data.Code)
+                {
+                    Data data = (Data)this.BodySection;
+                    if (typeof(T) == typeof(byte[]))
+                    {
+                        return (T)(object)data.Binary;
+                    }
+                    else if (typeof(T) == typeof(ByteBuffer))
+                    {
+                        return (T)(object)data.Buffer;
+                    }
+                }
             }
 
             return (T)this.Body;
@@ -149,26 +163,7 @@ namespace Amqp
         /// <returns>The buffer.</returns>
         public ByteBuffer Encode()
         {
-            ByteBuffer buffer = new ByteBuffer(128, true);
-
-#if SMALL_MEMORY
-            EncodeIfNotNull(this.Header, ref buffer);
-            EncodeIfNotNull(this.DeliveryAnnotations, ref buffer);
-            EncodeIfNotNull(this.MessageAnnotations, ref buffer);
-            EncodeIfNotNull(this.Properties, ref buffer);
-            EncodeIfNotNull(this.ApplicationProperties, ref buffer);
-            EncodeIfNotNull(this.BodySection, ref buffer);
-            EncodeIfNotNull(this.Footer, ref buffer);
-#else
-            EncodeIfNotNull(this.Header, buffer);
-            EncodeIfNotNull(this.DeliveryAnnotations, buffer);
-            EncodeIfNotNull(this.MessageAnnotations, buffer);
-            EncodeIfNotNull(this.Properties, buffer);
-            EncodeIfNotNull(this.ApplicationProperties, buffer);
-            EncodeIfNotNull(this.BodySection, buffer);
-            EncodeIfNotNull(this.Footer, buffer);
-#endif
-            return buffer;
+            return this.Encode(0);
         }
 
         /// <summary>
@@ -240,6 +235,13 @@ namespace Amqp
             return message;
         }
 
+        internal ByteBuffer Encode(int reservedBytes)
+        {
+            ByteBuffer buffer = new ByteBuffer(reservedBytes + 128, true);
+            this.WriteToBuffer(buffer);
+            return buffer;
+        }
+
 #if SMALL_MEMORY
         static void EncodeIfNotNull(RestrictedDescribed section, ref ByteBuffer buffer)
 #else
@@ -257,6 +259,88 @@ namespace Amqp
             }
         }
 
+        void WriteToBuffer(ByteBuffer buffer)
+        {
+            EncodeIfNotNull(this.Header, buffer);
+            EncodeIfNotNull(this.DeliveryAnnotations, buffer);
+            EncodeIfNotNull(this.MessageAnnotations, buffer);
+            EncodeIfNotNull(this.Properties, buffer);
+            EncodeIfNotNull(this.ApplicationProperties, buffer);
+            EncodeIfNotNull(this.BodySection, buffer);
+            EncodeIfNotNull(this.Footer, buffer);
+        }
+
+#if DOTNET
+        /// <summary>
+        /// Disposes the current message to release resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (this.Delivery != null &&
+                this.Delivery.Buffer != null)
+            {
+                this.Delivery.Buffer.ReleaseReference();
+            }
+        }
+
+        internal ByteBuffer Encode(IBufferManager bufferManager, int reservedBytes)
+        {
+            // get some extra space to store the frame header
+            // and the transfer command.
+            int size = reservedBytes + this.GetEstimatedMessageSize();
+            ByteBuffer buffer = bufferManager.GetByteBuffer(size);
+            buffer.AdjustPosition(buffer.Offset + reservedBytes, 0);
+            this.WriteToBuffer(buffer);
+            return buffer;
+        }
+
+        static int GetEstimatedBodySize(RestrictedDescribed body)
+        {
+            var data = body as Data;
+            if (data != null)
+            {
+                if (data.Buffer != null)
+                {
+                    return data.Buffer.Length;
+                }
+                else
+                {
+                    return data.Binary.Length;
+                }
+            }
+
+            var value = body as AmqpValue;
+            if (value != null)
+            {
+                var b = value.Value as byte[];
+                if (b != null)
+                {
+                    return b.Length;
+                }
+
+                var f = value.Value as ByteBuffer;
+                if (f != null)
+                {
+                    return f.Length;
+                }
+            }
+
+            return 64;
+        }
+
+        int GetEstimatedMessageSize()
+        {
+            int size = 0;
+            if (this.Header != null) size += 64;
+            if (this.DeliveryAnnotations != null) size += 64;
+            if (this.MessageAnnotations != null) size += 64;
+            if (this.Properties != null) size += 64;
+            if (this.ApplicationProperties != null) size += 64;
+            if (this.BodySection != null) size += GetEstimatedBodySize(this.BodySection) + 8;
+            if (this.Footer != null) size += 64;
+            return size;
+        }
+#endif
     }
 
 }

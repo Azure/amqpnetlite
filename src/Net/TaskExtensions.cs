@@ -33,10 +33,31 @@ namespace Amqp
         {
             return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);
         }
+
+        internal static ByteBuffer GetByteBuffer(this IBufferManager bufferManager, int size)
+        {
+            ByteBuffer buffer;
+            if (bufferManager == null)
+            {
+                buffer = new ByteBuffer(size, true);
+            }
+            else
+            {
+                ArraySegment<byte> segment = bufferManager.TakeBuffer(size);
+                buffer = new RefCountedByteBuffer(bufferManager, segment.Array, segment.Offset, segment.Count, 0);
+            }
+
+            return buffer;
+        }
 #else
         static Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
             return null;
+        }
+
+        internal static ByteBuffer GetByteBuffer(this IBufferManager bufferManager, int size)
+        {
+            return new ByteBuffer(size, true);
         }
 #endif
 
@@ -135,11 +156,12 @@ namespace Amqp
             return tcs.Task;
         }
 
-        internal static async Task<IAsyncTransport> OpenAsync(this SaslProfile saslProfile, string hostname, IAsyncTransport transport)
+        internal static async Task<IAsyncTransport> OpenAsync(this SaslProfile saslProfile, string hostname,
+            IBufferManager bufferManager, IAsyncTransport transport)
         {
             ProtocolHeader header = saslProfile.Start(hostname, transport);
 
-            AsyncPump pump = new AsyncPump(transport);
+            AsyncPump pump = new AsyncPump(bufferManager, transport);
 
             await pump.PumpAsync(
                 h => { saslProfile.OnHeader(header, h); return true; },

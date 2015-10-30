@@ -98,8 +98,10 @@ namespace Amqp
         /// Initializes a connection with SASL profile, open and open callback.
         /// </summary>
         /// <param name="address">The address.</param>
-        /// <param name="saslProfile">The SASL profile to do authentication (optional). If it is null and address has user info, SASL PLAIN profile is used.</param>
-        /// <param name="open">The open frame to send (optional). If not null, all mandatory fields must be set. Ensure that other fields are set to desired values.</param>
+        /// <param name="saslProfile">The SASL profile to do authentication (optional). If it is
+        /// null and address has user info, SASL PLAIN profile is used.</param>
+        /// <param name="open">The open frame to send (optional). If not null, all mandatory
+        /// fields must be set. Ensure that other fields are set to desired values.</param>
         /// <param name="onOpened">The callback to handle remote open frame (optional).</param>
         public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
             : this(DefaultMaxSessions, DefaultMaxFrameSize)
@@ -125,10 +127,17 @@ namespace Amqp
             this.Connect(saslProfile, open);
         }
 
+        object ThisLock
+        {
+            get { return this; }
+        }
+
 #if DOTNET || NETFX_CORE
-        internal Connection(AmqpSettings amqpSettings, Address address, IAsyncTransport transport, Open open, OnOpened onOpened)
+        internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
+            IAsyncTransport transport, Open open, OnOpened onOpened)
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
         {
+            this.BufferManager = bufferManager;
             this.address = address;
             this.onOpened = onOpened;
             this.maxFrameSize = (uint)amqpSettings.MaxFrameSize;
@@ -159,12 +168,33 @@ namespace Amqp
         {
             get { return new ConnectionFactory(); }
         }
-#endif
 
-        object ThisLock
+        internal IBufferManager BufferManager
         {
-            get { return this; }
+            get;
+            private set;
         }
+
+        ByteBuffer AllocateBuffer(int size)
+        {
+            return this.BufferManager.GetByteBuffer(size);
+        }
+
+        ByteBuffer WrapBuffer(ByteBuffer buffer, int offset, int length)
+        {
+            return new WrappedByteBuffer(buffer, offset, length);
+        }
+#else
+        ByteBuffer AllocateBuffer(int size)
+        {
+            return new ByteBuffer(size, true);
+        }
+
+        ByteBuffer WrapBuffer(ByteBuffer buffer, int offset, int length)
+        {
+            return new ByteBuffer(buffer.Buffer, buffer.Offset - offset, length, length);
+        }
+#endif
 
         internal ushort AddSession(Session session)
         {
@@ -203,7 +233,8 @@ namespace Amqp
         internal void SendCommand(ushort channel, DescribedList command)
         {
             this.ThrowIfClosed("Send");
-            ByteBuffer buffer = Frame.Encode(FrameType.Amqp, channel, command);
+            ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
+            Frame.Encode(buffer, FrameType.Amqp, channel, command);
 #if SMALL_MEMORY
             this.transport.Send(ref buffer);
 #else
@@ -214,20 +245,53 @@ namespace Amqp
 #endif
         }
 
-        internal void SendCommand(ushort channel, Transfer transfer, ByteBuffer payload)
+        internal int SendCommand(ushort channel, Transfer transfer, bool first, ByteBuffer payload, int reservedBytes)
         {
             this.ThrowIfClosed("Send");
-            int payloadSize;
-            ByteBuffer buffer = Frame.Encode(FrameType.Amqp, channel, transfer, payload, (int)this.maxFrameSize, out payloadSize);
+            ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
+            Frame.Encode(buffer, FrameType.Amqp, channel, transfer);
+
+            int payloadSize = payload.Length;
+            int frameSize = buffer.Length + payloadSize;
+            bool more = frameSize > this.maxFrameSize;
+            if (more)
+            {
+                transfer.More = true;
+                buffer.Reset();
+                Frame.Encode(buffer, FrameType.Amqp, channel, transfer);
+                frameSize = (int)this.maxFrameSize;
+                payloadSize = frameSize - buffer.Length;
+            }
+
+            AmqpBitConverter.WriteInt(buffer.Buffer, buffer.Offset, frameSize);
+
+            ByteBuffer frameBuffer;
+            if (first && !more && reservedBytes >= buffer.Length)
+            {
+                // optimize for most common case: single-transfer message
+                frameBuffer = this.WrapBuffer(payload, payload.Offset - buffer.Length, frameSize);
+                Array.Copy(buffer.Buffer, buffer.Offset, frameBuffer.Buffer, frameBuffer.Offset, buffer.Length);
+                buffer.ReleaseReference();
+            }
+            else
+            {
+                AmqpBitConverter.WriteBytes(buffer, payload.Buffer, payload.Offset, payloadSize);
+                frameBuffer = buffer;
+            }
+
+            payload.Complete(payloadSize);
+
 #if SMALL_MEMORY
             this.transport.Send(ref buffer);
 #else
             this.transport.Send(buffer);
-      
+
 #if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
 #endif
 #endif
+
+            return payloadSize;
         }
 
         /// <summary>
@@ -580,9 +644,10 @@ namespace Amqp
                 ushort channel;
                 DescribedList command;
 #if SMALL_MEMORY
-                Frame.GetFrame(ref buffer, out channel, out command);
+                //Frame.GetFrame(ref buffer, out channel, out command);
+                Frame.Decode(buffer, out channel, out command);
 #else
-                Frame.GetFrame(buffer, out channel, out command);
+                Frame.Decode(buffer, out channel, out command);
 #endif
 
 #if TRACE
@@ -711,7 +776,7 @@ namespace Amqp
                     session.Abort(error);
                 }
             }
-
+            
             this.NotifyClosed(error);
         }
 

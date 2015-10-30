@@ -135,9 +135,10 @@ namespace Amqp.Sasl
             ushort channel;
             DescribedList command;
 #if SMALL_MEMORY
-            Frame.GetFrame(ref buffer, out channel, out command);
+            //Frame.GetFrame(ref buffer, out channel, out command);
+            Frame.Decode(buffer, out channel, out command);
 #else
-            Frame.GetFrame(buffer, out channel, out command);
+            Frame.Decode(buffer, out channel, out command);
 #endif
 
 #if TRACE
@@ -208,7 +209,9 @@ namespace Amqp.Sasl
 
         void SendCommand(ITransport transport, DescribedList command)
         {
-            ByteBuffer buffer = Frame.Encode(FrameType.Sasl, 0, command);
+            ByteBuffer buffer = new ByteBuffer(Frame.CmdBufferSize, true);
+            Frame.Encode(buffer, FrameType.Sasl, 0, command);
+
 #if SMALL_MEMORY
             transport.Send(ref buffer);
 #else
@@ -219,4 +222,3 @@ namespace Amqp.Sasl
 #endif
         }
     }
-}

@@ -169,7 +169,12 @@ namespace Amqp
         internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
 #endif
         {
-            var buffer = message.Encode();
+            const int reservedBytes = 40;
+#if DOTNET
+            var buffer = message.Encode(this.Session.Connection.BufferManager, reservedBytes);
+#else
+            var buffer = message.Encode(reservedBytes);
+#endif
             if (buffer.Length < 1)
             {
                 throw new ArgumentException("Cannot send an empty message.");
@@ -179,6 +184,7 @@ namespace Amqp
             {
                 Message = message,
                 Buffer = buffer,
+                ReservedBufferSize = reservedBytes,
                 State = deliveryState,
                 Link = this,
                 OnOutcome = callback,

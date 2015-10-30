@@ -20,9 +20,11 @@ namespace PerfTest
     using System;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
+    using System.Threading.Tasks;
     using Amqp;
     using Amqp.Framing;
     using Amqp.Listener;
+    using Amqp.Types;
 
     class Program
     {
@@ -30,13 +32,8 @@ namespace PerfTest
         {
             try
             {
-                if (args.Length < 1)
-                {
-                    throw new ArgumentException("args");
-                }
-
                 PerfArguments perfArgs = new PerfArguments(args);
-                if (Arguments.IsHelp(perfArgs.Operation))
+                if (args.Length == 0 || Arguments.IsHelp(perfArgs.Operation))
                 {
                     Usage();
                     return;
@@ -87,6 +84,7 @@ namespace PerfTest
 
         abstract class Role
         {
+            protected IBufferManager bufferManager;
             PerfArguments perfArgs;
             int count;
             int started;
@@ -97,6 +95,7 @@ namespace PerfTest
 
             public Role(PerfArguments perfArgs)
             {
+                this.bufferManager = perfArgs.BufferPooling ? new BufferManager(256, 2 * 1024 * 1024, 100 * 1024 * 1024) : null;
                 this.perfArgs = perfArgs;
                 this.count = perfArgs.Count;
                 this.progress = perfArgs.Progress;
@@ -113,6 +112,7 @@ namespace PerfTest
             protected Connection CreateConnection(Address address)
             {
                 var factory = new ConnectionFactory();
+                factory.BufferManager = this.bufferManager;
                 factory.AMQP.MaxFrameSize = this.perfArgs.MaxFrameSize;
                 if (address.Scheme.Equals("amqps", StringComparison.OrdinalIgnoreCase))
                 {
@@ -169,7 +169,6 @@ namespace PerfTest
         {
             static OutcomeCallback onOutcome = OnSendComplete;
             int bodySize;
-            SenderLink sender;
 
             public Sender(PerfArguments args)
                 : base(args)
@@ -178,6 +177,36 @@ namespace PerfTest
             }
 
             public override void Run()
+            {
+                Task[] tasks = new Task[this.Args.Connections];
+                for (int i = 0; i < this.Args.Connections; i++)
+                {
+                    tasks[i] = Task.Run(() => this.RunOnce(i));
+                }
+
+                Task.WhenAll(tasks).Wait();
+            }
+
+            static void OnSendComplete(Message message, Outcome outcome, object state)
+            {
+                var tuple = (Tuple<Sender, SenderLink>)state;
+                Sender thisPtr = tuple.Item1;
+                SenderLink sender = tuple.Item2;
+                if (thisPtr.bufferManager != null)
+                {
+                    var buffer = message.GetBody<ByteBuffer>();
+                    buffer.Reset();
+                    thisPtr.bufferManager.ReturnBuffer(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Capacity));
+                }
+
+                if (thisPtr.OnComplete())
+                {
+                    Message msg = thisPtr.CreateMessage();
+                    sender.Send(msg, onOutcome, state);
+                }
+            }
+
+            void RunOnce(int id)
             {
                 Connection connection = this.CreateConnection(new Address(this.Args.Address));
                 Session session = new Session(connection);
@@ -190,15 +219,14 @@ namespace PerfTest
                     RcvSettleMode = this.Args.ReceiverMode
                 };
 
-                this.sender = new SenderLink(session, "perf-test-sender", attach, null);
+                SenderLink sender = new SenderLink(session, "perf-test-sender" + id, attach, null);
 
                 for (int i = 1; i <= this.Args.Queue; i++)
                 {
                     if (this.OnStart())
                     {
-                        Message message = new Message(new string('D', this.bodySize));
-                        message.Properties = new Properties() { MessageId = "msg" };
-                        sender.Send(message, onOutcome, this);
+                        var message = this.CreateMessage();
+                        sender.Send(message, onOutcome, Tuple.Create(this, sender));
                     }
                 }
 
@@ -209,15 +237,25 @@ namespace PerfTest
                 connection.Close();
             }
 
-            static void OnSendComplete(Message message, Outcome outcome, object state)
+            Message CreateMessage()
             {
-                var thisPtr = (Sender)state;
-                if (thisPtr.OnComplete())
+                ArraySegment<byte> segment = this.bufferManager != null ?
+                    this.bufferManager.TakeBuffer(this.bodySize) :
+                    new ArraySegment<byte>(new byte[this.bodySize]);
+                int seed = DateTime.UtcNow.Millisecond;
+                for (int i = 0; i < this.bodySize; i++)
                 {
-                    Message msg = new Message(new string('D', thisPtr.bodySize));
-                    msg.Properties = new Properties() { MessageId = "msg" };
-                    thisPtr.sender.Send(msg, onOutcome, state);
+                    segment.Array[segment.Offset + i] = (byte)((i + seed) % 256);
                 }
+
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg" };
+                message.BodySection = new Data()
+                {
+                    Buffer = new ByteBuffer(segment.Array, segment.Offset, this.bodySize, segment.Count)
+                };
+
+                return message;
             }
         }
 
@@ -230,6 +268,17 @@ namespace PerfTest
 
             public override void Run()
             {
+                Task[] tasks = new Task[this.Args.Connections];
+                for (int i = 0; i < this.Args.Connections; i++)
+                {
+                    tasks[i] = Task.Run(() => this.RunOnce(i));
+                }
+
+                Task.WhenAll(tasks).Wait();
+            }
+
+            void RunOnce(int id)
+            {
                 Connection connection = this.CreateConnection(new Address(this.Args.Address));
                 Session session = new Session(connection);
 
@@ -241,12 +290,13 @@ namespace PerfTest
                     RcvSettleMode = this.Args.ReceiverMode
                 };
 
-                ReceiverLink receiver = new ReceiverLink(session, "perf-test-receiver", attach, null);
+                ReceiverLink receiver = new ReceiverLink(session, "perf-test-receiver" + id, attach, null);
                 receiver.Start(
                     this.Args.Queue,
                     (r, m) =>
                     {
                         r.Accept(m);
+                        m.Dispose();
                         this.OnComplete();
                     });
 
@@ -275,6 +325,7 @@ namespace PerfTest
                 ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
                 foreach (var listener in host.Listeners)
                 {
+                    listener.BufferManager = this.bufferManager;
                     listener.AMQP.MaxFrameSize = this.Args.MaxFrameSize;
                 }
 
@@ -343,6 +394,13 @@ namespace PerfTest
                 protected set;
             }
 
+            [Argument(Name = "connection", Shortcut = "i", Description = "number of connection to create", Default = 1)]
+            public int Connections
+            {
+                get;
+                protected set;
+            }
+
             [Argument(Name = "body-size", Shortcut = "b", Description = "message body size (bytes)", Default = 64)]
             public int BodySize
             {
@@ -366,6 +424,13 @@ namespace PerfTest
 
             [Argument(Name = "progess", Shortcut = "p", Description = "report progess for every this number of messages", Default = 1000)]
             public int Progress
+            {
+                get;
+                protected set;
+            }
+
+            [Argument(Name = "buffer-pool", Shortcut = "u", Description = "enable buffer pooling", Default = false)]
+            public bool BufferPooling
             {
                 get;
                 protected set;

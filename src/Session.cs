@@ -616,12 +616,13 @@ namespace Amqp
         void WriteDelivery(Delivery delivery)
         {
             // Must be called under lock. Delivery must be on list already
-            while (this.outgoingWindow > 0 && delivery != null && delivery.Buffer.Length > 0)
+            while (this.outgoingWindow > 0 && delivery != null)
             {
                 --this.outgoingWindow;
                 Transfer transfer = new Transfer() { Handle = delivery.Handle };
 
-                if (delivery.BytesTransfered == 0)
+                bool first = delivery.BytesTransfered == 0;
+                if (first)
                 {
                     // initialize properties for first transfer
                     delivery.DeliveryId = this.outgoingDeliveryId++;
@@ -633,13 +634,13 @@ namespace Amqp
                     transfer.Batchable = true;
                 }
 
-                int len = delivery.Buffer.Length;
-                this.connection.SendCommand(this.channel, transfer, delivery.Buffer);
-                delivery.BytesTransfered += len - delivery.Buffer.Length;
+                int len = this.connection.SendCommand(this.channel, transfer, first,
+                    delivery.Buffer, delivery.ReservedBufferSize);
+                delivery.BytesTransfered += len;
 
                 if (delivery.Buffer.Length == 0)
                 {
-                    delivery.Buffer = null;
+                    delivery.Buffer.ReleaseReference();
                     Delivery next = (Delivery)delivery.Next;
                     if (delivery.Settled)
                     {
