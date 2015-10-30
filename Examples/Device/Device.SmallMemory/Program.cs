@@ -18,6 +18,7 @@
 using System;
 using Amqp;
 using Microsoft.SPOT;
+using System.Threading;
 
 namespace Device.SmallMemory
 {
@@ -30,16 +31,29 @@ namespace Device.SmallMemory
 
         static void Send()
         {
-            const int nMsgs = 20;
+            const int nMsgs = 800;
 
             Client client = new Client("localhost", 5672, false, "guest", "guest");
+
+            int count = 0;
+            ManualResetEvent done = new ManualResetEvent(false);
+            Receiver receiver = client.GetReceiver("q1");
+            receiver.Start(20, (r, m) =>
+            {
+                r.Accept(m);
+                if (++count >= nMsgs) done.Set();
+            });
+
             Sender sender = client.GetSender("q1");
             for (int i = 0; i < nMsgs; i++)
             {
-                sender.Send("hello" + i);
+                sender.Send(new Message() { Body = "hello" + i });
             }
 
+            done.WaitOne(30000, false);
+
             sender.Close();
+            receiver.Close();
             client.Close();
         }
     }

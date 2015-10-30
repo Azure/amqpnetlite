@@ -36,8 +36,15 @@ namespace Amqp
         const byte EndReceived = 1 << 6;
         const byte CloseReceived = 1 << 7;
 
+        internal const byte AttachSent = 1;
+        internal const byte AttachReceived = 2;
+        internal const byte DetachSent = 4;
+        internal const byte DetachReceived = 8;
+
         internal const string Name = "netmf-lite";
         internal const int MaxFrameSize = 16 * 1024;
+        const uint window = 100u;
+
         string host;
         int port;
         bool useSsl;
@@ -49,8 +56,13 @@ namespace Amqp
         internal NetworkStream transport;
         internal int maxFrameSize = MaxFrameSize;
 
-        Sender sender;
-        uint outWindow = 50;
+        internal Sender sender;
+        internal uint outWindow;
+        internal uint nextOutgoingId;
+
+        internal Receiver receiver;
+        internal uint inWindow;
+        internal uint nextIncomingId;
 
         public Client(string host, int port, bool useSsl, string userName, string password)
         {
@@ -61,7 +73,6 @@ namespace Amqp
             this.password = password;
             this.signal = new AutoResetEvent(false);
             this.transport = Extensions.Connect(this.host, this.port, this.useSsl);
-
             this.Initialize();
         }
 
@@ -69,6 +80,13 @@ namespace Amqp
         {
             Fx.AssertAndThrow(1000, this.sender == null);
             return this.sender = new Sender(this, address);
+        }
+
+        public Receiver GetReceiver(string address)
+        {
+            Fx.AssertAndThrow(1000, this.receiver == null);
+            this.inWindow = window;
+            return this.receiver = new Receiver(this, address);
         }
 
         public void Close()
@@ -83,26 +101,41 @@ namespace Amqp
         {
             while (condition(state))
             {
-                Fx.AssertAndThrow(1000, this.signal.WaitOne(millisecondsTimeout, true));
+                Fx.AssertAndThrow(1000, this.signal.WaitOne(millisecondsTimeout, false));
             }
         }
 
-        internal void Send(object message, uint deliveryId, bool settled)
+        internal void Send(Message message, uint deliveryId, bool settled)
         {
-            DescribedValue value = new DescribedValue(0x77ul, message);
             ByteBuffer buffer = new ByteBuffer(128, true);
             buffer.AdjustPosition(Extensions.TransferFramePrefixSize, 0);   // reserve space for frame header and transfer
-            Encoder.WriteObject(buffer, value, true);
+            message.Encode(buffer);
 
             while (buffer.Length > 0)
             {
                 this.Wait(o => ((Client)o).outWindow == 0, this, 60000);
                 lock (this)
                 {
-                    this.outWindow--;
+                    this.nextOutgoingId++;
+                    if (this.outWindow < uint.MaxValue)
+                    {
+                        this.outWindow--;
+                    }
                 }
+
                 this.transport.WriteTransferFrame(deliveryId, settled, buffer, this.maxFrameSize);
             }
+        }
+
+        internal void SendFlow(uint handle, uint dc, uint credit)
+        {
+            List flow;
+            lock (this)
+            {
+                flow = new List() { this.nextIncomingId, this.inWindow, this.nextOutgoingId, this.outWindow, handle, dc, credit };
+            }
+
+            this.transport.WriteFrame(0, 0, 0x13, flow);
         }
 
         void Initialize()
@@ -133,7 +166,7 @@ namespace Amqp
             this.state = OpenSent | BeginSent;
             this.transport.Write(header, 0, 8);
             this.transport.WriteFrame(0, 0, 0x10, Open(Guid.NewGuid().ToString(), this.host, 8 * 1024, 0));
-            this.transport.WriteFrame(0, 0, 0x11, Begin());
+            this.transport.WriteFrame(0, 0, 0x11, Begin(this.nextOutgoingId, this.inWindow));
 
             retHeader = this.transport.ReadFixedSizeBuffer(8);
             Fx.AssertAndThrow(2000, AreHeaderEqual(header, retHeader));
@@ -147,19 +180,20 @@ namespace Amqp
             ulong code = 0;
             List fields = null;
             ByteBuffer payload = null;
-            while (this.state > 0)
+            while (this.state < 0xFF)
             {
                 try
                 {
                     this.transport.ReadFrame(out frameType, out channel, out code, out fields, out payload);
                     this.OnFrame(code, fields, payload);
-                    this.signal.Set();
                 }
                 catch (Exception)
                 {
                     this.transport.Close();
-                    this.state = 0;
+                    this.state = 0xFF;
                 }
+
+                this.signal.Set();
             }
         }
 
@@ -171,38 +205,67 @@ namespace Amqp
                     this.state |= OpenReceived;
                     break;
                 case 0x11:  // begin
+                    this.nextIncomingId = (uint)fields[1];
+                    this.outWindow = (uint)fields[3];
                     this.state |= BeginReceived;
                     break;
                 case 0x12:  // attach
                 {
                     bool role = (bool)fields[2];
-                    if (!role)
+                    if (role)
                     {
                         Fx.AssertAndThrow(1000, this.sender != null);
                         this.sender.OnAttach(fields);
                     }
-
+                    else
+                    {
+                        Fx.AssertAndThrow(1000, this.receiver != null);
+                        this.receiver.OnAttach(fields);
+                    }
                     break;
                 }
                 case 0x13:  // flow
                 {
+                    uint nextIncomingId = (uint)fields[0];
+                    uint incomingWindow = (uint)fields[1];
                     lock(this)
                     {
-
+                        this.outWindow = incomingWindow < uint.MaxValue ?
+                            nextIncomingId + incomingWindow - this.nextOutgoingId :
+                            uint.MaxValue;
                     }
-                    if (fields[4] != null)
+
+                    Sender sender = this.sender;
+                    if (fields[4] != null && sender != null)
                     {
-                        uint handle = (uint)fields[4];
-                        Fx.AssertAndThrow(1000, handle < 2u);
-                        if (handle == 0u)
-                        {
-                            this.sender.OnFlow(fields);
-                        }
+                        sender.OnFlow(fields);
                     }
                     break;
                 }
                 case 0x14:  // transfer
+                {
+                    List flow = null;
+                    lock (this)
+                    {
+                        this.nextOutgoingId++;
+                        if (--this.inWindow == 0)
+                        {
+                            this.inWindow = window;
+                            flow = new List() { this.nextIncomingId, this.inWindow, this.nextOutgoingId, this.outWindow };
+                        }
+                    }
+
+                    if (flow != null)
+                    {
+                        this.transport.WriteFrame(0, 0, 0x13, flow);
+                    }
+
+                    if (this.receiver != null)
+                    {
+                        this.receiver.OnTransfer(fields, payload);
+                    }
                     break;
+                }
                 case 0x15:  // disposition
                 {
                     bool role = (bool)fields[0];
@@ -215,9 +278,13 @@ namespace Amqp
                 case 0x16:  // dettach
                 {
                     uint handle = (uint)fields[0];
-                    if (handle == 0)
+                    if (this.sender != null && handle == this.sender.remoteHandle)
                     {
                         this.sender.OnDetach(fields);
+                    }
+                    else if (this.receiver != null && handle == this.receiver.remoteHandle)
+                    {
+                        this.receiver.OnDetach(fields);
                     }
                     break;
                 }
@@ -255,9 +322,20 @@ namespace Amqp
             return new List() { containerId, hostName, maxFrameSize, channelMax };
         }
 
-        static List Begin()
+        static List Begin(uint nextOutgoingId, uint inWindow)
         {
-            return new List() { null, 0u, 100u, 100u, 0u };
+            return new List() { null, nextOutgoingId, inWindow, 0u, 1u };
+        }
+
+        internal static List Attach(string name, uint handle, bool role, string sourceAddress, string targetAddress)
+        {
+            return new List() { name, handle, role, null, null, new DescribedValue(0x28ul, new List() { sourceAddress }),
+                new DescribedValue(0x29ul, new List() { targetAddress }), null, null, 0u};
+        }
+
+        internal static List Detach(uint handle)
+        {
+            return new List { handle, true };
         }
     }
 }
