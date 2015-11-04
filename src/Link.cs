@@ -210,9 +210,9 @@ namespace Amqp
             }
         }
 
-        internal void SendFlow(uint deliveryCount, uint credit)
+        internal void SendFlow(uint deliveryCount, uint credit, bool drain)
         {
-            Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit };
+            Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
             this.session.SendFlow(flow);
         }
 
