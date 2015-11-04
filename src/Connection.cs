@@ -187,7 +187,7 @@ namespace Amqp
 
         ByteBuffer WrapBuffer(ByteBuffer buffer, int offset, int length)
         {
-            return new ByteBuffer(buffer.Buffer, buffer.Offset - offset, length, length);
+            return new ByteBuffer(buffer.Buffer, offset, length, length);
         }
 #endif
 
