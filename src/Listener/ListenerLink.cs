@@ -237,6 +237,7 @@ namespace Amqp.Listener
             ThrowIfNotNull(this.onCredit, "sender");
             ThrowIfNotNull(this.onDispose, "sender");
             this.credit = credit;
+            this.autoRestore = true;
             this.linkEndpoint = linkEndpoint;
         }
 
