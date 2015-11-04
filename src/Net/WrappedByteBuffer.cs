@@ -15,38 +15,34 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Listener
+namespace Amqp
 {
-    using System.Threading;
-    using Amqp.Framing;
+    using System;
 
-    /// <summary>
-    /// An AMQP connection used by the listener.
-    /// </summary>
-    public class ListenerConnection : Connection
+    class WrappedByteBuffer : ByteBuffer
     {
-        readonly ConnectionListener listener;
+        readonly ByteBuffer buffer;
 
-        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
-            : base(listener.BufferManager, listener.AMQP, address, transport, null, null)
+        public WrappedByteBuffer(ByteBuffer buffer, int offset, int length)
+            : base(buffer.Buffer, offset, length, length, false)
         {
-            this.listener = listener;
+            buffer.AddReference();
+            this.buffer = buffer;
         }
 
-        internal ConnectionListener Listener
+        internal override void DuplicateBuffer(int bufferSize, int dataSize, out byte[] buffer, out int offset, out int count)
         {
-            get { return this.listener; }
+            throw new InvalidOperationException();
         }
 
-        internal override void OnBegin(ushort remoteChannel, Begin begin)
+        internal override void AddReference()
         {
-            // this sends a begin to the remote peer
-            begin.RemoteChannel = remoteChannel;
-            var session = new ListenerSession(this, begin);
+            this.buffer.AddReference();
+        }
 
-            // this updates the local session state
-            begin.RemoteChannel = session.Channel;
-            base.OnBegin(remoteChannel, begin);
+        internal override void ReleaseReference()
+        {
+            this.buffer.ReleaseReference();
         }
     }
 }

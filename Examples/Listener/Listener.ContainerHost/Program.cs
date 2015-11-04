@@ -17,12 +17,15 @@
 
 namespace Listener.ContainerHost
 {
+    using System;
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Amqp;
     using Amqp.Framing;
     using Amqp.Listener;
     using Amqp.Types;
-    using System;
-    using System.Threading.Tasks;
 
     class Program
     {
@@ -54,6 +57,8 @@ namespace Listener.ContainerHost
 
         class LinkProcessor : ILinkProcessor
         {
+            SharedLinkEndpoint sharedLinkEndpoint = new SharedLinkEndpoint();
+
             public void Process(AttachContext attachContext)
             {
                 // start a task to process this request
@@ -72,12 +77,123 @@ namespace Listener.ContainerHost
                 }
                 else if (attachContext.Link.Role)
                 {
-                    attachContext.Complete(new IncomingLinkEndpoint(), 300);
+                    var target = attachContext.Attach.Target as Target;
+                    if (target != null)
+                    {
+                        if (target.Address == "slow-queue")
+                        {
+                            // how to do manual link flow control
+                            new SlowLinkEndpoint(attachContext);
+                        }
+                        else if (target.Address == "shared-queue")
+                        {
+                            // how to do flow control across links
+                            this.sharedLinkEndpoint.AttachLink(attachContext);
+                        }
+                        else
+                        {
+                            // default link flow control
+                            attachContext.Complete(new IncomingLinkEndpoint(), 300);
+                        }
+                    }
                 }
                 else
                 {
                     attachContext.Complete(new OutgoingLinkEndpoint(), 0);
                 }
+            }
+        }
+
+        class SlowLinkEndpoint : LinkEndpoint
+        {
+            ListenerLink link;
+            CancellationTokenSource cts;
+
+            public SlowLinkEndpoint(AttachContext attachContext)
+            {
+                this.link = attachContext.Link;
+                this.cts = new CancellationTokenSource();
+                link.Closed += (o, e) => this.cts.Cancel();
+                attachContext.Complete(this, 0);
+                this.link.SetCredit(1, false, false);
+            }
+
+            public override void OnMessage(MessageContext messageContext)
+            {
+                messageContext.Complete();
+
+                // delay 1s for the next message
+                Task.Delay(1000, this.cts.Token).ContinueWith(
+                    t =>
+                    {
+                        if (!t.IsCanceled)
+                        {
+                            this.link.SetCredit(1, false, false);
+                        }
+                    });
+            }
+
+            public override void OnFlow(FlowContext flowContext)
+            {
+            }
+
+            public override void OnDisposition(DispositionContext dispositionContext)
+            {
+            }
+        }
+
+        class SharedLinkEndpoint : LinkEndpoint
+        {
+            const int Capacity = 5; // max concurrent request
+            SemaphoreSlim semaphore;
+            ConcurrentDictionary<Link, CancellationTokenSource> ctsMap;
+
+            public SharedLinkEndpoint()
+            {
+                this.semaphore = new SemaphoreSlim(Capacity);
+                this.ctsMap = new ConcurrentDictionary<Link, CancellationTokenSource>();
+            }
+
+            public void AttachLink(AttachContext attachContext)
+            {
+                this.semaphore.WaitAsync(30000).ContinueWith(
+                    t =>
+                    {
+                        if (t.IsCanceled || t.IsFaulted)
+                        {
+                            attachContext.Complete(new Error() { Condition = ErrorCode.ResourceLimitExceeded });
+                        }
+                        else
+                        {
+                            this.semaphore.Release();
+                            attachContext.Complete(this, 1);
+                        }
+                    });
+            }
+
+            public override void OnMessage(MessageContext messageContext)
+            {
+                this.semaphore.WaitAsync(30000).ContinueWith(
+                    t =>
+                    {
+                        if (t.IsCanceled || t.IsFaulted)
+                        {
+                            messageContext.Complete(new Error() { Condition = ErrorCode.ResourceLimitExceeded });
+                        }
+                        else
+                        {
+                            this.semaphore.Release();
+                            messageContext.Complete();
+                        }
+                    });
+            }
+
+            public override void OnFlow(FlowContext flowContext)
+            {
+            }
+
+            public override void OnDisposition(DispositionContext dispositionContext)
+            {
             }
         }
 
@@ -106,7 +222,7 @@ namespace Listener.ContainerHost
                 {
                     var message = new Message("Hello!");
                     message.Properties = new Properties() { Subject = "Welcome Message" };
-                    flowContext.Link.SendMessage(message, null);
+                    flowContext.Link.SendMessage(message);
                 }
             }
 

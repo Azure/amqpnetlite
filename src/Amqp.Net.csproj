@@ -47,6 +47,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="Listener\ContainerHost.cs" />
     <Compile Include="Listener\AttachContext.cs" />
+    <Compile Include="Listener\ContextState.cs" />
     <Compile Include="Listener\FlowContext.cs" />
     <Compile Include="Listener\ILinkProcessor.cs" />
     <Compile Include="Listener\LinkEndpoint.cs" />
@@ -57,6 +58,10 @@
     <Compile Include="Listener\IMessageProcessor.cs" />
     <Compile Include="Listener\Context.cs" />
     <Compile Include="Listener\ListenerLink.cs" />
+    <Compile Include="Net\BufferManager.cs" />
+    <Compile Include="Net\WrappedByteBuffer.cs" />
+    <Compile Include="Net\RefCountedByteBuffer.cs" />
+    <Compile Include="Net\IBufferManager.cs" />
     <Compile Include="Net\TcpSettings.cs" />
     <Compile Include="Net\AmqpSettings.cs" />
     <Compile Include="Net\ConnectionFactoryBase.cs" />

@@ -1391,5 +1391,56 @@ namespace Amqp.Types
             return new AmqpException(ErrorCode.DecodeError,
                 Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, offset));
         }
+#if DOTNET || DOTNET35
+
+        internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
+        {
+            if (value == null)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
+            }
+            else if (value.Length <= byte.MaxValue)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Binary8);
+                AmqpBitConverter.WriteUByte(buffer, (byte)value.Length);
+            }
+            else
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Binary32);
+                AmqpBitConverter.WriteUInt(buffer, (uint)value.Length);
+            }
+
+            AmqpBitConverter.WriteBytes(buffer, value.Buffer, value.Offset, value.Length);
+        }
+
+        internal static ByteBuffer ReadBinaryBuffer(ByteBuffer buffer)
+        {
+            byte formatCode = Encoder.ReadFormatCode(buffer);
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
+            int count;
+            if (formatCode == FormatCode.Binary8)
+            {
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.Binary32)
+            {
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw DecodeException(formatCode, buffer.Offset);
+            }
+
+            buffer.Validate(false, count);
+            ByteBuffer result = new ByteBuffer(buffer.Buffer, buffer.Offset, count, count);
+            buffer.Complete(count);
+
+            return result;
+        }
+#endif
     }
 }

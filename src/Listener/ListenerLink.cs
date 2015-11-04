@@ -28,7 +28,6 @@ namespace Amqp.Listener
     public class ListenerLink : Link
     {
         bool role;
-        uint credit;
         object state;
 
         // caller can initialize the link for an endpoint, a sender or a receiver
@@ -43,7 +42,9 @@ namespace Amqp.Listener
 
         // receive
         SequenceNumber deliveryCount;
-        int delivered;
+        uint credit;
+        bool autoRestore;
+        int restored;
         Delivery deliveryCurrent;
         Action<ListenerLink, Message, DeliveryState, object> onMessage;
 
@@ -94,6 +95,7 @@ namespace Amqp.Listener
             ThrowIfNotNull(this.linkEndpoint, "endpoint");
             ThrowIfNotNull(this.onMessage, "receiver");
             this.credit = credit;
+            this.autoRestore = true;
             this.onMessage = onMessage;
             this.state = state;
         }
@@ -117,10 +119,24 @@ namespace Amqp.Listener
         /// <summary>
         /// Sends a message. This call is non-blocking and it does not wait for acknowledgements.
         /// </summary>
+        /// <param name="message"></param>
+        public void SendMessage(Message message)
+        {
+            this.SendMessage(message, null);
+        }
+
+        /// <summary>
+        /// Sends a message with an optional buffer as the message payload.
+        /// </summary>
         /// <param name="message">The message to be sent.</param>
         /// <param name="buffer">The serialized buffer of the message. It is null, the message is serialized.</param>
         public void SendMessage(Message message, ByteBuffer buffer)
         {
+            if (this.role)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed, "Cannot send a message over a receiving link.");
+            }
+
             Delivery delivery = new Delivery()
             {
                 Handle = this.Handle,
@@ -142,6 +158,18 @@ namespace Amqp.Listener
         /// <param name="settled">The settled flag on disposition.</param>
         public void DisposeMessage(Message message, DeliveryState deliveryState, bool settled)
         {
+            if (settled && this.autoRestore)
+            {
+                lock (this.ThisLock)
+                {
+                    if (this.restored++ >= this.credit / 2)
+                    {
+                        this.restored = 0;
+                        this.SendFlow(this.deliveryCount, this.credit, false);
+                    }
+                }
+            }
+
             Delivery delivery = message.Delivery;
             if (delivery == null || delivery.Settled)
             {
@@ -178,8 +206,27 @@ namespace Amqp.Listener
             {
                 if (this.credit > 0)
                 {
-                    this.SendFlow(this.deliveryCount, credit);
+                    this.SendFlow(this.deliveryCount, credit, false);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="drain">Sets the drain flag in the flow performative.</param>
+        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted/rejected
+        /// by the caller. If false, caller is responsible for manage link credits.</param>
+        public void SetCredit(int credit, bool drain, bool autoRestore = true)
+        {
+            this.ThrowIfDetaching("set-credit");
+            lock (this.ThisLock)
+            {
+                this.credit = (uint)credit;
+                this.autoRestore = autoRestore;
+                this.restored = 0;
+                this.SendFlow(this.deliveryCount, this.credit, drain);
             }
         }
 
@@ -190,6 +237,7 @@ namespace Amqp.Listener
             ThrowIfNotNull(this.onCredit, "sender");
             ThrowIfNotNull(this.onDispose, "sender");
             this.credit = credit;
+            this.autoRestore = true;
             this.linkEndpoint = linkEndpoint;
         }
 
@@ -250,33 +298,23 @@ namespace Amqp.Listener
         {
             if (delivery != null)
             {
+                buffer.AddReference();
+                delivery.Buffer = buffer;
                 this.deliveryCount++;
-                if (!transfer.More)
-                {
-                    // single transfer message - the most common case
-                    delivery.Buffer = buffer;
-                    this.DeliverMessage(delivery);
-                }
-                else
-                {
-                    delivery.Buffer = new ByteBuffer(buffer.Length * 2, true);
-                    AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                    this.deliveryCurrent = delivery;
-                }
             }
             else
             {
                 delivery = this.deliveryCurrent;
-                if (!transfer.More)
-                {
-                    AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                    this.deliveryCurrent = null;
-                    this.DeliverMessage(delivery);
-                }
-                else
-                {
-                    AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
-                }
+                AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
+            }
+
+            if (!transfer.More)
+            {
+                this.DeliverMessage(delivery);
+            }
+            else
+            {
+                this.deliveryCurrent = delivery;
             }
         }
 
@@ -307,12 +345,6 @@ namespace Amqp.Listener
             else if (this.linkEndpoint != null)
             {
                 this.linkEndpoint.OnMessage(new MessageContext(this, delivery.Message));
-            }
-
-            if (this.delivered++ >= this.credit / 2)
-            {
-                this.delivered = 0;
-                this.SendFlow(this.deliveryCount, this.credit);
             }
         }
     }

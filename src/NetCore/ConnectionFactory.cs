@@ -99,15 +99,15 @@ namespace Amqp
             if (address.User != null)
             {
                 SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                transport = await profile.OpenAsync(address.Host, transport);
+                transport = await profile.OpenAsync(address.Host, null, transport);
             }
             else if (this.saslSettings != null && this.saslSettings.Profile != null)
             {
-                transport = await this.saslSettings.Profile.OpenAsync(address.Host, transport);
+                transport = await this.saslSettings.Profile.OpenAsync(address.Host, null, transport);
             }
 
-            AsyncPump pump = new AsyncPump(transport);
-            Connection connection = new Connection(this.AMQP, address, transport, open, onOpened);
+            AsyncPump pump = new AsyncPump(null, transport);
+            Connection connection = new Connection(null, this.AMQP, address, transport, open, onOpened);
             pump.Start(connection);
 
             return connection;

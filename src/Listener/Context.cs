@@ -25,6 +25,7 @@ namespace Amqp.Listener
     public abstract class Context
     {
         internal static Accepted Accepted = new Accepted();
+        ContextState state;
 
         /// <summary>
         /// Initializes a context object.
@@ -35,10 +36,11 @@ namespace Amqp.Listener
         {
             this.Link = link;
             this.Message = message;
+            this.state = ContextState.Active;
         }
 
         /// <summary>
-        /// Gets the link associated with the context.
+        /// Gets the receiving link associated with the context.
         /// </summary>
         public ListenerLink Link
         {
@@ -56,6 +58,22 @@ namespace Amqp.Listener
         }
 
         /// <summary>
+        /// Gets the state of the concext.
+        /// </summary>
+        public ContextState State
+        {
+            get
+            {
+                return this.GetState();
+            }
+
+            internal set
+            {
+                this.state = value;
+            }
+        }
+
+        /// <summary>
         /// Disposes the request. If required, a disposition frame is sent to
         /// the peer to acknowledge the message.
         /// </summary>
@@ -63,6 +81,13 @@ namespace Amqp.Listener
         protected void Dispose(DeliveryState deliveryState)
         {
             this.Link.DisposeMessage(this.Message, deliveryState, true);
+            this.Message.Dispose();
+            this.state = ContextState.Completed;
+        }
+
+        internal virtual ContextState GetState()
+        {
+            return this.Link.IsDetaching ? ContextState.Aborted : this.state;
         }
     }
 }

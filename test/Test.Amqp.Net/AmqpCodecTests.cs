@@ -431,6 +431,11 @@ namespace Test.Amqp
                     continue;
                 }
 
+                if (type.GetConstructor(new Type[0]) == null)
+                {
+                    continue;
+                }
+
                 System.Diagnostics.Trace.WriteLine("testing " + type.FullName);
 
                 object obj = CreateRestrictedDescribed(type, random);

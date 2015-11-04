@@ -24,11 +24,24 @@ namespace Amqp.Listener
     using Amqp.Types;
 
     /// <summary>
-    /// The ContainerHost class hosts an AMQP container. A container has one or more transport
-    /// listeners. Message processors can be registered to accept incoming messages (one-way).
+    /// The ContainerHost class hosts an AMQP container where connection listeners can be
+    /// created to accept client requests.
+    /// </summary>
+    /// <remarks>
+    /// A container has one or more connection endpoints where transport listeners are created.
+    /// Message processors can be registered to accept incoming messages (one-way).
     /// Request processors can be registered to process request messages and send back response
     /// messages (two-way).
-    /// </summary>
+    /// Link processor can be registered to process received attach performatives. This is
+    /// useful in implementing scenarios such as:
+    /// (1) Extra resource allocation and/or additional validation of the request is required.
+    /// (2) Accept receiving links from the client. The listener acts as the message source.
+    /// Upon receiving an attach performative, the registered message processor(s)
+    /// and request processor(s) are checked first. If a processor matches the address
+    /// on the received attach performative, it is invoked to handle the command.
+    /// Otherwise, the registered link processor, if any, is invoked to handle the command.
+    /// When no processor is found, the link is detached with error "amqp:not-found".
+    /// </remarks>
     public class ContainerHost : IContainer
     {
         readonly X509Certificate2 certificate;
@@ -102,12 +115,9 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Registers a link process to handle received attach performatives. The registered message
-        /// processor(s) and request processor(s) are checked first. If a processor matches the address
-        /// on the received attach performative, it is invoked to handle the command. Otherwise, the
-        /// registered link processor is invoked to handle the command.
+        /// Registers a link process to handle received attach performatives.
         /// </summary>
-        /// <param name="linkProcessor"></param>
+        /// <param name="linkProcessor">The link processor to be registered.</param>
         public void RegisterLinkProcessor(ILinkProcessor linkProcessor)
         {
             if (this.linkProcessor != null)
@@ -122,20 +132,23 @@ namespace Amqp.Listener
         /// Registers a message processor to accept incoming messages from the specified address.
         /// When it is called, the container creates a node where the client can attach.
         /// </summary>
-        /// <param name="address">The node name.</param>
-        /// <param name="messageProcessor">The message processor.</param>
+        /// <param name="address">The address.</param>
+        /// <param name="messageProcessor">The message processor to be registered.</param>
         public void RegisterMessageProcessor(string address, IMessageProcessor messageProcessor)
         {
             AddProcessor(this.messageProcessors, address, new MessageProcessor(messageProcessor));
         }
 
         /// <summary>
-        /// Registers a request processor from the specified address (node name). Client must create a pair of
-        /// links (sending and receiving) at the address. The source.address on the sending link should contain
-        /// an unique address in the client and it should be specified in target.address on the receiving link.
+        /// Registers a request processor from the specified address.
         /// </summary>
-        /// <param name="address">The node name.</param>
-        /// <param name="requestProcessor">The request name.</param>
+        /// <param name="address">The address.</param>
+        /// <param name="requestProcessor">The request processor to be registered.</param>
+        /// <remarks>
+        /// Client must create a pair of links (sending and receiving) at the address. The
+        /// source.address on the sending link should contain an unique address in the client
+        /// and it should be specified in target.address on the receiving link.
+        /// </remarks>
         public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor)
         {
             AddProcessor(this.requestProcessors, address, new RequestProcessor(requestProcessor));
@@ -151,7 +164,7 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Unregisters a request process at the specified address.
+        /// Unregisters a request processor at the specified address.
         /// </summary>
         /// <param name="address">The address.</param>
         public void UnregisterRequestProcessor(string address)

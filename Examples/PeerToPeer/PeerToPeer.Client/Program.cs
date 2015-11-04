@@ -18,6 +18,7 @@
 namespace PeerToPeer.Client
 {
     using System;
+    using System.Threading;
     using Amqp;
     using Amqp.Framing;
 
@@ -35,63 +36,97 @@ namespace PeerToPeer.Client
             //Trace.TraceLevel = TraceLevel.Frame;
             //Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
 
-            Console.WriteLine("Running message client...");
-            RunMessageClient(address);
-
             Console.WriteLine("Running request client...");
-            RunRequestClient(address);
+            new Client(address).Run();
         }
 
-        static void RunMessageClient(string address)
+        class Client
         {
-            const int nMsgs = 10;
-            Connection connection = new Connection(new Address(address));
-            Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "message-client", "message_processor");
+            readonly string address;
+            string replyTo;
+            Connection connection;
+            Session session;
+            ReceiverLink receiver;
+            SenderLink sender;
+            int offset;
 
-            for (int i = 0; i < nMsgs; ++i)
+            public Client(string address)
             {
-                Message message = new Message("hello");
-                message.Properties = new Properties() { MessageId = "msg" + i };
-                message.ApplicationProperties = new ApplicationProperties();
-                message.ApplicationProperties["sn"] = i;
-                sender.Send(message);
-                Console.WriteLine("Sent message {0} body {1}", message.Properties, message.Body);
+                this.address = address;
+                this.replyTo = "client-" + Guid.NewGuid().ToString();
             }
 
-            sender.Close();
-            session.Close();
-            connection.Close();
-        }
-
-        static void RunRequestClient(string address)
-        {
-            Connection connection = new Connection(new Address(address));
-            Session session = new Session(connection);
-
-            string replyTo = "client-reply-to";
-            Attach recvAttach = new Attach()
+            public void Run()
             {
-                Source = new Source() { Address = "request_processor" },
-                Target = new Target() { Address = replyTo }
-            };
+                while (true)
+                {
+                    try
+                    {
+                        this.Cleanup();
+                        this.Setup();
 
-            ReceiverLink receiver = new ReceiverLink(session, "request-client-receiver", recvAttach, null);
-            SenderLink sender = new SenderLink(session, "request-client-sender", "request_processor");
+                        this.RunOnce();
 
-            Message request = new Message("hello");
-            request.Properties = new Properties() { MessageId = "request1", ReplyTo = replyTo };
-            sender.Send(request, null, null);
-            Console.WriteLine("Sent request {0} body {1}", request.Properties, request.Body);
+                        this.Cleanup();
+                        break;
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine("Reconnect on exception: " + exception.Message);
 
-            Message response = receiver.Receive();
-            Console.WriteLine("Received response: {0} body {1}", response.Properties, response.Body);
-            receiver.Accept(response);
+                        Thread.Sleep(5000);
+                    }
+                }
+            }
 
-            receiver.Close();
-            sender.Close();
-            session.Close();
-            connection.Close();
+            void Setup()
+            {
+                this.connection = new Connection(new Address(address));
+                this.session = new Session(connection);
+
+                Attach recvAttach = new Attach()
+                {
+                    Source = new Source() { Address = "request_processor" },
+                    Target = new Target() { Address = this.replyTo }
+                };
+
+                this.receiver = new ReceiverLink(session, "request-client-receiver", recvAttach, null);
+                this.receiver.Start(300);
+                this.sender = new SenderLink(session, "request-client-sender", "request_processor");
+            }
+
+            void Cleanup()
+            {
+                var temp = Interlocked.Exchange(ref this.connection, null);
+                if (temp != null)
+                {
+                    temp.Close();
+                }
+            }
+
+            void RunOnce()
+            {
+                Message request = new Message("hello " + this.offset);
+                request.Properties = new Properties() { MessageId = "command-request", ReplyTo = this.replyTo };
+                request.ApplicationProperties = new ApplicationProperties();
+                request.ApplicationProperties["offset"] = this.offset;
+                sender.Send(request, null, null);
+                Console.WriteLine("Sent request {0} body {1}", request.Properties, request.Body);
+
+                while (true)
+                {
+                    Message response = receiver.Receive();
+                    receiver.Accept(response);
+                    Console.WriteLine("Received response: {0} body {1}", response.Properties, response.Body);
+
+                    if (string.Equals("done", response.Body))
+                    {
+                        break;
+                    }
+
+                    this.offset = (int)response.ApplicationProperties["offset"];
+                }
+            }
         }
     }
 }

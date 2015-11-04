@@ -18,7 +18,9 @@
 namespace PeerToPeer.Server
 {
     using System;
+    using System.Threading.Tasks;
     using Amqp;
+    using Amqp.Framing;
     using Amqp.Listener;
 
     class Program
@@ -40,10 +42,6 @@ namespace PeerToPeer.Server
             host.Open();
             Console.WriteLine("Container host is listening on {0}:{1}", addressUri.Host, addressUri.Port);
 
-            string messageProcessor = "message_processor";
-            host.RegisterMessageProcessor(messageProcessor, new MessageProcessor());
-            Console.WriteLine("Message processor is registered on {0}", messageProcessor);
-
             string requestProcessor = "request_processor";
             host.RegisterRequestProcessor(requestProcessor, new RequestProcessor());
             Console.WriteLine("Request processor is registered on {0}", requestProcessor);
@@ -54,42 +52,47 @@ namespace PeerToPeer.Server
             host.Close();
         }
 
-        static void PrintMessage(Message message)
-        {
-            if (message.Header != null) Console.WriteLine(message.Header.ToString());
-            if (message.DeliveryAnnotations != null) Console.WriteLine(message.DeliveryAnnotations.ToString());
-            if (message.MessageAnnotations != null) Console.WriteLine(message.MessageAnnotations.ToString());
-            if (message.Properties != null) Console.WriteLine(message.Properties.ToString());
-            if (message.ApplicationProperties != null) Console.WriteLine(message.ApplicationProperties.ToString());
-            if (message.BodySection != null) Console.WriteLine("body:{0}", message.Body.ToString());
-            if (message.Footer != null) Console.WriteLine(message.Footer.ToString());
-        }
-
-        class MessageProcessor : IMessageProcessor
-        {
-            int IMessageProcessor.Credit
-            {
-                get { return 300; }
-            }
-
-            void IMessageProcessor.Process(MessageContext messageContext)
-            {
-                Console.WriteLine("Received a message.");
-                PrintMessage(messageContext.Message);
-
-                messageContext.Complete();
-            }
-        }
-
         class RequestProcessor : IRequestProcessor
         {
+            int offset;
+
             void IRequestProcessor.Process(RequestContext requestContext)
             {
-                Console.WriteLine("Received a request.");
-                PrintMessage(requestContext.Message);
+                Console.WriteLine("Received a request " + requestContext.Message.Body);
+                var task = this.ReplyAsync(requestContext);
+            }
 
-                Message response = new Message("welcome");
-                requestContext.Complete(response);
+            async Task ReplyAsync(RequestContext requestContext)
+            {
+                if (this.offset == 0)
+                {
+                    this.offset = (int)requestContext.Message.ApplicationProperties["offset"];
+                }
+
+                while (this.offset < 1000)
+                {
+                    try
+                    {
+                        Message response = new Message("reply" + this.offset);
+                        response.ApplicationProperties = new ApplicationProperties();
+                        response.ApplicationProperties["offset"] = this.offset;
+                        requestContext.ResponseLink.SendMessage(response);
+                        this.offset++;
+                    }
+                    catch (Exception exception)
+                    {
+                        Console.WriteLine("Exception: " + exception.Message);
+                        if (requestContext.State == ContextState.Aborted)
+                        {
+                            Console.WriteLine("Request is aborted. Last offset: " + this.offset);
+                            return;
+                        }
+                    }
+
+                    await Task.Delay(1000);
+                }
+
+                requestContext.Complete(new Message("done"));
             }
         }
     }

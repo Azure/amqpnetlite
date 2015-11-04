@@ -51,6 +51,7 @@ namespace Amqp
         SequenceNumber incomingDeliveryId;
         LinkedList incomingList;
         SequenceNumber nextIncomingId;
+        uint incomingWindow;
 
         // outgoing delivery tracking & flow control
         SequenceNumber outgoingDeliveryId;
@@ -70,16 +71,18 @@ namespace Amqp
         internal Session(Connection connection, Begin begin)
         {
             this.connection = connection;
-            this.channel = connection.AddSession(this);
             this.handleMax = begin.HandleMax;
+            this.nextOutgoingId = uint.MaxValue - 2u;
+            this.incomingWindow = defaultWindowSize;
+            this.outgoingWindow = begin.IncomingWindow;
+            this.incomingDeliveryId = uint.MaxValue;
             this.localLinks = new Link[1];
             this.remoteLinks = new Link[1];
             this.incomingList = new LinkedList();
             this.outgoingList = new LinkedList();
-            this.nextOutgoingId = uint.MaxValue - 2u;
-            this.outgoingWindow = begin.IncomingWindow;
-            this.incomingDeliveryId = uint.MaxValue;
+            this.channel = connection.AddSession(this);
 
+            begin.IncomingWindow = this.incomingWindow;
             begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
@@ -205,10 +208,11 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
+                this.incomingWindow = defaultWindowSize;
                 flow.NextOutgoingId = this.nextOutgoingId;
                 flow.OutgoingWindow = this.outgoingWindow;
                 flow.NextIncomingId = this.nextIncomingId;
-                flow.IncomingWindow = defaultWindowSize;
+                flow.IncomingWindow = this.incomingWindow;
 
                 this.SendCommand(flow);
             }
@@ -236,6 +240,8 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnBegin", this.state));
                 }
+
+                this.outgoingWindow = begin.IncomingWindow;
             }
 
             if (begin.HandleMax < this.handleMax)
@@ -445,6 +451,11 @@ namespace Amqp
             bool newDelivery;
             lock (this.ThisLock)
             {
+                if (this.incomingWindow-- == 0)
+                {
+                    this.SendFlow(new Flow());
+                }
+
                 this.nextIncomingId++;
                 newDelivery = transfer.HasDeliveryId && transfer.DeliveryId > this.incomingDeliveryId;
                 if (newDelivery)
@@ -460,6 +471,7 @@ namespace Amqp
                 delivery = new Delivery()
                 {
                     DeliveryId = transfer.DeliveryId,
+                    Link = link,
                     Tag = transfer.DeliveryTag,
                     Settled = transfer.Settled,
                     State = transfer.State
@@ -483,7 +495,8 @@ namespace Amqp
             SequenceNumber last = dispose.Last;
             lock (this.ThisLock)
             {
-                Delivery delivery = (Delivery)this.outgoingList.First;
+                LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
+                Delivery delivery = (Delivery)linkedList.First;
                 while (delivery != null && delivery.DeliveryId <= last)
                 {
                     Delivery next = (Delivery)delivery.Next;
@@ -494,7 +507,7 @@ namespace Amqp
                         delivery.OnStateChange(dispose.State);
                         if (delivery.Settled)
                         {
-                            this.outgoingList.Remove(delivery);
+                            linkedList.Remove(delivery);
                         }
                     }
 
@@ -549,12 +562,13 @@ namespace Amqp
         void WriteDelivery(Delivery delivery)
         {
             // Must be called under lock. Delivery must be on list already
-            while (this.outgoingWindow > 0 && delivery != null && delivery.Buffer.Length > 0)
+            while (this.outgoingWindow > 0 && delivery != null)
             {
                 --this.outgoingWindow;
                 Transfer transfer = new Transfer() { Handle = delivery.Handle };
 
-                if (delivery.BytesTransfered == 0)
+                bool first = delivery.BytesTransfered == 0;
+                if (first)
                 {
                     // initialize properties for first transfer
                     delivery.DeliveryId = this.outgoingDeliveryId++;
@@ -566,13 +580,13 @@ namespace Amqp
                     transfer.Batchable = true;
                 }
 
-                int len = delivery.Buffer.Length;
-                this.connection.SendCommand(this.channel, transfer, delivery.Buffer);
-                delivery.BytesTransfered += len - delivery.Buffer.Length;
+                int len = this.connection.SendCommand(this.channel, transfer, first,
+                    delivery.Buffer, delivery.ReservedBufferSize);
+                delivery.BytesTransfered += len;
 
                 if (delivery.Buffer.Length == 0)
                 {
-                    delivery.Buffer = null;
+                    delivery.Buffer.ReleaseReference();
                     Delivery next = (Delivery)delivery.Next;
                     if (delivery.Settled)
                     {

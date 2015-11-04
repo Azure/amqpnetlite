@@ -167,9 +167,11 @@ namespace Amqp
             static void OnWriteComplete(object sender, SocketAsyncEventArgs eventArgs)
             {
                 var thisPtr = (TcpSocket)eventArgs.UserToken;
+                thisPtr.transport.writer.DisposeWriteBuffers();
                 if (eventArgs.SocketError != SocketError.Success)
                 {
                     thisPtr.transport.connection.OnIoException(new SocketException((int)eventArgs.SocketError));
+                    thisPtr.transport.writer.DisposeQueuedBuffers();
                 }
                 else
                 {
@@ -382,6 +384,7 @@ namespace Amqp
             readonly TcpTransport owner;
             readonly IAsyncTransport transport;
             Queue<ByteBuffer> bufferQueue;
+            List<ByteBuffer> buffersInProgress;
             bool writing;
 
             public Writer(TcpTransport owner, IAsyncTransport transport)
@@ -389,6 +392,7 @@ namespace Amqp
                 this.owner = owner;
                 this.transport = transport;
                 this.bufferQueue = new Queue<ByteBuffer>();
+                this.buffersInProgress = new List<ByteBuffer>();
             }
 
             public void Write(ByteBuffer buffer)
@@ -401,12 +405,48 @@ namespace Amqp
                         return;
                     }
 
+                    this.buffersInProgress.Add(buffer);
                     this.writing = true;
                 }
 
-                if (!this.transport.SendAsync(buffer, null, 0))
+                bool pending = false;
+                try
                 {
-                    this.ContinueWrite();
+                    pending = this.transport.SendAsync(buffer, null, 0);
+                    if (!pending)
+                    {
+                        this.ContinueWrite();
+                    }
+                }
+                finally
+                {
+                    if (!pending)
+                    {
+                        this.DisposeWriteBuffers();
+                    }
+                }
+            }
+
+            public void DisposeWriteBuffers()
+            {
+                for (int i = 0; i < this.buffersInProgress.Count; i++)
+                {
+                    this.buffersInProgress[i].ReleaseReference();
+                }
+
+                this.buffersInProgress.Clear();
+            }
+
+            public void DisposeQueuedBuffers()
+            {
+                lock (this.bufferQueue)
+                {
+                    foreach (var buffer in this.bufferQueue)
+                    {
+                        buffer.ReleaseReference();
+                    }
+
+                    this.bufferQueue.Clear();
                 }
             }
 
@@ -428,6 +468,7 @@ namespace Amqp
                         else if (queueDepth == 1)
                         {
                             buffer = this.bufferQueue.Dequeue();
+                            this.buffersInProgress.Add(buffer);
                             buffers = null;
                         }
                         else
@@ -438,15 +479,18 @@ namespace Amqp
                             for (int i = 0; i < queueDepth; i++)
                             {
                                 ByteBuffer item = this.bufferQueue.Dequeue();
+                                this.buffersInProgress.Add(item);
                                 buffers[i] = new ArraySegment<byte>(item.Buffer, item.Offset, item.Length);
                                 listSize += item.Length;
                             }
                         }
                     }
 
+                    bool pending = false;
                     try
                     {
-                        if (this.transport.SendAsync(buffer, buffers, listSize))
+                        pending = this.transport.SendAsync(buffer, buffers, listSize);
+                        if (pending)
                         {
                             break;
                         }
@@ -454,7 +498,15 @@ namespace Amqp
                     catch (Exception exception)
                     {
                         this.owner.connection.OnIoException(exception);
+                        this.DisposeQueuedBuffers();
                         break;
+                    }
+                    finally
+                    {
+                        if (!pending)
+                        {
+                            this.DisposeWriteBuffers();
+                        }
                     }
                 }
                 while (true);

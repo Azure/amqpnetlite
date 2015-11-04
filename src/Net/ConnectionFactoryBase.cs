@@ -47,6 +47,15 @@ namespace Amqp
         }
 
         /// <summary>
+        /// Gets or sets a buffer manager used by the connection factory.
+        /// </summary>
+        public IBufferManager BufferManager
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets the TCP settings on the factory.
         /// </summary>
         public TcpSettings TCP
