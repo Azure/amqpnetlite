@@ -3,11 +3,11 @@
   <metadata>
     <id>AMQPNetLite</id>
     <title>AMQP.Net Lite: AMQP 1.0 client library for .Net and WinRT</title>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
-    <licenseUrl>http://amqpnetlite.codeplex.com/license</licenseUrl>
-    <projectUrl>http://amqpnetlite.codeplex.com/</projectUrl>
+    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is a lightweight AMQP 1.0 client library for use on .Net frameworks (including .Net Framework, .Net Micro Framework and .Net Compact Framework) and WinRT (Windows Phone and Windows Store).</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
