@@ -123,7 +123,7 @@ namespace Amqp
                 dc = this.deliveryCount;
             }
 
-            this.SendFlow(dc, (uint)credit);
+            this.SendFlow(dc, (uint)credit, false);
         }
 
         /// <summary>

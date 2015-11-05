@@ -221,6 +221,7 @@ namespace Amqp
         internal ByteBuffer Encode(int reservedBytes)
         {
             ByteBuffer buffer = new ByteBuffer(reservedBytes + 128, true);
+            buffer.AdjustPosition(buffer.Offset + reservedBytes, 0);
             this.WriteToBuffer(buffer);
             return buffer;
         }
