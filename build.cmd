@@ -95,15 +95,7 @@ IF %ERRORLEVEL% EQU 0 (
 
 SET TestBrokerPath=.\bin\%build-config%\TestAmqpBroker\TestAmqpBroker.exe
 ECHO Starting the test AMQP broker %TestBrokerPath%
-SET is-elevated=true
-NET SESSION >nul 2>&1
-IF %ERRORLEVEL% NEQ 0 (
-  SET is-elevated=false
-  ECHO CMD prompt has no Administrator permission. Will not start WebSocket listener.
-  START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 /creds:guest:guest /cert:localhost
-) ELSE (
-  START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:80 /creds:guest:guest /cert:localhost
-)
+START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 rem Delay to allow broker to start up
 PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
 :run-test

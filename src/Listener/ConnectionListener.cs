@@ -69,7 +69,7 @@ namespace Amqp.Listener
                 password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
             }
 
-            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, "/", addressUri.Scheme);
+            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, addressUri.AbsolutePath, addressUri.Scheme);
         }
 
         /// <summary>
