@@ -242,6 +242,7 @@ namespace Amqp
                 }
 
                 this.outgoingWindow = begin.IncomingWindow;
+                this.nextIncomingId = begin.NextOutgoingId;
             }
 
             if (begin.HandleMax < this.handleMax)
@@ -451,12 +452,13 @@ namespace Amqp
             bool newDelivery;
             lock (this.ThisLock)
             {
-                if (this.incomingWindow-- == 0)
+                this.nextIncomingId++;
+                this.incomingWindow--;
+                if (this.incomingWindow == 0)
                 {
                     this.SendFlow(new Flow());
                 }
 
-                this.nextIncomingId++;
                 newDelivery = transfer.HasDeliveryId && transfer.DeliveryId > this.incomingDeliveryId;
                 if (newDelivery)
                 {
@@ -564,7 +566,8 @@ namespace Amqp
             // Must be called under lock. Delivery must be on list already
             while (this.outgoingWindow > 0 && delivery != null)
             {
-                --this.outgoingWindow;
+                this.outgoingWindow--;
+                this.nextOutgoingId++;
                 Transfer transfer = new Transfer() { Handle = delivery.Handle };
 
                 bool first = delivery.BytesTransfered == 0;
