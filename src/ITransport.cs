@@ -28,7 +28,11 @@ namespace Amqp
         /// Sends a buffer.
         /// </summary>
         /// <param name="buffer">The buffer to send.</param>
+#if SMALL_MEMORY
+        void Send(ref ByteBuffer buffer);
+#else
         void Send(ByteBuffer buffer);
+#endif
 
         /// <summary>
         /// Receives a buffer.
@@ -37,7 +41,11 @@ namespace Amqp
         /// <param name="offset">The start position.</param>
         /// <param name="count">The number of bytes to receive.</param>
         /// <returns></returns>
+#if SMALL_MEMORY
+        int Receive(ref byte[] buffer, int offset, int count);
+#else
         int Receive(byte[] buffer, int offset, int count);
+#endif
 
         /// <summary>
         /// Closes the transport.

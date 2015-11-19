@@ -28,7 +28,12 @@ namespace ServiceBus.EventHub.NetMF
         public static void Main()
         {
             AmqpTrace.TraceLevel = TraceLevel.Information;
+#if SMALL_MEMORY
+            // FIXME
+            //AmqpTrace.TraceListener = (f, a) => Debug.Print(Fx.Format(f, a));
+#else
             AmqpTrace.TraceListener = (f, a) => Debug.Print(Fx.Format(f, a));
+#endif
 
             try
             {

@@ -25,6 +25,7 @@ namespace Amqp.Framing
         public static ProtocolHeader ReadHeader(ITransport transport)
         {
             byte[] smallBuffer = new byte[8];
+
             if (!ReadBuffer(transport, smallBuffer, 0, 8))
             {
                 throw new ObjectDisposedException(transport.GetType().Name);
@@ -43,18 +44,23 @@ namespace Amqp.Framing
             int size = AmqpBitConverter.ReadInt(sizeBuffer, 0);
             if ((uint)size > maxFrameSize)
             {
+#if !TRACE
+                throw new AmqpException(ErrorCode.InvalidFrameSize);
+#else
                 throw new AmqpException(ErrorCode.InvalidField,
                     Fx.Format(SRAmqp.InvalidFrameSize, size, maxFrameSize));
+#endif
             }
 
             ByteBuffer frameBuffer = new ByteBuffer(size, false);
             AmqpBitConverter.WriteInt(frameBuffer, size);
+
             if (!ReadBuffer(transport, frameBuffer.Buffer, frameBuffer.Length, frameBuffer.Size))
             {
                 return null;
             }
-
             frameBuffer.Append(frameBuffer.Size);
+
             return frameBuffer;
         }
 
@@ -62,7 +68,11 @@ namespace Amqp.Framing
         {
             while (count > 0)
             {
+#if SMALL_MEMORY
+                int bytes = transport.Receive(ref buffer, offset, count);
+#else
                 int bytes = transport.Receive(buffer, offset, count);
+#endif
                 offset += bytes;
                 count -= bytes;
                 if (bytes == 0)

@@ -57,8 +57,13 @@ namespace Amqp
         /// </summary>
         public static bool DisableServerCertValidation;
 
+#if SMALL_MEMORY
+        internal const uint DefaultMaxFrameSize = 1 * 512;
+        internal const ushort DefaultMaxSessions = 2;
+#else
         internal const uint DefaultMaxFrameSize = 256 * 1024;
         internal const ushort DefaultMaxSessions = 256;
+#endif
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         readonly Address address;
@@ -216,8 +221,12 @@ namespace Amqp
                     return (ushort)count;
                 }
 
+#if !TRACE
+                throw new AmqpException(ErrorCode.AmqpHandleExceeded);
+#else
                 throw new AmqpException(ErrorCode.NotAllowed,
                     Fx.Format(SRAmqp.AmqpHandleExceeded, this.channelMax));
+#endif
             }
         }
 
@@ -226,8 +235,14 @@ namespace Amqp
             this.ThrowIfClosed("Send");
             ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
             Frame.Encode(buffer, FrameType.Amqp, channel, command);
+#if SMALL_MEMORY
+            this.transport.Send(ref buffer);
+#else
             this.transport.Send(buffer);
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
+#endif
+#endif
         }
 
         internal int SendCommand(ushort channel, Transfer transfer, bool first, ByteBuffer payload, int reservedBytes)
@@ -235,6 +250,7 @@ namespace Amqp
             this.ThrowIfClosed("Send");
             ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
             Frame.Encode(buffer, FrameType.Amqp, channel, transfer);
+
             int payloadSize = payload.Length;
             int frameSize = buffer.Length + payloadSize;
             bool more = frameSize > this.maxFrameSize;
@@ -264,8 +280,16 @@ namespace Amqp
             }
 
             payload.Complete(payloadSize);
-            this.transport.Send(frameBuffer);
+
+#if SMALL_MEMORY
+            this.transport.Send(ref buffer);
+#else
+            this.transport.Send(buffer);
+
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
+#endif
+#endif
 
             return payloadSize;
         }
@@ -302,8 +326,12 @@ namespace Amqp
                 }
                 else
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.IllegalOperationStateClose, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
+#endif
                 }
 
                 this.SendClose(error);
@@ -315,15 +343,25 @@ namespace Amqp
         static void OnHeartBeatTimer(object state)
         {
             var thisPtr = (Connection)state;
+#if SMALL_MEMORY
+            ByteBuffer buffer = new ByteBuffer(new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 }, 0, 8, 8);
+            thisPtr.transport.Send(ref buffer);
+#else
             byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
             thisPtr.transport.Send(new ByteBuffer(frame, 0, frame.Length, frame.Length));
+
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
+#endif
+#endif
         }
 
         void Connect(SaslProfile saslProfile, Open open)
         {
             ITransport transport;
+
             TcpTransport tcpTransport = new TcpTransport();
+
             tcpTransport.Connect(this, this.address, DisableServerCertValidation);
             transport = tcpTransport;
 
@@ -339,6 +377,11 @@ namespace Amqp
             this.transport = transport;
 
             // after getting the transport, move state to open pipe before starting the pump
+            if (open == null)
+            {
+                open = new Open() { ContainerId = Guid.NewGuid().ToString(), HostName = this.address.Host };
+            }
+
             this.SendHeader();
             this.SendOpen(open);
             this.state = State.OpenPipe;
@@ -351,24 +394,38 @@ namespace Amqp
         {
             if (this.state >= State.ClosePipe)
             {
+#if !TRACE
+                throw new AmqpException(ErrorCode.IllegalOperationState, operation + " @ " + this.state.ToString());
+#else
                 throw new AmqpException(this.Error ??
                     new Error()
                     {
                         Condition = ErrorCode.IllegalState,
                         Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
                     });
+#endif
             }
         }
 
         void SendHeader()
         {
             byte[] header = new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
+#if SMALL_MEMORY
+            ByteBuffer buffer = new ByteBuffer(header, 0, header.Length, header.Length);
+            this.transport.Send(ref buffer);
+#else
             this.transport.Send(new ByteBuffer(header, 0, header.Length, header.Length));
+
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP 0 1.0.0");
+#endif
+#endif
         }
 
         void SendOpen(Open open)
         {
+            open.ChannelMax = DefaultMaxSessions - 1;
+            open.MaxFrameSize = this.maxFrameSize;
             this.SendCommand(0, open);
         }
 
@@ -391,8 +448,12 @@ namespace Amqp
                 }
                 else
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnOpen, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnOpen", this.state));
+#endif
                 }
             }
 
@@ -437,8 +498,12 @@ namespace Amqp
                 }
                 else
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnClose, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnClose", this.state));
+#endif
                 }
 
                 this.state = State.End;
@@ -452,8 +517,12 @@ namespace Amqp
             {
                 if (remoteChannel > this.channelMax)
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.AmqpHandleExceeded, (this.channelMax + 1).ToString());
+#else
                     throw new AmqpException(ErrorCode.NotAllowed,
                         Fx.Format(SRAmqp.AmqpHandleExceeded, this.channelMax + 1));
+#endif
                 }
 
                 Session session = this.GetSession(this.localSessions, begin.RemoteChannel);
@@ -471,8 +540,12 @@ namespace Amqp
                 var remoteSession = this.remoteSessions[remoteChannel];
                 if (remoteSession != null)
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.HandleInUse, remoteSession.GetType().Name);
+#else
                     throw new AmqpException(ErrorCode.HandleInUse,
                         Fx.Format(SRAmqp.AmqpHandleInUse, remoteChannel, remoteSession.GetType().Name));
+#endif
                 }
 
                 this.remoteSessions[remoteChannel] = session;
@@ -509,17 +582,27 @@ namespace Amqp
 
                 if (session == null)
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.ChannelNotFound, channel.ToString());
+#else
                     throw new AmqpException(ErrorCode.NotFound,
                         Fx.Format(SRAmqp.AmqpChannelNotFound, channel));
+#endif
                 }
 
                 return session;
             }
         }
 
+#if SMALL_MEMORY
+        internal bool OnHeader(ref ProtocolHeader header)
+#else
         internal bool OnHeader(ProtocolHeader header)
+#endif
         {
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", header);
+#endif
             lock (this.ThisLock)
             {
                 if (this.state == State.OpenPipe)
@@ -532,8 +615,12 @@ namespace Amqp
                 }
                 else
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.IllegalOperationStateOnHeader, this.state.ToString());
+#else
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnHeader", this.state));
+#endif
                 }
 
                 if (header.Major != 1 || header.Minor != 0 || header.Revision != 0)
@@ -545,14 +632,25 @@ namespace Amqp
             return true;
         }
 
+#if SMALL_MEMORY
+        internal bool OnFrame(ref ByteBuffer buffer)
+#else
         internal bool OnFrame(ByteBuffer buffer)
+#endif
         {
             bool shouldContinue = true;
             try
             {
                 ushort channel;
                 DescribedList command;
+#if SMALL_MEMORY
+                //Frame.GetFrame(ref buffer, out channel, out command);
                 Frame.Decode(buffer, out channel, out command);
+#else
+                Frame.Decode(buffer, out channel, out command);
+#endif
+
+#if TRACE
                 if (buffer.Length > 0)
                 {
                     Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1} payload {2}", channel, command, buffer.Length);
@@ -561,6 +659,7 @@ namespace Amqp
                 {
                     Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
                 }
+#endif
 
                 if (command != null)
                 {
@@ -598,11 +697,17 @@ namespace Amqp
 
         void OnException(Exception exception)
         {
+#if TRACE
             Trace.WriteLine(TraceLevel.Error, "Exception occurred: {0}", exception.ToString());
+#endif
             AmqpException amqpException = exception as AmqpException;
             Error error = amqpException != null ?
                 amqpException.Error :
+#if !TRACE
+                new Error() { ErrorCode = ErrorCode.InternalError, Description = exception.Message };
+#else
                 new Error() { Condition = ErrorCode.InternalError, Description = exception.Message };
+#endif
 
             if (this.state < State.ClosePipe)
             {
@@ -628,10 +733,16 @@ namespace Amqp
 
         internal void OnIoException(Exception exception)
         {
+#if TRACE
             Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception.ToString());
+#endif
             if (this.state != State.End)
             {
+#if !TRACE
+                Error error = new Error() { ErrorCode = ErrorCode.ConnectionForced };
+#else
                 Error error = new Error() { Condition = ErrorCode.ConnectionForced };
+#endif
                 for (int i = 0; i < this.localSessions.Length; i++)
                 {
                     if (this.localSessions[i] != null)
@@ -680,7 +791,11 @@ namespace Amqp
 
             public void Start()
             {
+#if !TRACE
+                new Thread(this.PumpThread).Start();
+#else
                 Fx.StartThread(this.PumpThread);
+#endif
             }
 
             void PumpThread()
@@ -688,7 +803,11 @@ namespace Amqp
                 try
                 {
                     ProtocolHeader header = Reader.ReadHeader(this.connection.transport);
+#if SMALL_MEMORY
+                    this.connection.OnHeader(ref header);
+#else
                     this.connection.OnHeader(header);
+#endif
                 }
                 catch (Exception exception)
                 {
@@ -702,9 +821,14 @@ namespace Amqp
                     try
                     {
                         ByteBuffer buffer = Reader.ReadFrameBuffer(this.connection.transport, sizeBuffer, this.connection.maxFrameSize);
+
                         if (buffer != null)
                         {
+#if SMALL_MEMORY
+                            this.connection.OnFrame(ref buffer);
+#else
                             this.connection.OnFrame(buffer);
+#endif
                         }
                         else
                         {

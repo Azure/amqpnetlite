@@ -37,10 +37,16 @@ namespace Amqp.Sasl
 
         internal ITransport Open(string hostname, ITransport transport)
         {
+#if SMALL_MEMORY
+            ProtocolHeader myHeader = this.Start(hostname, ref transport);
+#else
             ProtocolHeader myHeader = this.Start(hostname, transport);
+#endif
 
             ProtocolHeader theirHeader = Reader.ReadHeader(transport);
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", theirHeader);
+#endif
             this.OnHeader(myHeader, theirHeader);
 
             SaslCode code = SaslCode.SysTemp;
@@ -52,7 +58,15 @@ namespace Amqp.Sasl
                     throw new ObjectDisposedException(transport.GetType().Name);
                 }
 
+#if NETMF
+                //Microsoft.SPOT.Debug.GC(true);
+#endif
+
+#if SMALL_MEMORY
+                if (!this.OnFrame(ref transport, ref buffer, out code))
+#else
                 if (!this.OnFrame(transport, buffer, out code))
+#endif
                 {
                     break;
                 }
@@ -60,24 +74,39 @@ namespace Amqp.Sasl
 
             if (code != SaslCode.Ok)
             {
+#if !TRACE
+                throw new AmqpException(ErrorCode.SaslNegoFailed, code.ToString());
+#else
                 throw new AmqpException(ErrorCode.UnauthorizedAccess,
                     Fx.Format(SRAmqp.SaslNegoFailed, code));
+#endif
             }
 
             return this.UpgradeTransport(transport);
         }
 
+#if SMALL_MEMORY
+        internal ProtocolHeader Start(string hostname, ref ITransport transport)
+#else
         internal ProtocolHeader Start(string hostname, ITransport transport)
+#endif
         {
             ProtocolHeader myHeader = new ProtocolHeader() { Id = 3, Major = 1, Minor = 0, Revision = 0 };
+
 
             ByteBuffer headerBuffer = new ByteBuffer(
                 new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', myHeader.Id, myHeader.Major, myHeader.Minor, myHeader.Revision },
                 0,
                 8,
                 8);
+#if SMALL_MEMORY
+            transport.Send(ref headerBuffer);
+#else
             transport.Send(headerBuffer);
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP {0}", myHeader);
+#endif
+#endif
 
             DescribedList command = this.GetStartCommand(hostname);
             if (command != null)
@@ -97,12 +126,24 @@ namespace Amqp.Sasl
             }
         }
 
+#if SMALL_MEMORY
+        internal bool OnFrame(ref ITransport transport, ref ByteBuffer buffer, out SaslCode code)
+#else
         internal bool OnFrame(ITransport transport, ByteBuffer buffer, out SaslCode code)
+#endif
         {
             ushort channel;
             DescribedList command;
+#if SMALL_MEMORY
+            //Frame.GetFrame(ref buffer, out channel, out command);
             Frame.Decode(buffer, out channel, out command);
+#else
+            Frame.Decode(buffer, out channel, out command);
+#endif
+
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
+#endif
 
             bool shouldContinue = true;
             if (command.Descriptor.Code == Codec.SaslOutcome.Code)
@@ -124,12 +165,20 @@ namespace Amqp.Sasl
             return shouldContinue;
         }
 
+#if SMALL_MEMORY
+        internal DescribedList OnCommandInternal(ref DescribedList command)
+#else
         internal DescribedList OnCommandInternal(DescribedList command)
+#endif
         {
             return this.OnCommand(command);
         }
 
+#if SMALL_MEMORY
+        internal ITransport UpgradeTransportInternal(ref ITransport transport)
+#else
         internal ITransport UpgradeTransportInternal(ITransport transport)
+#endif
         {
             return this.UpgradeTransport(transport);
         }
@@ -162,8 +211,14 @@ namespace Amqp.Sasl
         {
             ByteBuffer buffer = new ByteBuffer(Frame.CmdBufferSize, true);
             Frame.Encode(buffer, FrameType.Sasl, 0, command);
+
+#if SMALL_MEMORY
+            transport.Send(ref buffer);
+#else
             transport.Send(buffer);
+#if TRACE
             Trace.WriteLine(TraceLevel.Frame, "SEND {0}", command);
+#endif
+#endif
         }
     }
-}

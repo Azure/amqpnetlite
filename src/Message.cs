@@ -120,8 +120,8 @@ namespace Amqp
             {
                 if (this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
                 {
-                    return ((AmqpValue)this.BodySection).GetValue<T>();
-                }
+                return ((AmqpValue)this.BodySection).GetValue<T>();
+            }
                 else if (this.BodySection.Descriptor.Code == Codec.Data.Code)
                 {
                     Data data = (Data)this.BodySection;
@@ -171,13 +171,22 @@ namespace Amqp
         /// </summary>
         /// <param name="buffer">The buffer.</param>
         /// <returns></returns>
+#if SMALL_MEMORY
+        public static Message Decode(ref ByteBuffer buffer)
+#else
         public static Message Decode(ByteBuffer buffer)
+#endif
         {
             Message message = new Message();
 
             while (buffer.Length > 0)
             {
+#if SMALL_MEMORY
+                var described = (RestrictedDescribed)Encoder.ReadObject(ref buffer);
+#else
                 var described = (RestrictedDescribed)Encoder.ReadObject(buffer);
+#endif
+
                 if (described.Descriptor.Code == Codec.Header.Code)
                 {
                     message.Header = (Header)described;
@@ -210,9 +219,17 @@ namespace Amqp
                 }
                 else
                 {
+#if !TRACE
+                    throw new AmqpException(ErrorCode.AmqpUnknownDescriptor, described.Descriptor.Code.ToString());
+#else
                     throw new AmqpException(ErrorCode.FramingError,
                         Fx.Format(SRAmqp.AmqpUnknownDescriptor, described.Descriptor));
+#endif
                 }
+
+#if SMALL_MEMORY
+                described = null;
+#endif
             }
 
             return message;
@@ -226,11 +243,20 @@ namespace Amqp
             return buffer;
         }
 
+#if SMALL_MEMORY
+        static void EncodeIfNotNull(RestrictedDescribed section, ref ByteBuffer buffer)
+#else
         static void EncodeIfNotNull(RestrictedDescribed section, ByteBuffer buffer)
+#endif
+
         {
             if (section != null)
             {
+#if SMALL_MEMORY
+                section.Encode(ref buffer);
+#else
                 section.Encode(buffer);
+#endif
             }
         }
 
@@ -317,4 +343,5 @@ namespace Amqp
         }
 #endif
     }
+
 }

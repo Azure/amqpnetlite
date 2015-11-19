@@ -23,9 +23,11 @@ namespace Amqp
     using System.Threading;
     using Microsoft.SPOT;
 
+#if TRACE
     // Framework specific routines
     public static class Fx
     {
+
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
@@ -69,6 +71,8 @@ namespace Amqp
             new Thread(threadStart).Start();
         }
     }
+
+#endif
 
     class Uri
     {

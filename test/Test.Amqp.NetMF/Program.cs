@@ -41,7 +41,14 @@ namespace Test.Amqp
 
         static void WriteTrace(string format, params object[] args)
         {
+#if SMALL_MEMORY
+            // FIXME
+            //string message = args == null ? format : Fx.Format(format, args);
+            string message = "NEED FIX";
+#else
             string message = args == null ? format : Fx.Format(format, args);
+#endif
+
 #if NETMF
             Debug.Print(message);
 #elif COMPACT_FRAMEWORK

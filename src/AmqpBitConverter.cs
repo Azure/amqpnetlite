@@ -34,6 +34,356 @@ namespace Amqp
         public static readonly bool IsLittleEndian = BitConverter.IsLittleEndian;
 #endif
 
+
+#if SMALL_MEMORY
+
+        /// <summary>
+        /// Reads a signed byte and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static sbyte ReadByte(ref ByteBuffer buffer)
+        {
+            buffer.Validate(false, FixedWidth.UByte);
+            sbyte data = (sbyte)buffer.Buffer[buffer.Offset];
+            buffer.Complete(FixedWidth.UByte);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads an unsigned byte and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static byte ReadUByte(ref ByteBuffer buffer)
+        {
+            return (byte)ReadByte(ref buffer);
+        }
+
+        /// <summary>
+        /// Reads a 16-bit signed integer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static short ReadShort(ref ByteBuffer buffer)
+        {
+            buffer.Validate(false, FixedWidth.Short);
+            short data = (short)((buffer.Buffer[buffer.Offset] << 8) | buffer.Buffer[buffer.Offset + 1]);
+            buffer.Complete(FixedWidth.Short);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a 16-bit unsigned integer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static ushort ReadUShort(ref ByteBuffer buffer)
+        {
+            return (ushort)ReadShort(ref buffer);
+        }
+
+        /// <summary>
+        /// Reads a 32-bit signed integer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static int ReadInt(ref ByteBuffer buffer)
+        {
+            buffer.Validate(false, FixedWidth.Int);
+            int data = ReadInt(buffer.Buffer, buffer.Offset);
+            buffer.Complete(FixedWidth.Int);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a 32-bit signed integer from the buffer at the specified offset.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <param name="offset">The offset in the buffer to start reading.</param>
+        /// <returns></returns>
+        public static int ReadInt(byte[] buffer, int offset)
+        {
+            return (buffer[offset] << 24) | (buffer[offset + 1] << 16) | (buffer[offset + 2] << 8) | buffer[offset + 3];
+        }
+
+        /// <summary>
+        /// Reads a 32-bit unsigned integer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static uint ReadUInt(ByteBuffer buffer)
+        {
+            return (uint)ReadInt(ref buffer);
+        }
+
+        /// <summary>
+        /// Reads a 64-bit signed integer from the buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static long ReadLong(ref ByteBuffer buffer)
+        {
+            buffer.Validate(false, FixedWidth.Long);
+            long high = ReadInt(buffer.Buffer, buffer.Offset);
+            long low = (uint)ReadInt(buffer.Buffer, buffer.Offset + 4);
+            long data = (high << 32) | low;
+            buffer.Complete(FixedWidth.Long);
+            return data;
+        }
+
+        /// <summary>
+        /// Reads a 64-bit unsigned integer from the buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static ulong ReadULong(ref ByteBuffer buffer)
+        {
+            return (ulong)ReadLong(ref buffer);
+        }
+
+        /// <summary>
+        /// Reads a 32-bit floating-point value from the buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static unsafe float ReadFloat(ref ByteBuffer buffer)
+        {
+            int data = ReadInt(ref buffer);
+            return *((float*)&data);
+        }
+
+        /// <summary>
+        /// Reads a 64-bit floating-point value from the buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static unsafe double ReadDouble(ref ByteBuffer buffer)
+        {
+            long data = ReadLong(ref buffer);
+            return *((double*)&data);
+        }
+
+        /// <summary>
+        /// Reads a uuid (16-bytes) from the buffer and advance the buffer read cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to read from.</param>
+        /// <returns></returns>
+        public static Guid ReadUuid(ref ByteBuffer buffer)
+        {
+            buffer.Validate(false, FixedWidth.Uuid);
+            byte[] d = new byte[FixedWidth.Uuid];
+            if (AmqpBitConverter.IsLittleEndian)
+            {
+                int pos = buffer.Offset;
+                d[3] = buffer.Buffer[pos++];
+                d[2] = buffer.Buffer[pos++];
+                d[1] = buffer.Buffer[pos++];
+                d[0] = buffer.Buffer[pos++];
+
+                d[5] = buffer.Buffer[pos++];
+                d[4] = buffer.Buffer[pos++];
+
+                d[7] = buffer.Buffer[pos++];
+                d[6] = buffer.Buffer[pos++];
+
+                Array.Copy(buffer.Buffer, pos, d, 8, 8);
+            }
+            else
+            {
+                Array.Copy(buffer.Buffer, buffer.Offset, d, 0, FixedWidth.Uuid);
+            }
+
+            buffer.Complete(FixedWidth.Uuid);
+            return new Guid(d);
+        }
+
+        /// <summary>
+        /// Reads bytes from one buffer into another.
+        /// </summary>
+        /// <param name="buffer">Source buffer.</param>
+        /// <param name="data">Destination buffer</param>
+        /// <param name="offset">The start position to write.</param>
+        /// <param name="count">The number of bytes to read.</param>
+        //public static void ReadBytes(ByteBuffer buffer, byte[] data, int offset, int count)
+        //{
+        //    buffer.Validate(false, count);
+        //    Array.Copy(buffer.Buffer, buffer.Offset, data, offset, count);
+        //    buffer.Complete(count);
+        //}
+
+        /// <summary>
+        /// Writes a signed byte into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteByte(ref ByteBuffer buffer, sbyte data)
+        {
+            buffer.Validate(true, FixedWidth.Byte);
+            buffer.Buffer[buffer.WritePos] = (byte)data;
+            buffer.Append(FixedWidth.Byte);
+        }
+
+        /// <summary>
+        /// Writes an unsigned byte into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteUByte(ref ByteBuffer buffer, byte data)
+        {
+            WriteByte(ref buffer, (sbyte)data);
+        }
+
+        /// <summary>
+        /// Writes a 16-bit signed integer into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteShort(ref ByteBuffer buffer, short data)
+        {
+            buffer.Validate(true, FixedWidth.Short);
+            buffer.Buffer[buffer.WritePos] = (byte)(data >> 8);
+            buffer.Buffer[buffer.WritePos + 1] = (byte)data;
+            buffer.Append(FixedWidth.Short);
+        }
+
+        /// <summary>
+        /// Writes a 16-bit unsigned integer into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteUShort(ref ByteBuffer buffer, ushort data)
+        {
+            WriteShort(ref buffer, (short)data);
+        }
+
+        /// <summary>
+        /// Writes a 32-bit signed integer into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteInt(ByteBuffer buffer, int data)
+        {
+            buffer.Validate(true, FixedWidth.Int);
+            WriteInt(buffer.Buffer, buffer.WritePos, data);
+            buffer.Append(FixedWidth.Int);
+        }
+
+        /// <summary>
+        /// Writes a 32-bit unsigned integer into the buffer at specified offset.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="offset">The offset of the buffer.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteInt(byte[] buffer, int offset, int data)
+        {
+            buffer[offset] = (byte)(data >> 24);
+            buffer[offset + 1] = (byte)(data >> 16);
+            buffer[offset + 2] = (byte)(data >> 8);
+            buffer[offset + 3] = (byte)data;
+        }
+
+        /// <summary>
+        /// Writes a 32-bit unsigned integer into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteUInt(ByteBuffer buffer, uint data)
+        {
+            WriteInt(buffer, (int)data);
+        }
+
+        /// <summary>
+        /// Writes a 64-bit signed integer into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteLong(ref ByteBuffer buffer, long data)
+        {
+            WriteInt(buffer, (int)(data >> 32));
+            WriteInt(buffer, (int)data);
+        }
+
+        /// <summary>
+        /// Writes a 64-bit unsigned integer into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteULong(ref ByteBuffer buffer, ulong data)
+        {
+            WriteLong(ref buffer, (long)data);
+        }
+
+        /// <summary>
+        /// Writes a 32-bit floating-point value into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static unsafe void WriteFloat(ByteBuffer buffer, float data)
+        {
+            int n = *((int*)&data);
+            WriteInt(buffer, n);
+        }
+
+        /// <summary>
+        /// Writes a 64-bit floating-point value into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static unsafe void WriteDouble(ref ByteBuffer buffer, double data)
+        {
+            long n = *((long*)&data);
+            WriteLong(ref buffer, n);
+        }
+
+        /// <summary>
+        /// Writes a uuid (16-bytes) into the buffer and advance the buffer write cursor.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="data">The data to write.</param>
+        public static void WriteUuid(ref ByteBuffer buffer, Guid data)
+        {
+            buffer.Validate(true, FixedWidth.Uuid);
+            byte[] p = data.ToByteArray();
+            int pos = buffer.WritePos;
+
+            if (AmqpBitConverter.IsLittleEndian)
+            {
+                buffer.Buffer[pos++] = p[3];
+                buffer.Buffer[pos++] = p[2];
+                buffer.Buffer[pos++] = p[1];
+                buffer.Buffer[pos++] = p[0];
+
+                buffer.Buffer[pos++] = p[5];
+                buffer.Buffer[pos++] = p[4];
+
+                buffer.Buffer[pos++] = p[7];
+                buffer.Buffer[pos++] = p[6];
+
+                Array.Copy(p, 8, buffer.Buffer, pos, 8);
+            }
+            else
+            {
+                Array.Copy(p, buffer.Buffer, FixedWidth.Uuid);
+            }
+
+            buffer.Append(FixedWidth.Uuid);
+        }
+
+        /// <summary>
+        /// Writes bytes from one buffer into another.
+        /// </summary>
+        /// <param name="buffer">The destination buffer.</param>
+        /// <param name="data">The source buffer</param>
+        /// <param name="offset">The position in source buffer to start.</param>
+        /// <param name="count">The number of bytes to write.</param>
+        public static void WriteBytes(ByteBuffer buffer, byte[] data, int offset, int count)
+        {
+            buffer.Validate(true, count);
+            Array.Copy(data, offset, buffer.Buffer, buffer.WritePos, count);
+            buffer.Append(count);
+        }
+#else
         /// <summary>
         /// Reads a signed byte and advance the buffer read cursor.
         /// </summary>
@@ -202,12 +552,12 @@ namespace Amqp
         /// <param name="data">Destination buffer</param>
         /// <param name="offset">The start position to write.</param>
         /// <param name="count">The number of bytes to read.</param>
-        public static void ReadBytes(ByteBuffer buffer, byte[] data, int offset, int count)
-        {
-            buffer.Validate(false, count);
-            Array.Copy(buffer.Buffer, buffer.Offset, data, offset, count);
-            buffer.Complete(count);
-        }
+        //public static void ReadBytes(ByteBuffer buffer, byte[] data, int offset, int count)
+        //{
+        //    buffer.Validate(false, count);
+        //    Array.Copy(buffer.Buffer, buffer.Offset, data, offset, count);
+        //    buffer.Complete(count);
+        //}
 
         /// <summary>
         /// Writes a signed byte into the buffer and advance the buffer write cursor.
@@ -380,5 +730,7 @@ namespace Amqp
             Array.Copy(data, offset, buffer.Buffer, buffer.WritePos, count);
             buffer.Append(count);
         }
+#endif
+
     }
 }

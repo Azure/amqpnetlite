@@ -59,6 +59,14 @@ namespace Amqp.Framing
             set { this.Fields[2] = value; }
         }
 
+#if !TRACE
+        public ErrorCode ErrorCode
+        {
+            get;
+            set;
+        }
+#endif
+
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current error object.

@@ -26,6 +26,48 @@ namespace Amqp.Framing
 
     static class Codec
     {
+#if SMALL_MEMORY
+        // transport performatives
+        public static readonly Descriptor Open = new Descriptor(0x0000000000000010, "");
+        public static readonly Descriptor Begin = new Descriptor(0x0000000000000011, "");
+        public static readonly Descriptor Attach = new Descriptor(0x0000000000000012, "");
+        public static readonly Descriptor Flow = new Descriptor(0x0000000000000013, "");
+        public static readonly Descriptor Transfer = new Descriptor(0x0000000000000014, "");
+        public static readonly Descriptor Dispose = new Descriptor(0x0000000000000015, "");
+        public static readonly Descriptor Detach = new Descriptor(0x0000000000000016, "");
+        public static readonly Descriptor End = new Descriptor(0x0000000000000017, "");
+        public static readonly Descriptor Close = new Descriptor(0x0000000000000018, "");
+
+        public static readonly Descriptor Error = new Descriptor(0x000000000000001d, "");
+
+        // outcome
+        public static readonly Descriptor Received = new Descriptor(0x0000000000000023, "");
+        public static readonly Descriptor Accepted = new Descriptor(0x0000000000000024, "");
+        public static readonly Descriptor Rejected = new Descriptor(0x0000000000000025, "");
+        public static readonly Descriptor Released = new Descriptor(0x0000000000000026, "");
+        public static readonly Descriptor Modified = new Descriptor(0x0000000000000027, "");
+
+        public static readonly Descriptor Source = new Descriptor(0x0000000000000028, "");
+        public static readonly Descriptor Target = new Descriptor(0x0000000000000029, "");
+
+        // sasl
+        public static readonly Descriptor SaslMechanisms = new Descriptor(0x0000000000000040, "");
+        public static readonly Descriptor SaslInit = new Descriptor(0x0000000000000041, "");
+        public static readonly Descriptor SaslChallenge = new Descriptor(0x0000000000000042, "");
+        public static readonly Descriptor SaslResponse = new Descriptor(0x0000000000000043, "");
+        public static readonly Descriptor SaslOutcome = new Descriptor(0x0000000000000044, "");
+
+        // message
+        public static readonly Descriptor Header = new Descriptor(0x0000000000000070, "");
+        public static readonly Descriptor DeliveryAnnotations = new Descriptor(0x0000000000000071, "");
+        public static readonly Descriptor MessageAnnotations = new Descriptor(0x0000000000000072, "");
+        public static readonly Descriptor Properties = new Descriptor(0x0000000000000073, "");
+        public static readonly Descriptor ApplicationProperties = new Descriptor(0x0000000000000074, "");
+        public static readonly Descriptor Data = new Descriptor(0x0000000000000075, "");
+        public static readonly Descriptor AmqpSequence = new Descriptor(0x0000000000000076, "");
+        public static readonly Descriptor AmqpValue = new Descriptor(0x0000000000000077, "");
+        public static readonly Descriptor Footer = new Descriptor(0x0000000000000078, "");
+#else
         // transport performatives
         public static readonly Descriptor Open = new Descriptor(0x0000000000000010, "amqp:open:list");
         public static readonly Descriptor Begin = new Descriptor(0x0000000000000011, "amqp:begin:list");
@@ -68,7 +110,6 @@ namespace Amqp.Framing
         public static readonly Descriptor Footer = new Descriptor(0x0000000000000078, "amqp:footer:map");
 
         // transactions
-#if DOTNET
         public static readonly Descriptor Coordinator = new Descriptor(0x0000000000000030, "amqp:coordinator:list");
         public static readonly Descriptor Declare = new Descriptor(0x0000000000000031, "amqp:declare:list");
         public static readonly Descriptor Discharge = new Descriptor(0x0000000000000032, "amqp:discharge:list");
@@ -78,6 +119,8 @@ namespace Amqp.Framing
 
         static Codec()
         {
+#if SMALL_MEMORY
+#else
             Encoder.Initialize();
 
             Encoder.AddKnownDescribed(Codec.Open, () => new Open());
@@ -111,11 +154,11 @@ namespace Amqp.Framing
             Encoder.AddKnownDescribed(Codec.MessageAnnotations, () => new MessageAnnotations());
             Encoder.AddKnownDescribed(Codec.Properties, () => new Properties());
             Encoder.AddKnownDescribed(Codec.ApplicationProperties, () => new ApplicationProperties());
-            Encoder.AddKnownDescribed(Codec.Data, () => new Data());
+            //Encoder.AddKnownDescribed(Codec.Data, () => new Data());
             Encoder.AddKnownDescribed(Codec.AmqpSequence, () => new AmqpSequence());
             Encoder.AddKnownDescribed(Codec.AmqpValue, () => new AmqpValue());
             Encoder.AddKnownDescribed(Codec.Footer, () => new Footer());
-
+#endif
 #if DOTNET
             Encoder.AddKnownDescribed(Codec.Coordinator, () => new Coordinator());
             Encoder.AddKnownDescribed(Codec.Declare, () => new Declare());
@@ -129,9 +172,26 @@ namespace Amqp.Framing
         // all dependant static fields in other class are initialized correctly.
         // NETMF does not track cross-class static field/ctor dependancies
 
+#if SMALL_MEMORY
+        public static void Encode(RestrictedDescribed command, ref ByteBuffer buffer)
+        {
+#if TRACE
+            Fx.Assert(command != null, "command is null!");
+#endif
+            command.Encode(ref buffer);
+        }
+
+        public static object Decode(ref ByteBuffer buffer)
+        {
+            byte formatCode = Encoder.ReadFormatCode(ref buffer);
+            return Encoder.ReadDescribed(ref buffer, formatCode);
+        }
+#else
         public static void Encode(RestrictedDescribed command, ByteBuffer buffer)
         {
+#if TRACE
             Fx.Assert(command != null, "command is null!");
+#endif
             command.Encode(buffer);
         }
 
@@ -139,6 +199,7 @@ namespace Amqp.Framing
         {
             return Encoder.ReadDescribed(buffer, Encoder.ReadFormatCode(buffer));
         }
+#endif
 
         public static Symbol[] GetSymbolMultiple(object[] fields, int index)
         {
@@ -161,7 +222,11 @@ namespace Amqp.Framing
                 return symbols;
             }
 
+#if !TRACE
+            throw new AmqpException(ErrorCode.InvalidField, index.ToString() + " : " + fields[index].GetType().Name);
+#else
             throw new AmqpException(ErrorCode.InvalidField, Fx.Format("{0} {1}", index, fields[index].GetType().Name));
+#endif
         }
     }
 }

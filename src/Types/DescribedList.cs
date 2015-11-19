@@ -45,6 +45,23 @@ namespace Amqp.Types
             get { return this.fields; }
         }
 
+#if SMALL_MEMORY
+        internal override void DecodeValue(ref ByteBuffer buffer)
+        {
+            byte formatCode = Encoder.ReadFormatCode(ref buffer);
+            var list = Encoder.ReadList(ref buffer, formatCode);
+            int count = list.Count < this.fields.Length ? list.Count : this.fields.Length;
+            for (int i = 0; i < count; i++)
+            {
+                this.fields[i] = list[i];
+            }
+        }
+
+        internal override void EncodeValue(ref ByteBuffer buffer)
+        {
+            Encoder.WriteList(ref buffer, this.fields, true);
+        }
+#else
         internal override void DecodeValue(ByteBuffer buffer)
         {
             var list = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
@@ -59,6 +76,7 @@ namespace Amqp.Types
         {
             Encoder.WriteList(buffer, this.fields, true);
         }
+#endif
 
 #if TRACE
         /// <summary>

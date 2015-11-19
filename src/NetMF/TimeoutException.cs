@@ -22,7 +22,11 @@ namespace Amqp
     public class TimeoutException : Exception
     {
         public TimeoutException()
+#if TRACE
             : base(SRAmqp.AmqpTimeout)
+#else
+            : base("Amqp timeout")
+#endif
         {
         }
     }

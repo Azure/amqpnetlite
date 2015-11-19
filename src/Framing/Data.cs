@@ -66,7 +66,18 @@ namespace Amqp.Framing
             get;
             set;
         }
+#if SMALL_MEMORY
+        internal override void EncodeValue(ref ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(ref buffer, this.Binary, true);
+        }
 
+        internal override void DecodeValue(ref ByteBuffer buffer)
+        {
+            byte formatedCode = Encoder.ReadFormatCode(ref buffer);
+            this.Binary = Encoder.ReadBinary(ref buffer, formatedCode);
+        }
+#else
         internal override void EncodeValue(ByteBuffer buffer)
         {
             if (this.Buffer != null)

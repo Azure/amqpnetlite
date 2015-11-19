@@ -26,6 +26,34 @@ namespace Amqp.Types
         /// Encodes the current described value into a buffer.
         /// </summary>
         /// <param name="buffer">The buffer to write.</param>
+#if SMALL_MEMORY
+        public void Encode(ref ByteBuffer buffer)
+        {
+            AmqpBitConverter.WriteUByte(ref buffer, FormatCode.Described);
+            this.EncodeDescriptor(ref buffer);
+            this.EncodeValue(ref buffer);
+        }
+
+        /// <summary>
+        /// Decodes the descriptor and the value of the current object from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        public void Decode(ref ByteBuffer buffer)
+        {
+            Encoder.ReadFormatCode(ref buffer);
+            this.DecodeDescriptor(ref buffer);
+            this.DecodeValue(ref buffer);
+        }
+
+        internal abstract void EncodeDescriptor(ref ByteBuffer buffer);
+
+        internal abstract void EncodeValue(ref ByteBuffer buffer);
+
+        internal abstract void DecodeDescriptor(ref ByteBuffer buffer);
+
+        internal abstract void DecodeValue(ref ByteBuffer buffer);
+
+#else
         public void Encode(ByteBuffer buffer)
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Described);
@@ -51,5 +79,7 @@ namespace Amqp.Types
         internal abstract void DecodeDescriptor(ByteBuffer buffer);
 
         internal abstract void DecodeValue(ByteBuffer buffer);
+#endif
+
     }
 }

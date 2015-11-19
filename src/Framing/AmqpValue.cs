@@ -51,7 +51,7 @@ namespace Amqp.Framing
                 {
                     this.value = Encoder.ReadObject(this.valueBuffer);
                     this.valueDecoded = true;
-                }
+        }
 
                 return this.value;
             }
@@ -73,7 +73,7 @@ namespace Amqp.Framing
                 if (this.binaryOffset == 0)
                 {
                     throw new ArgumentException("Body is not binary type.");
-                }
+            }
 
                 var payload = new ByteBuffer(this.valueBuffer.Buffer, this.valueBuffer.Offset + this.binaryOffset,
                     this.valueBuffer.Length - this.binaryOffset, this.valueBuffer.Length - this.binaryOffset);
@@ -105,8 +105,8 @@ namespace Amqp.Framing
             }
             else
             {
-                Serialization.AmqpSerializer.Serialize(buffer, this.value);
-            }
+            Serialization.AmqpSerializer.Serialize(buffer, this.value);
+        }
         }
 
         internal override void DecodeValue(ByteBuffer buffer)
@@ -172,6 +172,18 @@ namespace Amqp.Framing
             set { this.value = value; }
         }
 
+
+#if SMALL_MEMORY
+        internal override void EncodeValue(ref ByteBuffer buffer)
+        {
+            Encoder.WriteObject(ref buffer, this.value);
+        }
+
+        internal override void DecodeValue(ref ByteBuffer buffer)
+        {
+            this.value = Encoder.ReadObject(ref buffer);
+        }
+#else
         internal override void EncodeValue(ByteBuffer buffer)
         {
             Encoder.WriteObject(buffer, this.value);
@@ -181,6 +193,8 @@ namespace Amqp.Framing
         {
             this.value = Encoder.ReadObject(buffer);
         }
+#endif
+
 #endif
     }
 }
