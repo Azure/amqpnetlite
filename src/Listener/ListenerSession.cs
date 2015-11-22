@@ -35,7 +35,8 @@ namespace Amqp.Listener
         {
             var connection = (ListenerConnection)this.Connection;
             Link link = connection.Listener.Container.CreateLink(connection, this, attach);
-            base.OnAttach(attach);
+            this.AddRemoteLink(attach.Handle, link);
+            link.OnAttach(attach.Handle, attach);
         }
     }
 }

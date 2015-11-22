@@ -346,45 +346,58 @@ namespace Amqp
 
         internal virtual void OnAttach(Attach attach)
         {
+            if (attach.Handle > this.handleMax)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed,
+                    Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
+            }
+
+            Link link = null;
             lock (this.ThisLock)
             {
-                if (attach.Handle > this.handleMax)
-                {
-                    throw new AmqpException(ErrorCode.NotAllowed,
-                        Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
-                }
-
                 for (int i = 0; i < this.localLinks.Length; ++i)
                 {
-                    Link link = this.localLinks[i];
-                    if (link != null && string.Compare(link.Name, attach.LinkName) == 0)
+                    Link temp = this.localLinks[i];
+                    if (temp != null && temp.LinkState == LinkState.AttachSent && string.Compare(temp.Name, attach.LinkName) == 0)
                     {
-                        link.OnAttach(attach.Handle, attach);
-
-                        int count = this.remoteLinks.Length;
-                        if (count - 1 < attach.Handle)
-                        {
-                            int size = Math.Min(count * 2, (int)this.handleMax + 1);
-                            Link[] expanded = new Link[size];
-                            Array.Copy(this.remoteLinks, expanded, count);
-                            this.remoteLinks = expanded;
-                        }
-
-                        var remoteLink = this.remoteLinks[attach.Handle];
-                        if (remoteLink != null)
-                        {
-                            throw new AmqpException(ErrorCode.HandleInUse,
-                                Fx.Format(SRAmqp.AmqpHandleInUse, attach.Handle, remoteLink.Name));
-                        }
-
-                        this.remoteLinks[attach.Handle] = link;
-                        return;
+                        link = temp;
+                        this.AddRemoteLink(attach.Handle, link);
+                        break;
                     }
                 }
             }
 
-            throw new AmqpException(ErrorCode.NotFound,
-                Fx.Format(SRAmqp.LinkNotFound, attach.LinkName));
+            if (link == null)
+            {
+                throw new AmqpException(ErrorCode.NotFound,
+                    Fx.Format(SRAmqp.LinkNotFound, attach.LinkName));
+            }
+            
+            link.OnAttach(attach.Handle, attach);
+        }
+
+        internal void AddRemoteLink(uint remoteHandle, Link link)
+        {
+            lock (this.ThisLock)
+            {
+                int count = this.remoteLinks.Length;
+                if (count - 1 < remoteHandle)
+                {
+                    int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                    Link[] expanded = new Link[size];
+                    Array.Copy(this.remoteLinks, expanded, count);
+                    this.remoteLinks = expanded;
+                }
+
+                var remoteLink = this.remoteLinks[remoteHandle];
+                if (remoteLink != null)
+                {
+                    throw new AmqpException(ErrorCode.HandleInUse,
+                        Fx.Format(SRAmqp.AmqpHandleInUse, remoteHandle, remoteLink.Name));
+                }
+
+                this.remoteLinks[remoteHandle] = link;
+            }
         }
 
         void CancelPendingDeliveries(Error error)

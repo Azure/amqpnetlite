@@ -37,6 +37,13 @@ namespace Test.Amqp
         static readonly Address Address = new Address(Endpoint);
         ContainerHost host;
 
+        [ClassInitialize]
+        public static void Initialize(TestContext context)
+        {
+            //Trace.TraceLevel = TraceLevel.Frame;
+            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+        }
+
         [TestInitialize]
         public void Initialize()
         {
@@ -149,7 +156,7 @@ namespace Test.Amqp
             int count = 80;
             var connection = new Connection(Address);
             var session = new Session(connection);
-            var sender = new SenderLink(session, "send-link", TestLinkProcessor.Name);
+            var sender = new SenderLink(session, "send-link", "any");
 
             for (int i = 0; i < count; i++)
             {
@@ -184,7 +191,7 @@ namespace Test.Amqp
 
             sender.Close();
 
-            sender = new SenderLink(session, "send-link", TestLinkProcessor.Name);
+            sender = new SenderLink(session, "send-link", "any");
             for (int i = 0; i < count; i++)
             {
                 var message = new Message("msg" + i);
@@ -296,6 +303,109 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
         }
+
+        [TestMethod]
+        public void DuplicateLinkNameSameSessionTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
+
+            string linkName = "same-send-link";
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender1 = new SenderLink(session, linkName, name);
+            var sender2 = new SenderLink(session, linkName, name);
+
+            sender1.Send(new Message("msg1"), SendTimeout);
+
+            try
+            {
+                sender2.Send(new Message("msg1"), SendTimeout);
+                Assert.IsTrue(false, "Excpected exception not thrown");
+            }
+            catch(AmqpException ae)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.Stolen, ae.Error.Condition);
+            }
+
+            sender1.Close();
+            session.Close();
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void DuplicateLinkNameSameConnectionTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
+
+            string linkName = "same-send-link";
+            var connection = new Connection(Address);
+
+            var session1 = new Session(connection);
+            var sender1 = new SenderLink(session1, linkName, name);
+
+            var session2 = new Session(connection);
+            var sender2 = new SenderLink(session2, linkName, name);
+
+            sender1.Send(new Message("msg1"), SendTimeout);
+
+            try
+            {
+                sender2.Send(new Message("msg1"), SendTimeout);
+                Assert.IsTrue(false, "Excpected exception not thrown");
+            }
+            catch (AmqpException ae)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.Stolen, ae.Error.Condition);
+            }
+
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void DuplicateLinkNameDifferentContainerTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
+
+            string linkName = "same-send-link";
+            var connection1 = new Connection(Address);
+            var session1 = new Session(connection1);
+            var sender1 = new SenderLink(session1, linkName, name);
+
+            var connection2 = new Connection(Address);
+            var session2 = new Session(connection2);
+            var sender2 = new SenderLink(session2, linkName, name);
+
+            sender1.Send(new Message("msg1"), SendTimeout);
+            sender1.Send(new Message("msg1"), SendTimeout);
+
+            connection1.Close();
+            connection2.Close();
+        }
+
+        [TestMethod]
+        public void DuplicateLinkNameDifferentRoleTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterLinkProcessor(new TestLinkProcessor());
+
+            string linkName = "same-link-for-different-role";
+            var connection = new Connection(Address);
+            var session1 = new Session(connection);
+            var sender = new SenderLink(session1, linkName, name);
+            sender.Send(new Message("msg1"), SendTimeout);
+
+            var session2 = new Session(connection);
+            var receiver = new ReceiverLink(session2, linkName, name);
+            receiver.SetCredit(2, false);
+            var message = receiver.Receive();
+            Assert.IsTrue(message != null, "No message was received");
+            receiver.Accept(message);
+
+            connection.Close();
+        }
     }
 
     class TestMessageProcessor : IMessageProcessor
@@ -356,36 +466,31 @@ namespace Test.Amqp
 
     class TestLinkProcessor : ILinkProcessor
     {
-        public const string Name = "LinkProcessorName";
-
         public void Process(AttachContext attachContext)
         {
-            if (attachContext.Link.Role &&
-                ((Target)attachContext.Attach.Target).Address == Name)
+            attachContext.Complete(new TestLinkEndpoint(), attachContext.Attach.Role ? 0 : 30);
+        }
+
+        class TestLinkEndpoint : LinkEndpoint
+        {
+            public override void OnMessage(MessageContext messageContext)
             {
-                attachContext.Complete(new IncomingLinkEndpoint(), 30);
+                messageContext.Complete();
             }
-            else
+
+            public override void OnFlow(FlowContext flowContext)
             {
-                attachContext.Complete(new Error() { Condition = ErrorCode.NotImplemented });
+                for (int i = 0; i < flowContext.Messages; i++)
+                {
+                    var message = new Message("test message");
+                    flowContext.Link.SendMessage(message, message.Encode());
+                }
             }
-        }
-    }
 
-    class IncomingLinkEndpoint : LinkEndpoint
-    {
-        public override void OnMessage(MessageContext messageContext)
-        {
-            // this can also be done when an async operation, if required, is done
-            messageContext.Complete();
-        }
-
-        public override void OnFlow(FlowContext flowContext)
-        {
-        }
-
-        public override void OnDisposition(DispositionContext dispositionContext)
-        {
+            public override void OnDisposition(DispositionContext dispositionContext)
+            {
+                dispositionContext.Complete();
+            }
         }
     }
 }
