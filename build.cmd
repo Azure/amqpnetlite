@@ -21,8 +21,15 @@ SET build-verbosity=minimal
 SET build-test=true
 SET build-nuget=false
 
-IF /I "%1" EQU "" goto args-done 
+IF /I "%1" EQU "" goto args-done
+
 SET build-target=%1
+IF /I "%build-target%" EQU "release" (
+  set build-target=build
+  set build-config=Release
+  set build-nuget=true
+  GOTO :args-done
+)
 
 :args-loop
 SHIFT
@@ -139,7 +146,8 @@ ENDLOCAL
 EXIT /b !return-code!
 
 :usage
-ECHO build.cmd clean^|build [options]
+ECHO build.cmd clean^|build^|release [options]
+ECHO release is a shortcut for "build --config Release --nuget"
 ECHO options:
 ECHO  --config ^<value^>      [Debug] build configuration (e.g. Debug, Release)
 ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
