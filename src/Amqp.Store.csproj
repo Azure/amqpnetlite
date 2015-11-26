@@ -22,7 +22,7 @@
     <Optimize>false</Optimize>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_STORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <Optimize>true</Optimize>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS_STORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -39,7 +39,7 @@
     <DebugSymbols>true</DebugSymbols>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_STORE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>ARM</PlatformTarget>
@@ -50,7 +50,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS_STORE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -63,7 +63,7 @@
     <DebugSymbols>true</DebugSymbols>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_STORE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -74,7 +74,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS_STORE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -87,7 +87,7 @@
     <DebugSymbols>true</DebugSymbols>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;WINDOWS_STORE</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -98,7 +98,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\$(Platform)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(Platform)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;WINDOWS_STORE</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -163,6 +163,12 @@
     <Compile Include="Link.cs" />
     <Compile Include="LinkedList.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="Net\AmqpSettings.cs" />
+    <Compile Include="Net\AsyncPump.cs" />
+    <Compile Include="Net\IAsyncTransport.cs" />
+    <Compile Include="Net\IBufferManager.cs" />
+    <Compile Include="Net\TaskExtensions.cs" />
+    <Compile Include="Net\WrappedByteBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\StoreAssemblyInfo.cs" />
     <Compile Include="ReceiverLink.cs" />
@@ -192,6 +198,7 @@
     <Compile Include="Types\Map.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
+    <Compile Include="WinRT\ConnectionFactory.cs" />
     <Compile Include="WinRT\Timer.cs" />
     <Compile Include="WinRT\Fx.cs" />
     <Compile Include="WinRT\List.cs" />
@@ -202,6 +209,7 @@
       <DependentUpon>SRAmqp.resx</DependentUpon>
     </Compile>
     <Compile Include="WinRT\TcpTransport.cs" />
+    <Compile Include="WinRT\WebSocketTransport.cs" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
     <VisualStudioVersion>11.0</VisualStudioVersion>
