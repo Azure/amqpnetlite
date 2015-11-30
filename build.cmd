@@ -21,18 +21,19 @@ SET build-verbosity=minimal
 SET build-test=true
 SET build-nuget=false
 
-IF /I "%1" EQU "" goto args-done
-
-SET build-target=%1
-IF /I "%build-target%" EQU "release" (
+IF /I "%1" EQU "release" (
   set build-target=build
   set build-config=Release
   set build-nuget=true
   GOTO :args-done
 )
 
-:args-loop
-SHIFT
+IF /I "%1" EQU "clean" (
+  set build-target=clean
+  GOTO :args-done
+)
+
+:args-start
 IF /I "%1" EQU "" GOTO args-done
 
 IF /I "%1" EQU "--skiptest" SET build-test=false&&GOTO args-loop
@@ -54,6 +55,10 @@ GOTO :args-error
   SHIFT
   SET build-verbosity=%1
   GOTO args-loop
+
+:args-loop
+SHIFT
+GOTO :args-start
 
 :args-done
 
@@ -146,12 +151,13 @@ ENDLOCAL
 EXIT /b !return-code!
 
 :usage
-ECHO build.cmd clean^|build^|release [options]
-ECHO release is a shortcut for "build --config Release --nuget"
+ECHO build.cmd [clean^|release] [options]
+ECHO   clean: clean intermediate files
+ECHO   release: a shortcut for "--config Release --nuget"
 ECHO options:
 ECHO  --config ^<value^>      [Debug] build configuration (e.g. Debug, Release)
 ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
-ECHO  --verbosity ^<value^>   [quiet] build verbosity (q[uiet], m[inimal], n[ormal], d[etailed] and diag[nostic])
+ECHO  --verbosity ^<value^>   [minimal] build verbosity (q[uiet], m[inimal], n[ormal], d[etailed] and diag[nostic])
 ECHO  --skiptest            [false] skip test
 ECHO  --nuget               [false] create NuGet packet (for Release only)
 GOTO :eof 
