@@ -19,6 +19,7 @@ namespace Amqp.Listener
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Security.Cryptography.X509Certificates;
     using Amqp.Framing;
     using Amqp.Types;
@@ -44,8 +45,11 @@ namespace Amqp.Listener
     /// </remarks>
     public class ContainerHost : IContainer
     {
+        readonly string containerId;
         readonly X509Certificate2 certificate;
         readonly ConnectionListener[] listeners;
+        readonly LinkCollection linkCollection;
+        readonly ClosedCallback onLinkClosed;
         readonly Dictionary<string, MessageProcessor> messageProcessors;
         readonly Dictionary<string, RequestProcessor> requestProcessors;
         ILinkProcessor linkProcessor;
@@ -67,13 +71,17 @@ namespace Amqp.Listener
         /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of form "user:password".</param>
         public ContainerHost(IList<Uri> addressUriList, X509Certificate2 certificate, string userInfo)
         {
+            this.containerId = string.Join("-", this.GetType().Name, Process.GetCurrentProcess().Id, Guid.NewGuid().ToString().Substring(0, 8));
             this.certificate = certificate;
+            this.linkCollection = new LinkCollection(this.containerId);
+            this.onLinkClosed = this.OnLinkClosed;
             this.messageProcessors = new Dictionary<string, MessageProcessor>(StringComparer.OrdinalIgnoreCase);
             this.requestProcessors = new Dictionary<string, RequestProcessor>(StringComparer.OrdinalIgnoreCase);
             this.listeners = new ConnectionListener[addressUriList.Count];
             for (int i = 0; i < addressUriList.Count; i++)
             {
                 this.listeners[i] = new ConnectionListener(addressUriList[i], userInfo, this);
+                this.listeners[i].AMQP.ContainerId = this.containerId;
             }
         }
 
@@ -221,13 +229,20 @@ namespace Amqp.Listener
 
         Link IContainer.CreateLink(ListenerConnection connection, ListenerSession session, Attach attach)
         {
-            return new ListenerLink(session, attach);
+            ListenerLink link = new ListenerLink(session, attach);
+            link.Closed += this.onLinkClosed;
+            return link;
         }
 
         bool IContainer.AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach)
         {
-            string address = attach.Role ? ((Source)attach.Source).Address : ((Target)attach.Target).Address;
             var listenerLink = (ListenerLink)link;
+            if (!this.linkCollection.TryAdd(listenerLink))
+            {
+                throw new AmqpException(ErrorCode.Stolen, string.Format("Link '{0}' has been attached already.", attach.LinkName));
+            }
+
+            string address = attach.Role ? ((Source)attach.Source).Address : ((Target)attach.Target).Address;
 
             MessageProcessor messageProcessor;
             if (TryGetProcessor(this.messageProcessors, address, out messageProcessor))
@@ -250,6 +265,12 @@ namespace Amqp.Listener
             }
 
             throw new AmqpException(ErrorCode.NotFound, "No processor was found at " + address);
+        }
+
+        void OnLinkClosed(AmqpObject sender, Error error)
+        {
+            ListenerLink link = (ListenerLink)sender;
+            this.linkCollection.Remove(link);
         }
 
         class MessageProcessor : IDisposable

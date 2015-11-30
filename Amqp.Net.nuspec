@@ -3,7 +3,7 @@
   <metadata>
     <id>AMQPNetLite</id>
     <title>AMQP.Net Lite: AMQP 1.0 client library for .Net and WinRT</title>
-    <version>1.1.3</version>
+    <version>1.1.4</version>
     <authors>Microsoft</authors>
     <owners>Microsoft</owners>
     <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
@@ -19,15 +19,15 @@
   <files>
     <file src="bin\Release\Amqp.Net\*.*" target="lib\net45" />
     <file src="bin\Release\Amqp.Net35\*.*" target="lib\net35" />
-    <file src="bin\Release\Amqp.NetCF39\*.*" target="lib\netcf39" />
+    <file src="bin\Release\Amqp.NetCF39\*.*" target="lib\net-cf" />
     <file src="bin\Release\Amqp.NetMF42\*.*" target="lib\netmf42" />
     <file src="bin\Release\Amqp.NetMF42\le\*.p*" target="lib\netmf42\le" />
     <file src="bin\Release\Amqp.NetMF42\be\*.p*" target="lib\netmf42\be" />
     <file src="bin\Release\Amqp.NetMF43\*.*" target="lib\netmf43" />
     <file src="bin\Release\Amqp.NetMF43\le\*.p*" target="lib\netmf43\le" />
     <file src="bin\Release\Amqp.NetMF43\be\*.p*" target="lib\netmf43\be" />
+    <file src="bin\Release\Amqp.NetCore\*.*" target="lib\portable-netcore451+wpa81" />
     <file src="bin\Release\Amqp.Store\*.*" target="lib\windows8" />
     <file src="bin\Release\Amqp.WP\*.*" target="lib\windowsphone8" />
-    <file src="bin\Release\Amqp.NetCore\*.*" target="lib\portable-netcore451+wpa81" />
   </files>
 </package>

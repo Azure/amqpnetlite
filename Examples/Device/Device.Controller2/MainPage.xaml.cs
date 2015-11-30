@@ -42,10 +42,6 @@ namespace Device.Controller
         {
             this.InitializeComponent();
             this.NavigationCacheMode = NavigationCacheMode.Required;
-
-            this.controller = new Controller();
-            this.btnData.DataContext = this.controller;
-            this.controller.Start();
         }
 
         /// <summary>
@@ -127,14 +123,13 @@ namespace Device.Controller
                 }
             }
 
-            public async void Start()
+            public async void Start(string address)
             {
-                Address address = new Address("amqp://guest:guest@192.168.1.120:5672");
                 ConnectionFactory factory = new ConnectionFactory();
 
                 try
                 {
-                    this.connection = await factory.CreateAsync(address);
+                    this.connection = await factory.CreateAsync(new Address(address));
                     this.session = new Session(connection);
                     this.sender = new SenderLink(session, "send-link", "control");
                     this.receiver = new ReceiverLink(session, "recv-link", "data");
@@ -151,6 +146,13 @@ namespace Device.Controller
                 int temperature = (int)message.ApplicationProperties["temperature"];
                 this.Message = temperature.ToString();
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            this.controller = new Controller();
+            this.btnData.DataContext = this.controller;
+            this.controller.Start(this.txtAddress.Text);
         }
     }
 }

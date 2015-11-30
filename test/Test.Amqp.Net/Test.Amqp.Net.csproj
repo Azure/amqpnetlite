@@ -61,6 +61,7 @@
     <Compile Include="AmqpSerializerTests.cs" />
     <Compile Include="AmqpCodecTests.cs" />
     <Compile Include="Assert.cs" />
+    <Compile Include="WebSocketTests.cs" />
     <Compile Include="TransactionTests.cs" />
     <Compile Include="PerfTests.cs" />
     <Compile Include="TaskTests.cs" />

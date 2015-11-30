@@ -49,6 +49,7 @@
     <Compile Include="Listener\AttachContext.cs" />
     <Compile Include="Listener\ContextState.cs" />
     <Compile Include="Listener\FlowContext.cs" />
+    <Compile Include="Listener\LinkCollection.cs" />
     <Compile Include="Listener\ILinkProcessor.cs" />
     <Compile Include="Listener\LinkEndpoint.cs" />
     <Compile Include="Listener\DispositionContext.cs" />
