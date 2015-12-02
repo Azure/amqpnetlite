@@ -317,7 +317,7 @@ namespace Amqp
                     return null;
                 }
 
-#if DOTNET || NETFX_CORE
+#if DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
                 waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
 #else
                 waiter = new SyncWaiter();
@@ -421,7 +421,7 @@ namespace Amqp
             }
         }
 
-#if DOTNET || NETFX_CORE
+#if DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         sealed class AsyncWaiter : Waiter
         {
             readonly static TimerCallback onTimer = OnTimer;

@@ -52,7 +52,9 @@ namespace Amqp
 #else
         static Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
-            return null;
+            var tcs = new TaskCompletionSource<DeliveryState>();
+            tcs.SetResult(null);
+            return tcs.Task;
         }
 
         internal static ByteBuffer GetByteBuffer(this IBufferManager bufferManager, int size)
