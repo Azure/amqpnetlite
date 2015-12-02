@@ -20,11 +20,12 @@ namespace Amqp
     using System;
     using System.Collections.Generic;
     using System.Runtime.InteropServices.WindowsRuntime;
+    using System.Threading.Tasks;
     using Windows.Networking;
     using Windows.Networking.Sockets;
     using Windows.Storage.Streams;
 
-    sealed class TcpTransport : ITransport
+    sealed class TcpTransport : IAsyncTransport
     {
         readonly Queue<ByteBuffer> writeQueue;
         Connection connection;
@@ -38,19 +39,75 @@ namespace Amqp
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.connection = connection;
-            this.socket = new StreamSocket();
-            this.socket.ConnectAsync(
-                new HostName(address.Host),
-                address.Port.ToString(),
-                address.UseSsl ? SocketProtectionLevel.Ssl : SocketProtectionLevel.PlainSocket).AsTask().GetAwaiter().GetResult();
+            var factory = new ConnectionFactory();
+            this.ConnectAsync(address, factory).GetAwaiter().GetResult();
+        }
+
+        public void SetConnection(Connection connection)
+        {
+            this.connection = connection;
+        }
+
+        public async Task ConnectAsync(Address address, ConnectionFactory factory)
+        {
+            SocketProtectionLevel spl = !address.UseSsl ?
+                SocketProtectionLevel.PlainSocket :
+#if NETFX_CORE
+                SocketProtectionLevel.Tls12;
+#else
+                SocketProtectionLevel.Ssl;
+#endif
+            StreamSocket ss = new StreamSocket();
+            await ss.ConnectAsync(new HostName(address.Host), address.Port.ToString(), spl);
+
+            this.socket = ss;
+        }
+
+        public async Task<int> ReceiveAsync(byte[] buffer, int offset, int count)
+        {
+            var ret = await this.socket.InputStream.ReadAsync(buffer.AsBuffer(offset, count), (uint)count, InputStreamOptions.None);
+            if (ret.Length == 0)
+            {
+                throw new ObjectDisposedException(this.GetType().Name);
+            }
+
+            return (int)ret.Length;
+        }
+
+        public bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        {
+            if (buffer != null)
+            {
+                this.SendInternal(buffer);
+            }
+            else
+            {
+                for (int i = 0; i < bufferList.Count; i++)
+                {
+                    ArraySegment<byte> segment = bufferList[i];
+                    this.SendInternal(new ByteBuffer(segment.Array, segment.Offset, segment.Count, segment.Count));
+                }
+            }
+
+            return true;
         }
 
         public void Close()
         {
-            this.socket.Dispose();
+            this.SendInternal(null);
         }
 
         public void Send(ByteBuffer buffer)
+        {
+            this.SendInternal(buffer);
+        }
+
+        public int Receive(byte[] buffer, int offset, int count)
+        {
+            return this.ReceiveAsync(buffer, offset, count).Result;
+        }
+
+        void SendInternal(ByteBuffer buffer)
         {
             lock (this.writeQueue)
             {
@@ -59,15 +116,15 @@ namespace Amqp
                 {
                     return;
                 }
+                else if (buffer == null)
+                {
+                    // close
+                    this.CloseSocket();
+                    return;
+                }
             }
 
             this.SendAsync(buffer);
-        }
-
-        public int Receive(byte[] buffer, int offset, int count)
-        {
-            IBuffer result = this.socket.InputStream.ReadAsync(buffer.AsBuffer(offset, count), (uint)count, InputStreamOptions.Partial).AsTask().Result;
-            return (int)result.Length;
         }
 
         async void SendAsync(ByteBuffer buffer)
@@ -81,6 +138,7 @@ namespace Amqp
                 catch (Exception exception)
                 {
                     this.connection.OnIoException(exception);
+                    this.CloseSocket();
                     break;
                 }
 
@@ -94,8 +152,26 @@ namespace Amqp
                     else
                     {
                         buffer = this.writeQueue.Peek();
+                        if (buffer == null)
+                        {
+                            // delayed close
+                            this.CloseSocket();
+                        }
                     }
                 }
+            }
+        }
+
+        void CloseSocket()
+        {
+            lock (this.writeQueue)
+            {
+                this.writeQueue.Clear();
+            }
+
+            if (this.socket != null)
+            {
+                this.socket.Dispose();
             }
         }
     }

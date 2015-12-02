@@ -29,28 +29,28 @@ namespace Amqp
     /// <param name="attach">The received attach frame.</param>
     public delegate void OnAttached(Link link, Attach attach);
 
+    enum LinkState
+    {
+        Start,
+        AttachSent,
+        AttachReceived,
+        Attached,
+        DetachPipe,
+        DetachSent,
+        DetachReceived,
+        End
+    }
+
     /// <summary>
     /// The Link class represents an AMQP link.
     /// </summary>
     public abstract class Link : AmqpObject
     {
-        enum State
-        {
-            Start,
-            AttachSent,
-            AttachReceived,
-            Attached,
-            DetachPipe,
-            DetachSent,
-            DetachReceived,
-            End
-        }
-
         readonly Session session;
         readonly string name;
         readonly uint handle;
         readonly OnAttached onAttached;
-        State state;
+        LinkState state;
 
         /// <summary>
         /// Initializes the link.
@@ -64,7 +64,7 @@ namespace Amqp
             this.name = name;
             this.onAttached = onAttached;
             this.handle = session.AddLink(this);
-            this.state = State.Start;
+            this.state = LinkState.Start;
         }
 
         /// <summary>
@@ -98,16 +98,21 @@ namespace Amqp
 
         internal bool IsDetaching
         {
-            get { return this.state >= State.DetachPipe; }
+            get { return this.state >= LinkState.DetachPipe; }
+        }
+
+        internal LinkState LinkState
+        {
+            get { return this.state; }
         }
 
         internal void Abort(Error error)
         {
             this.OnAbort(error);
 
-            if (this.state != State.End)
+            if (this.state != LinkState.End)
             {
-                this.state = State.End;
+                this.state = LinkState.End;
                 this.NotifyClosed(error);
             }
         }
@@ -116,13 +121,13 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
-                if (this.state == State.AttachSent)
+                if (this.state == LinkState.AttachSent)
                 {
-                    this.state = State.Attached;
+                    this.state = LinkState.Attached;
                 }
-                else if (this.state == State.DetachPipe)
+                else if (this.state == LinkState.DetachPipe)
                 {
-                    this.state = State.DetachSent;
+                    this.state = LinkState.DetachSent;
                 }
                 else
                 {
@@ -141,14 +146,14 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
-                if (this.state == State.DetachSent)
+                if (this.state == LinkState.DetachSent)
                 {
-                    this.state = State.End;
+                    this.state = LinkState.End;
                 }
-                else if (this.state == State.Attached)
+                else if (this.state == LinkState.Attached)
                 {
                     this.SendDetach(null);
-                    this.state = State.End;
+                    this.state = LinkState.End;
                 }
                 else
                 {
@@ -183,21 +188,21 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
-                if (this.state == State.End)
+                if (this.state == LinkState.End)
                 {
                     return true;
                 }
-                else if (this.state == State.AttachSent)
+                else if (this.state == LinkState.AttachSent)
                 {
-                    this.state = State.DetachPipe;
+                    this.state = LinkState.DetachPipe;
                 }
-                else if (this.state == State.Attached)
+                else if (this.state == LinkState.Attached)
                 {
-                    this.state = State.DetachSent;
+                    this.state = LinkState.DetachSent;
                 }
-                else if (this.state == State.DetachReceived)
+                else if (this.state == LinkState.DetachReceived)
                 {
-                    this.state = State.End;
+                    this.state = LinkState.End;
                 }
                 else
                 {
@@ -206,20 +211,20 @@ namespace Amqp
                 }
 
                 this.SendDetach(error);
-                return this.state == State.End;
+                return this.state == LinkState.End;
             }
         }
 
-        internal void SendFlow(uint deliveryCount, uint credit)
+        internal void SendFlow(uint deliveryCount, uint credit, bool drain)
         {
-            Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit };
+            Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
             this.session.SendFlow(flow);
         }
 
         internal void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
         {
-            Fx.Assert(this.state == State.Start, "state must be Start");
-            this.state = State.AttachSent;
+            Fx.Assert(this.state == LinkState.Start, "state must be Start");
+            this.state = LinkState.AttachSent;
             attach.LinkName = this.name;
             attach.Handle = this.handle;
             attach.Role = role;

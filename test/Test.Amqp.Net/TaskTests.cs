@@ -205,40 +205,5 @@ namespace Test.Amqp
 
             await connection.CloseAsync();
         }
-
-        [TestMethod]
-        public async Task WebSocketSendReceiveAsync()
-        {
-            string testName = "WebSocketSendReceiveAsync";
-            // assuming it matches the broker's setup
-            Address wsAddress = new Address("ws://guest:guest@localhost:80");
-            int nMsgs = 50;
-
-            Connection connection = await Connection.Factory.CreateAsync(wsAddress);
-            Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
-
-            for (int i = 0; i < nMsgs; ++i)
-            {
-                Message message = new Message();
-                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
-                message.ApplicationProperties = new ApplicationProperties();
-                message.ApplicationProperties["sn"] = i;
-                await sender.SendAsync(message);
-            }
-
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            for (int i = 0; i < nMsgs; ++i)
-            {
-                Message message = await receiver.ReceiveAsync();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
-                receiver.Accept(message);
-            }
-
-            await sender.CloseAsync();
-            await receiver.CloseAsync();
-            await session.CloseAsync();
-            await connection.CloseAsync();
-        }
     }
 }

@@ -63,17 +63,57 @@ namespace Amqp
 
         public async Task ConnectAsync(Address address, ConnectionFactory factory)
         {
-            Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            IPAddress[] ipAddresses;
+            IPAddress ip;
+            if (IPAddress.TryParse(address.Host, out ip))
+            {
+                ipAddresses = new IPAddress[] { ip };
+            }
+            else
+            {
+                ipAddresses = Dns.GetHostAddresses(address.Host);
+            }
+
+            // need to handle both IPv4 and IPv6
+            Socket socket = null;
+            Exception exception = null;
+            for (int i = 0; i < ipAddresses.Length; i++)
+            {
+                if (ipAddresses[i] == null ||
+                    (ipAddresses[i].AddressFamily == AddressFamily.InterNetwork && !Socket.OSSupportsIPv4) ||
+                    (ipAddresses[i].AddressFamily == AddressFamily.InterNetworkV6 && !Socket.OSSupportsIPv6))
+                {
+                    continue;
+                }
+
+                socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    await Task.Factory.FromAsync(
+                        (c, s) => socket.BeginConnect(ipAddresses[i], address.Port, c, s),
+                        (r) => socket.EndConnect(r),
+                        null);
+
+                    exception = null;
+                    break;
+                }
+                catch (Exception e)
+                {
+                    exception = e;
+                    socket.Close();
+                    socket = null;
+                }
+            }
+
+            if (socket == null)
+            {
+                throw exception ?? new SocketException((int)SocketError.AddressNotAvailable);
+            }
 
             if (factory.tcpSettings != null)
             {
                 factory.tcpSettings.Configure(socket);
             }
-
-            await Task.Factory.FromAsync(
-                (c, s) => ((Socket)s).BeginConnect(address.Host, address.Port, c, s),
-                (r) => ((Socket)r.AsyncState).EndConnect(r),
-                socket);
 
             IAsyncTransport transport;
             if (address.UseSsl)

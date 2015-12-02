@@ -83,6 +83,7 @@ namespace Amqp
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
+#if !WINDOWS_PHONE
             if (WebSocketTransport.MatchScheme(address.Scheme))
             {
                 WebSocketTransport wsTransport = new WebSocketTransport();
@@ -90,10 +91,17 @@ namespace Amqp
                 transport = wsTransport;
             }
             else
+#endif
+            if (string.Equals(address.Scheme, Address.Amqp, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(address.Scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase))
             {
                 TcpTransport tcpTransport = new TcpTransport();
                 await tcpTransport.ConnectAsync(address, this);
                 transport = tcpTransport;
+            }
+            else
+            {
+                throw new NotSupportedException(address.Scheme);
             }
 
             if (address.User != null)

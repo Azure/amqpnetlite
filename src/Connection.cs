@@ -127,7 +127,7 @@ namespace Amqp
             get { return this; }
         }
 
-#if DOTNET || NETFX_CORE
+#if DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
             IAsyncTransport transport, Open open, OnOpened onOpened)
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
@@ -187,7 +187,7 @@ namespace Amqp
 
         ByteBuffer WrapBuffer(ByteBuffer buffer, int offset, int length)
         {
-            return new ByteBuffer(buffer.Buffer, buffer.Offset - offset, length, length);
+            return new ByteBuffer(buffer.Buffer, offset, length, length);
         }
 #endif
 

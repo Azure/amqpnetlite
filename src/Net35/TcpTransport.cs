@@ -64,6 +64,7 @@ namespace Amqp
 
         class TcpSocket : Socket, ITransport
         {
+            // support IPv4 only
             public TcpSocket()
                 : base(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
             {
