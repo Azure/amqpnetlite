@@ -13,6 +13,12 @@
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>Azure ServiceBus AMQP Micro-Framework netmf netcf embedded iot winrt WindowsPhone</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="System" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
+    </frameworkAssemblies>    
     <dependencies>
     </dependencies>
   </metadata>
