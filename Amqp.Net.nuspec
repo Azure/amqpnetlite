@@ -32,6 +32,9 @@
     <file src="bin\Release\Amqp.NetMF43\*.*" target="lib\netmf43" />
     <file src="bin\Release\Amqp.NetMF43\le\*.p*" target="lib\netmf43\le" />
     <file src="bin\Release\Amqp.NetMF43\be\*.p*" target="lib\netmf43\be" />
+    <file src="bin\Release\Amqp.NetMF44\*.*" target="lib\netmf44" />
+    <file src="bin\Release\Amqp.NetMF44\le\*.p*" target="lib\netmf44\le" />
+    <file src="bin\Release\Amqp.NetMF44\be\*.p*" target="lib\netmf44\be" />
     <file src="bin\Release\Amqp.NetCore\*.*" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\*.*" target="lib\wpa81" />
     <file src="bin\Release\Amqp.Store\*.*" target="lib\windows8" />
