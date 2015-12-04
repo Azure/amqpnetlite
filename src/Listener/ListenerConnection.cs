@@ -25,10 +25,11 @@ namespace Amqp.Listener
     /// </summary>
     public class ListenerConnection : Connection
     {
+        readonly static OnOpened onOpened = OnOpen;
         readonly ConnectionListener listener;
 
         internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
-            : base(listener.BufferManager, listener.AMQP, address, transport, null, null)
+            : base(listener.BufferManager, listener.AMQP, address, transport, null, onOpened)
         {
             this.listener = listener;
         }
@@ -36,6 +37,12 @@ namespace Amqp.Listener
         internal ConnectionListener Listener
         {
             get { return this.listener; }
+        }
+
+        internal string RemoteContainerId
+        {
+            get;
+            private set;
         }
 
         internal override void OnBegin(ushort remoteChannel, Begin begin)
@@ -47,6 +54,12 @@ namespace Amqp.Listener
             // this updates the local session state
             begin.RemoteChannel = session.Channel;
             base.OnBegin(remoteChannel, begin);
+        }
+
+        static void OnOpen(Connection connection, Open open)
+        {
+            var thisPtr = (ListenerConnection)connection;
+            thisPtr.RemoteContainerId = open.ContainerId;
         }
     }
 }
