@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF42", "src\Amqp.NetMF42.csproj", "{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}"
 EndProject
@@ -87,6 +87,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device.SmallMemory", "Examples\Device\Device.SmallMemory\Device.SmallMemory.csproj", "{69E4A20C-EF50-49C6-8DAC-F76B9D565767}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Lite.NetMF44", "src\Amqp.Lite.NetMF44.csproj", "{E43D756E-0061-4326-841D-BAD89CFFB074}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF44", "src\Amqp.NetMF44.csproj", "{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -486,6 +488,22 @@ Global
 		{E43D756E-0061-4326-841D-BAD89CFFB074}.Release|x64.Build.0 = Release|Any CPU
 		{E43D756E-0061-4326-841D-BAD89CFFB074}.Release|x86.ActiveCfg = Release|Any CPU
 		{E43D756E-0061-4326-841D-BAD89CFFB074}.Release|x86.Build.0 = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|ARM.Build.0 = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|x64.Build.0 = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|x86.Build.0 = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|ARM.ActiveCfg = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|ARM.Build.0 = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|x64.ActiveCfg = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|x64.Build.0 = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|x86.ActiveCfg = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
