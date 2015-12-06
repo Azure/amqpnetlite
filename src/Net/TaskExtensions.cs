@@ -28,7 +28,7 @@ namespace Amqp
     /// </summary>
     public static class TaskExtensions
     {
-#if DOTNET
+#if NETFX
         static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
             return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);

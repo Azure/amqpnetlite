@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;DOTNET</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Debug\Amqp.Net\Amqp.Net.XML</DocumentationFile>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DOTNET</DefineConstants>
+    <DefineConstants>TRACE;NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

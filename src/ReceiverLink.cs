@@ -33,7 +33,7 @@ namespace Amqp
     /// </summary>
     public class ReceiverLink : Link
     {
-#if DOTNET
+#if NETFX
         const int DefaultCredit = 200;
 #else
         const int DefaultCredit = 20;
@@ -317,7 +317,7 @@ namespace Amqp
                     return null;
                 }
 
-#if DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+#if NETFX || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
                 waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
 #else
                 waiter = new SyncWaiter();
@@ -338,7 +338,7 @@ namespace Amqp
 
             DeliveryState state = outcome;
             bool settled = true;
-#if DOTNET
+#if NETFX
             var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
             if (txnState != null)
             {
@@ -421,7 +421,7 @@ namespace Amqp
             }
         }
 
-#if DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+#if NETFX || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         sealed class AsyncWaiter : Waiter
         {
             readonly static TimerCallback onTimer = OnTimer;

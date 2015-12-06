@@ -233,7 +233,7 @@ namespace Amqp
             Array.Copy(this.buffer, this.start, buffer, 0, dataSize);
         }
 
-#if DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+#if NETFX || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         internal int Start
         {
             get { return this.start; }
