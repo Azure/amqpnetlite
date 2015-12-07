@@ -4,15 +4,15 @@
     <id>AMQPNetLite</id>
     <title>AMQP.Net Lite: AMQP 1.0 client library for .Net and WinRT</title>
     <version>1.1.5</version>
-    <authors>Microsoft</authors>
+    <authors>xinchen</authors>
     <owners>Microsoft</owners>
     <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This is a lightweight AMQP 1.0 client library for use on .Net frameworks (including .Net Framework, .Net Micro Framework and .Net Compact Framework) and WinRT (Windows Phone and Windows Store).</description>
+    <description>This is a lightweight AMQP 1.0 client library for .Net frameworks (including .Net Framework, .Net Micro Framework, .Net Compact Framework and .Net Core) and WinRT (Windows Phone and Windows Store).</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>Azure ServiceBus AMQP Micro-Framework netmf netcf embedded iot winrt WindowsPhone</tags>
+    <tags>AMQP Micro-Framework netmf netcf iot winrt coreclr .NetPlatform .NetCore UWP</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf42, netmf43, netmf44" />
       <frameworkAssembly assemblyName="Microsoft.SPOT.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
@@ -23,6 +23,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="bin\Release\dotnet\*.*" target="lib\dotnet" />
     <file src="bin\Release\Amqp.Net\*.*" target="lib\net45" />
     <file src="bin\Release\Amqp.Net35\*.*" target="lib\net35" />
     <file src="bin\Release\Amqp.NetCF39\*.*" target="lib\net-cf" />

@@ -71,7 +71,7 @@ namespace Amqp
             }
             else
             {
-                ipAddresses = Dns.GetHostAddresses(address.Host);
+                ipAddresses = Dns.GetHostAddressesAsync(address.Host).GetAwaiter().GetResult();
             }
 
             // need to handle both IPv4 and IPv6
@@ -100,7 +100,7 @@ namespace Amqp
                 catch (Exception e)
                 {
                     exception = e;
-                    socket.Close();
+                    socket.Dispose();
                     socket = null;
                 }
             }
@@ -333,7 +333,7 @@ namespace Amqp
 
             void ITransport.Close()
             {
-                this.socket.Close();
+                this.socket.Dispose();
                 this.args.Dispose();
             }
         }
@@ -415,7 +415,7 @@ namespace Amqp
 
             void ITransport.Close()
             {
-                this.sslStream.Close();
+                this.sslStream.Dispose();
             }
         }
 

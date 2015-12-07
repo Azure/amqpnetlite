@@ -1,0 +1,67 @@
+{
+  "version": "1.1.5",
+  "description": "Amqp 1.0 Class Library for .NETFramework, .NETPlatform, and WinRT",
+  "authors": [ "xinchen" ],
+  "tags": [ "AMQP Micro-Framework netmf netcf iot winrt coreclr corefx .NetPlatform .NetCore UWP" ],
+  "projectUrl": "https://github.com/Azure/amqpnetlite",
+  "licenseUrl": "https://github.com/Azure/amqpnetlite/blob/master/license.txt",
+
+  "compile": [
+    "../../src/Framing/*.cs",
+    "../../src/Listener/*.cs",
+    "../../src/Net/*.cs",
+    "../../src/Sasl/*.cs",
+    "../../src/Serialization/*.cs",
+    "../../src/Transactions/*.cs",
+    "../../src/Types/*.cs",
+    "../../src/*.cs"
+  ],
+
+  "frameworks": {
+    "net45": {
+      "compilationOptions": {
+        "allowUnsafe": true,
+        "define": [ "TRACE", "NETFX" ]
+      },
+      "frameworkAssemblies": {
+        "System": "",
+        "System.Transactions": ""
+      }
+    },
+    "dnx451": {
+      "compilationOptions": {
+        "allowUnsafe": true,
+        "define": [ "TRACE", "NETFX" ]
+      },
+      "frameworkAssemblies": {
+        "System": "",
+        "System.Transactions": ""
+      }
+    },
+    "dotnet": {
+      "compilationOptions": {
+        "allowUnsafe": true,
+        "define": [ "TRACE", "DOTNET" ]
+      },
+      "dependencies": {
+        "System.Collections": "4.0.10-beta-23019",
+        "System.Collections.Concurrent": "4.0.10-beta-23019",
+        "System.Collections.NonGeneric": "4.0.0-beta-23019",
+        "System.Diagnostics.Tools": "4.0.1-beta-23409",
+        "System.Threading": "4.0.10-beta-23019",
+        "System.Threading.Tasks": "4.0.10-beta-23019",
+        "System.Threading.Thread": "4.0.0-beta-23409",
+        "System.Threading.ThreadPool": "4.0.10-beta-23409",
+        "System.Threading.Timer": "4.0.1-beta-23409",
+        "System.Net.NameResolution": "4.0.0-beta-23409",
+        "System.Net.Security": "4.0.0-beta-23409",
+        "System.Net.Sockets": "4.0.10-beta-23019",
+        "System.Reflection": "4.0.0",
+        "System.Reflection.Emit.Lightweight": "4.0.1-beta-23409",
+        "System.Reflection.Extensions": "4.0.1-beta-23409",
+        "System.Reflection.TypeExtensions": "4.0.1-beta-23409",
+        "System.Runtime.Serialization.Primitives": "4.0.11-beta-23409"
+      }
+    }
+  }
+}

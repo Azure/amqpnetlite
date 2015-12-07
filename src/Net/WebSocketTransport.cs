@@ -17,6 +17,7 @@
 
 namespace Amqp
 {
+#if NETFX
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -181,4 +182,5 @@ namespace Amqp
             while (buffer != null);
         }
     }
+#endif
 }

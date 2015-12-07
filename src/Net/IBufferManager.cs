@@ -19,7 +19,7 @@ namespace Amqp
 {
     using System;
 
-#if DOTNET
+#if NETFX || DOTNET
     /// <summary>
     /// The interface defines the methods to manage buffers.
     /// </summary>

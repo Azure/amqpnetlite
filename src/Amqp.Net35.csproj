@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;DOTNET35</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DOTNET35</DefineConstants>
+    <DefineConstants>TRACE;NETFX35</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -48,6 +48,7 @@
     <Compile Include="Net35\TcpTransport.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Net\TypeExtensions.cs" />
     <Compile Include="Sasl\SaslExternalProfile.cs" />
     <Compile Include="Sasl\SaslPlainMechanism.cs" />
     <Compile Include="Sasl\SaslMechanism.cs" />
