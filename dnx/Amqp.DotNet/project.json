@@ -57,7 +57,6 @@
         "System.Net.Security": "4.0.0-beta-23409",
         "System.Net.Sockets": "4.0.10-beta-23019",
         "System.Reflection": "4.0.0",
-        "System.Reflection.Emit.ILGeneration": "4.0.1-beta-23409",
         "System.Reflection.Emit.Lightweight": "4.0.1-beta-23409",
         "System.Reflection.Extensions": "4.0.1-beta-23409",
         "System.Reflection.TypeExtensions": "4.0.1-beta-23409",
