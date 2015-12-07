@@ -10,7 +10,6 @@
     "../../src/Framing/*.cs",
     "../../src/Listener/*.cs",
     "../../src/Net/*.cs",
-    "../../src/Dnx/*.cs",
     "../../src/Sasl/*.cs",
     "../../src/Serialization/*.cs",
     "../../src/Transactions/*.cs",

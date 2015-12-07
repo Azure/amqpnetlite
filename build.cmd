@@ -181,6 +181,7 @@ ECHO   release: a shortcut for "--config Release --nuget"
 ECHO options:
 ECHO  --config ^<value^>      [Debug] build configuration (e.g. Debug, Release)
 ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
+ECHO  --dnx                 [false] build dnx
 ECHO  --verbosity ^<value^>   [minimal] build verbosity (q[uiet], m[inimal], n[ormal], d[etailed] and diag[nostic])
 ECHO  --skiptest            [false] skip test
 ECHO  --nuget               [false] create NuGet packet (for Release only)
