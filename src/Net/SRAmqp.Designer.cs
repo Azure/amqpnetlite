@@ -39,7 +39,7 @@ namespace Amqp {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Amqp.SRAmqp", typeof(SRAmqp).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Amqp.SRAmqp", typeof(SRAmqp).Assembly());
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -1391,7 +1391,7 @@ namespace Amqp.Types
             return new AmqpException(ErrorCode.DecodeError,
                 Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, offset));
         }
-#if NETFX || NETFX35
+#if NETFX || DOTNET || NETFX35
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {

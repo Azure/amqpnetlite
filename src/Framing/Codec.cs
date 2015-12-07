@@ -18,7 +18,7 @@
 namespace Amqp.Framing
 {
     using Amqp.Sasl;
-#if NETFX
+#if NETFX || DOTNET
     using Amqp.Transactions;
 #endif
     using Amqp.Types;
@@ -68,7 +68,7 @@ namespace Amqp.Framing
         public static readonly Descriptor Footer = new Descriptor(0x0000000000000078, "amqp:footer:map");
 
         // transactions
-#if NETFX
+#if NETFX || DOTNET
         public static readonly Descriptor Coordinator = new Descriptor(0x0000000000000030, "amqp:coordinator:list");
         public static readonly Descriptor Declare = new Descriptor(0x0000000000000031, "amqp:declare:list");
         public static readonly Descriptor Discharge = new Descriptor(0x0000000000000032, "amqp:discharge:list");
@@ -116,7 +116,7 @@ namespace Amqp.Framing
             Encoder.AddKnownDescribed(Codec.AmqpValue, () => new AmqpValue());
             Encoder.AddKnownDescribed(Codec.Footer, () => new Footer());
 
-#if NETFX
+#if NETFX || DOTNET
             Encoder.AddKnownDescribed(Codec.Coordinator, () => new Coordinator());
             Encoder.AddKnownDescribed(Codec.Declare, () => new Declare());
             Encoder.AddKnownDescribed(Codec.Discharge, () => new Discharge());

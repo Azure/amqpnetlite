@@ -99,11 +99,7 @@ namespace Amqp
 
             this.Send(message, callback, acked);
 
-#if !COMPACT_FRAMEWORK
-            bool signaled = acked.WaitOne(millisecondsTimeout, true);
-#else
-            bool signaled = acked.WaitOne(millisecondsTimeout, false);
-#endif
+            bool signaled = acked.WaitOne(millisecondsTimeout);
             if (!signaled)
             {
                 lock (this.ThisLock)
@@ -152,7 +148,7 @@ namespace Amqp
         internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
             const int reservedBytes = 40;
-#if NETFX
+#if NETFX || DOTNET
             var buffer = message.Encode(this.Session.Connection.BufferManager, reservedBytes);
 #else
             var buffer = message.Encode(reservedBytes);
@@ -231,7 +227,7 @@ namespace Amqp
             if (delivery.OnOutcome != null)
             {
                 Outcome outcome = delivery.State as Outcome;
-#if NETFX
+#if NETFX || DOTNET
                 if (delivery.State != null && delivery.State is Amqp.Transactions.TransactionalState)
                 {
                     outcome = ((Amqp.Transactions.TransactionalState)delivery.State).Outcome;

@@ -127,7 +127,7 @@ namespace Amqp
             get { return this; }
         }
 
-#if NETFX || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+#if NETFX || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
             IAsyncTransport transport, Open open, OnOpened onOpened)
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)

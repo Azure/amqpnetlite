@@ -108,7 +108,7 @@ namespace Amqp
             }
         }
 
-#if (NETFX || NETFX35)
+#if (NETFX || DOTNET || NETFX35)
         /// <summary>
         /// Gets an object of type T from the message body.
         /// </summary>
@@ -245,7 +245,7 @@ namespace Amqp
             EncodeIfNotNull(this.Footer, buffer);
         }
 
-#if NETFX
+#if NETFX || DOTNET
         /// <summary>
         /// Disposes the current message to release resources.
         /// </summary>

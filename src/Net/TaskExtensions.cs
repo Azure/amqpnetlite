@@ -33,7 +33,8 @@ namespace Amqp
         {
             return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);
         }
-
+#endif
+#if NETFX || DOTNET
         internal static ByteBuffer GetByteBuffer(this IBufferManager bufferManager, int size)
         {
             ByteBuffer buffer;
@@ -50,13 +51,6 @@ namespace Amqp
             return buffer;
         }
 #else
-        static Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
-        {
-            var tcs = new TaskCompletionSource<DeliveryState>();
-            tcs.SetResult(null);
-            return tcs.Task;
-        }
-
         internal static ByteBuffer GetByteBuffer(this IBufferManager bufferManager, int size)
         {
             return new ByteBuffer(size, true);
@@ -104,8 +98,10 @@ namespace Amqp
         /// <returns></returns>
         public static async Task SendAsync(this SenderLink sender, Message message)
         {
-            var txnState = await TaskExtensions.GetTransactionalStateAsync(sender);
-
+            DeliveryState txnState = null;
+#if NETFX
+            txnState = await TaskExtensions.GetTransactionalStateAsync(sender);
+#endif
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
             sender.Send(
                 message,
