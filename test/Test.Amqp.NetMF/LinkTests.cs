@@ -21,13 +21,18 @@ using Amqp.Types;
 using System;
 using System.Text;
 using System.Threading;
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
+#if NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using System.Threading.Tasks;
 #endif
 
 namespace Test.Amqp
 {
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
     [TestClass]
 #endif
     public class LinkTests
@@ -40,7 +45,7 @@ namespace Test.Amqp
         bool waitExitContext = false;
 #endif
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
@@ -83,7 +88,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ConnectionFrameSize()
@@ -116,7 +121,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ConnectionChannelMax()
@@ -146,7 +151,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ConnectionWithIPAddress()
@@ -181,7 +186,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ConnectionRemoteProperties()
@@ -212,7 +217,7 @@ namespace Test.Amqp
             Assert.IsTrue(remoteOpen != null, "remote open not set");
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_OnMessage()
@@ -263,7 +268,7 @@ namespace Test.Amqp
             Assert.AreEqual(nMsgs, received, "not all messages are received.");
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_CloseBusyReceiver()
@@ -308,7 +313,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ReleaseMessage()
@@ -358,7 +363,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_SendAck()
@@ -404,7 +409,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWaiter()
@@ -414,6 +419,14 @@ namespace Test.Amqp
             Session session = new Session(connection);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+#if NETFX || NETFX_CORE
+            Task t = Task.Run(() =>
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                receiver.Accept(message);
+            });
+#else
             Thread t = new Thread(() =>
             {
                 Message message = receiver.Receive();
@@ -422,12 +435,17 @@ namespace Test.Amqp
             });
 
             t.Start();
+#endif
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             Message msg = new Message() { Properties = new Properties() { MessageId = "123456" } };
             sender.Send(msg, null, null);
 
+#if NETFX || NETFX_CORE
+            t.Wait(10000);
+#else
             t.Join(10000);
+#endif
 
             sender.Close();
             receiver.Close();
@@ -435,7 +453,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWithFilter()
@@ -466,7 +484,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_LinkCloseWithPendingSend()
@@ -507,7 +525,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_SynchronousSend()
@@ -530,7 +548,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_DynamicSenderLink()
@@ -561,7 +579,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_DynamicReceiverLink()
@@ -593,7 +611,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_RequestResponse()
@@ -635,7 +653,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_AdvancedLinkFlowControl()
@@ -690,7 +708,7 @@ namespace Test.Amqp
         /// This test proves that issue #14 is fixed.
         /// https://github.com/Azure/amqpnetlite/issues/14
         /// </summary>
-#if !(NETMF || COMPACT_FRAMEWORK)
+#if NETFX || NETFX_CORE
         [TestMethod]
 #endif
         public void TestMethod_SendEmptyMessage()
