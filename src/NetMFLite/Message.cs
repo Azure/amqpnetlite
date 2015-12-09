@@ -39,12 +39,12 @@ namespace Amqp
 
             if (this.ApplicationProperties != null)
             {
-                Encoder.WriteObject(buffer, new DescribedValue(0x74ul, this.MessageAnnotations));
+                Encoder.WriteObject(buffer, new DescribedValue(0x74ul, this.ApplicationProperties));
             }
 
             if (this.Body != null)
             {
-                Encoder.WriteObject(buffer, new DescribedValue(0x77ul, this.MessageAnnotations));
+                Encoder.WriteObject(buffer, new DescribedValue(0x77ul, this.Body));
             }
         }
 
@@ -60,7 +60,7 @@ namespace Amqp
                 }
                 else if (section.Descriptor.Equals(0x74ul))
                 {
-                    message.MessageAnnotations = (Map)section.Value;
+                    message.ApplicationProperties = (Map)section.Value;
                 }
                 else if (section.Descriptor.Equals(0x75ul) ||
                     section.Descriptor.Equals(0x76ul) ||
