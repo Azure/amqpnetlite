@@ -18,10 +18,13 @@
 namespace Amqp
 {
     using Amqp.Types;
+    using Amqp.Framing;
 
     public class Message
     {
         public Map MessageAnnotations { get; set; }
+
+        public Properties Properties { get; set; }
 
         public Map ApplicationProperties { get; set; }
 
@@ -35,6 +38,11 @@ namespace Amqp
             if (this.MessageAnnotations != null)
             {
                 Encoder.WriteObject(buffer, new DescribedValue(0x72ul, this.MessageAnnotations));
+            }
+
+            if (this.Properties != null)
+            {
+                Encoder.WriteObject(buffer, new DescribedValue(0x73ul, this.Properties));
             }
 
             if (this.ApplicationProperties != null)
@@ -57,6 +65,10 @@ namespace Amqp
                 if (section.Descriptor.Equals(0x72ul))
                 {
                     message.MessageAnnotations = (Map)section.Value;
+                }
+                else if (section.Descriptor.Equals(0x73ul))
+                {
+                    message.Properties = new Properties((List)section.Value);
                 }
                 else if (section.Descriptor.Equals(0x74ul))
                 {
