@@ -170,7 +170,7 @@ namespace Amqp
             this.transport.Write(header, 0, 8);
 
             // perform open 
-            var open = Open(Guid.NewGuid().ToString(), this.host, MaxFrameSize, 10);
+            var open = Open(Guid.NewGuid().ToString(), this.host, MaxFrameSize, 0);
 #if TRACE
             Microsoft.SPOT.Debug.Print("SEND open (container-id:" + open[0] + ", host-name: " + open[1] + ", max-frame-size:" + open[2] + ", channel-max:" + open[3] + ")");
 #endif
