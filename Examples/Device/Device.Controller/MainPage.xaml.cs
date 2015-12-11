@@ -40,15 +40,6 @@ namespace Device.Controller
         public MainPage()
         {
             InitializeComponent();
-            try
-            {
-                this.controller = new Controller(this);
-            }
-            catch
-            {
-                this.btnData.Content = "X";
-                this.controller = null;
-            }
         }
 
         sealed class Controller
@@ -59,11 +50,11 @@ namespace Device.Controller
             SenderLink sender;
             ReceiverLink receiver;
 
-            public Controller(MainPage parent)
+            public Controller(MainPage parent, string address)
             {
                 this.parent = parent;
-                Address address = new Address("amqp://guest:guest@10.1.10.76:5672");
-                this.connection = new Connection(address);
+
+                this.connection = new Connection(new Address(address));
                 this.session = new Session(connection);
                 this.sender = new SenderLink(session, "send-link", "control");
                 this.receiver = new ReceiverLink(session, "recv-link", "data");
@@ -98,6 +89,19 @@ namespace Device.Controller
             if (this.controller != null)
             {
                 this.controller.Control(40);
+            }
+        }
+
+        private void Button_Click_2(object sender, System.Windows.RoutedEventArgs e)
+        {
+            try
+            {
+                this.controller = new Controller(this, this.txtAddress.Text);
+            }
+            catch
+            {
+                this.btnData.Content = "X";
+                this.controller = null;
             }
         }
     }

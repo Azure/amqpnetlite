@@ -22,7 +22,9 @@ namespace Amqp.Listener
     using System.Net;
     using System.Net.Security;
     using System.Net.Sockets;
+#if !DOTNET
     using System.Net.WebSockets;
+#endif
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
@@ -69,7 +71,7 @@ namespace Amqp.Listener
                 password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
             }
 
-            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, "/", addressUri.Scheme);
+            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, addressUri.AbsolutePath, addressUri.Scheme);
         }
 
         /// <summary>
@@ -128,6 +130,7 @@ namespace Amqp.Listener
             {
                 this.listener = new TlsTransportListener(this, this.address.Host, this.address.Port, this.GetServiceCertificate());
             }
+#if !DOTNET
             else if (this.address.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
             {
                 this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, null);
@@ -136,6 +139,7 @@ namespace Amqp.Listener
             {
                 this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, this.GetServiceCertificate());
             }
+#endif
             else
             {
                 throw new NotSupportedException(this.address.Scheme);
@@ -233,7 +237,7 @@ namespace Amqp.Listener
         {
             internal SslSettings()
             {
-                this.Protocols = SslProtocols.Default;
+                this.Protocols = SslProtocols.Ssl3 | SslProtocols.Tls;
             }
 
             /// <summary>
@@ -418,8 +422,8 @@ namespace Amqp.Listener
                 List<IPAddress> addresses = new List<IPAddress>();
                 IPAddress ipAddress;
                 if (host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
-                    host.Equals(Environment.MachineName, StringComparison.OrdinalIgnoreCase) ||
-                    host.Equals(Dns.GetHostEntry(string.Empty).HostName, StringComparison.OrdinalIgnoreCase))
+                    host.Equals(Environment.GetEnvironmentVariable("COMPUTERNAME"), StringComparison.OrdinalIgnoreCase) ||
+                    host.Equals(Dns.GetHostEntryAsync(string.Empty).Result.HostName, StringComparison.OrdinalIgnoreCase))
                 {
                     if (Socket.OSSupportsIPv4)
                     {
@@ -437,7 +441,7 @@ namespace Amqp.Listener
                 }
                 else
                 {
-                    addresses.AddRange(Dns.GetHostAddresses(host));
+                    addresses.AddRange(Dns.GetHostAddressesAsync(host).GetAwaiter().GetResult());
                 }
 
                 this.listenSockets = new Socket[addresses.Count];
@@ -466,7 +470,7 @@ namespace Amqp.Listener
                     {
                         if (this.listenSockets[i] != null)
                         {
-                            this.listenSockets[i].Close();
+                            this.listenSockets[i].Dispose();
                         }
                     }
                 }
@@ -488,7 +492,7 @@ namespace Amqp.Listener
                 catch (Exception exception)
                 {
                     Trace.WriteLine(TraceLevel.Error, exception.ToString());
-                    socket.Close();
+                    socket.Dispose();
                 }
             }
 
@@ -520,7 +524,7 @@ namespace Amqp.Listener
                     }
                 }
 
-                socket.Close();
+                socket.Dispose();
             }
         }
 
@@ -555,6 +559,7 @@ namespace Amqp.Listener
             }
         }
 
+#if !DOTNET
         class WebSocketTransportListener : TransportListener
         {
             readonly ConnectionListener listener;
@@ -619,5 +624,6 @@ namespace Amqp.Listener
                 }
             }
         }
+#endif
     }
 }

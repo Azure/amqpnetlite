@@ -55,9 +55,12 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
-            <Button Content="UP" HorizontalAlignment="Left" Margin="92,99,0,0" VerticalAlignment="Top" Width="297" Click="Button_Click"/>
-            <Button Content="###" Name="btnData" HorizontalAlignment="Left" Margin="92,144,0,0" VerticalAlignment="Top" Width="297" Height="152"/>
-            <Button Content="DOWN" HorizontalAlignment="Left" Margin="92,269,0,0" VerticalAlignment="Top" Width="297" Click="Button_Click_1"/>
+            <Button Content="UP" HorizontalAlignment="Left" Margin="36,218,0,0" VerticalAlignment="Top" Width="393" Click="Button_Click"/>
+            <Button Content="###" Name="btnData" HorizontalAlignment="Left" Margin="36,263,0,0" VerticalAlignment="Top" Width="393" Height="152"/>
+            <Button Content="DOWN" HorizontalAlignment="Left" Margin="36,388,0,0" VerticalAlignment="Top" Width="393" Click="Button_Click_1"/>
+            <TextBox Name="txtAddress" HorizontalAlignment="Left" Height="65" Margin="36,62,0,0" TextWrapping="Wrap" Text="amqp://guest:guest@192.168.1.1:5672" VerticalAlignment="Top" Width="393" FontSize="20"/>
+            <TextBlock HorizontalAlignment="Left" Margin="51,40,0,0" TextWrapping="Wrap" Text="Address:" VerticalAlignment="Top" Width="166"/>
+            <Button Content="Connect" HorizontalAlignment="Left" Margin="36,111,0,0" VerticalAlignment="Top" Click="Button_Click_2" Width="159"/>
         </Grid>
 
     </Grid>

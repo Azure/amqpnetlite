@@ -142,6 +142,12 @@
     <Compile Include="Link.cs" />
     <Compile Include="LinkedList.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="Net\AmqpSettings.cs" />
+    <Compile Include="Net\AsyncPump.cs" />
+    <Compile Include="Net\IAsyncTransport.cs" />
+    <Compile Include="Net\IBufferManager.cs" />
+    <Compile Include="Net\TaskExtensions.cs" />
+    <Compile Include="Net\WrappedByteBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiverLink.cs" />
     <Compile Include="Sasl\SaslChallenge.cs" />
@@ -170,6 +176,7 @@
     <Compile Include="Types\Map.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
+    <Compile Include="WinRT\ConnectionFactory.cs" />
     <Compile Include="WinRT\Fx.cs" />
     <Compile Include="WinRT\List.cs" />
     <Compile Include="WinRT\Map.cs" />

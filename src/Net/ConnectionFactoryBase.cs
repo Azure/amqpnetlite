@@ -17,6 +17,7 @@
 
 namespace Amqp
 {
+    using System;
     using System.Diagnostics;
 
     /// <summary>
@@ -40,7 +41,7 @@ namespace Amqp
             this.amqpSettings = new AmqpSettings()
             {
                 MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
-                ContainerId = Process.GetCurrentProcess().ProcessName,
+                ContainerId = "AMQPLite-" + Guid.NewGuid().ToString("N"),
                 IdleTimeout = int.MaxValue,
                 MaxSessionsPerConnection = 8
             };

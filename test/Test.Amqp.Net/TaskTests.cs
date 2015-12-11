@@ -19,7 +19,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
+#if NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+#else
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
 
 namespace Test.Amqp
 {
@@ -38,7 +42,7 @@ namespace Test.Amqp
         public async Task BasicSendReceiveAsync()
         {
             string testName = "BasicSendReceiveAsync";
-            int nMsgs = 10;
+            int nMsgs = 100;
 
             Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
@@ -67,6 +71,7 @@ namespace Test.Amqp
             await connection.CloseAsync();
         }
 
+#if NETFX
         [TestMethod]
         public async Task CustomMessgeBody()
         {
@@ -205,40 +210,6 @@ namespace Test.Amqp
 
             await connection.CloseAsync();
         }
-
-        [TestMethod]
-        public async Task WebSocketSendReceiveAsync()
-        {
-            string testName = "WebSocketSendReceiveAsync";
-            // assuming it matches the broker's setup
-            Address wsAddress = new Address("ws://guest:guest@localhost:80");
-            int nMsgs = 50;
-
-            Connection connection = await Connection.Factory.CreateAsync(wsAddress);
-            Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
-
-            for (int i = 0; i < nMsgs; ++i)
-            {
-                Message message = new Message();
-                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
-                message.ApplicationProperties = new ApplicationProperties();
-                message.ApplicationProperties["sn"] = i;
-                await sender.SendAsync(message);
-            }
-
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
-            for (int i = 0; i < nMsgs; ++i)
-            {
-                Message message = await receiver.ReceiveAsync();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
-                receiver.Accept(message);
-            }
-
-            await sender.CloseAsync();
-            await receiver.CloseAsync();
-            await session.CloseAsync();
-            await connection.CloseAsync();
-        }
+#endif
     }
 }

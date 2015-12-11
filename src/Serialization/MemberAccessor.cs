@@ -40,16 +40,16 @@ namespace Amqp.Serialization
 
         public static MemberAccessor Create(MemberInfo memberInfo, bool requiresSetter)
         {
-            if (memberInfo.MemberType == MemberTypes.Field)
+            if (memberInfo is FieldInfo)
             {
                 return new FieldMemberAccessor((FieldInfo)memberInfo);
             }
-            else if (memberInfo.MemberType == MemberTypes.Property)
+            else if (memberInfo is PropertyInfo)
             {
                 return new PropertyMemberAccessor((PropertyInfo)memberInfo, requiresSetter);
             }
 
-            throw new NotSupportedException(memberInfo.MemberType.ToString());
+            throw new NotSupportedException(memberInfo.Name);
         }
 
         public object Get(object container)
@@ -67,7 +67,7 @@ namespace Amqp.Serialization
             if (castType == typeof(object))
             {
             }
-            else if (castType.IsValueType)
+            else if (castType.IsValueType())
             {
                 generator.Emit(isContainer ? OpCodes.Unbox : OpCodes.Unbox_Any, castType);
             }
@@ -79,7 +79,7 @@ namespace Amqp.Serialization
 
         static void EmitCall(ILGenerator generator, MethodInfo method)
         {
-            OpCode opcode = (method.IsStatic || method.DeclaringType.IsValueType) ? OpCodes.Call : OpCodes.Callvirt;
+            OpCode opcode = (method.IsStatic || method.DeclaringType.IsValueType()) ? OpCodes.Call : OpCodes.Callvirt;
             generator.EmitCall(opcode, method, null);
         }
 
@@ -104,7 +104,7 @@ namespace Amqp.Serialization
                 generator.Emit(OpCodes.Ldarg_0);
                 EmitTypeConversion(generator, fieldInfo.DeclaringType, true);
                 generator.Emit(OpCodes.Ldfld, fieldInfo);
-                if (fieldInfo.FieldType.IsValueType)
+                if (fieldInfo.FieldType.IsValueType())
                 {
                     generator.Emit(OpCodes.Box, fieldInfo.FieldType);
                 }
@@ -146,7 +146,7 @@ namespace Amqp.Serialization
                 generator.Emit(OpCodes.Ldarg_0);
                 EmitTypeConversion(generator, propertyInfo.DeclaringType, true);
                 EmitCall(generator, propertyInfo.GetGetMethod(true));
-                if (propertyInfo.PropertyType.IsValueType)
+                if (propertyInfo.PropertyType.IsValueType())
                 {
                     generator.Emit(OpCodes.Box, propertyInfo.PropertyType);
                 }

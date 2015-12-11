@@ -294,8 +294,8 @@ namespace Amqp.Types
             {
                 if (type.IsArray)
                 {
-                    codec = serializers[20];
-                }
+                codec = serializers[20];
+            }
             }
 
             if (codec != null)
@@ -1424,7 +1424,7 @@ namespace Amqp.Types
         }
 #endif
 
-#if DOTNET || DOTNET35
+#if NETFX || DOTNET || DOTNET35
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {

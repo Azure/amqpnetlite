@@ -96,9 +96,6 @@
     <Compile Include="Link.cs" />
     <Compile Include="LinkedList.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="NetCore\ConnectionFactory.cs" />
-    <Compile Include="NetCore\TcpTransport.cs" />
-    <Compile Include="NetCore\WebSocketTransport.cs" />
     <Compile Include="Net\AmqpSettings.cs" />
     <Compile Include="Net\AsyncPump.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
@@ -137,6 +134,7 @@
     <Compile Include="Types\Map.cs" />
     <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
+    <Compile Include="WinRT\ConnectionFactory.cs" />
     <Compile Include="WinRT\Fx.cs" />
     <Compile Include="WinRT\List.cs" />
     <Compile Include="WinRT\Map.cs" />
@@ -145,6 +143,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SRAmqp.resx</DependentUpon>
     </Compile>
+    <Compile Include="WinRT\TcpTransport.cs" />
+    <Compile Include="WinRT\WebSocketTransport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
