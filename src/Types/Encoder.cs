@@ -243,7 +243,7 @@ namespace Amqp.Types
                 { typeof(List),     serializers[18] },
                 { typeof(Map),      serializers[19] },
 #if !NETMF_LITE
-                { typeof(Fields),      serializers[19] },
+                { typeof(Fields),   serializers[19] },
 #endif
             };
 
@@ -294,8 +294,8 @@ namespace Amqp.Types
             {
                 if (type.IsArray)
                 {
-                codec = serializers[20];
-            }
+                    codec = serializers[20];
+                }
             }
 
             if (codec != null)
