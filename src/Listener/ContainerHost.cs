@@ -71,7 +71,7 @@ namespace Amqp.Listener
         /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of form "user:password".</param>
         public ContainerHost(IList<Uri> addressUriList, X509Certificate2 certificate, string userInfo)
         {
-            this.containerId = string.Join("-", this.GetType().Name, Process.GetCurrentProcess().Id, Guid.NewGuid().ToString().Substring(0, 8));
+            this.containerId = string.Join("-", this.GetType().Name, Guid.NewGuid().ToString("N"));
             this.certificate = certificate;
             this.linkCollection = new LinkCollection(this.containerId);
             this.onLinkClosed = this.OnLinkClosed;

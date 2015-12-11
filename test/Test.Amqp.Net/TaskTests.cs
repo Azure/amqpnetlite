@@ -19,7 +19,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
+#if NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+#else
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+#endif
 
 namespace Test.Amqp
 {
@@ -38,7 +42,7 @@ namespace Test.Amqp
         public async Task BasicSendReceiveAsync()
         {
             string testName = "BasicSendReceiveAsync";
-            int nMsgs = 10;
+            int nMsgs = 100;
 
             Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
@@ -67,6 +71,7 @@ namespace Test.Amqp
             await connection.CloseAsync();
         }
 
+#if NETFX
         [TestMethod]
         public async Task CustomMessgeBody()
         {
@@ -205,5 +210,6 @@ namespace Test.Amqp
 
             await connection.CloseAsync();
         }
+#endif
     }
 }

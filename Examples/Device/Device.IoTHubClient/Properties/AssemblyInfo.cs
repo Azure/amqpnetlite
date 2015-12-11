@@ -14,33 +14,28 @@
 //  See the Apache Version 2.0 License for specific language governing permissions and 
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-namespace Amqp
-{
-    using System;
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("MFWindowApplication1")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("MFWindowApplication1")]
+[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
-#if NETFX || DOTNET
-    /// <summary>
-    /// The interface defines the methods to manage buffers.
-    /// </summary>
-    public
-#endif
-    interface IBufferManager
-    {
-        /// <summary>
-        /// Takes a buffer from the buffer manager.
-        /// </summary>
-        /// <param name="bufferSize">the buffer size.</param>
-        /// <returns>
-        /// A segment of a byte array. The count should be the same, or larger
-        /// than the requested bufferSize.
-        /// </returns>
-        ArraySegment<byte> TakeBuffer(int bufferSize);
-
-        /// <summary>
-        /// Returns a buffer to the buffer manager.
-        /// </summary>
-        /// <param name="buffer">The buffer to return.</param>
-        void ReturnBuffer(ArraySegment<byte> buffer);
-    }
-}
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

@@ -82,7 +82,7 @@ namespace Amqp
             {
                 if (waitUntilEnded > 0)
                 {
-                    this.endEvent.WaitOne(waitUntilEnded, false);
+                    this.endEvent.WaitOne(waitUntilEnded);
                 }
             }
             else

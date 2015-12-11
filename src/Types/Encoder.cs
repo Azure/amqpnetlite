@@ -243,7 +243,7 @@ namespace Amqp.Types
                 { typeof(List),     serializers[18] },
                 { typeof(Map),      serializers[19] },
 #if !NETMF_LITE
-                { typeof(Fields),      serializers[19] },
+                { typeof(Fields),   serializers[19] },
 #endif
             };
 
@@ -1424,7 +1424,7 @@ namespace Amqp.Types
         }
 #endif
 
-#if DOTNET || DOTNET35
+#if NETFX || DOTNET || DOTNET35
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {

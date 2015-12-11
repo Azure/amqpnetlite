@@ -6,7 +6,7 @@ ECHO.
 
 SET return-code=0
 
-CALL :exe-exists MSBuild
+CALL :file-exists MSBuild exe
 IF "%MSBuildPath%" == "" (
   ECHO MSBuild.exe does not exist or is not under PATH.
   ECHO This can be resolved by building from a VS developer command prompt.
@@ -18,12 +18,14 @@ SET build-target=build
 SET build-config=Debug
 SET build-platform=Any CPU
 SET build-verbosity=minimal
+SET build-dnx=false
 SET build-test=true
 SET build-nuget=false
 
 IF /I "%1" EQU "release" (
   set build-target=build
   set build-config=Release
+  set build-dnx=true
   set build-nuget=true
   GOTO :args-done
 )
@@ -36,6 +38,7 @@ IF /I "%1" EQU "clean" (
 :args-start
 IF /I "%1" EQU "" GOTO args-done
 
+IF /I "%1" EQU "--dnx" SET build-dnx=true&&GOTO args-loop
 IF /I "%1" EQU "--skiptest" SET build-test=false&&GOTO args-loop
 IF /I "%1" EQU "--nuget" SET build-nuget=true&&GOTO args-loop
 IF /I "%1" EQU "--config" GOTO :args-config
@@ -91,9 +94,30 @@ IF %ERRORLEVEL% NEQ 0 (
   GOTO :exit
 )
 
+IF /I "%build-dnx%" EQU "false" GOTO :build-done
+CALL :file-exists dnu cmd
+IF "%dnuPath%" == "" (
+  ECHO dnvm is not installed or "dnvm use" is not run to add a runtime.
+  GOTO :exit
+)
+CALL "%dnuPath%" restore dnx\Amqp.DotNet
+IF %ERRORLEVEL% NEQ 0 (
+  ECHO dnu restore failed with error %ERRORLEVEL%
+  SET return-code=%ERRORLEVEL%
+  GOTO :exit
+)
+CALL "%dnuPath%" build dnx\Amqp.DotNet --configuration %build-config% --out bin
+IF %ERRORLEVEL% NEQ 0 (
+  ECHO dnu build failed with error %ERRORLEVEL%
+  SET return-code=%ERRORLEVEL%
+  GOTO :exit
+)
+
+:build-done
+
 IF /I "%build-test%" EQU "false" GOTO :nuget-package
 
-CALL :exe-exists MSTest
+CALL :file-exists MSTest exe
 IF "%MSTestPath%" == "" (
   ECHO MSTest.exe does not exist or is not under PATH. Will not run tests.
   GOTO :exit
@@ -133,7 +157,7 @@ IF /I "%build-config%" NEQ "Release" (
 
 rem Build NuGet package
 ECHO.
-CALL :exe-exists NuGet
+CALL :file-exists NuGet exe
 IF "%NuGetPath%" == "" (
   ECHO NuGet.exe does not exist or is not under PATH.
   ECHO If you want to build NuGet package, install NuGet.CommandLine
@@ -157,6 +181,7 @@ ECHO   release: a shortcut for "--config Release --nuget"
 ECHO options:
 ECHO  --config ^<value^>      [Debug] build configuration (e.g. Debug, Release)
 ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
+ECHO  --dnx                 [false] build dnx
 ECHO  --verbosity ^<value^>   [minimal] build verbosity (q[uiet], m[inimal], n[ormal], d[etailed] and diag[nostic])
 ECHO  --skiptest            [false] skip test
 ECHO  --nuget               [false] create NuGet packet (for Release only)
@@ -167,10 +192,10 @@ CALL :usage
 SET return-code=%1
 GOTO :eof
 
-:exe-exists
-IF EXIST ".\Build\tools\%1.exe" (
-  SET %1Path=.\Build\tools\%1.exe
+:file-exists
+IF EXIST ".\Build\tools\%1.%2" (
+  SET %1Path=.\Build\tools\%1.%2
 ) ELSE (
-  FOR %%f IN (%1.exe) DO IF EXIST "%%~$PATH:f" SET %1Path=%%~$PATH:f
+  FOR %%f IN (%1.%2) DO IF EXIST "%%~$PATH:f" SET %1Path=%%~$PATH:f
 )
 GOTO :eof

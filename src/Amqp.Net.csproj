@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;DOTNET</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>..\bin\Debug\Amqp.Net\Amqp.Net.XML</DocumentationFile>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DOTNET</DefineConstants>
+    <DefineConstants>TRACE;NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -59,7 +59,9 @@
     <Compile Include="Listener\IMessageProcessor.cs" />
     <Compile Include="Listener\Context.cs" />
     <Compile Include="Listener\ListenerLink.cs" />
+    <Compile Include="Net\ResourceManager.cs" />
     <Compile Include="Net\BufferManager.cs" />
+    <Compile Include="Net\TypeExtensions.cs" />
     <Compile Include="Net\WrappedByteBuffer.cs" />
     <Compile Include="Net\RefCountedByteBuffer.cs" />
     <Compile Include="Net\IBufferManager.cs" />
@@ -152,7 +154,6 @@
     <Compile Include="Trace.cs" />
     <Compile Include="Transactions\Controller.cs" />
     <Compile Include="Transactions\Coordinator.cs" />
-    <Compile Include="Transactions\ResourceManager.cs" />
     <Compile Include="Transactions\Declare.cs" />
     <Compile Include="Transactions\Declared.cs" />
     <Compile Include="Transactions\Discharge.cs" />

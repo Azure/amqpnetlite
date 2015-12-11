@@ -88,19 +88,21 @@ namespace Amqp
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
-            if (WebSocketTransport.MatchScheme(address.Scheme))
-            {
-                WebSocketTransport wsTransport = new WebSocketTransport();
-                await wsTransport.ConnectAsync(address);
-                transport = wsTransport;
-            }
-            else if (string.Equals(address.Scheme, Address.Amqp, StringComparison.OrdinalIgnoreCase) ||
+            if (string.Equals(address.Scheme, Address.Amqp, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(address.Scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase))
             {
                 TcpTransport tcpTransport = new TcpTransport();
                 await tcpTransport.ConnectAsync(address, this);
                 transport = tcpTransport;
             }
+#if NETFX
+            else if (WebSocketTransport.MatchScheme(address.Scheme))
+            {
+                WebSocketTransport wsTransport = new WebSocketTransport();
+                await wsTransport.ConnectAsync(address);
+                transport = wsTransport;
+            }
+#endif
             else
             {
                 throw new NotSupportedException(address.Scheme);
@@ -130,7 +132,7 @@ namespace Amqp
         {
             internal SslSettings()
             {
-                this.Protocols = SslProtocols.Default;
+                this.Protocols = SslProtocols.Ssl3 | SslProtocols.Tls;
                 this.ClientCertificates = new X509CertificateCollection();
             }
 

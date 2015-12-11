@@ -68,6 +68,11 @@ namespace Amqp
         {
             new Thread(threadStart).Start();
         }
+
+        public static bool WaitOne(this ManualResetEvent mre, int milliseconds)
+        {
+            return mre.WaitOne(milliseconds, false);
+        }
     }
 
     class Uri

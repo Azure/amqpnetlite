@@ -35,7 +35,7 @@ namespace Amqp.Framing
         {
         }
 
-#if (DOTNET || DOTNET35)
+#if (NETFX || DOTNET || NETFX35)
         ByteBuffer valueBuffer;
         bool valueDecoded;
         byte binaryOffset;

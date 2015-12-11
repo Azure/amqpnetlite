@@ -17,13 +17,27 @@
 
 using System;
 using Amqp;
-using Microsoft.SPOT;
 using System.Threading;
 
 namespace Device.SmallMemory
 {
     public class Program
     {
+        // this example program connects to an Azure IoT hub sends a couple of messages and waits for messages from
+
+
+        // replace with IoT Hub name
+        const string iotHubName = "<replace>";
+
+        // replace with device name 
+        const string device = "<replace>";
+
+        // user/pass to be authenticated with Azure IoT hub
+        // if using a shared access signature like SharedAccessSignature sr=myhub.azure-devices.net&sig=H4Rm2%2bjdBr84lq5KOddD9YpOSC8s7ZSe9SygErVuPe8%3d&se=1444444444&skn=iothubowner
+        // user will be iothubowner and password the complete SAS string 
+        const string authUser = "<replace>";
+        const string authPassword = "<replace>";
+
         public static void Main()
         {
             Send();
@@ -31,23 +45,27 @@ namespace Device.SmallMemory
 
         static void Send()
         {
-            const int nMsgs = 800;
+            const int nMsgs = 5;
 
-            Client client = new Client("localhost", 5672, false, "guest", "guest");
+            Client client = new Client(iotHubName + ".azure-devices.net", 5671, true, authUser + "@sas.root." + iotHubName, authPassword);
 
             int count = 0;
             ManualResetEvent done = new ManualResetEvent(false);
-            Receiver receiver = client.GetReceiver("q1");
+            Receiver receiver = client.GetReceiver("devices/"+ device + "/messages/deviceBound");
             receiver.Start(20, (r, m) =>
             {
                 r.Accept(m);
                 if (++count >= nMsgs) done.Set();
             });
 
-            Sender sender = client.GetSender("q1");
+            Thread.Sleep(5000);
+
+
+            Sender sender = client.GetSender("devices/" + device + "/messages/events");
             for (int i = 0; i < nMsgs; i++)
             {
-                sender.Send(new Message() { Body = "hello" + i });
+                sender.Send(new Message() { Body = Guid.NewGuid().ToString() });
+                Thread.Sleep(1000);
             }
 
             done.WaitOne(30000, false);

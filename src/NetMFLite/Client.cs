@@ -42,8 +42,8 @@ namespace Amqp
         internal const byte DetachReceived = 8;
 
         internal const string Name = "netmf-lite";
-        internal const int MaxFrameSize = 16 * 1024;
-        const uint window = 100u;
+        internal const int MaxFrameSize = 1024;
+        const uint defaultWindowSize = 100u;
 
         string host;
         int port;
@@ -57,11 +57,11 @@ namespace Amqp
         internal int maxFrameSize = MaxFrameSize;
 
         internal Sender sender;
-        internal uint outWindow;
+        internal uint outWindow = defaultWindowSize;
         internal uint nextOutgoingId;
 
         internal Receiver receiver;
-        internal uint inWindow;
+        internal uint inWindow = defaultWindowSize;
         internal uint nextIncomingId;
 
         public Client(string host, int port, bool useSsl, string userName, string password)
@@ -85,7 +85,6 @@ namespace Amqp
         public Receiver GetReceiver(string address)
         {
             Fx.AssertAndThrow(1000, this.receiver == null);
-            this.inWindow = window;
             return this.receiver = new Receiver(this, address);
         }
 
@@ -129,6 +128,10 @@ namespace Amqp
 
         internal void SendFlow(uint handle, uint dc, uint credit)
         {
+#if TRACE
+            Microsoft.SPOT.Debug.Print("SEND flow (next-in-id:" + this.nextIncomingId + " in-window:" + this.inWindow + " next-out-id:" + this.nextOutgoingId + " out-window:" + this.outWindow + " handle:" + handle + " dc:" + dc + " credit:" + credit + ")");
+#endif
+
             List flow;
             lock (this)
             {
@@ -165,8 +168,20 @@ namespace Amqp
 
             this.state = OpenSent | BeginSent;
             this.transport.Write(header, 0, 8);
-            this.transport.WriteFrame(0, 0, 0x10, Open(Guid.NewGuid().ToString(), this.host, 8 * 1024, 0));
-            this.transport.WriteFrame(0, 0, 0x11, Begin(this.nextOutgoingId, this.inWindow));
+
+            // perform open 
+            var open = Open(Guid.NewGuid().ToString(), this.host, MaxFrameSize, 0);
+#if TRACE
+            Microsoft.SPOT.Debug.Print("SEND open (container-id:" + open[0] + ", host-name: " + open[1] + ", max-frame-size:" + open[2] + ", channel-max:" + open[3] + ")");
+#endif
+            this.transport.WriteFrame(0, 0, 0x10, open);
+
+            // perform begin
+            var begin = Begin(this.nextOutgoingId, this.inWindow, this.outWindow);
+#if TRACE
+            Microsoft.SPOT.Debug.Print("SEND begin(next-outgoing-id:" + begin[0] + ", incoming-window:" + begin[1] + ", outgoing-window:" + begin[2] + ", handle-max:0)");
+#endif
+            this.transport.WriteFrame(0, 0, 0x11, begin);
 
             retHeader = this.transport.ReadFixedSizeBuffer(8);
             Fx.AssertAndThrow(2000, AreHeaderEqual(header, retHeader));
@@ -203,11 +218,19 @@ namespace Amqp
             {
                 case 0x10:  // open
                     this.state |= OpenReceived;
+
+#if TRACE
+                    Microsoft.SPOT.Debug.Print("RECV open (container-id:" + (string)fields[0] + ", host-name:" + (string)fields[1] + ", max-frame-size:" + (uint)fields[2] + ", channel-max:" + (ushort)fields[3] + ", idle-time-out:" + (uint)fields[4]);
+#endif
+
                     break;
                 case 0x11:  // begin
                     this.nextIncomingId = (uint)fields[1];
-                    this.outWindow = (uint)fields[3];
+                    this.outWindow = (uint)fields[2];
                     this.state |= BeginReceived;
+#if TRACE
+                    Microsoft.SPOT.Debug.Print("RECV begin (next-outgoing-id:" + this.nextOutgoingId + ", outgoing-window:" + this.outWindow + ", incoming-window:" + this.inWindow + ")");
+#endif
                     break;
                 case 0x12:  // attach
                 {
@@ -216,11 +239,17 @@ namespace Amqp
                     {
                         Fx.AssertAndThrow(1000, this.sender != null);
                         this.sender.OnAttach(fields);
+#if TRACE
+                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + ((List)((DescribedValue)fields[6]).Value)[0] + "), max-message-size:" + (ulong)fields[10] + ")");
+#endif
                     }
                     else
                     {
                         Fx.AssertAndThrow(1000, this.receiver != null);
                         this.receiver.OnAttach(fields);
+#if TRACE
+                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
+#endif
                     }
                     break;
                 }
@@ -234,6 +263,10 @@ namespace Amqp
                             nextIncomingId + incomingWindow - this.nextOutgoingId :
                             uint.MaxValue;
                     }
+
+#if TRACE
+                    Microsoft.SPOT.Debug.Print("RECV flow (next-in-id:" + this.nextIncomingId + ", in-window:" + this.inWindow + ", next-out-id:" + this.nextOutgoingId + ", out-window:" + this.outWindow + ")");
+#endif
 
                     Sender sender = this.sender;
                     if (fields[4] != null && sender != null)
@@ -250,14 +283,17 @@ namespace Amqp
                         this.nextOutgoingId++;
                         if (--this.inWindow == 0)
                         {
-                            this.inWindow = window;
+                            this.inWindow = defaultWindowSize;
                             flow = new List() { this.nextIncomingId, this.inWindow, this.nextOutgoingId, this.outWindow };
                         }
                     }
 
                     if (flow != null)
                     {
-                        this.transport.WriteFrame(0, 0, 0x13, flow);
+#if TRACE
+                         Microsoft.SPOT.Debug.Print("RECV transfer (next-in-id:" + this.nextIncomingId + " in-window:" + this.inWindow + " next-out-id:" + this.nextOutgoingId + " out-window:" + this.outWindow + ")");
+#endif
+                         this.transport.WriteFrame(0, 0, 0x13, flow);
                     }
 
                     if (this.receiver != null)
@@ -278,12 +314,20 @@ namespace Amqp
                 case 0x16:  // dettach
                 {
                     uint handle = (uint)fields[0];
+
                     if (this.sender != null && handle == this.sender.remoteHandle)
                     {
+#if TRACE
+                        Microsoft.SPOT.Debug.Print("RECV detach sender handle" + handle);
+#endif
+
                         this.sender.OnDetach(fields);
                     }
                     else if (this.receiver != null && handle == this.receiver.remoteHandle)
                     {
+#if TRACE
+                        Microsoft.SPOT.Debug.Print("RECV detach receiver handle" + handle);
+#endif
                         this.receiver.OnDetach(fields);
                     }
                     break;
@@ -322,9 +366,9 @@ namespace Amqp
             return new List() { containerId, hostName, maxFrameSize, channelMax };
         }
 
-        static List Begin(uint nextOutgoingId, uint inWindow)
+        static List Begin(uint nextOutgoingId, uint inWindow, uint outWindow)
         {
-            return new List() { null, nextOutgoingId, inWindow, 0u, 1u };
+            return new List() { null, nextOutgoingId, inWindow, outWindow, 1u };
         }
 
         internal static List Attach(string name, uint handle, bool role, string sourceAddress, string targetAddress)
