@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}</ProjectGuid>
+    <AssemblyName>Amqp.NetMF</AssemblyName>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Amqp</RootNamespace>
-    <AssemblyName>Amqp.Net35</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}</ProjectGuid>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -20,24 +19,21 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETFX35</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETMF,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;NETFX35</DefineConstants>
+    <DefineConstants>TRACE;NETMF,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="SRAmqp.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Net\SRAmqp.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+  <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
     <Compile Include="Address.cs" />
     <Compile Include="AmqpBitConverter.cs" />
@@ -45,22 +41,15 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
-    <Compile Include="Net35\TcpTransport.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Net\TypeExtensions.cs" />
-    <Compile Include="Sasl\SaslExternalProfile.cs" />
-    <Compile Include="Sasl\SaslPlainMechanism.cs" />
-    <Compile Include="Sasl\SaslMechanism.cs" />
     <Compile Include="Delivery.cs" />
     <Compile Include="Framing\Accepted.cs" />
+    <Compile Include="Framing\AmqpSequence.cs" />
+    <Compile Include="Framing\AmqpValue.cs" />
     <Compile Include="Framing\ApplicationProperties.cs" />
     <Compile Include="Framing\Attach.cs" />
     <Compile Include="Framing\Begin.cs" />
     <Compile Include="Framing\Close.cs" />
     <Compile Include="Framing\Codec.cs" />
-    <Compile Include="Framing\AmqpValue.cs" />
-    <Compile Include="Framing\AmqpSequence.cs" />
     <Compile Include="Framing\Data.cs" />
     <Compile Include="Framing\DeliveryAnnotations.cs" />
     <Compile Include="Framing\DeliveryState.cs" />
@@ -91,18 +80,20 @@
     <Compile Include="Link.cs" />
     <Compile Include="LinkedList.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Net\Fx.cs" />
-    <Compile Include="Net\List.cs" />
-    <Compile Include="Net\Map.cs" />
-    <Compile Include="Net\SRAmqp.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SRAmqp.resx</DependentUpon>
+    <Compile Include="NetMF\Fx.cs" />
+    <Compile Include="NetMF\List.cs" />
+    <Compile Include="NetMF\Map.cs" />
+    <Compile Include="NetMF\SRAmqp.cs" />
+    <Compile Include="NetMF\SRAmqp.Designer.cs">
+      <DependentUpon>SRAmqp.cs</DependentUpon>
     </Compile>
+    <Compile Include="NetMF\TimeoutException.cs" />
+    <Compile Include="NetMF\TcpTransport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiverLink.cs" />
     <Compile Include="Sasl\SaslChallenge.cs" />
     <Compile Include="Sasl\SaslCode.cs" />
+    <Compile Include="Sasl\SaslExternalProfile.cs" />
     <Compile Include="Sasl\SaslInit.cs" />
     <Compile Include="Sasl\SaslMechanisms.cs" />
     <Compile Include="Sasl\SaslOutcome.cs" />
@@ -111,42 +102,30 @@
     <Compile Include="Sasl\SaslResponse.cs" />
     <Compile Include="SenderLink.cs" />
     <Compile Include="SequenceNumber.cs" />
-    <Compile Include="Serialization\AmqpContractAttribute.cs" />
-    <Compile Include="Serialization\AmqpSerializer.cs" />
-    <Compile Include="Serialization\AmqpMemberAttribute.cs" />
-    <Compile Include="Serialization\AmqpProvidesAttribute.cs" />
-    <Compile Include="Serialization\IAmqpSerializable.cs" />
-    <Compile Include="Serialization\EncodingType.cs" />
-    <Compile Include="Serialization\MemberAccessor.cs" />
-    <Compile Include="Serialization\MethodAccessor.cs" />
-    <Compile Include="Serialization\SerialiableMember.cs" />
-    <Compile Include="Serialization\SerializableType.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Trace.cs" />
     <Compile Include="Types\Described.cs" />
-    <Compile Include="Types\Fields.cs" />
-    <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\DescribedList.cs" />
     <Compile Include="Types\DescribedMap.cs" />
     <Compile Include="Types\DescribedValue.cs" />
     <Compile Include="Types\Descriptor.cs" />
     <Compile Include="Types\Encoder.cs" />
     <Compile Include="Types\ErrorCode.cs" />
+    <Compile Include="Types\Fields.cs" />
     <Compile Include="Types\FixedWidth.cs" />
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />
+    <Compile Include="Types\RestrictedDescribed.cs" />
     <Compile Include="Types\Symbol.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.SPOT.Native">
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Net.Security" />
     <Reference Include="System" />
-    <Reference Include="System.Transactions" />
+    <Reference Include="System.Net.Security" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <EmbeddedResource Include="SRAmqp.resx" />
+  </ItemGroup>
 </Project>

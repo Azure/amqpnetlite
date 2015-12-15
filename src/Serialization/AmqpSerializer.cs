@@ -157,8 +157,8 @@ namespace Amqp.Serialization
 
         SerializableType CompileType(Type type, bool describedOnly)
         {
-            object[] typeAttributes = type.GetCustomAttributes(typeof(AmqpContractAttribute), false);
-            if (typeAttributes.Length == 0)
+            AmqpContractAttribute contractAttribute = type.GetCustomAttribute<AmqpContractAttribute>(false);
+            if (contractAttribute == null)
             {
                 if (describedOnly)
                 {
@@ -170,21 +170,20 @@ namespace Amqp.Serialization
                 }
             }
 
-            AmqpContractAttribute contractAttribute = (AmqpContractAttribute)typeAttributes[0];
             SerializableType baseType = null;
-            if (type.BaseType != typeof(object))
+            if (type.BaseType() != typeof(object))
             {
-                baseType = this.CompileType(type.BaseType, true);
+                baseType = this.CompileType(type.BaseType(), true);
                 if (baseType != null)
                 {
                     if (baseType.Encoding != contractAttribute.Encoding)
                     {
                         throw new SerializationException(
                             Fx.Format("{0}.Encoding ({1}) is different from {2}.Encoding ({3})",
-                                type.Name, contractAttribute.Encoding, type.BaseType.Name, baseType.Encoding));
+                                type.Name, contractAttribute.Encoding, type.BaseType().Name, baseType.Encoding));
                     }
 
-                    this.typeCache[type.BaseType] = baseType;
+                    this.typeCache[type.BaseType()] = baseType;
                 }
             }
 
@@ -211,16 +210,13 @@ namespace Amqp.Serialization
                     continue;
                 }
 
-                if (memberInfo.MemberType == MemberTypes.Field ||
-                    memberInfo.MemberType == MemberTypes.Property)
+                if (memberInfo is FieldInfo || memberInfo is PropertyInfo)
                 {
-                    object[] memberAttributes = memberInfo.GetCustomAttributes(typeof(AmqpMemberAttribute), true);
-                    if (memberAttributes.Length != 1)
+                    AmqpMemberAttribute attribute = memberInfo.GetCustomAttribute<AmqpMemberAttribute>(true);
+                    if (attribute == null)
                     {
                         continue;
                     }
-
-                    AmqpMemberAttribute attribute = (AmqpMemberAttribute)memberAttributes[0];
 
                     SerialiableMember member = new SerialiableMember();
                     member.Name = attribute.Name ?? memberInfo.Name;
@@ -228,28 +224,28 @@ namespace Amqp.Serialization
                     member.Accessor = MemberAccessor.Create(memberInfo, true);
 
                     // This will recursively resolve member types
-                    Type memberType = memberInfo.MemberType == MemberTypes.Field ? ((FieldInfo)memberInfo).FieldType : ((PropertyInfo)memberInfo).PropertyType;
+                    Type memberType = memberInfo is FieldInfo ? ((FieldInfo)memberInfo).FieldType : ((PropertyInfo)memberInfo).PropertyType;
                     member.Type = GetType(memberType);
 
                     memberList.Add(member);
                 }
-                else if (memberInfo.MemberType == MemberTypes.Method)
+                else if (memberInfo is MethodInfo)
                 {
                     MethodInfo methodInfo = (MethodInfo)memberInfo;
                     MethodAccessor methodAccessor;
-                    if (this.TryCreateMethodAccessor(methodInfo, typeof(OnSerializingAttribute), out methodAccessor))
+                    if (this.TryCreateMethodAccessor<OnSerializingAttribute>(methodInfo, out methodAccessor))
                     {
                         serializationCallbacks[SerializationCallback.OnSerializing] = methodAccessor;
                     }
-                    else if (this.TryCreateMethodAccessor(methodInfo, typeof(OnSerializedAttribute), out methodAccessor))
+                    else if (this.TryCreateMethodAccessor<OnSerializedAttribute>(methodInfo, out methodAccessor))
                     {
                         serializationCallbacks[SerializationCallback.OnSerialized] = methodAccessor;
                     }
-                    else if (this.TryCreateMethodAccessor(methodInfo, typeof(OnDeserializingAttribute), out methodAccessor))
+                    else if (this.TryCreateMethodAccessor<OnDeserializingAttribute>(methodInfo, out methodAccessor))
                     {
                         serializationCallbacks[SerializationCallback.OnDeserializing] = methodAccessor;
                     }
-                    else if (this.TryCreateMethodAccessor(methodInfo, typeof(OnDeserializedAttribute), out methodAccessor))
+                    else if (this.TryCreateMethodAccessor<OnDeserializedAttribute>(methodInfo, out methodAccessor))
                     {
                         serializationCallbacks[SerializationCallback.OnDeserialized] = methodAccessor;
                     }
@@ -273,18 +269,19 @@ namespace Amqp.Serialization
 
             SerialiableMember[] members = memberList.ToArray();
 
-            Dictionary<Type, SerializableType> knownTypes = null;
-            var providesAttributes = type.GetCustomAttributes(typeof(AmqpProvidesAttribute), false);
-            if (contractAttribute.Encoding == EncodingType.SimpleMap && providesAttributes.Length > 0)
+            if (contractAttribute.Encoding == EncodingType.SimpleMap &&
+                type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
             {
                 throw new SerializationException(
                     Fx.Format("{0}: SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
             }
 
+            Dictionary<Type, SerializableType> knownTypes = null;
+            var providesAttributes = type.GetCustomAttributes<AmqpProvidesAttribute>(false);
             foreach (object o in providesAttributes)
             {
                 AmqpProvidesAttribute knownAttribute = (AmqpProvidesAttribute)o;
-                if (knownAttribute.Type.GetCustomAttributes(typeof(AmqpContractAttribute), false).Length > 0)
+                if (knownAttribute.Type.GetCustomAttribute<AmqpContractAttribute>(false) != null)
                 {
                     if (knownTypes == null)
                     {
@@ -316,10 +313,10 @@ namespace Amqp.Serialization
             }
         }
 
-        bool TryCreateMethodAccessor(MethodInfo methodInfo, Type attributeType, out MethodAccessor methodAccessor)
+        bool TryCreateMethodAccessor<T>(MethodInfo methodInfo, out MethodAccessor methodAccessor) where T : Attribute
         {
-            object[] memberAttributes = methodInfo.GetCustomAttributes(attributeType, false);
-            if (memberAttributes.Length == 1)
+            T memberAttribute = methodInfo.GetCustomAttribute<T>(false);
+            if (memberAttribute != null)
             {
                 methodAccessor = MethodAccessor.Create((MethodInfo)methodInfo);
                 return true;
@@ -371,7 +368,7 @@ namespace Amqp.Serialization
 
         SerializableType CompileNullableTypes(Type type)
         {
-            if (type.IsGenericType &&
+            if (type.IsGenericType() &&
                 type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 Type[] argTypes = type.GetGenericArguments();
@@ -391,7 +388,7 @@ namespace Amqp.Serialization
 
             foreach (Type it in type.GetInterfaces())
             {
-                if (it.IsGenericType)
+                if (it.IsGenericType())
                 {
                     Type genericTypeDef = it.GetGenericTypeDefinition();
                     if (genericTypeDef == typeof(IDictionary<,>))

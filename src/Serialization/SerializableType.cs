@@ -20,6 +20,7 @@ namespace Amqp.Serialization
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Runtime.Serialization;
     using Amqp.Types;
 
@@ -220,9 +221,7 @@ namespace Amqp.Serialization
                     return null;
                 }
 
-                object container = this.hasDefaultCtor ?
-                    Activator.CreateInstance(this.type) :
-                    FormatterServices.GetUninitializedObject(this.type);
+                object container = this.type.CreateInstance(this.hasDefaultCtor);
                 this.DecodeObject(buffer, container);
                 return container;
             }
@@ -367,9 +366,7 @@ namespace Amqp.Serialization
                 this.Initialize(buffer, formatCode, out size, out count, out encodeWidth, out effectiveType);
                 int offset = buffer.Offset;
 
-                object container = effectiveType.hasDefaultCtor ?
-                    Activator.CreateInstance(effectiveType.type) :
-                    FormatterServices.GetUninitializedObject(effectiveType.type);
+                object container = effectiveType.type.CreateInstance(effectiveType.hasDefaultCtor);
 
                 if (count > 0)
                 {

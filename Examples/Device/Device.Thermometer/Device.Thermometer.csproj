@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <AssemblyName>Device.Thermometer</AssemblyName>
     <OutputType>Exe</OutputType>
     <RootNamespace>Device.Thermometer</RootNamespace>
@@ -8,7 +10,7 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{43570F0D-DE6C-423E-A275-AC619A813B79}</ProjectGuid>
-    <TargetFrameworkVersion>v4.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
     <IntermediateOutputPath>..\..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <TargetFrameworkProfile />
@@ -18,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;TRACE,MF_FRAMEWORK_VERSION_V4_2</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TRACE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -65,9 +67,9 @@
     <None Include="Resources\small.tinyfnt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Amqp.NetMF42.csproj">
+    <ProjectReference Include="..\..\..\src\Amqp.NetMF44.csproj">
       <Project>{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}</Project>
-      <Name>Amqp.NetMF42</Name>
+      <Name>Amqp.NetMF44</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
