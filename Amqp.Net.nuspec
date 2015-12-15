@@ -23,7 +23,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\dotnet\*.*" target="lib\dotnet" />
     <file src="bin\Release\Amqp.Net\*.*" target="lib\net45" />
     <file src="bin\Release\Amqp.Net35\*.*" target="lib\net35" />
     <file src="bin\Release\Amqp.NetCF39\*.*" target="lib\net-cf" />
