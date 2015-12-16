@@ -29,7 +29,7 @@ namespace Amqp
             Debug.Assert(condition, message);
         }
 
-        public static void AssertAndThrow(int id, bool condition)
+        public static void AssertAndThrow(ErrorCode id, bool condition)
         {
             if (!condition)
             {

@@ -78,13 +78,13 @@ namespace Amqp
 
         public Sender GetSender(string address)
         {
-            Fx.AssertAndThrow(1000, this.sender == null);
+            Fx.AssertAndThrow(ErrorCode.ClientSenderIsNull, this.sender == null);
             return this.sender = new Sender(this, address);
         }
 
         public Receiver GetReceiver(string address)
         {
-            Fx.AssertAndThrow(1000, this.receiver == null);
+            Fx.AssertAndThrow(ErrorCode.ClientReceiverIsNull, this.receiver == null);
             return this.receiver = new Receiver(this, address);
         }
 
@@ -100,7 +100,7 @@ namespace Amqp
         {
             while (condition(state))
             {
-                Fx.AssertAndThrow(1000, this.signal.WaitOne(millisecondsTimeout, false));
+                Fx.AssertAndThrow(ErrorCode.ClientWaitTimeout, this.signal.WaitOne(millisecondsTimeout, false));
             }
         }
 
@@ -153,15 +153,15 @@ namespace Amqp
                 this.transport.Flush();
 
                 retHeader = this.transport.ReadFixedSizeBuffer(8);
-                Fx.AssertAndThrow(2000, AreHeaderEqual(header, retHeader));
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
                 List body = this.transport.ReadFrameBody(1, 0, 0x40);
-                Fx.AssertAndThrow(2001, body.Count > 0);
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
                 Symbol[] mechanisms = Extensions.GetSymbolMultiple(body[0]);
-                Fx.AssertAndThrow(2002, Array.IndexOf(mechanisms, new Symbol("PLAIN")) >= 0);
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongSymbol, Array.IndexOf(mechanisms, new Symbol("PLAIN")) >= 0);
 
                 body = this.transport.ReadFrameBody(1, 0, 0x44);
-                Fx.AssertAndThrow(2003, body.Count > 0);
-                Fx.AssertAndThrow(2004, body[0].Equals((byte)0));   // sasl-outcome.code = OK
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeSaslFailed, body[0].Equals((byte)0));   // sasl-outcome.code = OK
 
                 header[4] = 0;
             }
@@ -184,7 +184,7 @@ namespace Amqp
             this.transport.WriteFrame(0, 0, 0x11, begin);
 
             retHeader = this.transport.ReadFixedSizeBuffer(8);
-            Fx.AssertAndThrow(2000, AreHeaderEqual(header, retHeader));
+            Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
             new Thread(this.PumpThread).Start();
         }
 
@@ -237,7 +237,7 @@ namespace Amqp
                     bool role = (bool)fields[2];
                     if (role)
                     {
-                        Fx.AssertAndThrow(1000, this.sender != null);
+                        Fx.AssertAndThrow(ErrorCode.ClientAttachSenderIsNull, this.sender != null);
                         this.sender.OnAttach(fields);
 #if TRACE
                         Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + ((List)((DescribedValue)fields[6]).Value)[0] + "), max-message-size:" + (ulong)fields[10] + ")");
@@ -245,7 +245,7 @@ namespace Amqp
                     }
                     else
                     {
-                        Fx.AssertAndThrow(1000, this.receiver != null);
+                        Fx.AssertAndThrow(ErrorCode.ClientAttachReceiverIsNull, this.receiver != null);
                         this.receiver.OnAttach(fields);
 #if TRACE
                         Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
@@ -339,7 +339,7 @@ namespace Amqp
                     this.state |= CloseReceived;
                     break;
                 default:
-                    Fx.AssertAndThrow(1000, false);
+                    Fx.AssertAndThrow(ErrorCode.ClientInvalidCodeOnFrame, false);
                     break;
             }
         }
