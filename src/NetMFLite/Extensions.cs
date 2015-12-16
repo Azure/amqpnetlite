@@ -55,7 +55,7 @@ namespace Amqp
             stream.Write(buffer.Buffer, buffer.Offset, buffer.Length);
         }
 
-        public static void WriteTransferFrame(this NetworkStream stream, uint deliveryId, bool settled,
+        public static int WriteTransferFrame(this NetworkStream stream, uint deliveryId, bool settled,
             ByteBuffer buffer, int maxFrameSize)
         {
             // payload should have bytes reserved for frame header and transfer
@@ -105,6 +105,8 @@ namespace Amqp
 
             stream.Write(buffer.Buffer, offset, frameSize);
             buffer.Complete(payloadSize);
+
+            return payloadSize;
         }
 
         public static void ReadFrame(this NetworkStream stream, out byte frameType, out ushort channel,

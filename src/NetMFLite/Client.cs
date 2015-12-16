@@ -96,6 +96,7 @@ namespace Amqp
         {
             this.state |= CloseSent;
             this.transport.WriteFrame(0, 0, 0x18ul, new List());
+            Fx.DebugPrint(true, 0, "close", null);
             this.Wait(o => (((Client)o).state & CloseReceived) == 0, this, 60000);
             this.transport.Close();
         }
@@ -126,16 +127,13 @@ namespace Amqp
                     }
                 }
 
-                this.transport.WriteTransferFrame(deliveryId, settled, buffer, this.maxFrameSize);
+                int payload = this.transport.WriteTransferFrame(deliveryId, settled, buffer, this.maxFrameSize);
+                Fx.DebugPrint(true, 0, "transfer", new List { deliveryId, settled, payload }, "delivery-id", "settled", "payload");
             }
         }
 
         internal void SendFlow(uint handle, uint dc, uint credit)
         {
-#if TRACE
-            Microsoft.SPOT.Debug.Print("SEND flow (next-in-id:" + this.nextIncomingId + " in-window:" + this.inWindow + " next-out-id:" + this.nextOutgoingId + " out-window:" + this.outWindow + " handle:" + handle + " dc:" + dc + " credit:" + credit + ")");
-#endif
-
             List flow;
             lock (this)
             {
@@ -143,6 +141,7 @@ namespace Amqp
             }
 
             this.transport.WriteFrame(0, 0, 0x13, flow);
+            Fx.DebugPrint(true, 0, "flow", flow, "next-in-id", "in-window", "next-out", "out-window", "handle", "dc", "credit");
         }
 
         void Initialize()
@@ -153,18 +152,24 @@ namespace Amqp
             {
                 header[4] = 3;
                 this.transport.Write(header, 0, 8);
-                this.transport.WriteFrame(1, 0, 0x41, SaslInit("PLAIN", this.userName, this.password));
+                Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
+                List saslInit = SaslInit("PLAIN", this.userName, this.password);
+                this.transport.WriteFrame(1, 0, 0x41, saslInit);
+                Fx.DebugPrint(true, 0, "sasl-init", saslInit, "mechanism");
                 this.transport.Flush();
 
                 retHeader = this.transport.ReadFixedSizeBuffer(8);
+                Fx.DebugPrint(false, 0, "AMQP", new List { string.Concat(retHeader[5], retHeader[6], retHeader[7]) }, retHeader[4]);
                 Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
                 List body = this.transport.ReadFrameBody(1, 0, 0x40);
+                Fx.DebugPrint(false, 0, "sasl-mechanisms", body, "server-mechanisms");
                 Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
                 Symbol[] mechanisms = Extensions.GetSymbolMultiple(body[0]);
                 Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongSymbol, Array.IndexOf(mechanisms, new Symbol("PLAIN")) >= 0);
 
                 body = this.transport.ReadFrameBody(1, 0, 0x44);
                 Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
+                Fx.DebugPrint(false, 0, "sasl-outcome", body, "code");
                 Fx.AssertAndThrow(ErrorCode.ClientInitializeSaslFailed, body[0].Equals((byte)0));   // sasl-outcome.code = OK
 
                 header[4] = 0;
@@ -172,22 +177,20 @@ namespace Amqp
 
             this.state = OpenSent | BeginSent;
             this.transport.Write(header, 0, 8);
+            Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
 
             // perform open 
             var open = Open(Guid.NewGuid().ToString(), this.host, MaxFrameSize, 0);
-#if TRACE
-            Microsoft.SPOT.Debug.Print("SEND open (container-id:" + open[0] + ", host-name: " + open[1] + ", max-frame-size:" + open[2] + ", channel-max:" + open[3] + ")");
-#endif
             this.transport.WriteFrame(0, 0, 0x10, open);
+            Fx.DebugPrint(true, 0, "open", open, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
 
             // perform begin
             var begin = Begin(this.nextOutgoingId, this.inWindow, this.outWindow);
-#if TRACE
-            Microsoft.SPOT.Debug.Print("SEND begin(next-outgoing-id:" + begin[0] + ", incoming-window:" + begin[1] + ", outgoing-window:" + begin[2] + ", handle-max:0)");
-#endif
             this.transport.WriteFrame(0, 0, 0x11, begin);
+            Fx.DebugPrint(true, 0, "begin", begin, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");
 
             retHeader = this.transport.ReadFixedSizeBuffer(8);
+            Fx.DebugPrint(false, 0, "AMQP", new List { string.Concat(retHeader[5], retHeader[6], retHeader[7]) }, retHeader[4]);
             Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
             new Thread(this.PumpThread).Start();
         }
@@ -204,7 +207,7 @@ namespace Amqp
                 try
                 {
                     this.transport.ReadFrame(out frameType, out channel, out code, out fields, out payload);
-                    this.OnFrame(code, fields, payload);
+                    this.OnFrame(channel, code, fields, payload);
                 }
                 catch (Exception)
                 {
@@ -216,52 +219,43 @@ namespace Amqp
             }
         }
 
-        void OnFrame(ulong code, List fields, ByteBuffer payload)
+        void OnFrame(ushort channel, ulong code, List fields, ByteBuffer payload)
         {
             switch (code)
             {
                 case 0x10:  // open
+                    Fx.DebugPrint(false, channel, "open", fields, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
                     this.state |= OpenReceived;
-
-#if TRACE
-                    Microsoft.SPOT.Debug.Print("RECV open (container-id:" + (string)fields[0] + ", host-name:" + (string)fields[1] + ", max-frame-size:" + (uint)fields[2] + ", channel-max:" + (ushort)fields[3] + ", idle-time-out:" + (uint)fields[4]);
-#endif
                     idleTimeout = (uint)fields[4];
                     this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
 
 
                     break;
                 case 0x11:  // begin
+                    Fx.DebugPrint(false, channel, "begin", fields, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");
                     this.nextIncomingId = (uint)fields[1];
                     this.outWindow = (uint)fields[2];
                     this.state |= BeginReceived;
-#if TRACE
-                    Microsoft.SPOT.Debug.Print("RECV begin (next-outgoing-id:" + this.nextOutgoingId + ", outgoing-window:" + this.outWindow + ", incoming-window:" + this.inWindow + ")");
-#endif
                     break;
                 case 0x12:  // attach
                 {
+                    Fx.DebugPrint(false, channel, "attach", fields, "name", "handle", "role", "snd-mode", "rcv-mode", "source", "target");
                     bool role = (bool)fields[2];
                     if (role)
                     {
                         Fx.AssertAndThrow(ErrorCode.ClientAttachSenderIsNull, this.sender != null);
                         this.sender.OnAttach(fields);
-#if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + (fields[6] != null ? ((List)((DescribedValue)fields[6]).Value)[0] : string.Empty) + "), max-message-size:" + (ulong)fields[10] + ")");
-#endif
                     }
                     else
                     {
                         Fx.AssertAndThrow(ErrorCode.ClientAttachReceiverIsNull, this.receiver != null);
                         this.receiver.OnAttach(fields);
-#if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + (fields[5] != null ? ((List)((DescribedValue)fields[5]).Value)[0] : string.Empty) + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
-#endif
                     }
                     break;
                 }
                 case 0x13:  // flow
                 {
+                    Fx.DebugPrint(false, channel, "flow", fields, "next-in-id", "in-window", "next-out", "out-window", "handle", "dc", "credit");
                     uint nextIncomingId = (uint)fields[0];
                     uint incomingWindow = (uint)fields[1];
                     lock(this)
@@ -270,10 +264,6 @@ namespace Amqp
                             nextIncomingId + incomingWindow - this.nextOutgoingId :
                             uint.MaxValue;
                     }
-
-#if TRACE
-                    Microsoft.SPOT.Debug.Print("RECV flow (next-in-id:" + this.nextIncomingId + ", in-window:" + this.inWindow + ", next-out-id:" + this.nextOutgoingId + ", out-window:" + this.outWindow + ")");
-#endif
 
                     Sender sender = this.sender;
                     if (fields[4] != null && sender != null)
@@ -292,15 +282,9 @@ namespace Amqp
                         {
                             this.inWindow = defaultWindowSize;
                             flow = new List() { this.nextIncomingId, this.inWindow, this.nextOutgoingId, this.outWindow };
+                            this.transport.WriteFrame(0, 0, 0x13, flow);
+                            Fx.DebugPrint(true, 0, "flow", flow, "next-in-id", "in-window", "next-out", "out-window", "handle", "dc", "credit");
                         }
-                    }
-
-                    if (flow != null)
-                    {
-#if TRACE
-                         Microsoft.SPOT.Debug.Print("RECV transfer (next-in-id:" + this.nextIncomingId + " in-window:" + this.inWindow + " next-out-id:" + this.nextOutgoingId + " out-window:" + this.outWindow + ")");
-#endif
-                         this.transport.WriteFrame(0, 0, 0x13, flow);
                     }
 
                     if (this.receiver != null)
@@ -311,6 +295,7 @@ namespace Amqp
                 }
                 case 0x15:  // disposition
                 {
+                    Fx.DebugPrint(false, channel, "disposition", fields, "role", "first", "last");
                     bool role = (bool)fields[0];
                     if (role)
                     {
@@ -320,29 +305,25 @@ namespace Amqp
                 }
                 case 0x16:  // dettach
                 {
+                    Fx.DebugPrint(false, channel, "detach", fields, "handle");
                     uint handle = (uint)fields[0];
 
                     if (this.sender != null && handle == this.sender.remoteHandle)
                     {
-#if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV detach sender handle" + handle);
-#endif
-
                         this.sender.OnDetach(fields);
                     }
                     else if (this.receiver != null && handle == this.receiver.remoteHandle)
                     {
-#if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV detach receiver handle" + handle);
-#endif
                         this.receiver.OnDetach(fields);
                     }
                     break;
                 }
                 case 0x17:  // end
+                    Fx.DebugPrint(false, channel, "end", null);
                     this.state |= EndReceived;
                     break;
                 case 0x18:  // close
+                    Fx.DebugPrint(false, channel, "close", null);
                     this.state |= CloseReceived;
                     break;
                 default:
@@ -395,9 +376,7 @@ namespace Amqp
             byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
             thisPtr.transport.Write(frame, 0, frame.Length);
             thisPtr.transport.Flush();
-#if TRACE
-            Microsoft.SPOT.Debug.Print("SEND empty");
-#endif
+            Fx.DebugPrint(true, 0, "empty", null);
         }
     }
 }

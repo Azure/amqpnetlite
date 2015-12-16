@@ -1424,7 +1424,7 @@ namespace Amqp.Types
         }
 #endif
 
-#if NETFX || DOTNET || DOTNET35
+#if NETFX || DOTNET || NETFX35
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {
