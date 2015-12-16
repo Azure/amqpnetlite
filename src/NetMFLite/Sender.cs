@@ -34,7 +34,7 @@ namespace Amqp
             this.state |= Client.AttachSent;
             this.remoteHandle = uint.MaxValue;
             this.client = client;
-            this.client.transport.WriteFrame(0, 0, 0x12, Client.Attach(Client.Name + "-" + this.GetType().Name, 0u, false, null, address));
+            this.client.SendAttach(Client.Name + "-" + this.GetType().Name, 0u, false, null, address);
         }
 
         public void Send(Message message)

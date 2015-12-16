@@ -44,6 +44,8 @@ namespace Amqp
         internal const string Name = "netmf-lite";
         internal const int MaxFrameSize = 1024;
         const uint defaultWindowSize = 100u;
+        const uint minIdleTimeout = 10000;
+        const uint maxIdleTimeout = 120000;
 
         string host;
         int port;
@@ -130,6 +132,13 @@ namespace Amqp
                 int payload = this.transport.WriteTransferFrame(deliveryId, settled, buffer, this.maxFrameSize);
                 Fx.DebugPrint(true, 0, "transfer", new List { deliveryId, settled, payload }, "delivery-id", "settled", "payload");
             }
+        }
+
+        internal void SendAttach(string name, uint handle, bool role, string sourceAddress, string targetAddress)
+        {
+            List attach = Attach(name, handle, role, sourceAddress, targetAddress);
+            this.transport.WriteFrame(0, 0, 0x12, attach);
+            Fx.DebugPrint(true, 0, "attach", attach, "name", "handle", "role", "snd-mode", "rcv-mode", "source", "target");
         }
 
         internal void SendFlow(uint handle, uint dc, uint credit)
@@ -226,10 +235,22 @@ namespace Amqp
                 case 0x10:  // open
                     Fx.DebugPrint(false, channel, "open", fields, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
                     this.state |= OpenReceived;
-                    idleTimeout = (uint)fields[4];
-                    this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
+                    // process open.idle-time-out
+                    if (fields.Count >= 5 && fields[4] != null)
+                    {
+                        this.idleTimeout = (uint)fields[4];
+                        if (this.idleTimeout > 0 && this.idleTimeout < uint.MaxValue)
+                        {
+                            Fx.AssertAndThrow(ErrorCode.ClientIdleTimeoutTooSmall, this.idleTimeout >= minIdleTimeout);
+                            this.idleTimeout -= 5000;
+                            if (this.idleTimeout > maxIdleTimeout)
+                            {
+                                this.idleTimeout = maxIdleTimeout;
+                            }
 
-
+                            this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)this.idleTimeout, (int)this.idleTimeout);
+                        }
+                    }
                     break;
                 case 0x11:  // begin
                     Fx.DebugPrint(false, channel, "begin", fields, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");

@@ -36,7 +36,7 @@ namespace Amqp
         ClientInvalidCode = 1013,
         ClientInvalidFieldList = 1014,
         ClientInvalidPayload = 1015,
-
+        ClientIdleTimeoutTooSmall = 1016,
 
         // received error codes
         ReceiverStartInvalidState = 2000,

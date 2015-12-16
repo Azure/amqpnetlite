@@ -42,7 +42,7 @@ namespace Amqp
             this.remoteHandle = uint.MaxValue;
             this.lastDeliveryId = uint.MaxValue;
             this.state |= Client.AttachSent;
-            this.client.transport.WriteFrame(0, 0, 0x12, Client.Attach(Client.Name + "-" + this.GetType().Name, 1u, true, address, null));
+            this.client.SendAttach(Client.Name + "-" + this.GetType().Name, 1u, true, address, null);
         }
 
         public void Start(uint credit, OnMessage onMessage)
