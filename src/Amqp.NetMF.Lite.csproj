@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AmqpBitConverter.cs" />
     <Compile Include="ByteBuffer.cs" />
+    <Compile Include="NetMFLite\ErrorCode.cs" />
     <Compile Include="NetMFLite\Message.cs" />
     <Compile Include="NetMFLite\Receiver.cs" />
     <Compile Include="NetMFLite\Sender.cs" />

@@ -39,7 +39,7 @@ namespace Amqp
 
         public void Send(Message message)
         {
-            Fx.AssertAndThrow(1000, this.state > 0);
+            Fx.AssertAndThrow(ErrorCode.SenderSendInvalidState, this.state > 0);
             this.client.Wait(o => ((Sender)o).credit == 0, this, 60000);
 
             lock (this)
