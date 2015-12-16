@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <AssemblyName>Amqp.Lite.NetMF44</AssemblyName>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Amqp</RootNamespace>
+    <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E43D756E-0061-4326-841D-BAD89CFFB074}</ProjectGuid>
+    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
+    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETMF;NETMF_LITE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <DefineConstants>NETMF;NETMF_LITE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
+  <ItemGroup>
+    <Reference Include="Microsoft.SPOT.Native">
+    </Reference>
+    <Reference Include="Microsoft.SPOT.Net.Security" />
+    <Reference Include="System" />
+    <Reference Include="System.Net.Security" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AmqpBitConverter.cs" />
+    <Compile Include="ByteBuffer.cs" />
+    <Compile Include="NetMFLite\Message.cs" />
+    <Compile Include="NetMFLite\Receiver.cs" />
+    <Compile Include="NetMFLite\Sender.cs" />
+    <Compile Include="NetMFLite\Fx.cs" />
+    <Compile Include="NetMFLite\Extensions.cs" />
+    <Compile Include="NetMF\List.cs" />
+    <Compile Include="NetMF\Map.cs" />
+    <Compile Include="NetMFLite\Client.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\Described.cs" />
+    <Compile Include="Types\DescribedValue.cs" />
+    <Compile Include="Types\Descriptor.cs" />
+    <Compile Include="Types\Encoder.cs" />
+    <Compile Include="Types\FixedWidth.cs" />
+    <Compile Include="Types\FormatCode.cs" />
+    <Compile Include="Types\RestrictedDescribed.cs" />
+    <Compile Include="Types\Symbol.cs" />
+  </ItemGroup>
+  <ItemGroup />
+</Project>
