@@ -240,7 +240,7 @@ namespace Amqp
                         Fx.AssertAndThrow(1000, this.sender != null);
                         this.sender.OnAttach(fields);
 #if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + ((List)((DescribedValue)fields[6]).Value)[0] + "), max-message-size:" + (ulong)fields[10] + ")");
+                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + (fields[6] != null ? ((List)((DescribedValue)fields[6]).Value)[0] : string.Empty) + "), max-message-size:" + (ulong)fields[10] + ")");
 #endif
                     }
                     else
@@ -248,7 +248,7 @@ namespace Amqp
                         Fx.AssertAndThrow(1000, this.receiver != null);
                         this.receiver.OnAttach(fields);
 #if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
+                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + (fields[5] != null ? ((List)((DescribedValue)fields[5]).Value)[0] : string.Empty) + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
 #endif
                     }
                     break;
