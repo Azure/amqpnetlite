@@ -47,7 +47,7 @@ namespace Amqp
 
         public void Start(uint credit, OnMessage onMessage)
         {
-            Fx.AssertAndThrow(1000, this.state > 0);
+            Fx.AssertAndThrow(ErrorCode.ReceiverStartInvalidState, this.state > 0);
             this.credit = credit;
             this.flowThreshold = this.credit > 512u ? byte.MaxValue : (byte)(this.credit / 2);
             this.onMessage = onMessage;
@@ -56,7 +56,7 @@ namespace Amqp
 
         public void Accept(Message message)
         {
-            Fx.AssertAndThrow(1000, this.state > 0);
+            Fx.AssertAndThrow(ErrorCode.ReceiverAcceptInvalidState, this.state > 0);
             if (!message.settled)
             {
                 this.client.transport.WriteFrame(0, 0, 0x15ul, new List() { true, message.deliveryId, null, true, new DescribedValue(0x24ul, new List()) });
@@ -110,7 +110,7 @@ namespace Amqp
             {
                 lock (this)
                 {
-                    Fx.AssertAndThrow(1000, this.credit > 0);
+                    Fx.AssertAndThrow(ErrorCode.InvalidCreditOnTransfer, this.credit > 0);
                     this.deliveryCount++;
                     if (this.credit < uint.MaxValue)
                     {
