@@ -64,6 +64,10 @@ namespace Amqp
         internal uint inWindow = defaultWindowSize;
         internal uint nextIncomingId;
 
+        uint idleTimeout;
+        Timer heartBeatTimer;
+        static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
+
         public Client(string host, int port, bool useSsl, string userName, string password)
         {
             this.host = host;
@@ -222,6 +226,9 @@ namespace Amqp
 #if TRACE
                     Microsoft.SPOT.Debug.Print("RECV open (container-id:" + (string)fields[0] + ", host-name:" + (string)fields[1] + ", max-frame-size:" + (uint)fields[2] + ", channel-max:" + (ushort)fields[3] + ", idle-time-out:" + (uint)fields[4]);
 #endif
+                    idleTimeout = (uint)fields[4];
+                    this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
+
 
                     break;
                 case 0x11:  // begin
@@ -243,12 +250,12 @@ namespace Amqp
                         Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + ((List)((DescribedValue)fields[6]).Value)[0] + "), max-message-size:" + (ulong)fields[10] + ")");
 #endif
                     }
-                    else
+                        else
                     {
                         Fx.AssertAndThrow(1000, this.receiver != null);
                         this.receiver.OnAttach(fields);
 #if TRACE
-                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
+                            Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
 #endif
                     }
                     break;
@@ -380,6 +387,17 @@ namespace Amqp
         internal static List Detach(uint handle)
         {
             return new List { handle, true };
+        }
+
+        static void OnHeartBeatTimer(object state)
+        {
+            var thisPtr = (Client)state;
+            byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
+            thisPtr.transport.Write(frame, 0, frame.Length);
+            thisPtr.transport.Flush();
+#if TRACE
+            Microsoft.SPOT.Debug.Print("SEND empty");
+#endif
         }
     }
 }
