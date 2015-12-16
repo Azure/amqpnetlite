@@ -242,7 +242,9 @@ namespace Amqp.Types
                 { typeof(Symbol),   serializers[17] },
                 { typeof(List),     serializers[18] },
                 { typeof(Map),      serializers[19] },
+#if !NETMF_LITE
                 { typeof(Fields),   serializers[19] },
+#endif
             };
 
             codecIndexTable = new byte[][]
@@ -288,9 +290,12 @@ namespace Amqp.Types
         internal static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
         {
             Serializer codec = (Serializer)codecByType[type];
-            if (codec == null && type.IsArray)
+            if (codec == null)
             {
-                codec = serializers[20];
+                if (type.IsArray)
+                {
+                    codec = serializers[20];
+                }
             }
 
             if (codec != null)
@@ -372,8 +377,7 @@ namespace Amqp.Types
                 }
                 else
                 {
-                    throw new AmqpException(ErrorCode.NotImplemented,
-                        Fx.Format(SRAmqp.EncodingTypeNotSupported, value.GetType()));
+                    throw TypeNotSupportedException(value.GetType());
                 }
             }
         }
@@ -858,7 +862,7 @@ namespace Amqp.Types
                 return ReadDescribed(buffer, formatCode);
             }
 
-            throw DecodeException(formatCode, buffer.Offset);
+            throw InvalidFormatCodeException(formatCode, buffer.Offset);
         }
 
         /// <summary>
@@ -908,7 +912,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -925,7 +929,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -942,7 +946,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -967,7 +971,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -992,7 +996,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1009,7 +1013,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1026,7 +1030,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1047,7 +1051,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1068,7 +1072,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1085,7 +1089,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1102,7 +1106,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1119,7 +1123,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1136,7 +1140,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1153,7 +1157,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
 
@@ -1180,7 +1184,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             buffer.Validate(false, count);
@@ -1241,7 +1245,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             List value = new List();
@@ -1279,14 +1283,14 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             formatCode = Encoder.ReadFormatCode(buffer);
             Serializer codec = GetSerializer(formatCode);
             if (codec == null)
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             Array value = Array.CreateInstance(codec.Type, count);
@@ -1325,13 +1329,12 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             if (count % 2 > 0)
             {
-                throw new AmqpException(ErrorCode.DecodeError,
-                    Fx.Format(SRAmqp.InvalidMapCount, count));
+                throw InvalidMapCountException(count);
             }
 
             Map value = new Map();
@@ -1376,7 +1379,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             buffer.Validate(false, count);
@@ -1386,12 +1389,42 @@ namespace Amqp.Types
             return value;
         }
 
-        static AmqpException DecodeException(byte formatCode, int offset)
+#if NETMF_LITE
+        static Exception InvalidFormatCodeException(byte formatCode, int offset)
+        {
+            return new Exception("Format code " + formatCode + " at offset " + offset + " is invalid");
+        }
+
+        static Exception InvalidMapCountException(int count)
+        {
+            return new Exception("Invalid count " + count);
+        }
+
+        static Exception TypeNotSupportedException(Type type)
+        {
+            return new Exception(type.Name + " not supported");
+        }
+#else
+        static AmqpException InvalidFormatCodeException(byte formatCode, int offset)
         {
             return new AmqpException(ErrorCode.DecodeError,
                 Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, offset));
         }
-#if NETFX || DOTNET || NETFX35
+
+        static AmqpException InvalidMapCountException(int count)
+        {
+            return new AmqpException(ErrorCode.DecodeError,
+                Fx.Format(SRAmqp.InvalidMapCount, count));
+        }
+
+        static AmqpException TypeNotSupportedException(Type type)
+        {
+            return new AmqpException(ErrorCode.NotImplemented,
+                Fx.Format(SRAmqp.EncodingTypeNotSupported, type));
+        }
+#endif
+
+#if NETFX || DOTNET || DOTNET35
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {
@@ -1432,7 +1465,7 @@ namespace Amqp.Types
             }
             else
             {
-                throw DecodeException(formatCode, buffer.Offset);
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
             buffer.Validate(false, count);

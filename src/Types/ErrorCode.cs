@@ -15,7 +15,7 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Types
+namespace Amqp
 {
     /// <summary>
     /// Defines the conditions of AMQP errors.
@@ -123,7 +123,7 @@ namespace Amqp.Types
         /// <summary>
         /// Input was received for a link that was detached with an error.
         /// </summary>
-        public const string ErrantLink = "amqp:session-errant-link";
+        public const string ErrantLink = "amqp:session:errant-link";
 
         /// <summary>
         /// An attach was received using a handle that is already in use for an attached Link.
