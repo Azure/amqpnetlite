@@ -250,12 +250,12 @@ namespace Amqp
                         Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:True, source:source(), target:target(" + ((List)((DescribedValue)fields[6]).Value)[0] + "), max-message-size:" + (ulong)fields[10] + ")");
 #endif
                     }
-                        else
+                    else
                     {
                         Fx.AssertAndThrow(1000, this.receiver != null);
                         this.receiver.OnAttach(fields);
 #if TRACE
-                            Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
+                        Microsoft.SPOT.Debug.Print("RECV attach(name:" + (string)fields[0] + ", handle:0, role:False, source:source(" + ((List)((DescribedValue)fields[5]).Value)[0] + "), target:target(), max-message-size:" + (ulong)fields[10] + ")");
 #endif
                     }
                     break;
