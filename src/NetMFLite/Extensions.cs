@@ -120,7 +120,7 @@ namespace Amqp
             {
                 byte[] frameBuffer = stream.ReadFixedSizeBuffer(size);
                 ByteBuffer buffer = new ByteBuffer(frameBuffer, 0, size, size);
-                Fx.AssertAndThrow(1001, Encoder.ReadFormatCode(buffer) == FormatCode.Described);
+                Fx.AssertAndThrow(ErrorCode.ClientInvalidFormatCodeRead, Encoder.ReadFormatCode(buffer) == FormatCode.Described);
 
                 code = Encoder.ReadULong(buffer, Encoder.ReadFormatCode(buffer));
                 fields = Encoder.ReadList(buffer,Encoder.ReadFormatCode(buffer));
@@ -149,11 +149,11 @@ namespace Amqp
             List f;
             ByteBuffer p;
             stream.ReadFrame(out t, out c, out d, out f, out p);
-            Fx.AssertAndThrow(1002, t == frameType);
-            Fx.AssertAndThrow(1003, c == channel);
-            Fx.AssertAndThrow(1004, d == code);
-            Fx.AssertAndThrow(1005, f != null);
-            Fx.AssertAndThrow(1006, p == null);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidFrameType, t == frameType);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidChannel, c == channel);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidCode, d == code);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidFieldList, f != null);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidPayload, p == null);
             return f;
         }
 
