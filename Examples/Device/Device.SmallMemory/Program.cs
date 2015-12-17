@@ -55,7 +55,7 @@ namespace Device.SmallMemory
             string senderAddress = "devices/" + device + "/messages/events";
             string receiverAddress = "devices/" + device + "/messages/deviceBound";
 
-            Client client = new Client(hostName, port, false, userName, password);
+            Client client = new Client(hostName, port, true, userName, password);
 
             int count = 0;
             ManualResetEvent done = new ManualResetEvent(false);
