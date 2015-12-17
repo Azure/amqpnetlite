@@ -22,12 +22,10 @@ namespace Amqp
 
     public delegate void OnMessage(Receiver receiver, Message message);
 
-    public class Receiver
+    public class Receiver : Link
     {
-        internal uint remoteHandle;
         Client client;
         OnMessage onMessage;
-        byte state;
         uint credit;
         byte restored;
         byte flowThreshold;
@@ -36,30 +34,29 @@ namespace Amqp
         uint lastDeliveryId;
         ByteBuffer messageBuffer;
 
-        internal Receiver(Client client, string address)
+        internal Receiver(Client client, string name, string address)
         {
+            this.Role = true;
+            this.Name = name;
             this.client = client;
-            this.remoteHandle = uint.MaxValue;
             this.lastDeliveryId = uint.MaxValue;
-            this.state |= Client.AttachSent;
-            this.client.SendAttach(Client.Name + "-" + this.GetType().Name, 1u, true, address, null);
         }
 
         public void Start(uint credit, OnMessage onMessage)
         {
-            Fx.AssertAndThrow(ErrorCode.ReceiverStartInvalidState, this.state > 0);
+            Fx.AssertAndThrow(ErrorCode.ReceiverStartInvalidState, this.State < 0xff);
             this.credit = credit;
             this.flowThreshold = this.credit > 512u ? byte.MaxValue : (byte)(this.credit / 2);
             this.onMessage = onMessage;
-            this.client.SendFlow(1u, this.deliveryCount, credit);
+            this.client.SendFlow(this.Handle, this.deliveryCount, credit);
         }
 
         public void Accept(Message message)
         {
-            Fx.AssertAndThrow(ErrorCode.ReceiverAcceptInvalidState, this.state > 0);
+            Fx.AssertAndThrow(ErrorCode.ReceiverAcceptInvalidState, this.State < 0xff);
             if (!message.settled)
             {
-                this.client.transport.WriteFrame(0, 0, 0x15ul, new List() { true, message.deliveryId, null, true, new DescribedValue(0x24ul, new List()) });
+                this.client.SendDisposition(true, message.deliveryId, true, new DescribedValue(0x24ul, new List()));
             }
 
             if (this.credit < uint.MaxValue)
@@ -70,7 +67,7 @@ namespace Amqp
                     if (++this.restored >= this.flowThreshold)
                     {
                         this.restored = 0;
-                        this.client.SendFlow(1u, this.deliveryCount, this.credit);
+                        this.client.SendFlow(this.Handle, this.deliveryCount, this.credit);
                     }
                 }
             }
@@ -78,20 +75,23 @@ namespace Amqp
 
         public void Close()
         {
-            this.state |= Client.DetachSent;
-            this.client.transport.WriteFrame(0, 0, 0x16, Client.Detach(0x01u));
-            this.client.Wait(o => (((Receiver)o).state & Client.DetachReceived) == 0, this, 60000);
-            this.state = 0;
-            this.client.receiver = null;
-            this.client.inWindow = 0;
-            this.client.nextIncomingId = 0;
+            if (this.State < 0xff)
+            {
+                this.client.CloseLink(this);
+            }
         }
 
-        internal void OnAttach(List attach)
+        internal override void OnAttach(List attach)
         {
             this.deliveryCount = (uint)attach[9];
-            this.remoteHandle = (uint)attach[1];
-            this.state |= Client.AttachReceived;
+        }
+
+        internal override void OnFlow(List fields)
+        {
+        }
+
+        internal override void OnDisposition(uint first, uint last, DescribedValue state)
+        {
         }
 
         internal void OnTransfer(List transfer, ByteBuffer payload)
@@ -142,11 +142,6 @@ namespace Amqp
                 message.settled = transfer[4] != null && true.Equals(transfer[4]);
                 this.onMessage(this, message);
             }
-        }
-
-        internal void OnDetach(List detach)
-        {
-            this.state |= Client.DetachReceived;
         }
     }
 }

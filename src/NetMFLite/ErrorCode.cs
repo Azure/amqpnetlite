@@ -20,15 +20,15 @@ namespace Amqp
     public enum ErrorCode
     {
         // client error codes
-        ClientSenderIsNull = 1000,
-        ClientReceiverIsNull = 1001,
+        ClientNoHandleAvailable = 1000,
+        ClientHandlInUse = 1001,
         ClientWaitTimeout = 1002,
         ClientInitializeWrongBodyCount = 1003,
         ClientInitializeWrongSymbol = 1004,
         ClientInitializeHeaderCheckFailed = 1005,
         ClientInitializeSaslFailed = 1006,
-        ClientAttachSenderIsNull = 1007,
-        ClientAttachReceiverIsNull = 1008,
+        ClientInvalidHandle = 1007,
+        ClientLinkNotFound = 1008,
         ClientInvalidCodeOnFrame = 1009,
         ClientInvalidFormatCodeRead = 1010,
         ClientInvalidFrameType = 1011,
@@ -42,7 +42,6 @@ namespace Amqp
         ReceiverStartInvalidState = 2000,
         ReceiverAcceptInvalidState = 2001,
         InvalidCreditOnTransfer = 2002,
-
 
         // sender error codes
         SenderSendInvalidState = 3000

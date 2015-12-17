@@ -20,26 +20,31 @@ namespace Amqp
     using System;
     using Amqp.Types;
 
-    public class Sender
+    public class Sender : Link
     {
-        internal uint remoteHandle;
+        const int defaultTimeout = 60000;
+
         Client client;
-        byte state;
         uint credit;
         uint deliveryCount;
+        uint deliveryId;
         DescribedValue deliveryState;
 
-        internal Sender(Client client, string address)
+        internal Sender(Client client, string name, string address)
         {
-            this.state |= Client.AttachSent;
-            this.remoteHandle = uint.MaxValue;
+            this.Role = false;
+            this.Name = name;
             this.client = client;
-            this.client.SendAttach(Client.Name + "-" + this.GetType().Name, 0u, false, null, address);
         }
 
         public void Send(Message message)
         {
-            Fx.AssertAndThrow(ErrorCode.SenderSendInvalidState, this.state > 0);
+            this.Send(message, defaultTimeout);
+        }
+
+        public void Send(Message message, int timeout)
+        {
+            Fx.AssertAndThrow(ErrorCode.SenderSendInvalidState, this.State < 0xff);
             this.client.Wait(o => ((Sender)o).credit == 0, this, 60000);
 
             lock (this)
@@ -51,10 +56,10 @@ namespace Amqp
             }
 
             this.deliveryState = null;
-            this.client.Send(message, this.deliveryCount, false);
+            this.deliveryId = this.client.Send(this, message, timeout == 0);
             this.deliveryCount++;
 
-            this.client.Wait(o => ((Sender)o).deliveryState == null, this, 60000);
+            this.client.Wait(o => ((Sender)o).deliveryState == null, this, timeout);
             if (!object.Equals(this.deliveryState.Descriptor, 0x24ul))
             {
                 throw new Exception(this.deliveryState.Value.ToString());
@@ -63,22 +68,14 @@ namespace Amqp
 
         public void Close()
         {
-            this.state |= Client.DetachSent;
-            this.client.transport.WriteFrame(0, 0, 0x16, Client.Detach(0x00u));
-            this.client.Wait(o => (((Sender)o).state & Client.DetachReceived) == 0, this, 60000);
-            this.state = 0;
-            this.client.sender = null;
-            this.client.outWindow = 0;
-            this.client.nextOutgoingId = 0;
+            this.client.CloseLink(this);
         }
 
-        internal void OnAttach(List attach)
+        internal override void OnAttach(List attach)
         {
-            this.remoteHandle = (uint)attach[1];
-            this.state |= Client.AttachReceived;
         }
 
-        internal void OnFlow(List flow)
+        internal override void OnFlow(List flow)
         {
             lock (this)
             {
@@ -88,14 +85,12 @@ namespace Amqp
             }
         }
 
-        internal void OnDisposition(List disposition)
+        internal override void OnDisposition(uint first, uint last, DescribedValue deliveryState)
         {
-            this.deliveryState = disposition[4] as DescribedValue;
-        }
-
-        internal void OnDetach(List detach)
-        {
-            this.state |= Client.DetachReceived;
+            if (this.deliveryId >= first && this.deliveryId <= last)
+            {
+                this.deliveryState = deliveryState;
+            }
         }
     }
 }
