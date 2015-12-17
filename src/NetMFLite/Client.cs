@@ -61,8 +61,6 @@ namespace Amqp
         const string Name = "netmf-lite";
         const uint MaxFrameSize = 1024;
         const uint defaultWindowSize = 100u;
-        const uint minIdleTimeout = 10000;
-        const uint maxIdleTimeout = 120000;
         const int maxLinks = 8;
 
         static int linkId;
@@ -85,9 +83,71 @@ namespace Amqp
         uint deliveryId;
         Link[] links;
 
-        uint idleTimeout;
+
+        #region heart beat timer and related properties
+
+        private int idleTimeout;
+
+        /// <summary>
+        /// Current idle timeout for a connection (in milliseconds). 
+        /// After opening a connection the <see cref="Client"/> will keep the link active with an heart beat timer that sends an empty packet before the value is reached.
+        /// If the <see cref="Client"/> is connected when this value is changed the heart beat timer will be changed, if necessary.
+        /// </summary>
+        public int IdleTimeout
+        {
+            get { return idleTimeout; }
+            set
+            {
+                if(idleTimeout != value)
+                {
+                    // adjust value if it's higher than the max idle timeout
+                    idleTimeout = Math.Min(value, maxIdleTimeout);
+
+                    // subtract 5 seconds to make sure that there is activity in the link before the timeout value is reached
+                    idleTimeout -= 5000;
+
+                    // update the heart beat timer if it's running
+                    if (this.heartBeatTimer != null)
+                    {
+                        // reschedule heart beat
+                        this.heartBeatTimer.Change(5000, idleTimeout);
+                    }
+                }
+            }
+        }
+
+        private int maxIdleTimeout = 120000;
+
+        /// <summary>
+        /// Maximum idle timeout for a connection (in milliseconds). 
+        /// This value is used when setting the heart beat timer when a new connection is established.
+        /// If the <see cref="Client"/> is connected when this value is changed the heart beat timer will be changed, if necessary.
+        /// <seealso cref="IdleTimeout"/>
+        /// </summary>
+        public int MaxIdleTimeout
+        {
+            get { return maxIdleTimeout; }
+            set
+            {
+                // is the new value different?
+                if (maxIdleTimeout != value)
+                {
+                    // update with new value
+                    maxIdleTimeout = value;
+
+                    // check if the current idle timeout needs to be changed
+                    if (IdleTimeout > maxIdleTimeout)
+                    {
+                        IdleTimeout = maxIdleTimeout;
+                    }
+                }
+            }
+        }
+
         Timer heartBeatTimer;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
+
+        #endregion
 
         public Client(string host, int port, bool useSsl, string userName, string password)
         {
@@ -138,6 +198,10 @@ namespace Amqp
             {
                 this.transport.Close();
                 this.ClearLinks();
+                
+                // kill heart beat timer
+                heartBeatTimer.Dispose();
+                heartBeatTimer = null;
             }
         }
 
@@ -168,6 +232,8 @@ namespace Amqp
                 }
 
                 int payload = this.transport.WriteTransferFrame(sender.Handle, this.deliveryId, settled, buffer, this.maxFrameSize);
+                // reschedule heart beat
+                this.heartBeatTimer.Change(IdleTimeout, IdleTimeout);
                 Fx.DebugPrint(true, 0, "transfer", new List { this.deliveryId, settled, payload }, "delivery-id", "settled", "payload");
             }
 
@@ -211,6 +277,8 @@ namespace Amqp
             }
 
             this.transport.WriteFrame(0, 0, 0x13, flow);
+            // reschedule heart beat
+            this.heartBeatTimer.Change(IdleTimeout, IdleTimeout);
             Fx.DebugPrint(true, 0, "flow", flow, "next-in-id", "in-window", "next-out", "out-window", "handle", "dc", "credit");
         }
 
@@ -352,6 +420,8 @@ namespace Amqp
                 {
                     this.transport.ReadFrame(out frameType, out channel, out code, out fields, out payload);
                     this.OnFrame(channel, code, fields, payload);
+                    // reschedule heart beat
+                    this.heartBeatTimer.Change(IdleTimeout, IdleTimeout);
                 }
                 catch (Exception)
                 {
@@ -370,22 +440,16 @@ namespace Amqp
                 case 0x10ul:  // open
                     Fx.DebugPrint(false, channel, "open", fields, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
                     this.state |= OpenReceived;
-                    // process open.idle-time-out
+
+                    // process open.idle-time-out if exists
                     if (fields.Count >= 5 && fields[4] != null)
                     {
-                        this.idleTimeout = (uint)fields[4];
-                        if (this.idleTimeout > 0 && this.idleTimeout < uint.MaxValue)
-                        {
-                            Fx.AssertAndThrow(ErrorCode.ClientIdleTimeoutTooSmall, this.idleTimeout >= minIdleTimeout);
-                            this.idleTimeout -= 5000;
-                            if (this.idleTimeout > maxIdleTimeout)
-                            {
-                                this.idleTimeout = maxIdleTimeout;
-                            }
-
-                            this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)this.idleTimeout, (int)this.idleTimeout);
-                        }
+                        // need to cast field to uint first because that is the type that is sent with the 'open' frame
+                        this.idleTimeout = (int)((uint)fields[4]);
                     }
+
+                    // set the idle timeout
+                    this.heartBeatTimer = new Timer(onHeartBeatTimer, this, IdleTimeout, IdleTimeout);
                     break;
                 case 0x11ul:  // begin
                     Fx.DebugPrint(false, channel, "begin", fields, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");
