@@ -25,7 +25,7 @@ namespace Amqp
 
     static class Extensions
     {
-        public const int TransferFramePrefixSize = 29;
+        public const int TransferFramePrefixSize = 30;
 
         // Frame extensions
 
@@ -55,8 +55,8 @@ namespace Amqp
             stream.Write(buffer.Buffer, buffer.Offset, buffer.Length);
         }
 
-        public static void WriteTransferFrame(this NetworkStream stream, uint deliveryId, bool settled,
-            ByteBuffer buffer, int maxFrameSize)
+        public static int WriteTransferFrame(this NetworkStream stream, uint handle, uint deliveryId,
+            bool settled, ByteBuffer buffer, int maxFrameSize)
         {
             // payload should have bytes reserved for frame header and transfer
             int frameSize = Math.Min(buffer.Length + TransferFramePrefixSize, maxFrameSize);
@@ -84,7 +84,8 @@ namespace Amqp
             buffer.Buffer[pos++] = 0x10;
             buffer.Buffer[pos++] = 0x06;
 
-            buffer.Buffer[pos++] = 0x43; // handle
+            buffer.Buffer[pos++] = 0x52; // handle
+            buffer.Buffer[pos++] = (byte)handle;
 
             buffer.Buffer[pos++] = 0x70; // delivery id: uint
             buffer.Buffer[pos++] = (byte)(deliveryId >> 24);
@@ -105,6 +106,8 @@ namespace Amqp
 
             stream.Write(buffer.Buffer, offset, frameSize);
             buffer.Complete(payloadSize);
+
+            return payloadSize;
         }
 
         public static void ReadFrame(this NetworkStream stream, out byte frameType, out ushort channel,

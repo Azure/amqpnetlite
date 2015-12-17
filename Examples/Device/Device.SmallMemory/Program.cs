@@ -16,8 +16,8 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
-using Amqp;
 using System.Threading;
+using Amqp;
 
 namespace Device.SmallMemory
 {
@@ -35,8 +35,8 @@ namespace Device.SmallMemory
         // user/pass to be authenticated with Azure IoT hub
         // if using a shared access signature like SharedAccessSignature sr=myhub.azure-devices.net&sig=H4Rm2%2bjdBr84lq5KOddD9YpOSC8s7ZSe9SygErVuPe8%3d&se=1444444444&skn=iothubowner
         // user will be iothubowner and password the complete SAS string 
-        const string authUser = "<replace>";
-        const string authPassword = "<replace>";
+        const string iotHubOwner = "<replace>";
+        const string sasToken = "<replace>";
 
         public static void Main()
         {
@@ -45,33 +45,42 @@ namespace Device.SmallMemory
 
         static void Send()
         {
-            const int nMsgs = 5;
+            const int nMsgs = 50;
 
-            Client client = new Client(iotHubName + ".azure-devices.net", 5671, true, authUser + "@sas.root." + iotHubName, authPassword);
+            // Map IotHub settings to AMQP protocol settings
+            string hostName = iotHubName + ".azure-devices.net";
+            int port = 5671;
+            string userName = iotHubOwner + "@sas.root." + iotHubName;
+            string password = sasToken;
+            string senderAddress = "devices/" + device + "/messages/events";
+            string receiverAddress = "devices/" + device + "/messages/deviceBound";
+
+            Client client = new Client(hostName, port, false, userName, password);
 
             int count = 0;
             ManualResetEvent done = new ManualResetEvent(false);
-            Receiver receiver = client.GetReceiver("devices/"+ device + "/messages/deviceBound");
+            Receiver receiver = client.CreateReceiver(receiverAddress);
             receiver.Start(20, (r, m) =>
             {
                 r.Accept(m);
                 if (++count >= nMsgs) done.Set();
             });
 
-            Thread.Sleep(5000);
-
-
-            Sender sender = client.GetSender("devices/" + device + "/messages/events");
-            for (int i = 0; i < nMsgs; i++)
+            Thread.Sleep(1000);
+            
+            Sender[] senders = new Sender[5];
+            for (int i = 0; i < senders.Length; i++)
             {
-                sender.Send(new Message() { Body = Guid.NewGuid().ToString() });
-                Thread.Sleep(1000);
+                senders[i] = client.CreateSender(senderAddress);
             }
 
-            done.WaitOne(30000, false);
+            for (int i = 0; i < nMsgs; i++)
+            {
+                senders[i % senders.Length].Send(new Message() { Body = Guid.NewGuid().ToString() });
+            }
 
-            sender.Close();
-            receiver.Close();
+            done.WaitOne(120000, false);
+
             client.Close();
         }
     }
