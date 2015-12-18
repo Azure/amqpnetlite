@@ -783,10 +783,18 @@ namespace Amqp
             var thisPtr = (Client)state;
             if (!thisPtr.sendActive)
             {
-                byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
-                thisPtr.transport.Write(frame, 0, frame.Length);
-                thisPtr.transport.Flush();
-                Fx.DebugPrint(true, 0, "empty", null);
+                try
+                {
+                    byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
+                    thisPtr.transport.Write(frame, 0, frame.Length);
+                    thisPtr.transport.Flush();
+                    Fx.DebugPrint(true, 0, "empty", null);
+                }
+                catch
+                {
+                    thisPtr.state = 0xff;
+                    thisPtr.Close();
+                }
             }
 
             thisPtr.sendActive = false;
