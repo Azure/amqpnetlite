@@ -18,32 +18,19 @@
 namespace Amqp
 {
     using System;
+    using System.Net;
     using System.Net.Sockets;
     using System.Text;
     using System.Threading;
     using Amqp.Types;
+    using Microsoft.SPOT.Net.Security;
 
     delegate bool Condition(object state);
 
-    public abstract class Link
-    {
-        public bool Role;
-
-        public string Name;
-
-        internal byte State;
-
-        internal uint Handle;
-
-        internal uint RemoteHandle;
-
-        internal abstract void OnAttach(List fields);
-
-        internal abstract void OnFlow(List fields);
-
-        internal abstract void OnDisposition(uint first, uint last, DescribedValue state);
-    }
-
+    /// <summary>
+    /// A Client is a channel to communicate with an AMQP peer. It manages an AMQP
+    /// connection and a session within it.
+    /// </summary>
     public class Client
     {
         const byte OpenSent = 1;
@@ -60,22 +47,23 @@ namespace Amqp
         const byte DetachReceived = 8;
         const string Name = "netmf-lite";
         const uint MaxFrameSize = 1024;
-        const uint defaultWindowSize = 100u;
-        const uint minIdleTimeout = 10000;
-        const uint maxIdleTimeout = 120000;
-        const int maxLinks = 8;
+        const uint DefaultWindowSize = 100u;
+        const uint MaxIdleTimeout = 120000;
+        const int MaxLinks = 8;
+        const int TransferFramePrefixSize = 30;
 
+        static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         static int linkId;
-        string host;
-        int port;
-        bool useSsl;
-        string userName;
-        string password;
-
-        AutoResetEvent signal;
         byte state;
+
+        // connection state
+        AutoResetEvent signal;
         NetworkStream transport;
+        bool sendActive;
         int maxFrameSize;
+        uint idleTimeout;
+        string hostName;
+        Timer heartBeatTimer;
 
         // session state
         uint outWindow;
@@ -85,28 +73,126 @@ namespace Amqp
         uint deliveryId;
         Link[] links;
 
-        uint idleTimeout;
-        Timer heartBeatTimer;
-        static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
-
-        public Client(string host, int port, bool useSsl, string userName, string password)
+        /// <summary>
+        /// Current idle timeout for a connection (in milliseconds).
+        /// </summary>
+        /// <remarks>After opening a connection the <see cref="Client"/> will keep the connection
+        /// active with an heart beat timer that sends an empty packet before the value is reached.
+        /// This value must be set before the <see cref="Client"/> is connected.
+        /// </remarks>
+        public uint IdleTimeout
         {
-            this.host = host;
-            this.port = port;
-            this.useSsl = useSsl;
-            this.userName = userName;
-            this.password = password;
-            this.maxFrameSize = (int)MaxFrameSize;
-            this.inWindow = defaultWindowSize;
-            this.outWindow = defaultWindowSize;
-            this.links = new Link[maxLinks];
-            this.signal = new AutoResetEvent(false);
-            this.transport = Extensions.Connect(this.host, this.port, this.useSsl);
-            this.Initialize();
+            get { return this.idleTimeout; }
+            set
+            {
+                Fx.AssertAndThrow(ErrorCode.ClientNotAllowedAfterConnect, this.state == 0);
+                this.idleTimeout = value;
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the host-name to be used to open the connection. It should be set if the
+        /// virtual host is different from the network host in Connect method.
+        /// </summary>
+        public string HostName
+        {
+            get { return this.hostName; }
+            set
+            {
+                Fx.AssertAndThrow(ErrorCode.ClientNotAllowedAfterConnect, this.state == 0);
+                this.hostName = value;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new Client object with default settings.
+        /// </summary>
+        public Client()
+        {
+            this.maxFrameSize = (int)MaxFrameSize;
+            this.idleTimeout = uint.MaxValue;   // no idle timeout
+            this.inWindow = DefaultWindowSize;
+            this.outWindow = DefaultWindowSize;
+            this.links = new Link[MaxLinks];
+            this.signal = new AutoResetEvent(false);
+        }
+
+        /// <summary>
+        /// Establish a connection and a session for the client.
+        /// </summary>
+        /// <param name="host">The network host name or IP address to connect.</param>
+        /// <param name="port">The port to connect.</param>
+        /// <param name="useSsl">If true, use secure socket.</param>
+        /// <param name="userName">If set, the user name for authentication.</param>
+        /// <param name="password">If set, the password for authentication.</param>
+        public void Connect(string host, int port, bool useSsl, string userName, string password)
+        {
+            this.transport = Connect(host, port, useSsl);
+
+            byte[] header = new byte[8] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
+            byte[] retHeader;
+            if (userName != null)
+            {
+                header[4] = 3;
+                this.transport.Write(header, 0, 8);
+                Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
+
+                byte[] b1 = Encoding.UTF8.GetBytes(userName);
+                byte[] b2 = Encoding.UTF8.GetBytes(password ?? string.Empty);
+                byte[] b = new byte[1 + b1.Length + 1 + b2.Length];
+                Array.Copy(b1, 0, b, 1, b1.Length);
+                Array.Copy(b2, 0, b, b1.Length + 2, b2.Length);
+                List saslInit = new List() { new Symbol("PLAIN"), b };
+                this.WriteFrame(1, 0, 0x41, saslInit);
+                Fx.DebugPrint(true, 0, "sasl-init", saslInit, "mechanism");
+                this.transport.Flush();
+
+                retHeader = this.ReadFixedSizeBuffer(8);
+                Fx.DebugPrint(false, 0, "AMQP", new List { string.Concat(retHeader[5], retHeader[6], retHeader[7]) }, retHeader[4]);
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
+
+                List body = this.ReadFrameBody(1, 0, 0x40);
+                Fx.DebugPrint(false, 0, "sasl-mechanisms", body, "server-mechanisms");
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
+                Symbol[] mechanisms = GetSymbolMultiple(body[0]);
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongSymbol, Array.IndexOf(mechanisms, new Symbol("PLAIN")) >= 0);
+
+                body = this.ReadFrameBody(1, 0, 0x44);
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
+                Fx.DebugPrint(false, 0, "sasl-outcome", body, "code");
+                Fx.AssertAndThrow(ErrorCode.ClientInitializeSaslFailed, body[0].Equals((byte)0));   // sasl-outcome.code = OK
+
+                header[4] = 0;
+            }
+
+            this.state = OpenSent | BeginSent;
+            this.transport.Write(header, 0, 8);
+            Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
+
+            // perform open 
+            var open = new List() { Guid.NewGuid().ToString(), host, MaxFrameSize, (ushort)0 };
+            this.WriteFrame(0, 0, 0x10, open);
+            Fx.DebugPrint(true, 0, "open", open, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
+
+            // perform begin
+            var begin = new List() { null, this.nextOutgoingId, this.inWindow, this.outWindow, (uint)(this.links.Length - 1) };
+            this.WriteFrame(0, 0, 0x11, begin);
+            Fx.DebugPrint(true, 0, "begin", begin, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");
+
+            retHeader = this.ReadFixedSizeBuffer(8);
+            Fx.DebugPrint(false, 0, "AMQP", new List { string.Concat(retHeader[5], retHeader[6], retHeader[7]) }, retHeader[4]);
+            Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
+            new Thread(this.PumpThread).Start();
+        }
+        
+        /// <summary>
+        /// Creates a Sender from the client.
+        /// </summary>
+        /// <param name="address">The address of the node where messages are sent.</param>
+        /// <returns>A Sender object.</returns>
         public Sender CreateSender(string address)
         {
+            Fx.AssertAndThrow(ErrorCode.ClientNotConnected, this.state > 0 && this.state < 0xff);
             var sender = new Sender(this, Client.Name + "-sender" + Interlocked.Increment(ref linkId), address);
             lock (this)
             {
@@ -115,8 +201,14 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Creates a Receiver from the client.
+        /// </summary>
+        /// <param name="address">The address of the node where messages are received.</param>
+        /// <returns>A Receiver object.</returns>
         public Receiver CreateReceiver(string address)
         {
+            Fx.AssertAndThrow(ErrorCode.ClientNotConnected, this.state > 0 && this.state < 0xff);
             var receiver = new Receiver(this, Client.Name + "-receiver" + Interlocked.Increment(ref linkId), address);
             lock (this)
             {
@@ -125,19 +217,35 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Close the client.
+        /// </summary>
         public void Close()
         {
-            this.state |= CloseSent;
-            this.transport.WriteFrame(0, 0, 0x18ul, new List());
-            Fx.DebugPrint(true, 0, "close", null);
             try
             {
-                this.Wait(o => (((Client)o).state & CloseReceived) == 0, this, 60000);
+                if (this.state > 0 && this.state < 0xff)
+                {
+                    this.state |= CloseSent;
+                    this.WriteFrame(0, 0, 0x18ul, new List());
+                    Fx.DebugPrint(true, 0, "close", null);
+                    this.Wait(o => (((Client)o).state & CloseReceived) == 0, this, 60000);
+                }
             }
             finally
             {
-                this.transport.Close();
+                if (this.transport != null)
+                {
+                    this.transport.Close();
+                }
+
                 this.ClearLinks();
+
+                if (this.heartBeatTimer != null)
+                {
+                    // kill heart beat timer
+                    this.heartBeatTimer.Dispose();
+                }
             }
         }
 
@@ -152,7 +260,7 @@ namespace Amqp
         internal uint Send(Sender sender, Message message, bool settled)
         {
             ByteBuffer buffer = new ByteBuffer(128, true);
-            buffer.AdjustPosition(Extensions.TransferFramePrefixSize, 0);   // reserve space for frame header and transfer
+            buffer.AdjustPosition(TransferFramePrefixSize, 0);   // reserve space for frame header and transfer
             message.Encode(buffer);
 
             while (buffer.Length > 0)
@@ -167,7 +275,7 @@ namespace Amqp
                     }
                 }
 
-                int payload = this.transport.WriteTransferFrame(sender.Handle, this.deliveryId, settled, buffer, this.maxFrameSize);
+                int payload = this.WriteTransferFrame(sender.Handle, this.deliveryId, settled, buffer, this.maxFrameSize);
                 Fx.DebugPrint(true, 0, "transfer", new List { this.deliveryId, settled, payload }, "delivery-id", "settled", "payload");
             }
 
@@ -178,7 +286,7 @@ namespace Amqp
         {
             link.State |= DetachSent;
             List detach = new List { link.Handle, true };
-            this.transport.WriteFrame(0, 0, 0x16, detach);
+            this.WriteFrame(0, 0, 0x16, detach);
             Fx.DebugPrint(true, 0, "detach", detach, "handle");
             try
             {
@@ -210,73 +318,15 @@ namespace Amqp
                 flow = new List() { this.nextIncomingId, this.inWindow, this.nextOutgoingId, this.outWindow, handle, dc, credit };
             }
 
-            this.transport.WriteFrame(0, 0, 0x13, flow);
+            this.WriteFrame(0, 0, 0x13, flow);
             Fx.DebugPrint(true, 0, "flow", flow, "next-in-id", "in-window", "next-out", "out-window", "handle", "dc", "credit");
         }
 
         internal void SendDisposition(bool role, uint deliveryId, bool settled, DescribedValue state)
         {
             List disposition = new List() { role, deliveryId, null, settled, state };
-            this.transport.WriteFrame(0, 0, 0x15ul, disposition);
+            this.WriteFrame(0, 0, 0x15ul, disposition);
             Fx.DebugPrint(true, 0, "disposition", disposition, "role", "first", "last");
-        }
-
-        void Initialize()
-        {
-            byte[] header = new byte[8] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
-            byte[] retHeader;
-            if (this.userName != null)
-            {
-                header[4] = 3;
-                this.transport.Write(header, 0, 8);
-                Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
-
-                byte[] b1 = Encoding.UTF8.GetBytes(this.userName);
-                byte[] b2 = Encoding.UTF8.GetBytes(this.password ?? string.Empty);
-                byte[] b = new byte[1 + b1.Length + 1 + b2.Length];
-                Array.Copy(b1, 0, b, 1, b1.Length);
-                Array.Copy(b2, 0, b, b1.Length + 2, b2.Length);
-                List saslInit = new List() { new Symbol("PLAIN"), b };
-                this.transport.WriteFrame(1, 0, 0x41, saslInit);
-                Fx.DebugPrint(true, 0, "sasl-init", saslInit, "mechanism");
-                this.transport.Flush();
-
-                retHeader = this.transport.ReadFixedSizeBuffer(8);
-                Fx.DebugPrint(false, 0, "AMQP", new List { string.Concat(retHeader[5], retHeader[6], retHeader[7]) }, retHeader[4]);
-                Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
-
-                List body = this.transport.ReadFrameBody(1, 0, 0x40);
-                Fx.DebugPrint(false, 0, "sasl-mechanisms", body, "server-mechanisms");
-                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
-                Symbol[] mechanisms = Extensions.GetSymbolMultiple(body[0]);
-                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongSymbol, Array.IndexOf(mechanisms, new Symbol("PLAIN")) >= 0);
-
-                body = this.transport.ReadFrameBody(1, 0, 0x44);
-                Fx.AssertAndThrow(ErrorCode.ClientInitializeWrongBodyCount, body.Count > 0);
-                Fx.DebugPrint(false, 0, "sasl-outcome", body, "code");
-                Fx.AssertAndThrow(ErrorCode.ClientInitializeSaslFailed, body[0].Equals((byte)0));   // sasl-outcome.code = OK
-
-                header[4] = 0;
-            }
-
-            this.state = OpenSent | BeginSent;
-            this.transport.Write(header, 0, 8);
-            Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
-
-            // perform open 
-            var open = new List() { Guid.NewGuid().ToString(), this.host, MaxFrameSize, (ushort)0 };
-            this.transport.WriteFrame(0, 0, 0x10, open);
-            Fx.DebugPrint(true, 0, "open", open, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
-
-            // perform begin
-            var begin = new List() { null, this.nextOutgoingId, this.inWindow, this.outWindow, (uint)(this.links.Length - 1) };
-            this.transport.WriteFrame(0, 0, 0x11, begin);
-            Fx.DebugPrint(true, 0, "begin", begin, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");
-
-            retHeader = this.transport.ReadFixedSizeBuffer(8);
-            Fx.DebugPrint(false, 0, "AMQP", new List { string.Concat(retHeader[5], retHeader[6], retHeader[7]) }, retHeader[4]);
-            Fx.AssertAndThrow(ErrorCode.ClientInitializeHeaderCheckFailed, AreHeaderEqual(header, retHeader));
-            new Thread(this.PumpThread).Start();
         }
 
         uint GetLinkHandle(out int index)
@@ -320,7 +370,8 @@ namespace Amqp
                 new DescribedValue(0x28ul, new List() { source }),
                 new DescribedValue(0x29ul, new List() { target })
             };
-            this.transport.WriteFrame(0, 0, 0x12, attach);
+
+            this.WriteFrame(0, 0, 0x12, attach);
             Fx.DebugPrint(true, 0, "attach", attach, "name", "handle", "role", "snd-mode", "rcv-mode", "source", "target");
         }
 
@@ -350,13 +401,14 @@ namespace Amqp
             {
                 try
                 {
-                    this.transport.ReadFrame(out frameType, out channel, out code, out fields, out payload);
+                    this.ReadFrame(out frameType, out channel, out code, out fields, out payload);
                     this.OnFrame(channel, code, fields, payload);
                 }
                 catch (Exception)
                 {
                     this.transport.Close();
                     this.state = 0xFF;
+                    this.Close();
                 }
 
                 this.signal.Set();
@@ -370,21 +422,19 @@ namespace Amqp
                 case 0x10ul:  // open
                     Fx.DebugPrint(false, channel, "open", fields, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
                     this.state |= OpenReceived;
-                    // process open.idle-time-out
+
+                    // process open.idle-time-out if exists: final value is determined by the min of the local and the remote values
+                    uint remoteValue = uint.MaxValue;
                     if (fields.Count >= 5 && fields[4] != null)
                     {
-                        this.idleTimeout = (uint)fields[4];
-                        if (this.idleTimeout > 0 && this.idleTimeout < uint.MaxValue)
-                        {
-                            Fx.AssertAndThrow(ErrorCode.ClientIdleTimeoutTooSmall, this.idleTimeout >= minIdleTimeout);
-                            this.idleTimeout -= 5000;
-                            if (this.idleTimeout > maxIdleTimeout)
-                            {
-                                this.idleTimeout = maxIdleTimeout;
-                            }
-
-                            this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)this.idleTimeout, (int)this.idleTimeout);
-                        }
+                        remoteValue = (uint)fields[4];
+                    }
+                    uint timeout = this.idleTimeout < remoteValue ? this.idleTimeout : remoteValue;
+                    if (timeout < uint.MaxValue)
+                    {
+                        timeout -= 5000;
+                        timeout = timeout > MaxIdleTimeout ? MaxIdleTimeout : timeout;
+                        this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)timeout, (int)timeout);
                     }
                     break;
                 case 0x11ul:  // begin
@@ -451,9 +501,9 @@ namespace Amqp
                         this.nextOutgoingId++;
                         if (--this.inWindow == 0)
                         {
-                            this.inWindow = defaultWindowSize;
+                            this.inWindow = DefaultWindowSize;
                             List flow = new List() { this.nextIncomingId, this.inWindow, this.nextOutgoingId, this.outWindow };
-                            this.transport.WriteFrame(0, 0, 0x13, flow);
+                            this.WriteFrame(0, 0, 0x13, flow);
                             Fx.DebugPrint(true, 0, "flow", flow, "next-in-id", "in-window", "next-out", "out-window", "handle", "dc", "credit");
                         }
                     }
@@ -496,7 +546,7 @@ namespace Amqp
                     this.state |= EndReceived;
                     if ((this.state & EndSent) == 0)
                     {
-                        this.transport.WriteFrame(0, 0, 0x17ul, new List());
+                        this.WriteFrame(0, 0, 0x17ul, new List());
                         Fx.DebugPrint(true, channel, "end", null);
                         this.ClearLinks();
                     }
@@ -515,6 +565,212 @@ namespace Amqp
             }
         }
 
+        void WriteFrame(byte frameType, ushort channel, ulong code, List fields)
+        {
+            ByteBuffer buffer = new ByteBuffer(64, true);
+
+            // frame header
+            buffer.Append(FixedWidth.UInt);
+            AmqpBitConverter.WriteUByte(buffer, 2);
+            AmqpBitConverter.WriteUByte(buffer, (byte)frameType);
+            AmqpBitConverter.WriteUShort(buffer, channel);
+
+            // command
+            AmqpBitConverter.WriteUByte(buffer, FormatCode.Described);
+            Encoder.WriteULong(buffer, code, true);
+            AmqpBitConverter.WriteUByte(buffer, FormatCode.List32);
+            int sizeOffset = buffer.WritePos;
+            buffer.Append(8);
+            AmqpBitConverter.WriteInt(buffer.Buffer, sizeOffset + 4, fields.Count);
+            for (int i = 0; i < fields.Count; i++)
+            {
+                Encoder.WriteObject(buffer, fields[i]);
+            }
+
+            AmqpBitConverter.WriteInt(buffer.Buffer, sizeOffset, buffer.Length - sizeOffset);
+            AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length); // frame size
+            this.transport.Write(buffer.Buffer, buffer.Offset, buffer.Length);
+            this.sendActive = true;
+        }
+
+        int WriteTransferFrame(uint handle, uint deliveryId, bool settled, ByteBuffer buffer, int maxFrameSize)
+        {
+            // payload should have bytes reserved for frame header and transfer
+            int frameSize = Math.Min(buffer.Length + TransferFramePrefixSize, maxFrameSize);
+            int payloadSize = frameSize - TransferFramePrefixSize;
+            int offset = buffer.Offset - TransferFramePrefixSize;
+            int pos = offset;
+
+            // frame size
+            buffer.Buffer[pos++] = (byte)(frameSize >> 24);
+            buffer.Buffer[pos++] = (byte)(frameSize >> 16);
+            buffer.Buffer[pos++] = (byte)(frameSize >> 8);
+            buffer.Buffer[pos++] = (byte)frameSize;
+
+            // DOF, type and channel
+            buffer.Buffer[pos++] = 0x02;
+            buffer.Buffer[pos++] = 0x00;
+            buffer.Buffer[pos++] = 0x00;
+            buffer.Buffer[pos++] = 0x00;
+
+            // transfer(list8-size,count)
+            buffer.Buffer[pos++] = 0x00;
+            buffer.Buffer[pos++] = 0x53;
+            buffer.Buffer[pos++] = 0x14;
+            buffer.Buffer[pos++] = 0xc0;
+            buffer.Buffer[pos++] = 0x10;
+            buffer.Buffer[pos++] = 0x06;
+
+            buffer.Buffer[pos++] = 0x52; // handle
+            buffer.Buffer[pos++] = (byte)handle;
+
+            buffer.Buffer[pos++] = 0x70; // delivery id: uint
+            buffer.Buffer[pos++] = (byte)(deliveryId >> 24);
+            buffer.Buffer[pos++] = (byte)(deliveryId >> 16);
+            buffer.Buffer[pos++] = (byte)(deliveryId >> 8);
+            buffer.Buffer[pos++] = (byte)deliveryId;
+
+            buffer.Buffer[pos++] = 0xa0; // delivery tag: bin8
+            buffer.Buffer[pos++] = 0x04;
+            buffer.Buffer[pos++] = (byte)(deliveryId >> 24);
+            buffer.Buffer[pos++] = (byte)(deliveryId >> 16);
+            buffer.Buffer[pos++] = (byte)(deliveryId >> 8);
+            buffer.Buffer[pos++] = (byte)deliveryId;
+
+            buffer.Buffer[pos++] = 0x43; // message-format
+            buffer.Buffer[pos++] = settled ? (byte)0x41 : (byte)0x42;   // settled
+            buffer.Buffer[pos++] = buffer.Length > payloadSize ? (byte)0x41 : (byte)0x42;   // more
+
+            this.transport.Write(buffer.Buffer, offset, frameSize);
+            this.sendActive = true;
+            buffer.Complete(payloadSize);
+
+            return payloadSize;
+        }
+
+        void ReadFrame(out byte frameType, out ushort channel, out ulong code, out List fields, out ByteBuffer payload)
+        {
+            byte[] headerBuffer = this.ReadFixedSizeBuffer(8);
+            int size = AmqpBitConverter.ReadInt(headerBuffer, 0);
+            frameType = headerBuffer[5];    // TOOD: header EXT
+            channel = (ushort)(headerBuffer[6] << 8 | headerBuffer[7]);
+
+            size -= 8;
+            if (size > 0)
+            {
+                byte[] frameBuffer = this.ReadFixedSizeBuffer(size);
+                ByteBuffer buffer = new ByteBuffer(frameBuffer, 0, size, size);
+                Fx.AssertAndThrow(ErrorCode.ClientInvalidFormatCodeRead, Encoder.ReadFormatCode(buffer) == FormatCode.Described);
+
+                code = Encoder.ReadULong(buffer, Encoder.ReadFormatCode(buffer));
+                fields = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
+                if (buffer.Length > 0)
+                {
+                    payload = new ByteBuffer(buffer.Buffer, buffer.Offset, buffer.Length, buffer.Length);
+                }
+                else
+                {
+                    payload = null;
+                }
+            }
+            else
+            {
+                code = 0;
+                fields = null;
+                payload = null;
+            }
+        }
+
+        List ReadFrameBody(byte frameType, ushort channel, ulong code)
+        {
+            byte t;
+            ushort c;
+            ulong d;
+            List f;
+            ByteBuffer p;
+            this.ReadFrame(out t, out c, out d, out f, out p);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidFrameType, t == frameType);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidChannel, c == channel);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidCode, d == code);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidFieldList, f != null);
+            Fx.AssertAndThrow(ErrorCode.ClientInvalidPayload, p == null);
+            return f;
+        }
+
+        byte[] ReadFixedSizeBuffer(int size)
+        {
+            byte[] buffer = new byte[size];
+            int offset = 0;
+            while (size > 0)
+            {
+                int bytes = this.transport.Read(buffer, offset, size);
+                offset += bytes;
+                size -= bytes;
+            }
+
+            return buffer;
+        }
+
+        static NetworkStream Connect(string host, int port, bool useSsl)
+        {
+            var ipHostEntry = Dns.GetHostEntry(host);
+            Socket socket = null;
+            SocketException exception = null;
+            foreach (var ipAddress in ipHostEntry.AddressList)
+            {
+                if (ipAddress == null) continue;
+
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                try
+                {
+                    socket.Connect(new IPEndPoint(ipAddress, port));
+                    exception = null;
+                    break;
+                }
+                catch (SocketException socketException)
+                {
+                    exception = socketException;
+                    socket = null;
+                }
+            }
+
+            if (exception != null)
+            {
+                throw exception;
+            }
+
+            NetworkStream stream;
+            if (useSsl)
+            {
+                SslStream sslStream = new SslStream(socket);
+                sslStream.AuthenticateAsClient(host, null, SslVerification.VerifyPeer, SslProtocols.Default);
+                stream = sslStream;
+            }
+            else
+            {
+                stream = new NetworkStream(socket, true);
+            }
+
+            return stream;
+        }
+
+        static Symbol[] GetSymbolMultiple(object multiple)
+        {
+            Symbol[] array = multiple as Symbol[];
+            if (array != null)
+            {
+                return array;
+            }
+
+            Symbol symbol = multiple as Symbol;
+            if (symbol != null)
+            {
+                return new Symbol[] { symbol };
+            }
+
+            throw new Exception("object is not a multiple type");
+        }
+        
         static bool AreHeaderEqual(byte[] b1, byte[] b2)
         {
             // assume both are 8 bytes
@@ -525,10 +781,15 @@ namespace Amqp
         static void OnHeartBeatTimer(object state)
         {
             var thisPtr = (Client)state;
-            byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
-            thisPtr.transport.Write(frame, 0, frame.Length);
-            thisPtr.transport.Flush();
-            Fx.DebugPrint(true, 0, "empty", null);
+            if (!thisPtr.sendActive)
+            {
+                byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
+                thisPtr.transport.Write(frame, 0, frame.Length);
+                thisPtr.transport.Flush();
+                Fx.DebugPrint(true, 0, "empty", null);
+            }
+
+            thisPtr.sendActive = false;
         }
     }
 }
