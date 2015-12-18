@@ -33,9 +33,9 @@ namespace Device.SmallMemory
         const string device = "<replace>";
 
         // user/pass to be authenticated with Azure IoT hub
-        // if using a shared access signature like SharedAccessSignature sr=myhub.azure-devices.net&sig=H4Rm2%2bjdBr84lq5KOddD9YpOSC8s7ZSe9SygErVuPe8%3d&se=1444444444&skn=iothubowner
-        // user will be iothubowner and password the complete SAS string 
-        const string iotHubOwner = "<replace>";
+        // if using a shared access signature like SharedAccessSignature sr=myhub.azure-devices.net&sig=H4Rm2%2bjdBr84lq5KOddD9YpOSC8s7ZSe9SygErVuPe8%3d&se=1444444444&skn=userNameHere
+        // user will be userNameHere and password the complete SAS string 
+        const string iotUser = "<replace>";
         const string sasToken = "<replace>";
 
         public static void Main()
@@ -50,12 +50,13 @@ namespace Device.SmallMemory
             // Map IotHub settings to AMQP protocol settings
             string hostName = iotHubName + ".azure-devices.net";
             int port = 5671;
-            string userName = iotHubOwner + "@sas.root." + iotHubName;
+            string userName = iotUser + "@sas.root." + iotHubName;
             string password = sasToken;
             string senderAddress = "devices/" + device + "/messages/events";
             string receiverAddress = "devices/" + device + "/messages/deviceBound";
 
-            Client client = new Client(hostName, port, false, userName, password);
+            Client client = new Client();
+            client.Connect(hostName, port, true, userName, password);
 
             int count = 0;
             ManualResetEvent done = new ManualResetEvent(false);
