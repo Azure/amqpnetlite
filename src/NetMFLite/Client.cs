@@ -170,7 +170,7 @@ namespace Amqp
             Fx.DebugPrint(true, 0, "AMQP", new List { string.Concat(header[5], header[6], header[7]) }, header[4]);
 
             // perform open 
-            var open = new List() { Guid.NewGuid().ToString(), host, MaxFrameSize, (ushort)0 };
+            var open = new List() { Guid.NewGuid().ToString(), this.hostName ?? host, MaxFrameSize, (ushort)0 };
             this.WriteFrame(0, 0, 0x10, open);
             Fx.DebugPrint(true, 0, "open", open, "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out");
 
