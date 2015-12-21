@@ -89,11 +89,7 @@ namespace Amqp
                 socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
-                    await Task.Factory.FromAsync(
-                        (c, s) => socket.BeginConnect(ipAddresses[i], address.Port, c, s),
-                        (r) => socket.EndConnect(r),
-                        null);
-
+                    await socket.ConnectAsync( ipAddresses[i], address.Port );
                     exception = null;
                     break;
                 }
@@ -261,20 +257,10 @@ namespace Amqp
 
                 if (this.receiveBuffer == null)
                 {
-                    return await Task.Factory.FromAsync(
-                        (c, s) => ((TcpSocket)s).socket.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
-                        (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
-                        this);
+                    return await this.socket.ReceiveAsync( buffer, offset, count, SocketFlags.None );
                 }
 
-                int bytes = await Task.Factory.FromAsync(
-                    (c, s) =>
-                    {
-                        var thisPtr = (TcpSocket)s;
-                        return thisPtr.socket.BeginReceive(thisPtr.receiveBuffer.Buffer, 0, thisPtr.receiveBuffer.Size, SocketFlags.None, c, s);
-                    },
-                    (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
-                    this);
+                int bytes = await this.socket.ReceiveAsync(this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size, SocketFlags.None);
 
                 this.receiveBuffer.Append(bytes);
                 return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
@@ -610,6 +596,65 @@ namespace Amqp
 
                 return changed;
             }
+        }
+    }
+
+    /// <summary>
+    /// These methods provide conversion from the various Socket.*Async methods taking <see cref="SocketAsyncEventArgs"/>
+    /// to more modern <see cref="Task"/>-based ones. While it would seem easier to use <see cref="TaskFactory.FromAsync"/>
+    /// with Socket.Begin*/End* methods, this will not work on coreclr, because these methods have been removed from the
+    /// contract of <see cref="Socket"/> as of RC1.
+    /// </summary>
+    static class SocketUtils
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public static Task Async( Func<SocketAsyncEventArgs, bool> action, SocketAsyncEventArgs args ) {
+            return Async<int>( action, args, _ => 0 );
+        }
+
+        /// <summary>
+        /// Starts execution of an asynchronous operation on a socket and returns a <see cref="Task{TResult}"/> representing it.
+        /// </summary>
+        /// <typeparam name="T">Type of operation result.</typeparam>
+        /// <param name="action">The operation to execute.</param>
+        /// <param name="args">Arguments for the operation.</param>
+        /// <param name="getResult">A function that can obtain operation result from <see cref="SocketAsyncEventArgs"/> once the operation has completed.</param>
+        public static Task<T> Async<T>( Func<SocketAsyncEventArgs, bool> action, SocketAsyncEventArgs args, Func<SocketAsyncEventArgs, T> getResult ) {
+            var connectTask = new TaskCompletionSource<T>();
+            args.Completed += ( _, __ ) => {
+                if ( args.SocketError == SocketError.Success ) {
+                    connectTask.SetResult( getResult( args ) );
+                }
+                else {
+                    connectTask.SetException( new SocketException( (int)args.SocketError ) );
+                }
+            };
+
+            action( args );
+            return connectTask.Task;
+        }
+
+        /// <summary>
+        /// Implements <see cref="Socket.ConnectAsync(SocketAsyncEventArgs)"/> as a <see cref="Task"/>.
+        /// </summary>
+        public static Task ConnectAsync( this Socket s, IPAddress addr, int port ) {
+            return Async( s.ConnectAsync, new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint( addr, port ) } );
+        }
+
+        /// <summary>
+        /// Implements <see cref="Socket.ReceiveAsync(SocketAsyncEventArgs)"/> as a <see cref="Task"/>.
+        /// </summary>
+        public static Task<int> ReceiveAsync( this Socket s, byte[] buffer, int start, int count, SocketFlags flags ) {
+            return Async( s.ReceiveAsync, new SocketAsyncEventArgs { BufferList = { new ArraySegment<byte>( buffer, start, count ) }, SocketFlags = flags }, args => args.BytesTransferred );
+        }
+
+        /// <summary>
+        /// Implements <see cref="Socket.AcceptAsync(SocketAsyncEventArgs)"/> as a <see cref="Task"/>.
+        /// </summary>
+        public static Task<Socket> AcceptAsync( this Socket s ) {
+            return Async( s.AcceptAsync, new SocketAsyncEventArgs(), args => args.AcceptSocket );
         }
     }
 }

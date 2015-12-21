@@ -507,11 +507,7 @@ namespace Amqp.Listener
                 {
                     try
                     {
-                        Socket acceptSocket = await Task.Factory.FromAsync(
-                            (c, s) => ((Socket)s).BeginAccept(c, s),
-                            (r) => ((Socket)r.AsyncState).EndAccept(r),
-                            socket);
-
+                        Socket acceptSocket = await socket.AcceptAsync();
                         var task = this.HandleSocketAsync(acceptSocket);
                     }
                     catch (ObjectDisposedException)
