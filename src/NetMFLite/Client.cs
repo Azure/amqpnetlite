@@ -105,6 +105,23 @@ namespace Amqp
         }
 
         /// <summary>
+        /// The callback that is invoked when the connection status changes. 
+        /// This is updated when an open/close frame is received from peer or when the socket connection is closed for some reason.
+        /// </summary>
+        /// <param name="connected">The connection status.</param>
+        public delegate void ConnectionStatusChangedEventHandler(bool connected);
+        public static event ConnectionStatusChangedEventHandler ConnectionStatusChanged;
+        private static ConnectionStatusChangedEventHandler onConnectionStatusChanged;
+        protected virtual void OnConnectionStatusChanged(bool connected)
+        {
+            if (onConnectionStatusChanged == null) onConnectionStatusChanged = new ConnectionStatusChangedEventHandler(onConnectionStatusChanged);
+            if (ConnectionStatusChanged != null)
+            {
+                ConnectionStatusChanged(connected);
+            }
+        }
+
+        /// <summary>
         /// Creates a new Client object with default settings.
         /// </summary>
         public Client()
@@ -230,6 +247,7 @@ namespace Amqp
                     this.WriteFrame(0, 0, 0x18ul, new List());
                     Fx.DebugPrint(true, 0, "close", null);
                     this.Wait(o => (((Client)o).state & CloseReceived) == 0, this, 60000);
+                    OnConnectionStatusChanged(false);
                 }
             }
             finally
@@ -436,6 +454,7 @@ namespace Amqp
                         timeout = timeout > MaxIdleTimeout ? MaxIdleTimeout : timeout;
                         this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)timeout, (int)timeout);
                     }
+                    OnConnectionStatusChanged(true);
                     break;
                 case 0x11ul:  // begin
                     Fx.DebugPrint(false, channel, "begin", fields, "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max");
