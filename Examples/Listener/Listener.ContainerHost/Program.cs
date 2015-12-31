@@ -159,7 +159,7 @@ namespace Listener.ContainerHost
                 this.semaphore.WaitAsync(30000).ContinueWith(
                     t =>
                     {
-                        if (t.IsCanceled || t.IsFaulted)
+                        if (!t.Result)
                         {
                             attachContext.Complete(new Error() { Condition = ErrorCode.ResourceLimitExceeded });
                         }
@@ -176,7 +176,7 @@ namespace Listener.ContainerHost
                 this.semaphore.WaitAsync(30000).ContinueWith(
                     t =>
                     {
-                        if (t.IsCanceled || t.IsFaulted)
+                        if (!t.Result)
                         {
                             messageContext.Complete(new Error() { Condition = ErrorCode.ResourceLimitExceeded });
                         }
