@@ -18,6 +18,7 @@
 using System;
 using System.Threading;
 using Amqp;
+using Amqp.Types;
 
 namespace Device.SmallMemory
 {
@@ -56,6 +57,7 @@ namespace Device.SmallMemory
             string receiverAddress = "devices/" + device + "/messages/deviceBound";
 
             Client client = new Client();
+            client.OnError += client_OnError;
             client.Connect(hostName, port, true, userName, password);
 
             int count = 0;
@@ -83,6 +85,11 @@ namespace Device.SmallMemory
             done.WaitOne(120000, false);
 
             client.Close();
+        }
+
+        static void client_OnError(Client client, Link link, Symbol error)
+        {
+            Microsoft.SPOT.Debug.Print((link != null ? "Link" : "Client") + " was closed due to error " + (error ?? "[unknown]"));
         }
     }
 }
