@@ -240,11 +240,24 @@ namespace Amqp
             {
                 if (this.receiveBuffer != null && this.receiveBuffer.Length > 0)
                 {
-                    return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                    try
+                    {
+                        this.receiveBuffer.AddReference();
+                        return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                    }
+                    finally
+                    {
+                        this.receiveBuffer.ReleaseReference();
+                    }
                 }
 
                 if (this.receiveTracker.TrackOne())
                 {
+                    if (this.receiveBuffer != null)
+                    {
+                        this.receiveBuffer.ReleaseReference();
+                    }
+
                     if (this.receiveTracker.Level > 0)
                     {
                         this.receiveBuffer = new ByteBuffer(8 * 1024, false);
@@ -257,13 +270,22 @@ namespace Amqp
 
                 if (this.receiveBuffer == null)
                 {
-                    return await this.socket.ReceiveAsync( buffer, offset, count, SocketFlags.None );
+                    return await this.socket.ReceiveAsync(buffer, offset, count, SocketFlags.None);
                 }
-
-                int bytes = await this.socket.ReceiveAsync(this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size, SocketFlags.None);
-
-                this.receiveBuffer.Append(bytes);
-                return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                else
+                {
+                    try
+                    {
+                        this.receiveBuffer.AddReference();
+                        int bytes = await this.socket.ReceiveAsync(this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size, SocketFlags.None);
+                        this.receiveBuffer.Append(bytes);
+                        return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                    }
+                    finally
+                    {
+                        this.receiveBuffer.ReleaseReference();
+                    }
+                }
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -273,31 +295,7 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                if (this.receiveBuffer != null && this.receiveBuffer.Length > 0)
-                {
-                    return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
-                }
-
-                if (this.receiveTracker.TrackOne())
-                {
-                    if (this.receiveTracker.Level > 0)
-                    {
-                        this.receiveBuffer = new ByteBuffer(8 * 1024, false);
-                    }
-                    else
-                    {
-                        this.receiveBuffer = null;
-                    }
-                }
-
-                if (this.receiveBuffer == null)
-                {
-                    return this.socket.Receive(buffer, offset, count, SocketFlags.None);
-                }
-
-                int bytes = this.socket.Receive(this.receiveBuffer.Buffer, this.receiveBuffer.Offset, this.receiveBuffer.Size, SocketFlags.None);
-                this.receiveBuffer.Append(bytes);
-                return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
             }
 
             static int ReceiveFromBuffer(ByteBuffer byteBuffer, byte[] buffer, int offset, int count)
@@ -321,6 +319,12 @@ namespace Amqp
             {
                 this.socket.Dispose();
                 this.args.Dispose();
+
+                var temp = this.receiveBuffer;
+                if (temp != null)
+                {
+                    temp.ReleaseReference();
+                }
             }
         }
 
