@@ -89,7 +89,7 @@ namespace Amqp
                 socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
-                    await socket.ConnectAsync( ipAddresses[i], address.Port );
+                    await socket.ConnectAsync(ipAddresses[i], address.Port);
                     exception = null;
                     break;
                 }
@@ -186,7 +186,8 @@ namespace Amqp
             readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
             readonly TcpTransport transport;
             readonly Socket socket;
-            readonly SocketAsyncEventArgs args;
+            readonly SocketAsyncEventArgs sendArgs;
+            readonly SocketAsyncEventArgs receiveArgs;
             readonly IopsTracker receiveTracker;
             ByteBuffer receiveBuffer;
 
@@ -195,9 +196,12 @@ namespace Amqp
                 this.transport = transport;
                 this.socket = socket;
                 this.receiveTracker = new IopsTracker();
-                this.args = new SocketAsyncEventArgs();
-                this.args.Completed += onWriteComplete;
-                this.args.UserToken = this;
+                this.sendArgs = new SocketAsyncEventArgs();
+                this.sendArgs.Completed += onWriteComplete;
+                this.sendArgs.UserToken = this;
+
+                this.receiveArgs = new SocketAsyncEventArgs();
+                this.receiveArgs.Completed += (s, a) => ((TaskCompletionSource<int>)a.UserToken).Complete(a, b => b.BytesTransferred);
             }
 
             static void OnWriteComplete(object sender, SocketAsyncEventArgs eventArgs)
@@ -224,16 +228,16 @@ namespace Amqp
             {
                 if (buffer != null)
                 {
-                    this.args.BufferList = null;
-                    this.args.SetBuffer(buffer.Buffer, buffer.Offset, buffer.Length);
+                    this.sendArgs.BufferList = null;
+                    this.sendArgs.SetBuffer(buffer.Buffer, buffer.Offset, buffer.Length);
                 }
                 else
                 {
-                    this.args.SetBuffer(null, 0, 0);
-                    this.args.BufferList = bufferList;
+                    this.sendArgs.SetBuffer(null, 0, 0);
+                    this.sendArgs.BufferList = bufferList;
                 }
 
-                return this.socket.SendAsync(this.args);
+                return this.socket.SendAsync(this.sendArgs);
             }
 
             async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
@@ -270,14 +274,14 @@ namespace Amqp
 
                 if (this.receiveBuffer == null)
                 {
-                    return await this.socket.ReceiveAsync(buffer, offset, count, SocketFlags.None);
+                    return await this.socket.ReceiveAsync(this.receiveArgs, buffer, offset, count);
                 }
                 else
                 {
                     try
                     {
                         this.receiveBuffer.AddReference();
-                        int bytes = await this.socket.ReceiveAsync(this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size, SocketFlags.None);
+                        int bytes = await this.socket.ReceiveAsync(this.receiveArgs, this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size);
                         this.receiveBuffer.Append(bytes);
                         return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
                     }
@@ -298,6 +302,19 @@ namespace Amqp
                 return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
             }
 
+            void ITransport.Close()
+            {
+                this.socket.Dispose();
+                this.sendArgs.Dispose();
+                this.receiveArgs.Dispose();
+
+                var temp = this.receiveBuffer;
+                if (temp != null)
+                {
+                    temp.ReleaseReference();
+                }
+            }
+
             static int ReceiveFromBuffer(ByteBuffer byteBuffer, byte[] buffer, int offset, int count)
             {
                 int len = byteBuffer.Length;
@@ -312,18 +329,6 @@ namespace Amqp
                     Buffer.BlockCopy(byteBuffer.Buffer, byteBuffer.Offset, buffer, offset, count);
                     byteBuffer.Complete(count);
                     return count;
-                }
-            }
-
-            void ITransport.Close()
-            {
-                this.socket.Dispose();
-                this.args.Dispose();
-
-                var temp = this.receiveBuffer;
-                if (temp != null)
-                {
-                    temp.ReleaseReference();
                 }
             }
         }
@@ -600,65 +605,6 @@ namespace Amqp
 
                 return changed;
             }
-        }
-    }
-
-    /// <summary>
-    /// These methods provide conversion from the various Socket.*Async methods taking <see cref="SocketAsyncEventArgs"/>
-    /// to more modern <see cref="Task"/>-based ones. While it would seem easier to use <see cref="TaskFactory.FromAsync"/>
-    /// with Socket.Begin*/End* methods, this will not work on coreclr, because these methods have been removed from the
-    /// contract of <see cref="Socket"/> as of RC1.
-    /// </summary>
-    static class SocketUtils
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public static Task Async( Func<SocketAsyncEventArgs, bool> action, SocketAsyncEventArgs args ) {
-            return Async<int>( action, args, _ => 0 );
-        }
-
-        /// <summary>
-        /// Starts execution of an asynchronous operation on a socket and returns a <see cref="Task{TResult}"/> representing it.
-        /// </summary>
-        /// <typeparam name="T">Type of operation result.</typeparam>
-        /// <param name="action">The operation to execute.</param>
-        /// <param name="args">Arguments for the operation.</param>
-        /// <param name="getResult">A function that can obtain operation result from <see cref="SocketAsyncEventArgs"/> once the operation has completed.</param>
-        public static Task<T> Async<T>( Func<SocketAsyncEventArgs, bool> action, SocketAsyncEventArgs args, Func<SocketAsyncEventArgs, T> getResult ) {
-            var connectTask = new TaskCompletionSource<T>();
-            args.Completed += ( _, __ ) => {
-                if ( args.SocketError == SocketError.Success ) {
-                    connectTask.SetResult( getResult( args ) );
-                }
-                else {
-                    connectTask.SetException( new SocketException( (int)args.SocketError ) );
-                }
-            };
-
-            action( args );
-            return connectTask.Task;
-        }
-
-        /// <summary>
-        /// Implements <see cref="Socket.ConnectAsync(SocketAsyncEventArgs)"/> as a <see cref="Task"/>.
-        /// </summary>
-        public static Task ConnectAsync( this Socket s, IPAddress addr, int port ) {
-            return Async( s.ConnectAsync, new SocketAsyncEventArgs { RemoteEndPoint = new IPEndPoint( addr, port ) } );
-        }
-
-        /// <summary>
-        /// Implements <see cref="Socket.ReceiveAsync(SocketAsyncEventArgs)"/> as a <see cref="Task"/>.
-        /// </summary>
-        public static Task<int> ReceiveAsync( this Socket s, byte[] buffer, int start, int count, SocketFlags flags ) {
-            return Async( s.ReceiveAsync, new SocketAsyncEventArgs { BufferList = { new ArraySegment<byte>( buffer, start, count ) }, SocketFlags = flags }, args => args.BytesTransferred );
-        }
-
-        /// <summary>
-        /// Implements <see cref="Socket.AcceptAsync(SocketAsyncEventArgs)"/> as a <see cref="Task"/>.
-        /// </summary>
-        public static Task<Socket> AcceptAsync( this Socket s ) {
-            return Async( s.AcceptAsync, new SocketAsyncEventArgs(), args => args.AcceptSocket );
         }
     }
 }
