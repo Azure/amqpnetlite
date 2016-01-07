@@ -503,15 +503,15 @@ namespace Amqp.Listener
 
             async Task AcceptAsync(Socket socket)
             {
+                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+                args.Completed += (s, a) => ((TaskCompletionSource<Socket>)a.UserToken).Complete(a, b => b.AcceptSocket);
+
                 while (!this.closed)
                 {
                     try
                     {
-                        Socket acceptSocket = await Task.Factory.FromAsync(
-                            (c, s) => ((Socket)s).BeginAccept(c, s),
-                            (r) => ((Socket)r.AsyncState).EndAccept(r),
-                            socket);
-
+                        args.AcceptSocket = null;
+                        Socket acceptSocket = await socket.AcceptAsync(args, SocketFlags.None);
                         var task = this.HandleSocketAsync(acceptSocket);
                     }
                     catch (ObjectDisposedException)
@@ -524,6 +524,7 @@ namespace Amqp.Listener
                     }
                 }
 
+                args.Dispose();
                 socket.Dispose();
             }
         }
