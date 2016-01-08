@@ -71,7 +71,7 @@ namespace Amqp
             }
             else
             {
-                ipAddresses = Dns.GetHostAddressesAsync(address.Host).GetAwaiter().GetResult();
+                ipAddresses = await TaskExtensions.GetHostAddressesAsync(address.Host);
             }
 
             // need to handle both IPv4 and IPv6

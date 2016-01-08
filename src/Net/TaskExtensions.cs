@@ -28,13 +28,109 @@ namespace Amqp
     /// </summary>
     public static class TaskExtensions
     {
-#if NETFX
+#if NETFX || NETFX40
         static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
             return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);
         }
 #endif
-#if NETFX || DOTNET
+
+#if NETFX
+        internal static Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
+        {
+            return System.Net.Dns.GetHostAddressesAsync(host);
+        }
+
+        internal static Task<System.Net.IPHostEntry> GetHostEntryAsync(string host)
+        {
+            return System.Net.Dns.GetHostEntryAsync(host);
+        }
+#endif
+
+#if NETFX40
+        internal static Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => System.Net.Dns.BeginGetHostAddresses(host, c, s),
+                (r) => System.Net.Dns.EndGetHostAddresses(r),
+                null);
+        }
+
+        internal static Task<System.Net.IPHostEntry> GetHostEntryAsync(string host)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => System.Net.Dns.BeginGetHostEntry(host, c, s),
+                (r) => System.Net.Dns.EndGetHostEntry(r),
+                null);
+        }
+
+        internal static Task AuthenticateAsClientAsync(this System.Net.Security.SslStream source,
+            string targetHost)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => source.BeginAuthenticateAsClient(targetHost, c, s),
+                (r) => source.EndAuthenticateAsClient(r),
+                null);
+        }
+
+        internal static Task AuthenticateAsClientAsync(this System.Net.Security.SslStream source,
+            string targetHost,
+            System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates,
+            System.Security.Authentication.SslProtocols enabledSslProtocols,
+            bool checkCertificateRevocation)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => source.BeginAuthenticateAsClient(targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, c, s),
+                (r) => source.EndAuthenticateAsClient(r),
+                null);
+        }
+
+        internal static Task AuthenticateAsServerAsync(this System.Net.Security.SslStream source,
+            System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => source.BeginAuthenticateAsServer(serverCertificate, c, s),
+                (r) => source.EndAuthenticateAsServer(r),
+                null);
+        }
+
+        internal static Task AuthenticateAsServerAsync(this System.Net.Security.SslStream source,
+            System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate,
+            bool clientCertificateRequired,
+            System.Security.Authentication.SslProtocols enabledSslProtocols,
+            bool checkCertificateRevocation)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => source.BeginAuthenticateAsServer(serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, c, s),
+                (r) => source.EndAuthenticateAsServer(r),
+                null);
+        }
+
+        internal static Task<int> ReadAsync(this System.Net.Security.SslStream source,
+            byte[] buffer, int offset, int count)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => source.BeginRead(buffer, offset, count, c, s),
+                (r) => source.EndRead(r),
+                null);
+        }
+
+        internal static Task WriteAsync(this System.Net.Security.SslStream source,
+            byte[] buffer, int offset, int count)
+        {
+            return Task.Factory.FromAsync(
+                (c, s) => source.BeginWrite(buffer, offset, count, c, s),
+                (r) => source.EndWrite(r),
+                null);
+        }
+
+        internal static Task ContinueWith(this Task task, Action<Task, object> action, object state)
+        {
+            return task.ContinueWith(t => action(t, state));
+        }
+#endif
+
+#if NETFX || NETFX40 || DOTNET
         internal static ByteBuffer GetByteBuffer(this IBufferManager bufferManager, int size)
         {
             ByteBuffer buffer;
@@ -99,7 +195,7 @@ namespace Amqp
         public static async Task SendAsync(this SenderLink sender, Message message)
         {
             DeliveryState txnState = null;
-#if NETFX
+#if NETFX || NETFX40
             txnState = await TaskExtensions.GetTransactionalStateAsync(sender);
 #endif
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
