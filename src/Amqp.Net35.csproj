@@ -49,6 +49,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Net\TypeExtensions.cs" />
+    <Compile Include="Properties\Version.cs" />
     <Compile Include="Sasl\SaslExternalProfile.cs" />
     <Compile Include="Sasl\SaslPlainMechanism.cs" />
     <Compile Include="Sasl\SaslMechanism.cs" />

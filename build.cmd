@@ -21,6 +21,7 @@ SET build-verbosity=minimal
 SET build-dnx=false
 SET build-test=true
 SET build-nuget=false
+SET build-version=
 
 IF /I "%1" EQU "release" (
   set build-target=build
@@ -88,6 +89,16 @@ SET return-code=%ERRORLEVEL%
 GOTO :exit
 
 :build-sln
+FOR /F "tokens=1-3* delims=() " %%A in (.\src\Properties\Version.cs) do (
+  IF "%%B" == "AssemblyVersion" SET build-version=%%C
+)
+IF "%build-version%" == "" (
+  ECHO Cannot find version from Version.cs.
+  SET return-code=2
+  GOTO :exit
+)
+
+echo Build version %build-version%
 "%MSBuildPath%" amqp.sln /t:Rebuild /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
@@ -165,7 +176,8 @@ IF "%NuGetPath%" == "" (
   ECHO directory.
 ) ELSE (
   IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
-  "%NuGetPath%" pack Amqp.Net.nuspec -OutputDirectory ".\Build\Packages"
+  ECHO Building NuGet package with version %build-version%
+  "%NuGetPath%" pack Amqp.Net.nuspec -Version %build-version% -OutputDirectory ".\Build\Packages"
 )
 
 GOTO :exit
@@ -177,7 +189,7 @@ EXIT /b !return-code!
 :usage
 ECHO build.cmd [clean^|release] [options]
 ECHO   clean: clean intermediate files
-ECHO   release: a shortcut for "--config Release --nuget"
+ECHO   release: a shortcut for "--config Release --nuget --dnx"
 ECHO options:
 ECHO  --config ^<value^>      [Debug] build configuration (e.g. Debug, Release)
 ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
