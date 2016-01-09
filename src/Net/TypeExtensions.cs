@@ -24,7 +24,7 @@ namespace Amqp
 
     static partial class TypeExtensions
     {
-#if NETFX || NETFX35
+#if NETFX || NETFX40 || NETFX35
         internal static Assembly Assembly(this Type type)
         {
             return type.Assembly;
@@ -52,7 +52,7 @@ namespace Amqp
                 FormatterServices.GetUninitializedObject(type);
         }
 #endif
-#if NETFX35
+#if NETFX35 || NETFX40
         internal static T GetCustomAttribute<T>(this MemberInfo mi, bool inherit)
         {
             object[] a = mi.GetCustomAttributes(typeof(T), inherit);

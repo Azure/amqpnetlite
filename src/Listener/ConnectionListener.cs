@@ -22,7 +22,7 @@ namespace Amqp.Listener
     using System.Net;
     using System.Net.Security;
     using System.Net.Sockets;
-#if !DOTNET
+#if NETFX
     using System.Net.WebSockets;
 #endif
     using System.Security.Authentication;
@@ -130,7 +130,7 @@ namespace Amqp.Listener
             {
                 this.listener = new TlsTransportListener(this, this.address.Host, this.address.Port, this.GetServiceCertificate());
             }
-#if !DOTNET
+#if NETFX
             else if (this.address.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
             {
                 this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, null);
@@ -423,7 +423,7 @@ namespace Amqp.Listener
                 IPAddress ipAddress;
                 if (host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                     host.Equals(Environment.GetEnvironmentVariable("COMPUTERNAME"), StringComparison.OrdinalIgnoreCase) ||
-                    host.Equals(Dns.GetHostEntryAsync(string.Empty).Result.HostName, StringComparison.OrdinalIgnoreCase))
+                    host.Equals(Amqp.TaskExtensions.GetHostEntryAsync(string.Empty).Result.HostName, StringComparison.OrdinalIgnoreCase))
                 {
                     if (Socket.OSSupportsIPv4)
                     {
@@ -441,7 +441,7 @@ namespace Amqp.Listener
                 }
                 else
                 {
-                    addresses.AddRange(Dns.GetHostAddressesAsync(host).GetAwaiter().GetResult());
+                    addresses.AddRange(Amqp.TaskExtensions.GetHostAddressesAsync(host).GetAwaiter().GetResult());
                 }
 
                 this.listenSockets = new Socket[addresses.Count];
@@ -498,7 +498,9 @@ namespace Amqp.Listener
 
             protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
-                return Task.FromResult<IAsyncTransport>(new TcpTransport(socket));
+                var tcs = new TaskCompletionSource<IAsyncTransport>();
+                tcs.SetResult(new TcpTransport(socket));
+                return tcs.Task;
             }
 
             async Task AcceptAsync(Socket socket)
@@ -560,7 +562,7 @@ namespace Amqp.Listener
             }
         }
 
-#if !DOTNET
+#if NETFX
         class WebSocketTransportListener : TransportListener
         {
             readonly ConnectionListener listener;
