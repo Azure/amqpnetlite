@@ -1,23 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AssemblyName>Amqp.NetMF.Lite</AssemblyName>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <FrameworkVersionMajor Condition=" '$(FrameworkVersionMajor)' == '' ">4</FrameworkVersionMajor>
+    <FrameworkVersionMinor Condition=" '$(FrameworkVersionMinor)' == '' ">4</FrameworkVersionMinor>
+    <AssemblyName>Amqp.Lite.NetMF</AssemblyName>
     <OutputType>Library</OutputType>
     <RootNamespace>Amqp</RootNamespace>
     <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}</ProjectGuid>
-    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v$(FrameworkVersionMajor).$(FrameworkVersionMinor)</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
-    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETMF;NETMF_LITE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NETMF;NETMF_LITE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -25,16 +29,15 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>NETMF;NETMF_LITE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</OutputPath>
+    <DefineConstants>NETMF;NETMF_LITE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Reference Include="Microsoft.SPOT.Native">
-    </Reference>
+    <Reference Include="Microsoft.SPOT.Native" />
     <Reference Include="Microsoft.SPOT.Net.Security" />
     <Reference Include="System" />
     <Reference Include="System.Net.Security" />

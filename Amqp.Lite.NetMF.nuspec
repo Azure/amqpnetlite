@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AMQPNetMFLite</id>
+    <title>A compact version of AMQP.Net Lite for NETMF</title>
+    <version>0.0.0</version>
+    <authors>xinchen</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is a compact version of the AMQP 1.0 client library for .Net Micro Framework on memory/space constrained devices.</description>
+    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>AMQP netmf</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="System" targetFramework="netmf42, netmf43, netmf44" />
+      <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Amqp.Lite.NetMF42\*.*" target="lib\netmf42" />
+    <file src="bin\Release\Amqp.Lite.NetMF42\le\*.p*" target="lib\netmf42\le" />
+    <file src="bin\Release\Amqp.Lite.NetMF42\be\*.p*" target="lib\netmf42\be" />
+    <file src="bin\Release\Amqp.Lite.NetMF43\*.*" target="lib\netmf43" />
+    <file src="bin\Release\Amqp.Lite.NetMF43\le\*.p*" target="lib\netmf43\le" />
+    <file src="bin\Release\Amqp.Lite.NetMF43\be\*.p*" target="lib\netmf43\be" />
+    <file src="bin\Release\Amqp.Lite.NetMF44\*.*" target="lib\netmf44" />
+    <file src="bin\Release\Amqp.Lite.NetMF44\le\*.p*" target="lib\netmf44\le" />
+    <file src="bin\Release\Amqp.Lite.NetMF44\be\*.p*" target="lib\netmf44\be" />
+  </files>
+</package>
