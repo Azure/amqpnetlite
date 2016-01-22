@@ -48,7 +48,7 @@ namespace Amqp
             this.socketTransport = new SslSocket(this, sslStream);
             this.writer = new Writer(this, this.socketTransport);
         }
-
+        
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.connection = connection;
@@ -181,6 +181,19 @@ namespace Amqp
             return received;
         }
 
+        void OnWriteSuccess()
+        {
+            this.writer.DisposeWriteBuffers();
+            this.writer.ContinueWrite();
+        }
+
+        void OnWriteFailure(Exception exception)
+        {
+            this.connection.OnIoException(exception);
+            this.writer.DisposeWriteBuffers();
+            this.writer.DisposeQueuedBuffers();
+        }
+
         class TcpSocket : IAsyncTransport
         {
             readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
@@ -207,15 +220,13 @@ namespace Amqp
             static void OnWriteComplete(object sender, SocketAsyncEventArgs eventArgs)
             {
                 var thisPtr = (TcpSocket)eventArgs.UserToken;
-                thisPtr.transport.writer.DisposeWriteBuffers();
                 if (eventArgs.SocketError != SocketError.Success)
                 {
-                    thisPtr.transport.connection.OnIoException(new SocketException((int)eventArgs.SocketError));
-                    thisPtr.transport.writer.DisposeQueuedBuffers();
+                    thisPtr.transport.OnWriteFailure(new SocketException((int)eventArgs.SocketError));
                 }
                 else
                 {
-                    thisPtr.transport.writer.ContinueWrite();
+                    thisPtr.transport.OnWriteSuccess();
                 }
             }
 
@@ -380,11 +391,11 @@ namespace Amqp
                             var thisPtr = (SslSocket)s;
                             if (t.IsFaulted)
                             {
-                                thisPtr.transport.connection.OnIoException(t.Exception.InnerException);
+                                thisPtr.transport.OnWriteFailure(t.Exception.InnerException);
                             }
                             else
                             {
-                                thisPtr.transport.writer.ContinueWrite();
+                                thisPtr.transport.OnWriteSuccess();
                             }
                         },
                         this);
@@ -430,9 +441,14 @@ namespace Amqp
                 this.buffersInProgress = new List<ByteBuffer>();
             }
 
+            object SyncRoot
+            {
+                get { return this.bufferQueue; }
+            }
+
             public void Write(ByteBuffer buffer)
             {
-                lock (this.bufferQueue)
+                lock (this.SyncRoot)
                 {
                     if (this.writing)
                     {
@@ -464,17 +480,20 @@ namespace Amqp
 
             public void DisposeWriteBuffers()
             {
-                for (int i = 0; i < this.buffersInProgress.Count; i++)
+                lock (this.SyncRoot)
                 {
-                    this.buffersInProgress[i].ReleaseReference();
-                }
+                    for (int i = 0; i < this.buffersInProgress.Count; i++)
+                    {
+                        this.buffersInProgress[i].ReleaseReference();
+                    }
 
-                this.buffersInProgress.Clear();
+                    this.buffersInProgress.Clear();
+                }
             }
 
             public void DisposeQueuedBuffers()
             {
-                lock (this.bufferQueue)
+                lock (this.SyncRoot)
                 {
                     foreach (var buffer in this.bufferQueue)
                     {
@@ -492,7 +511,7 @@ namespace Amqp
                 int listSize = 0;
                 do
                 {
-                    lock (this.bufferQueue)
+                    lock (this.SyncRoot)
                     {
                         int queueDepth = this.bufferQueue.Count;
                         if (queueDepth == 0)

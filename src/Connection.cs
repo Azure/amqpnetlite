@@ -631,16 +631,8 @@ namespace Amqp
             Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception.ToString());
             if (this.state != State.End)
             {
-                Error error = new Error() { Condition = ErrorCode.ConnectionForced };
-                for (int i = 0; i < this.localSessions.Length; i++)
-                {
-                    if (this.localSessions[i] != null)
-                    {
-                        this.localSessions[i].Abort(error);
-                    }
-                }
-
                 this.state = State.End;
+                Error error = new Error() { Condition = ErrorCode.ConnectionForced };
                 this.OnEnded(error);
             }
         }
