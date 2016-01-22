@@ -27,28 +27,37 @@ namespace Amqp
     sealed class TcpTransport : IAsyncTransport
     {
         static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
+        readonly IBufferManager bufferManager;
         Connection connection;
         Writer writer;
         IAsyncTransport socketTransport;
 
         public TcpTransport()
+            : this(null)
         {
         }
 
+        public TcpTransport(IBufferManager bufferManager)
+        {
+            this.bufferManager = bufferManager;
+        }
+
         // called by listener
-        public TcpTransport(Socket socket)
+        public TcpTransport(Socket socket, IBufferManager bufferManager)
+            : this(bufferManager)
         {
             this.socketTransport = new TcpSocket(this, socket);
             this.writer = new Writer(this, this.socketTransport);
         }
 
         // called by listener
-        public TcpTransport(SslStream sslStream)
+        public TcpTransport(SslStream sslStream, IBufferManager bufferManager)
+            : this(bufferManager)
         {
             this.socketTransport = new SslSocket(this, sslStream);
             this.writer = new Writer(this, this.socketTransport);
         }
-        
+
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.connection = connection;
@@ -362,33 +371,34 @@ namespace Amqp
 
             bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
             {
-                ArraySegment<byte> writeBuffer;
+                ByteBuffer writeBuffer;
                 if (buffer != null)
                 {
-                    writeBuffer = new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length);
+                    buffer.AddReference();
+                    writeBuffer = buffer;
                 }
                 else
                 {
-                    byte[] temp = new byte[listSize];
-                    int offset = 0;
+                    writeBuffer = this.transport.bufferManager.GetByteBuffer(listSize);
                     for (int i = 0; i < bufferList.Count; i++)
                     {
                         ArraySegment<byte> segment = bufferList[i];
-                        Buffer.BlockCopy(segment.Array, segment.Offset, temp, offset, segment.Count);
-                        offset += segment.Count;
+                        Buffer.BlockCopy(segment.Array, segment.Offset, writeBuffer.Buffer, writeBuffer.WritePos, segment.Count);
+                        writeBuffer.Append(segment.Count);
                     }
-
-                    writeBuffer = new ArraySegment<byte>(temp, 0, listSize);
                 }
 
-                Task task = this.sslStream.WriteAsync(writeBuffer.Array, writeBuffer.Offset, writeBuffer.Count);
+                Task task = this.sslStream.WriteAsync(writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Length);
                 bool pending = !task.IsCompleted;
                 if (pending)
                 {
                     task.ContinueWith(
                         (t, s) =>
                         {
-                            var thisPtr = (SslSocket)s;
+                            var tuple = (Tuple<SslSocket, ByteBuffer>)s;
+                            tuple.Item2.ReleaseReference();
+
+                            var thisPtr = tuple.Item1;
                             if (t.IsFaulted)
                             {
                                 thisPtr.transport.OnWriteFailure(t.Exception.InnerException);
@@ -398,7 +408,11 @@ namespace Amqp
                                 thisPtr.transport.OnWriteSuccess();
                             }
                         },
-                        this);
+                        Tuple.Create(this, writeBuffer));
+                }
+                else
+                {
+                    writeBuffer.ReleaseReference();
                 }
 
                 return pending;

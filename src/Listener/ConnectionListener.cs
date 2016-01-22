@@ -499,7 +499,7 @@ namespace Amqp.Listener
             protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
                 var tcs = new TaskCompletionSource<IAsyncTransport>();
-                tcs.SetResult(new TcpTransport(socket));
+                tcs.SetResult(new TcpTransport(socket, this.Listener.BufferManager));
                 return tcs.Task;
             }
 
@@ -558,7 +558,7 @@ namespace Amqp.Listener
                         this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation);
                 }
 
-                return new TcpTransport(sslStream);
+                return new TcpTransport(sslStream, this.Listener.BufferManager);
             }
         }
 
