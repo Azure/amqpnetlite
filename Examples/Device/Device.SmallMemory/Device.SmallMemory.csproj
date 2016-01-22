@@ -38,9 +38,9 @@
     <Reference Include="Microsoft.SPOT.Native" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Amqp.Lite.NetMF.csproj">
+    <ProjectReference Include="..\..\..\src\Amqp.Micro.NetMF.csproj">
       <Project>{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}</Project>
-      <Name>Amqp.Lite.NetMF</Name>
+      <Name>Amqp.Micro.NetMF</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Condition="EXISTS('$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets')" Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />

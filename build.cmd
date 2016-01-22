@@ -106,7 +106,7 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 REM build other versions of the lite NETMF project
 FOR /L %%I IN (2,1,3) DO (
-  "%MSBuildPath%" .\src\Amqp.Lite.NetMF.csproj /t:Rebuild /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
+  "%MSBuildPath%" .\src\Amqp.Micro.NetMF.csproj /t:Rebuild /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
   IF %ERRORLEVEL% NEQ 0 (
     SET return-code=%ERRORLEVEL%
     GOTO :exit
@@ -186,7 +186,7 @@ IF "%NuGetPath%" == "" (
   IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
   ECHO Building NuGet package with version %build-version%
   "%NuGetPath%" pack Amqp.Net.nuspec -Version %build-version% -OutputDirectory ".\Build\Packages"
-  "%NuGetPath%" pack Amqp.Lite.NetMF.nuspec -Version %build-version% -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack Amqp.Micro.nuspec -Version %build-version% -OutputDirectory ".\Build\Packages"
 )
 
 GOTO :exit

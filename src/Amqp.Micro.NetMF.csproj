@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <FrameworkVersionMajor Condition=" '$(FrameworkVersionMajor)' == '' ">4</FrameworkVersionMajor>
     <FrameworkVersionMinor Condition=" '$(FrameworkVersionMinor)' == '' ">4</FrameworkVersionMinor>
-    <AssemblyName>Amqp.Lite.NetMF</AssemblyName>
+    <AssemblyName>Amqp.Micro.NetMF</AssemblyName>
     <OutputType>Library</OutputType>
     <RootNamespace>Amqp</RootNamespace>
     <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
