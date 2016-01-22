@@ -18,7 +18,6 @@
 namespace Amqp
 {
     using System;
-    using Amqp.Types;
 
     /// <summary>
     /// A byte array wrapper that has read and write cursors.
@@ -156,7 +155,7 @@ namespace Amqp
 
             if (!valid)
             {
-                throw new AmqpException(ErrorCode.DecodeError, "buffer too small");
+                throw new InvalidOperationException("buffer too small");
             }
         }
 
@@ -233,7 +232,7 @@ namespace Amqp
             Array.Copy(this.buffer, this.start, buffer, 0, dataSize);
         }
 
-#if NETFX || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+#if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         internal int Start
         {
             get { return this.start; }

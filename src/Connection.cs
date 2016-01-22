@@ -127,7 +127,7 @@ namespace Amqp
             get { return this; }
         }
 
-#if NETFX || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+#if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
             IAsyncTransport transport, Open open, OnOpened onOpened)
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
@@ -631,16 +631,8 @@ namespace Amqp
             Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception.ToString());
             if (this.state != State.End)
             {
-                Error error = new Error() { Condition = ErrorCode.ConnectionForced };
-                for (int i = 0; i < this.localSessions.Length; i++)
-                {
-                    if (this.localSessions[i] != null)
-                    {
-                        this.localSessions[i].Abort(error);
-                    }
-                }
-
                 this.state = State.End;
+                Error error = new Error() { Condition = ErrorCode.ConnectionForced };
                 this.OnEnded(error);
             }
         }

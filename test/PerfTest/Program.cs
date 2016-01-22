@@ -163,6 +163,11 @@ namespace PerfTest
             {
                 this.completedEvent.WaitOne();
             }
+
+            protected void SetComplete()
+            {
+                this.completedEvent.Set();
+            }
         }
 
         class Sender : Role
@@ -209,6 +214,8 @@ namespace PerfTest
             void RunOnce(int id)
             {
                 Connection connection = this.CreateConnection(new Address(this.Args.Address));
+                connection.Closed += (o, e) => this.SetComplete();
+
                 Session session = new Session(connection);
 
                 Attach attach = new Attach()
@@ -280,6 +287,8 @@ namespace PerfTest
             void RunOnce(int id)
             {
                 Connection connection = this.CreateConnection(new Address(this.Args.Address));
+                connection.Closed += (o, e) => this.SetComplete();
+
                 Session session = new Session(connection);
 
                 Attach attach = new Attach()

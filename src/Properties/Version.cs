@@ -15,32 +15,14 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp
-{
-    using System;
+using System.Reflection;
 
-#if NETFX || NETFX40 || DOTNET
-    /// <summary>
-    /// The interface defines the methods to manage buffers.
-    /// </summary>
-    public
-#endif
-    interface IBufferManager
-    {
-        /// <summary>
-        /// Takes a buffer from the buffer manager.
-        /// </summary>
-        /// <param name="bufferSize">the buffer size.</param>
-        /// <returns>
-        /// A segment of a byte array. The count should be the same, or larger
-        /// than the requested bufferSize.
-        /// </returns>
-        ArraySegment<byte> TakeBuffer(int bufferSize);
-
-        /// <summary>
-        /// Returns a buffer to the buffer manager.
-        /// </summary>
-        /// <param name="buffer">The buffer to return.</param>
-        void ReturnBuffer(ArraySegment<byte> buffer);
-    }
-}
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+[assembly: AssemblyVersion("1.1.6")]
+[assembly: AssemblyFileVersion("1.1.6")]

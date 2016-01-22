@@ -27,23 +27,32 @@ namespace Amqp
     sealed class TcpTransport : IAsyncTransport
     {
         static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
+        readonly IBufferManager bufferManager;
         Connection connection;
         Writer writer;
         IAsyncTransport socketTransport;
 
         public TcpTransport()
+            : this(null)
         {
         }
 
+        public TcpTransport(IBufferManager bufferManager)
+        {
+            this.bufferManager = bufferManager;
+        }
+
         // called by listener
-        public TcpTransport(Socket socket)
+        public TcpTransport(Socket socket, IBufferManager bufferManager)
+            : this(bufferManager)
         {
             this.socketTransport = new TcpSocket(this, socket);
             this.writer = new Writer(this, this.socketTransport);
         }
 
         // called by listener
-        public TcpTransport(SslStream sslStream)
+        public TcpTransport(SslStream sslStream, IBufferManager bufferManager)
+            : this(bufferManager)
         {
             this.socketTransport = new SslSocket(this, sslStream);
             this.writer = new Writer(this, this.socketTransport);
@@ -71,7 +80,7 @@ namespace Amqp
             }
             else
             {
-                ipAddresses = Dns.GetHostAddressesAsync(address.Host).GetAwaiter().GetResult();
+                ipAddresses = await TaskExtensions.GetHostAddressesAsync(address.Host);
             }
 
             // need to handle both IPv4 and IPv6
@@ -89,11 +98,7 @@ namespace Amqp
                 socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
-                    await Task.Factory.FromAsync(
-                        (c, s) => socket.BeginConnect(ipAddresses[i], address.Port, c, s),
-                        (r) => socket.EndConnect(r),
-                        null);
-
+                    await socket.ConnectAsync(ipAddresses[i], address.Port);
                     exception = null;
                     break;
                 }
@@ -185,12 +190,26 @@ namespace Amqp
             return received;
         }
 
+        void OnWriteSuccess()
+        {
+            this.writer.DisposeWriteBuffers();
+            this.writer.ContinueWrite();
+        }
+
+        void OnWriteFailure(Exception exception)
+        {
+            this.connection.OnIoException(exception);
+            this.writer.DisposeWriteBuffers();
+            this.writer.DisposeQueuedBuffers();
+        }
+
         class TcpSocket : IAsyncTransport
         {
             readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
             readonly TcpTransport transport;
             readonly Socket socket;
-            readonly SocketAsyncEventArgs args;
+            readonly SocketAsyncEventArgs sendArgs;
+            readonly SocketAsyncEventArgs receiveArgs;
             readonly IopsTracker receiveTracker;
             ByteBuffer receiveBuffer;
 
@@ -199,23 +218,24 @@ namespace Amqp
                 this.transport = transport;
                 this.socket = socket;
                 this.receiveTracker = new IopsTracker();
-                this.args = new SocketAsyncEventArgs();
-                this.args.Completed += onWriteComplete;
-                this.args.UserToken = this;
+                this.sendArgs = new SocketAsyncEventArgs();
+                this.sendArgs.Completed += onWriteComplete;
+                this.sendArgs.UserToken = this;
+
+                this.receiveArgs = new SocketAsyncEventArgs();
+                this.receiveArgs.Completed += (s, a) => ((TaskCompletionSource<int>)a.UserToken).Complete(a, b => b.BytesTransferred);
             }
 
             static void OnWriteComplete(object sender, SocketAsyncEventArgs eventArgs)
             {
                 var thisPtr = (TcpSocket)eventArgs.UserToken;
-                thisPtr.transport.writer.DisposeWriteBuffers();
                 if (eventArgs.SocketError != SocketError.Success)
                 {
-                    thisPtr.transport.connection.OnIoException(new SocketException((int)eventArgs.SocketError));
-                    thisPtr.transport.writer.DisposeQueuedBuffers();
+                    thisPtr.transport.OnWriteFailure(new SocketException((int)eventArgs.SocketError));
                 }
                 else
                 {
-                    thisPtr.transport.writer.ContinueWrite();
+                    thisPtr.transport.OnWriteSuccess();
                 }
             }
 
@@ -228,27 +248,40 @@ namespace Amqp
             {
                 if (buffer != null)
                 {
-                    this.args.BufferList = null;
-                    this.args.SetBuffer(buffer.Buffer, buffer.Offset, buffer.Length);
+                    this.sendArgs.BufferList = null;
+                    this.sendArgs.SetBuffer(buffer.Buffer, buffer.Offset, buffer.Length);
                 }
                 else
                 {
-                    this.args.SetBuffer(null, 0, 0);
-                    this.args.BufferList = bufferList;
+                    this.sendArgs.SetBuffer(null, 0, 0);
+                    this.sendArgs.BufferList = bufferList;
                 }
 
-                return this.socket.SendAsync(this.args);
+                return this.socket.SendAsync(this.sendArgs);
             }
 
             async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
             {
                 if (this.receiveBuffer != null && this.receiveBuffer.Length > 0)
                 {
-                    return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                    try
+                    {
+                        this.receiveBuffer.AddReference();
+                        return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                    }
+                    finally
+                    {
+                        this.receiveBuffer.ReleaseReference();
+                    }
                 }
 
                 if (this.receiveTracker.TrackOne())
                 {
+                    if (this.receiveBuffer != null)
+                    {
+                        this.receiveBuffer.ReleaseReference();
+                    }
+
                     if (this.receiveTracker.Level > 0)
                     {
                         this.receiveBuffer = new ByteBuffer(8 * 1024, false);
@@ -261,23 +294,22 @@ namespace Amqp
 
                 if (this.receiveBuffer == null)
                 {
-                    return await Task.Factory.FromAsync(
-                        (c, s) => ((TcpSocket)s).socket.BeginReceive(buffer, offset, count, SocketFlags.None, c, s),
-                        (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
-                        this);
+                    return await this.socket.ReceiveAsync(this.receiveArgs, buffer, offset, count);
                 }
-
-                int bytes = await Task.Factory.FromAsync(
-                    (c, s) =>
+                else
+                {
+                    try
                     {
-                        var thisPtr = (TcpSocket)s;
-                        return thisPtr.socket.BeginReceive(thisPtr.receiveBuffer.Buffer, 0, thisPtr.receiveBuffer.Size, SocketFlags.None, c, s);
-                    },
-                    (r) => ((TcpSocket)r.AsyncState).socket.EndReceive(r),
-                    this);
-
-                this.receiveBuffer.Append(bytes);
-                return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                        this.receiveBuffer.AddReference();
+                        int bytes = await this.socket.ReceiveAsync(this.receiveArgs, this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size);
+                        this.receiveBuffer.Append(bytes);
+                        return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
+                    }
+                    finally
+                    {
+                        this.receiveBuffer.ReleaseReference();
+                    }
+                }
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -287,31 +319,20 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                if (this.receiveBuffer != null && this.receiveBuffer.Length > 0)
-                {
-                    return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
-                }
+                return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
+            }
 
-                if (this.receiveTracker.TrackOne())
-                {
-                    if (this.receiveTracker.Level > 0)
-                    {
-                        this.receiveBuffer = new ByteBuffer(8 * 1024, false);
-                    }
-                    else
-                    {
-                        this.receiveBuffer = null;
-                    }
-                }
+            void ITransport.Close()
+            {
+                this.socket.Dispose();
+                this.sendArgs.Dispose();
+                this.receiveArgs.Dispose();
 
-                if (this.receiveBuffer == null)
+                var temp = this.receiveBuffer;
+                if (temp != null)
                 {
-                    return this.socket.Receive(buffer, offset, count, SocketFlags.None);
+                    temp.ReleaseReference();
                 }
-
-                int bytes = this.socket.Receive(this.receiveBuffer.Buffer, this.receiveBuffer.Offset, this.receiveBuffer.Size, SocketFlags.None);
-                this.receiveBuffer.Append(bytes);
-                return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
             }
 
             static int ReceiveFromBuffer(ByteBuffer byteBuffer, byte[] buffer, int offset, int count)
@@ -329,12 +350,6 @@ namespace Amqp
                     byteBuffer.Complete(count);
                     return count;
                 }
-            }
-
-            void ITransport.Close()
-            {
-                this.socket.Dispose();
-                this.args.Dispose();
             }
         }
 
@@ -356,43 +371,48 @@ namespace Amqp
 
             bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
             {
-                ArraySegment<byte> writeBuffer;
+                ByteBuffer writeBuffer;
                 if (buffer != null)
                 {
-                    writeBuffer = new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length);
+                    buffer.AddReference();
+                    writeBuffer = buffer;
                 }
                 else
                 {
-                    byte[] temp = new byte[listSize];
-                    int offset = 0;
+                    writeBuffer = this.transport.bufferManager.GetByteBuffer(listSize);
                     for (int i = 0; i < bufferList.Count; i++)
                     {
                         ArraySegment<byte> segment = bufferList[i];
-                        Buffer.BlockCopy(segment.Array, segment.Offset, temp, offset, segment.Count);
-                        offset += segment.Count;
+                        Buffer.BlockCopy(segment.Array, segment.Offset, writeBuffer.Buffer, writeBuffer.WritePos, segment.Count);
+                        writeBuffer.Append(segment.Count);
                     }
-
-                    writeBuffer = new ArraySegment<byte>(temp, 0, listSize);
                 }
 
-                Task task = this.sslStream.WriteAsync(writeBuffer.Array, writeBuffer.Offset, writeBuffer.Count);
+                Task task = this.sslStream.WriteAsync(writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Length);
                 bool pending = !task.IsCompleted;
                 if (pending)
                 {
                     task.ContinueWith(
                         (t, s) =>
                         {
-                            var thisPtr = (SslSocket)s;
+                            var tuple = (Tuple<SslSocket, ByteBuffer>)s;
+                            tuple.Item2.ReleaseReference();
+
+                            var thisPtr = tuple.Item1;
                             if (t.IsFaulted)
                             {
-                                thisPtr.transport.connection.OnIoException(t.Exception.InnerException);
+                                thisPtr.transport.OnWriteFailure(t.Exception.InnerException);
                             }
                             else
                             {
-                                thisPtr.transport.writer.ContinueWrite();
+                                thisPtr.transport.OnWriteSuccess();
                             }
                         },
-                        this);
+                        Tuple.Create(this, writeBuffer));
+                }
+                else
+                {
+                    writeBuffer.ReleaseReference();
                 }
 
                 return pending;
@@ -435,9 +455,14 @@ namespace Amqp
                 this.buffersInProgress = new List<ByteBuffer>();
             }
 
+            object SyncRoot
+            {
+                get { return this.bufferQueue; }
+            }
+
             public void Write(ByteBuffer buffer)
             {
-                lock (this.bufferQueue)
+                lock (this.SyncRoot)
                 {
                     if (this.writing)
                     {
@@ -469,17 +494,20 @@ namespace Amqp
 
             public void DisposeWriteBuffers()
             {
-                for (int i = 0; i < this.buffersInProgress.Count; i++)
+                lock (this.SyncRoot)
                 {
-                    this.buffersInProgress[i].ReleaseReference();
-                }
+                    for (int i = 0; i < this.buffersInProgress.Count; i++)
+                    {
+                        this.buffersInProgress[i].ReleaseReference();
+                    }
 
-                this.buffersInProgress.Clear();
+                    this.buffersInProgress.Clear();
+                }
             }
 
             public void DisposeQueuedBuffers()
             {
-                lock (this.bufferQueue)
+                lock (this.SyncRoot)
                 {
                     foreach (var buffer in this.bufferQueue)
                     {
@@ -497,7 +525,7 @@ namespace Amqp
                 int listSize = 0;
                 do
                 {
-                    lock (this.bufferQueue)
+                    lock (this.SyncRoot)
                     {
                         int queueDepth = this.bufferQueue.Count;
                         if (queueDepth == 0)

@@ -21,6 +21,7 @@ namespace Test.Amqp
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using global::Amqp;
+    using global::Amqp.Framing;
     using global::Amqp.Serialization;
     using global::Amqp.Types;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -312,6 +313,46 @@ namespace Test.Amqp
             MessageBodyTest<Dictionary<Symbol, string>>(
                 new Dictionary<Symbol, string>() { { "product", "computer" }, { "company", "contoso" } },
                 (x, y) => CollectionAssert.AreEqual(x, y));
+        }
+
+        [TestMethod]
+        public void MessageSerializationTest()
+        {
+            var p1 = new Product() { Name = "test-product", Price = 34.99 };
+            var inputMessage = new Message(p1);
+            inputMessage.Properties = new Properties() { MessageId = "12345" };
+            inputMessage.ApplicationProperties = new ApplicationProperties();
+            inputMessage.ApplicationProperties["p1"] = "v1";
+            inputMessage.ApplicationProperties["p2"] = 5ul;
+            ByteBuffer buffer = inputMessage.Encode();
+
+            // decode the message in a new app domain to ensure codec is intialized
+            AppDomain ad = AppDomain.CreateDomain(
+                "test-app-domain",
+                AppDomain.CurrentDomain.Evidence,
+                AppDomain.CurrentDomain.SetupInformation);
+            ad.SetData("message-buffer", Convert.ToBase64String(buffer.Buffer, buffer.Offset, buffer.Length));
+            ad.DoCallBack(() =>
+            {
+                byte[] b = Convert.FromBase64String(AppDomain.CurrentDomain.GetData("message-buffer") as string);
+                try
+                {
+                    Message message = Message.Decode(new ByteBuffer(b, 0, b.Length, b.Length));
+                    Product p2 = message.GetBody<Product>();
+                    Assert.AreEqual("test-product", p2.Name);
+                    Assert.AreEqual(34.99, p2.Price);
+                    AppDomain.CurrentDomain.SetData("test-result", "pass");
+                }
+                catch (Exception exception)
+                {
+                    AppDomain.CurrentDomain.SetData("test-result", "fail:" + exception.Message);
+                }
+
+            });
+            string result = ad.GetData("test-result") as string;
+            AppDomain.Unload(ad);
+
+            Assert.AreEqual("pass", result);
         }
 
         [TestMethod()]

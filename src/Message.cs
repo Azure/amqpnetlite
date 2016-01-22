@@ -177,7 +177,7 @@ namespace Amqp
 
             while (buffer.Length > 0)
             {
-                var described = (RestrictedDescribed)Encoder.ReadObject(buffer);
+                var described = (RestrictedDescribed)Codec.Decode(buffer);
                 if (described.Descriptor.Code == Codec.Header.Code)
                 {
                     message.Header = (Header)described;
@@ -245,7 +245,7 @@ namespace Amqp
             EncodeIfNotNull(this.Footer, buffer);
         }
 
-#if NETFX || DOTNET
+#if NETFX || NETFX40 || DOTNET
         /// <summary>
         /// Disposes the current message to release resources.
         /// </summary>
