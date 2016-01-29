@@ -287,11 +287,20 @@ namespace Amqp
             while (delivery != null)
             {
                 delivery.Handle = this.Handle;
-                bool settled = delivery.Settled;
-                this.Session.SendDelivery(delivery);
-                if (settled && delivery.OnOutcome != null)
+
+                try
                 {
-                    delivery.OnOutcome(delivery.Message, new Accepted(), delivery.UserToken);
+                    bool settled = delivery.Settled;
+                    this.Session.SendDelivery(delivery);
+                    if (settled && delivery.OnOutcome != null)
+                    {
+                        delivery.OnOutcome(delivery.Message, new Accepted(), delivery.UserToken);
+                    }
+                }
+                catch
+                {
+                    this.writing = false;
+                    throw;
                 }
 
                 lock (this.ThisLock)
