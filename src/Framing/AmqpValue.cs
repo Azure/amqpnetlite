@@ -92,6 +92,7 @@ namespace Amqp.Framing
             }
             else
             {
+                this.valueBuffer.Seek(0);
                 return Serialization.AmqpSerializer.Deserialize<T>(this.valueBuffer);
             }
         }

@@ -382,6 +382,7 @@ namespace Test.Amqp
             var inputMessage = new Message(value);
             var buffer = inputMessage.Encode();
             var outputMessage = Message.Decode(buffer);
+            Assert.IsTrue(outputMessage.Body != null, "Body is not null");
             var value2 = outputMessage.GetBody<T>();
             validator(value, value2);
         }
