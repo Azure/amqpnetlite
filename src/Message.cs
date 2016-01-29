@@ -108,7 +108,7 @@ namespace Amqp
             }
         }
 
-#if (NETFX || DOTNET || NETFX35)
+#if (NETFX || DOTNET || NETFX35 || NETFX40)
         /// <summary>
         /// Gets an object of type T from the message body.
         /// </summary>
