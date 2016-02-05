@@ -73,19 +73,14 @@ namespace Amqp.Serialization
             return new AmqpObjectType(type);
         }
 
-        public static SerializableType CreateNullableType(Type type, SerializableType argType)
+        public static SerializableType CreateEnumType(Type type, SerializableType underlyingType)
         {
-            return new NullableType(type, argType);
+            return new EnumType(type, underlyingType);
         }
 
         public static SerializableType CreateAmqpSerializableType(AmqpSerializer serializer, Type type)
         {
             return new AmqpSerializableType(serializer, type);
-        }
-
-        public static SerializableType CreateAmqpDescribedType(AmqpSerializer serializer, Type type)
-        {
-            return new AmqpDescribedType(serializer, type);
         }
 
         public static SerializableType CreateGenericListType(
@@ -195,9 +190,44 @@ namespace Amqp.Serialization
             }
         }
 
-        abstract class AmqpExtendedType : SerializableType
+        sealed class EnumType : SerializableType
         {
-            protected AmqpExtendedType(AmqpSerializer serializer, Type type)
+            readonly SerializableType underlyingType;
+
+            public EnumType(Type type, SerializableType underlyingType)
+                : base(null, type)
+            {
+                this.underlyingType = underlyingType;
+            }
+
+            public override void WriteObject(ByteBuffer buffer, object value)
+            {
+                if (value == null)
+                {
+                    Encoder.WriteObject(buffer, value);
+                }
+                else
+                {
+                    value = Convert.ChangeType(value, this.underlyingType.type);
+                    this.underlyingType.WriteObject(buffer, value);
+                }
+            }
+
+            public override object ReadObject(ByteBuffer buffer)
+            {
+                object value = this.underlyingType.ReadObject(buffer);
+                if (value != null)
+                {
+                    value = Enum.ToObject(this.type, value);
+                }
+
+                return value;
+            }
+        }
+
+        sealed class AmqpSerializableType : SerializableType
+        {
+            public AmqpSerializableType(AmqpSerializer serializer, Type type)
                 : base(serializer, type)
             {
             }
@@ -210,106 +240,25 @@ namespace Amqp.Serialization
                 }
                 else
                 {
-                    this.EncodeObject(buffer, value);
+                    ((IAmqpSerializable)value).Encode(buffer);
                 }
             }
 
             public override object ReadObject(ByteBuffer buffer)
-            {
-                if (this.TryDecodeNull(buffer))
-                {
-                    return null;
-                }
-
-                object container = this.type.CreateInstance(this.hasDefaultCtor);
-                this.DecodeObject(buffer, container);
-                return container;
-            }
-
-            protected bool TryDecodeNull(ByteBuffer buffer)
             {
                 buffer.Validate(false, FixedWidth.FormatCode);
                 byte formatCode = buffer.Buffer[buffer.Offset];
                 if (formatCode == FormatCode.Null)
                 {
                     buffer.Complete(FixedWidth.FormatCode);
-                    return true;
+                    return null;
                 }
                 else
                 {
-                    return false;
+                    object value = this.type.CreateInstance(this.hasDefaultCtor);
+                    ((IAmqpSerializable)value).Decode(buffer);
+                    return value;
                 }
-            }
-
-            protected abstract void EncodeObject(ByteBuffer buffer, object value);
-
-            protected abstract void DecodeObject(ByteBuffer buffer, object value);
-        }
-
-        sealed class NullableType : AmqpExtendedType
-        {
-            SerializableType argType;
-
-            public NullableType(Type type, SerializableType argType)
-                : base(null, type)
-            {
-                this.argType = argType;
-            }
-
-            protected override void EncodeObject(ByteBuffer buffer, object value)
-            {
-                this.argType.WriteObject(buffer, value);
-            }
-
-            public override object ReadObject(ByteBuffer buffer)
-            {
-                if (this.TryDecodeNull(buffer))
-                {
-                    return null;
-                }
-
-                return this.argType.ReadObject(buffer);
-            }
-
-            protected override void DecodeObject(ByteBuffer buffer, object value)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        sealed class AmqpSerializableType : AmqpExtendedType
-        {
-            public AmqpSerializableType(AmqpSerializer serializer, Type type)
-                : base(serializer, type)
-            {
-            }
-
-            protected override void EncodeObject(ByteBuffer buffer, object value)
-            {
-                ((IAmqpSerializable)value).Encode(buffer);
-            }
-
-            protected override void DecodeObject(ByteBuffer buffer, object value)
-            {
-                ((IAmqpSerializable)value).Decode(buffer);
-            }
-        }
-
-        sealed class AmqpDescribedType : AmqpExtendedType
-        {
-            public AmqpDescribedType(AmqpSerializer serializer, Type type)
-                : base(serializer, type)
-            {
-            }
-
-            protected override void EncodeObject(ByteBuffer buffer, object value)
-            {
-                ((Described)value).Encode(buffer);
-            }
-
-            protected override void DecodeObject(ByteBuffer buffer, object value)
-            {
-                ((Described)value).Decode(buffer);
             }
         }
 

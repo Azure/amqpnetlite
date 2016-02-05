@@ -20,6 +20,17 @@ namespace Test.Amqp
     using System.Collections.Generic;
     using global::Amqp.Serialization;
 
+    enum Category : sbyte
+    {
+        Unspecified,
+        Electronic,
+        Housewares,
+        Sports,
+        Food,
+        Personal,
+        Automotive
+    }
+
     [AmqpContract(Name = "test.amqp:product", Encoding = EncodingType.Map)]
     class Product
     {
@@ -34,6 +45,9 @@ namespace Test.Amqp
 
         [AmqpMember]
         public Specification Specification { get; set; }
+
+        [AmqpMember]
+        public Category Category { get; set; }
 
         public Dictionary<string, string> Properties;
 
