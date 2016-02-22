@@ -243,6 +243,10 @@ namespace Amqp.Listener
             }
 
             string address = attach.Role ? ((Source)attach.Source).Address : ((Target)attach.Target).Address;
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                throw new AmqpException(ErrorCode.InvalidField, "The address field cannot be empty");
+            }
 
             MessageProcessor messageProcessor;
             if (TryGetProcessor(this.messageProcessors, address, out messageProcessor))

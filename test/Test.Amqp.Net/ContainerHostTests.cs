@@ -406,6 +406,39 @@ namespace Test.Amqp
 
             connection.Close();
         }
+
+        [TestMethod]
+        public void InvalidAddresses()
+        {
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+
+            try
+            {
+                var invalidAddresses = new List<string>() { null, "", "   " };
+                invalidAddresses.ForEach(addr =>
+                {
+                    var threw = false;
+                    try
+                    {
+                        var sender = new SenderLink(session, "link with bad address", addr);
+                        sender.Send(new Message("1"));
+                    }
+                    catch (AmqpException e)
+                    {
+                        Assert.AreEqual(ErrorCode.InvalidField, e.Error.Condition.ToString(), string.Format("Address '{0}' did not cause an amqp exception with the expected error condition", addr ?? "null"));
+                        threw = true;
+                    }
+
+                    Assert.IsTrue(threw, string.Format("Address '{0}' did not throw an amqp exception", addr ?? "null"));
+                });
+            }
+            finally
+            {
+                session.Close();
+                connection.Close();
+            }
+        }
     }
 
     class TestMessageProcessor : IMessageProcessor
