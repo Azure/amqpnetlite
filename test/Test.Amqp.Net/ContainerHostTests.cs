@@ -314,18 +314,16 @@ namespace Test.Amqp
             var connection = new Connection(Address);
             var session = new Session(connection);
             var sender1 = new SenderLink(session, linkName, name);
-            var sender2 = new SenderLink(session, linkName, name);
-
             sender1.Send(new Message("msg1"), SendTimeout);
 
             try
             {
-                sender2.Send(new Message("msg1"), SendTimeout);
+                var sender2 = new SenderLink(session, linkName, name);
                 Assert.IsTrue(false, "Excpected exception not thrown");
             }
             catch(AmqpException ae)
             {
-                Assert.AreEqual((Symbol)ErrorCode.Stolen, ae.Error.Condition);
+                Assert.AreEqual((Symbol)ErrorCode.NotAllowed, ae.Error.Condition);
             }
 
             sender1.Close();

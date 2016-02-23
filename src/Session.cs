@@ -130,14 +130,27 @@ namespace Amqp
             this.ThrowIfEnded("AddLink");
             lock (this.ThisLock)
             {
+                int index = -1;
                 int count = this.localLinks.Length;
                 for (int i = 0; i < count; ++i)
                 {
                     if (this.localLinks[i] == null)
                     {
-                        this.localLinks[i] = link;
-                        return (uint)i;
+                        if (index < 0)
+                        {
+                            index = i;
+                        }
                     }
+                    else if (string.Compare(this.localLinks[i].Name, link.Name) == 0)
+                    {
+                        throw new AmqpException(ErrorCode.NotAllowed, link.Name + " has been attached.");
+                    }
+                }
+
+                if (index >= 0)
+                {
+                    this.localLinks[index] = link;
+                    return (uint)index;
                 }
 
                 if (count - 1 < this.handleMax)
@@ -358,7 +371,7 @@ namespace Amqp
                 for (int i = 0; i < this.localLinks.Length; ++i)
                 {
                     Link temp = this.localLinks[i];
-                    if (temp != null && temp.LinkState == LinkState.AttachSent && string.Compare(temp.Name, attach.LinkName) == 0)
+                    if (temp != null && string.Compare(temp.Name, attach.LinkName) == 0)
                     {
                         link = temp;
                         this.AddRemoteLink(attach.Handle, link);
