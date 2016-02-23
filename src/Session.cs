@@ -22,6 +22,13 @@ namespace Amqp
     using Amqp.Types;
 
     /// <summary>
+    /// The callback that is invoked when a begin performative is received from peer.
+    /// </summary>
+    /// <param name="session">The session.</param>
+    /// <param name="begin">The received begin performative.</param>
+    public delegate void OnBegin(Session session, Begin begin);
+
+    /// <summary>
     /// The Session class represents an AMQP session.
     /// </summary>
     public class Session : AmqpObject
@@ -41,6 +48,7 @@ namespace Amqp
         const int DefaultMaxLinks = 64;
         const uint defaultWindowSize = 2048;
         readonly Connection connection;
+        readonly OnBegin onBegin;
         readonly ushort channel;
         uint handleMax;
         Link[] localLinks;
@@ -64,13 +72,20 @@ namespace Amqp
         /// </summary>
         /// <param name="connection">The connection within which to create the session.</param>
         public Session(Connection connection)
-            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize, HandleMax = DefaultMaxLinks - 1 })
+            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize, HandleMax = DefaultMaxLinks - 1 }, null)
         {
         }
 
-        internal Session(Connection connection, Begin begin)
+        /// <summary>
+        /// Initializes a session object with a custom Begin performative.
+        /// </summary>
+        /// <param name="connection">The connection in which the session will be created.</param>
+        /// <param name="begin">The Begin performative to be sent to the remote peer.</param>
+        /// <param name="onBegin">The callback to invoke when a begin is received from peer.</param>
+        public Session(Connection connection, Begin begin, OnBegin onBegin)
         {
             this.connection = connection;
+            this.onBegin = onBegin;
             this.handleMax = begin.HandleMax;
             this.nextOutgoingId = uint.MaxValue - 2u;
             this.incomingWindow = defaultWindowSize;
@@ -261,6 +276,11 @@ namespace Amqp
             if (begin.HandleMax < this.handleMax)
             {
                 this.handleMax = begin.HandleMax;
+            }
+
+            if (this.onBegin != null)
+            {
+                this.onBegin(this, begin);
             }
         }
 
