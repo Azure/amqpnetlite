@@ -40,8 +40,8 @@ namespace Test.Amqp
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            Trace.TraceLevel = TraceLevel.Frame;
+            Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
         }
 
         [TestInitialize]
@@ -228,6 +228,67 @@ namespace Test.Amqp
 
             sender.Close();
             session.Close();
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ContainerHostDefaultValueTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+
+            Open remoteOpen = null;
+            Begin remoteBegin = null;
+            Attach remoteAttach = null;
+
+            var connection = new Connection(Address, null, new Open() { ContainerId = "c" }, (c, o) => remoteOpen = o);
+            var session = new Session(connection, new Begin() { NextOutgoingId = 3 }, (s, b) => remoteBegin = b);
+            var sender1 = new SenderLink(session, "send-link1", new Attach() { Role = false, Target = new Target() { Address = name }, Source = new Source() }, (l, a) => remoteAttach = a);
+            var sender2 = new SenderLink(session, "send-link2", new Attach() { Role = false, Target = new Target() { Address = name }, Source = new Source() }, (l, a) => remoteAttach = a);
+
+            sender1.Send(new Message("m1"));
+            sender2.Send(new Message("m2"));
+
+            session.Close();
+            connection.Close();
+
+            Assert.IsTrue(remoteOpen != null, "remote open not received");
+            Assert.IsTrue(remoteOpen.MaxFrameSize < uint.MaxValue, "max frame size not set");
+            Assert.IsTrue(remoteOpen.ChannelMax < ushort.MaxValue, "channel max not set");
+
+            Assert.IsTrue(remoteBegin != null, "remote begin not received");
+            Assert.IsTrue(remoteBegin.IncomingWindow < uint.MaxValue, "incoming window not set");
+            Assert.IsTrue(remoteBegin.HandleMax < uint.MaxValue, "handle max not set");
+
+            Assert.IsTrue(remoteAttach != null, "remote attach not received");
+        }
+
+        [TestMethod]
+        public void ContainerHostMultiplexingTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+
+            int completed = 0;
+            ManualResetEvent doneEvent = new ManualResetEvent(false);
+            var connection = new Connection(Address, null, new Open() { ContainerId = name }, null);
+            for (int i = 0; i < 10; i++)
+            {
+                var session = new Session(connection, new Begin() { NextOutgoingId = (uint)i }, null);
+                for (int j = 0; j < 20; j++)
+                {
+                    var link = new SenderLink(session, string.Join("-", name, i, j), name);
+                    for (int k = 0; k < 30; k++)
+                    {
+                        link.Send(
+                            new Message() { Properties = new Properties() { MessageId = string.Join("-", "msg", i, j, k) } },
+                            (m, o, s) => { if (Interlocked.Increment(ref completed) >= 10 * 20 * 30) doneEvent.Set(); },
+                            null);
+                    }
+                }
+            }
+
+            Assert.IsTrue(doneEvent.WaitOne(10000), "send not completed in time");
             connection.Close();
         }
 

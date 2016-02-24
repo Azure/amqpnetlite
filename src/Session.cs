@@ -45,8 +45,7 @@ namespace Amqp
             End
         }
 
-        const int DefaultMaxLinks = 64;
-        const uint defaultWindowSize = 2048;
+        internal const uint defaultWindowSize = 2048;
         readonly Connection connection;
         readonly OnBegin onBegin;
         readonly ushort channel;
@@ -72,7 +71,7 @@ namespace Amqp
         /// </summary>
         /// <param name="connection">The connection within which to create the session.</param>
         public Session(Connection connection)
-            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize, HandleMax = DefaultMaxLinks - 1 }, null)
+            : this(connection, Default(connection), null)
         {
         }
 
@@ -87,7 +86,7 @@ namespace Amqp
             this.connection = connection;
             this.onBegin = onBegin;
             this.handleMax = begin.HandleMax;
-            this.nextOutgoingId = uint.MaxValue - 2u;
+            this.nextOutgoingId = begin.NextOutgoingId;
             this.incomingWindow = defaultWindowSize;
             this.outgoingWindow = begin.IncomingWindow;
             this.incomingDeliveryId = uint.MaxValue;
@@ -97,8 +96,6 @@ namespace Amqp
             this.outgoingList = new LinkedList();
             this.channel = connection.AddSession(this);
 
-            begin.IncomingWindow = this.incomingWindow;
-            begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
         }
@@ -170,7 +167,7 @@ namespace Amqp
 
                 if (count - 1 < this.handleMax)
                 {
-                    int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                    int size = (int)Math.Min(count * 2 - 1, this.handleMax) + 1;
                     Link[] expanded = new Link[size];
                     Array.Copy(this.localLinks, expanded, count);
                     this.localLinks = expanded;
@@ -416,7 +413,7 @@ namespace Amqp
                 int count = this.remoteLinks.Length;
                 if (count - 1 < remoteHandle)
                 {
-                    int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                    int size = (int)Math.Min(count * 2 - 1, this.handleMax) + 1;
                     Link[] expanded = new Link[size];
                     Array.Copy(this.remoteLinks, expanded, count);
                     this.remoteLinks = expanded;
@@ -431,6 +428,17 @@ namespace Amqp
 
                 this.remoteLinks[remoteHandle] = link;
             }
+        }
+
+        static Begin Default(Connection connection)
+        {
+            return new Begin()
+            {
+                IncomingWindow = defaultWindowSize,
+                OutgoingWindow = defaultWindowSize,
+                HandleMax = (uint)(connection.MaxLinksPerSession - 1),
+                NextOutgoingId = uint.MaxValue - 2u
+            };
         }
 
         void CancelPendingDeliveries(Error error)

@@ -17,6 +17,7 @@
 
 namespace Amqp.Listener
 {
+    using System;
     using System.Threading;
     using Amqp.Framing;
 
@@ -48,8 +49,21 @@ namespace Amqp.Listener
         internal override void OnBegin(ushort remoteChannel, Begin begin)
         {
             // this sends a begin to the remote peer
-            begin.RemoteChannel = remoteChannel;
-            var session = new ListenerSession(this, begin);
+            Begin local = new Begin()
+            {
+                RemoteChannel = remoteChannel,
+                IncomingWindow = Session.defaultWindowSize,
+                OutgoingWindow = begin.IncomingWindow,
+                NextOutgoingId = 0,
+                HandleMax = (uint)(this.listener.AMQP.MaxLinksPerSession - 1)
+            };
+
+            if (begin.HandleMax < local.HandleMax)
+            {
+                local.HandleMax = begin.HandleMax;
+            }
+
+            var session = new ListenerSession(this, local);
 
             // this updates the local session state
             begin.RemoteChannel = session.Channel;
