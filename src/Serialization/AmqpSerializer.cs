@@ -356,7 +356,7 @@ namespace Amqp.Serialization
                 Type[] argTypes = type.GetGenericArguments();
                 Fx.Assert(argTypes.Length == 1, "Nullable type must have one argument");
                 Type argType = argTypes[0];
-                if (argType.IsEnum)
+                if (argType.IsEnum())
                 {
                     return CompileEnumType(argType);
                 }
@@ -366,7 +366,7 @@ namespace Amqp.Serialization
                 }
             }
 
-            if (type.IsEnum)
+            if (type.IsEnum())
             {
                 return CompileEnumType(type);
             }

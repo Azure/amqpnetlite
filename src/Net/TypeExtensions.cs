@@ -40,6 +40,11 @@ namespace Amqp
             return type.IsValueType;
         }
 
+        internal static bool IsEnum(this Type type)
+        {
+            return type.IsEnum;
+        }
+
         internal static bool IsGenericType(this Type type)
         {
             return type.IsGenericType;
@@ -79,6 +84,11 @@ namespace Amqp
         internal static bool IsValueType(this Type type)
         {
             return type.GetTypeInfo().IsValueType;
+        }
+
+        internal static bool IsEnum(this Type type)
+        {
+            return type.GetTypeInfo().IsEnum;
         }
 
         internal static bool IsGenericType(this Type type)
