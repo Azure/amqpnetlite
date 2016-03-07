@@ -41,9 +41,10 @@ namespace Amqp
             this.amqpSettings = new AmqpSettings()
             {
                 MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
-                ContainerId = "AMQPLite-" + Guid.NewGuid().ToString("N"),
+                ContainerId = "AMQPNetLite-" + Guid.NewGuid().ToString("N").Substring(0, 8),
                 IdleTimeout = int.MaxValue,
-                MaxSessionsPerConnection = 8
+                MaxSessionsPerConnection = Connection.DefaultMaxSessions,
+                MaxLinksPerSession = Connection.DefaultMaxLinksPerSession
             };
         }
 

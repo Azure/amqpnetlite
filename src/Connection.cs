@@ -59,6 +59,7 @@ namespace Amqp
 
         internal const uint DefaultMaxFrameSize = 256 * 1024;
         internal const ushort DefaultMaxSessions = 256;
+        internal const int DefaultMaxLinksPerSession = 64;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         readonly Address address;
@@ -133,9 +134,9 @@ namespace Amqp
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
         {
             this.BufferManager = bufferManager;
+            this.MaxLinksPerSession = amqpSettings.MaxLinksPerSession;
             this.address = address;
             this.onOpened = onOpened;
-            this.maxFrameSize = (uint)amqpSettings.MaxFrameSize;
             this.transport = transport;
             transport.SetConnection(this);
 
@@ -170,6 +171,8 @@ namespace Amqp
             private set;
         }
 
+        internal int MaxLinksPerSession;
+
         ByteBuffer AllocateBuffer(int size)
         {
             return this.BufferManager.GetByteBuffer(size);
@@ -180,6 +183,8 @@ namespace Amqp
             return new WrappedByteBuffer(buffer, offset, length);
         }
 #else
+        internal int MaxLinksPerSession = DefaultMaxLinksPerSession;
+
         ByteBuffer AllocateBuffer(int size)
         {
             return new ByteBuffer(size, true);

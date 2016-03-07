@@ -22,6 +22,13 @@ namespace Amqp
     using Amqp.Types;
 
     /// <summary>
+    /// The callback that is invoked when a begin performative is received from peer.
+    /// </summary>
+    /// <param name="session">The session.</param>
+    /// <param name="begin">The received begin performative.</param>
+    public delegate void OnBegin(Session session, Begin begin);
+
+    /// <summary>
     /// The Session class represents an AMQP session.
     /// </summary>
     public class Session : AmqpObject
@@ -38,9 +45,9 @@ namespace Amqp
             End
         }
 
-        const int DefaultMaxLinks = 64;
-        const uint defaultWindowSize = 2048;
+        internal const uint defaultWindowSize = 2048;
         readonly Connection connection;
+        readonly OnBegin onBegin;
         readonly ushort channel;
         uint handleMax;
         Link[] localLinks;
@@ -64,15 +71,22 @@ namespace Amqp
         /// </summary>
         /// <param name="connection">The connection within which to create the session.</param>
         public Session(Connection connection)
-            : this(connection, new Begin() { IncomingWindow = defaultWindowSize, OutgoingWindow = defaultWindowSize, HandleMax = DefaultMaxLinks - 1 })
+            : this(connection, Default(connection), null)
         {
         }
 
-        internal Session(Connection connection, Begin begin)
+        /// <summary>
+        /// Initializes a session object with a custom Begin performative.
+        /// </summary>
+        /// <param name="connection">The connection in which the session will be created.</param>
+        /// <param name="begin">The Begin performative to be sent to the remote peer.</param>
+        /// <param name="onBegin">The callback to invoke when a begin is received from peer.</param>
+        public Session(Connection connection, Begin begin, OnBegin onBegin)
         {
             this.connection = connection;
+            this.onBegin = onBegin;
             this.handleMax = begin.HandleMax;
-            this.nextOutgoingId = uint.MaxValue - 2u;
+            this.nextOutgoingId = begin.NextOutgoingId;
             this.incomingWindow = defaultWindowSize;
             this.outgoingWindow = begin.IncomingWindow;
             this.incomingDeliveryId = uint.MaxValue;
@@ -82,8 +96,6 @@ namespace Amqp
             this.outgoingList = new LinkedList();
             this.channel = connection.AddSession(this);
 
-            begin.IncomingWindow = this.incomingWindow;
-            begin.NextOutgoingId = this.nextOutgoingId;
             this.state = State.BeginSent;
             this.SendBegin(begin);
         }
@@ -130,19 +142,32 @@ namespace Amqp
             this.ThrowIfEnded("AddLink");
             lock (this.ThisLock)
             {
+                int index = -1;
                 int count = this.localLinks.Length;
                 for (int i = 0; i < count; ++i)
                 {
                     if (this.localLinks[i] == null)
                     {
-                        this.localLinks[i] = link;
-                        return (uint)i;
+                        if (index < 0)
+                        {
+                            index = i;
+                        }
                     }
+                    else if (string.Compare(this.localLinks[i].Name, link.Name) == 0)
+                    {
+                        throw new AmqpException(ErrorCode.NotAllowed, link.Name + " has been attached.");
+                    }
+                }
+
+                if (index >= 0)
+                {
+                    this.localLinks[index] = link;
+                    return (uint)index;
                 }
 
                 if (count - 1 < this.handleMax)
                 {
-                    int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                    int size = (int)Math.Min(count * 2 - 1, this.handleMax) + 1;
                     Link[] expanded = new Link[size];
                     Array.Copy(this.localLinks, expanded, count);
                     this.localLinks = expanded;
@@ -248,6 +273,11 @@ namespace Amqp
             if (begin.HandleMax < this.handleMax)
             {
                 this.handleMax = begin.HandleMax;
+            }
+
+            if (this.onBegin != null)
+            {
+                this.onBegin(this, begin);
             }
         }
 
@@ -358,7 +388,7 @@ namespace Amqp
                 for (int i = 0; i < this.localLinks.Length; ++i)
                 {
                     Link temp = this.localLinks[i];
-                    if (temp != null && temp.LinkState == LinkState.AttachSent && string.Compare(temp.Name, attach.LinkName) == 0)
+                    if (temp != null && string.Compare(temp.Name, attach.LinkName) == 0)
                     {
                         link = temp;
                         this.AddRemoteLink(attach.Handle, link);
@@ -383,7 +413,7 @@ namespace Amqp
                 int count = this.remoteLinks.Length;
                 if (count - 1 < remoteHandle)
                 {
-                    int size = Math.Min(count * 2, (int)this.handleMax + 1);
+                    int size = (int)Math.Min(count * 2 - 1, this.handleMax) + 1;
                     Link[] expanded = new Link[size];
                     Array.Copy(this.remoteLinks, expanded, count);
                     this.remoteLinks = expanded;
@@ -398,6 +428,17 @@ namespace Amqp
 
                 this.remoteLinks[remoteHandle] = link;
             }
+        }
+
+        static Begin Default(Connection connection)
+        {
+            return new Begin()
+            {
+                IncomingWindow = defaultWindowSize,
+                OutgoingWindow = defaultWindowSize,
+                HandleMax = (uint)(connection.MaxLinksPerSession - 1),
+                NextOutgoingId = uint.MaxValue - 2u
+            };
         }
 
         void CancelPendingDeliveries(Error error)

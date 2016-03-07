@@ -30,6 +30,128 @@ namespace Test.Amqp
     public class AmqpSerializerTests
     {
         [TestMethod()]
+        public void AmqpSerializerPrimitiveTypeTest()
+        {
+            RunPrimitiveTypeTest<object>(null);
+
+            RunPrimitiveTypeTest<bool>(true);
+            RunPrimitiveTypeTest<bool>(false);
+            
+            RunPrimitiveTypeTest<byte>(byte.MinValue);
+            RunPrimitiveTypeTest<byte>(222);
+            RunPrimitiveTypeTest<byte>(byte.MaxValue);
+
+            RunPrimitiveTypeTest<ushort>(ushort.MinValue);
+            RunPrimitiveTypeTest<ushort>(2222);
+            RunPrimitiveTypeTest<ushort>(ushort.MaxValue);
+
+            RunPrimitiveTypeTest<uint>(uint.MinValue);
+            RunPrimitiveTypeTest<uint>(22);
+            RunPrimitiveTypeTest<uint>(2222222);
+            RunPrimitiveTypeTest<uint>(uint.MaxValue);
+
+            RunPrimitiveTypeTest<ulong>(ulong.MinValue);
+            RunPrimitiveTypeTest<ulong>(22);
+            RunPrimitiveTypeTest<ulong>(2222222222222);
+            RunPrimitiveTypeTest<ulong>(ulong.MaxValue);
+
+            RunPrimitiveTypeTest<sbyte>(sbyte.MinValue);
+            RunPrimitiveTypeTest<sbyte>(-111);
+            RunPrimitiveTypeTest<sbyte>(0);
+            RunPrimitiveTypeTest<sbyte>(111);
+            RunPrimitiveTypeTest<sbyte>(sbyte.MaxValue);
+
+            RunPrimitiveTypeTest<short>(short.MinValue);
+            RunPrimitiveTypeTest<short>(-11111);
+            RunPrimitiveTypeTest<short>(0);
+            RunPrimitiveTypeTest<short>(11111);
+            RunPrimitiveTypeTest<short>(short.MaxValue);
+
+            RunPrimitiveTypeTest<int>(int.MinValue);
+            RunPrimitiveTypeTest<int>(-22);
+            RunPrimitiveTypeTest<int>(0);
+            RunPrimitiveTypeTest<int>(2222222);
+            RunPrimitiveTypeTest<int>(int.MaxValue);
+
+            RunPrimitiveTypeTest<long>(long.MinValue);
+            RunPrimitiveTypeTest<long>(-222222222222);
+            RunPrimitiveTypeTest<long>(22);
+            RunPrimitiveTypeTest<long>(2222222222222);
+            RunPrimitiveTypeTest<long>(long.MaxValue);
+
+            RunPrimitiveTypeTest<float>(float.MinValue);
+            RunPrimitiveTypeTest<float>(-123.456F);
+            RunPrimitiveTypeTest<float>(0);
+            RunPrimitiveTypeTest<float>(123.456F);
+            RunPrimitiveTypeTest<float>(float.MaxValue);
+
+            RunPrimitiveTypeTest<double>(double.MinValue);
+            RunPrimitiveTypeTest<double>(-123.456789F);
+            RunPrimitiveTypeTest<double>(0);
+            RunPrimitiveTypeTest<double>(123.456789F);
+            RunPrimitiveTypeTest<double>(double.MaxValue);
+
+            RunPrimitiveTypeTest<char>('A');
+            RunPrimitiveTypeTest<char>('中');
+
+            RunPrimitiveTypeTest<DateTime>(DateTime.MinValue.ToUniversalTime());
+            RunPrimitiveTypeTest<DateTime>(DateTime.UtcNow);
+            RunPrimitiveTypeTest<DateTime>(DateTime.MaxValue.ToUniversalTime());
+
+            RunPrimitiveTypeTest<Guid>(Guid.Empty);
+            RunPrimitiveTypeTest<Guid>(Guid.NewGuid());
+
+            RunPrimitiveTypeTest<byte[]>(new byte[0]);
+            RunPrimitiveTypeTest<byte[]>(new byte[] { 4, 5, 6, 7, 8 });
+            RunPrimitiveTypeTest<byte[]>(System.Text.Encoding.UTF8.GetBytes(new string('D', 888)));
+
+            RunPrimitiveTypeTest<string>(string.Empty);
+            RunPrimitiveTypeTest<string>("test");
+            RunPrimitiveTypeTest<string>(new string('D', 888));
+
+            RunPrimitiveTypeTest<Symbol>(string.Empty);
+            RunPrimitiveTypeTest<Symbol>("test");
+            RunPrimitiveTypeTest<Symbol>(new string('D', 888));
+
+            RunPrimitiveTypeTest<Category>(Category.Food);
+            RunPrimitiveTypeTest<Category?>(Category.Food);
+
+            RunPrimitiveTypeTest<int?>(456);
+            RunPrimitiveTypeTest<sbyte?>(-1);
+            RunPrimitiveTypeTest<ulong?>(1234567890);
+            RunPrimitiveTypeTest<byte?>(null);
+        }
+
+        static void RunPrimitiveTypeTest<T>(T value)
+        {
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, value);
+            T o = AmqpSerializer.Deserialize<T>(b);
+
+            if (typeof(T) == typeof(DateTime))
+            {
+                DateTime now = DateTime.UtcNow;
+                long x = Convert.ToInt64((now - (DateTime)(object)value).TotalMilliseconds);
+                long y = Convert.ToInt64((now - (DateTime)(object)o).TotalMilliseconds);
+                Assert.IsTrue(Math.Abs(x - y) < 2, "timestamp difference should be less than 2");
+            }
+            else if (typeof(T) == typeof(byte[]))
+            {
+                byte[] b1 = (byte[])(object)value;
+                byte[] b2 = (byte[])(object)o;
+                Assert.AreEqual(b1.Length, b2.Length, "Count is not equal.");
+                for (int i = 0; i < b1.Length; ++i)
+                {
+                    Assert.AreEqual(b1[i], b2[i], string.Format("The {0}th byte is not equal ({1} != {2}).", i, b1[i], b2[i]));
+                }
+            }
+            else
+            {
+                Assert.AreEqual(value, o, "value not equal after deserialize");
+            }
+        }
+
+        [TestMethod()]
         public void AmqpSerializerListEncodingTest()
         {
             Action<Person, Person> personValidator = (p1, p2) =>
@@ -151,7 +273,7 @@ namespace Test.Amqp
             // serializer test
             {
                 var specification = new ComputerSpecification() {  Cores = 2, RamSize = 4, Description = "netbook" };
-                var product = new Product() { Name = "Computer", Price = 499.98, Weight = 30, Specification = specification };
+                var product = new Product() { Name = "Computer", Price = 499.98, Weight = 30, Specification = specification, Category = Category.Electronic };
 
                 var buffer = new ByteBuffer(1024, true);
                 AmqpSerializer.Serialize(buffer, product);
@@ -164,6 +286,7 @@ namespace Test.Amqp
                 Assert.AreEqual(product.Name, product2.Name);
                 Assert.AreEqual(product.Price, product2.Price);
                 Assert.AreEqual(product.Weight, product2.Weight);
+                Assert.AreEqual(product.Category, product2.Category);
 
                 var specification2 = product2.Specification as ComputerSpecification;
                 Assert.IsTrue(specification2 != null);
@@ -219,7 +342,8 @@ namespace Test.Amqp
                         { new Symbol("Name"), "Car" },
                         { new Symbol("Price"), 41200.0 },
                         { new Symbol("Weight"), 5600L },
-                        { new Symbol("Specification"), specification }
+                        { new Symbol("Specification"), specification },
+                        { new Symbol("Category"), (sbyte)Category.Automotive }
                     });
 
                 var buffer = new ByteBuffer(1024, true);
@@ -229,6 +353,7 @@ namespace Test.Amqp
                 Assert.AreEqual("Car", product2.Name);
                 Assert.AreEqual(41200.0, product2.Price);
                 Assert.AreEqual(5600L, product2.Weight);
+                Assert.AreEqual(Category.Automotive, product2.Category);
 
                 var specification2 = product2.Specification as CarSpecification;
                 Assert.IsTrue(specification2 != null);
@@ -382,6 +507,7 @@ namespace Test.Amqp
             var inputMessage = new Message(value);
             var buffer = inputMessage.Encode();
             var outputMessage = Message.Decode(buffer);
+            Assert.IsTrue(outputMessage.Body != null, "Body is not null");
             var value2 = outputMessage.GetBody<T>();
             validator(value, value2);
         }

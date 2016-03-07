@@ -36,6 +36,10 @@ IF /I "%1" EQU "clean" (
   GOTO :args-done
 )
 
+IF /I "%1" EQU "test" (
+  GOTO :build-done
+)
+
 :args-start
 IF /I "%1" EQU "" GOTO args-done
 

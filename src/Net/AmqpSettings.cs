@@ -50,9 +50,18 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Gets or sets the open.channel-max field.
+        /// Gets or sets the open.channel-max field (less by one).
         /// </summary>
         public ushort MaxSessionsPerConnection
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the begin.handle-max field (less by one).
+        /// </summary>
+        public int MaxLinksPerSession
         {
             get;
             set;

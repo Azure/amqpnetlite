@@ -737,5 +737,43 @@ namespace Test.Amqp
 
             Assert.IsTrue(threwArgEx, "Should throw an argument exception when sending an empty message.");
         }
+
+#if NETFX || NETFX_CORE
+        [TestMethod]
+#endif
+        public void TestMethod_ConnectionCreateClose()
+        {
+            Connection connection = new Connection(address);
+            connection.Close();
+            Assert.IsTrue(connection.Error == null, "connection has error!");
+        }
+
+#if NETFX || NETFX_CORE
+        [TestMethod]
+#endif
+        public void TestMethod_SessionCreateClose()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            session.Close(0);
+            connection.Close();
+            Assert.IsTrue(connection.Error == null, "connection has error!");
+        }
+
+#if NETFX || NETFX_CORE
+        [TestMethod]
+#endif
+        public void TestMethod_LinkCreateClose()
+        {
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver", "q1");
+            sender.Close(0);
+            receiver.Close(0);
+            session.Close(0);
+            connection.Close();
+            Assert.IsTrue(connection.Error == null, "connection has error!");
+        }
     }
 }

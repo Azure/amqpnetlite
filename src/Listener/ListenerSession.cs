@@ -27,7 +27,7 @@ namespace Amqp.Listener
     public class ListenerSession : Session
     {
         internal ListenerSession(ListenerConnection connection, Begin begin)
-            : base(connection, begin)
+            : base(connection, begin, null)
         {
         }
 
