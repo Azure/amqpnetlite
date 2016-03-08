@@ -474,23 +474,24 @@ namespace Test.Amqp
 
             try
             {
-                var invalidAddresses = new List<string>() { null, "", "   " };
-                invalidAddresses.ForEach(addr =>
+                var invalidAddresses = new string[] { null, "", "   " };
+                for (int i = 0; i < invalidAddresses.Length; i++)
                 {
                     var threw = false;
                     try
                     {
-                        var sender = new SenderLink(session, "link with bad address", addr);
+                        var sender = new SenderLink(session, "invalid-address-" + i, invalidAddresses[i]);
                         sender.Send(new Message("1"));
                     }
                     catch (AmqpException e)
                     {
-                        Assert.AreEqual(ErrorCode.InvalidField, e.Error.Condition.ToString(), string.Format("Address '{0}' did not cause an amqp exception with the expected error condition", addr ?? "null"));
+                        Assert.AreEqual(ErrorCode.InvalidField, e.Error.Condition.ToString(),
+                            string.Format("Address '{0}' did not cause an amqp exception with the expected error condition", invalidAddresses[i] ?? "null"));
                         threw = true;
                     }
 
-                    Assert.IsTrue(threw, string.Format("Address '{0}' did not throw an amqp exception", addr ?? "null"));
-                });
+                    Assert.IsTrue(threw, string.Format("Address '{0}' did not throw an amqp exception", invalidAddresses[i] ?? "null"));
+                };
             }
             finally
             {
