@@ -328,9 +328,20 @@ namespace Amqp
         void Connect(SaslProfile saslProfile, Open open)
         {
             ITransport transport;
-            TcpTransport tcpTransport = new TcpTransport();
-            tcpTransport.Connect(this, this.address, DisableServerCertValidation);
-            transport = tcpTransport;
+#if NETFX
+            if (WebSocketTransport.MatchScheme(address.Scheme))
+            {
+                WebSocketTransport wsTransport = new WebSocketTransport();
+                wsTransport.ConnectAsync(address).GetAwaiter().GetResult();
+                transport = wsTransport;
+            }
+            else
+#endif
+            {
+                TcpTransport tcpTransport = new TcpTransport();
+                tcpTransport.Connect(this, this.address, DisableServerCertValidation);
+                transport = tcpTransport;
+            }
 
             if (saslProfile != null)
             {

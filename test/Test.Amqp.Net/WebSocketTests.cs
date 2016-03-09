@@ -15,6 +15,7 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
@@ -25,13 +26,42 @@ namespace Test.Amqp
     [TestClass]
     public class WebSocketTests
     {
+        const string address = "ws://guest:guest@localhost:18080/test";
+
+        [TestMethod]
+        public void WebSocketContainerHostTests()
+        {
+            foreach (var mi in typeof(ContainerHostTests).GetMethods())
+            {
+                if (mi.GetCustomAttributes(typeof(TestMethodAttribute), false).Length > 0 &&
+                    mi.GetCustomAttributes(typeof(IgnoreAttribute), false).Length == 0)
+                {
+                    ContainerHostTests test = new ContainerHostTests();
+                    test.Uri = new System.Uri(address);
+                    test.Initialize();
+
+                    try
+                    {
+                        mi.Invoke(test, new object[0]);
+                        System.Diagnostics.Trace.WriteLine(mi.Name + " passed");
+                    }
+                    catch (Exception exception)
+                    {
+                        System.Diagnostics.Trace.WriteLine(mi.Name + " failed: " + exception.Message);
+                    }
+
+                    test.Cleanup();
+                }
+            }
+        }
+
         [TestMethod]
         public async Task WebSocketSendReceiveAsync()
         {
             string testName = "WebSocketSendReceiveAsync";
 
             // assuming it matches the broker's setup and port is not taken
-            Address wsAddress = new Address("ws://guest:guest@localhost:18080");
+            Address wsAddress = new Address(address);
             int nMsgs = 50;
 
             Connection connection = await Connection.Factory.CreateAsync(wsAddress);

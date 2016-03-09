@@ -30,24 +30,34 @@ namespace Test.Amqp
     [TestClass]
     public class ContainerHostTests
     {
-        // pick a port other than 5762 so that it doesn't conflict with the test broker
-        const string Endpoint = "amqp://guest:guest@localhost:5765";
         const int SendTimeout = 5000;
-        static readonly Uri Uri = new Uri(Endpoint);
-        static readonly Address Address = new Address(Endpoint);
         ContainerHost host;
+
+        public Uri Uri
+        {
+            get;
+            set;
+        }
+
+        Address Address
+        {
+            get { return new Address(this.Uri.AbsoluteUri); }
+        }
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            Trace.TraceLevel = TraceLevel.Frame;
-            Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceLevel = TraceLevel.Frame;
+            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
         }
 
         [TestInitialize]
         public void Initialize()
         {
-            this.host = new ContainerHost(new List<Uri>() { Uri }, null, Uri.UserInfo);
+            // pick a port other than 5762 so that it doesn't conflict with the test broker
+            this.Uri = new Uri("amqp://guest:guest@localhost:5765");
+
+            this.host = new ContainerHost(new List<Uri>() { this.Uri }, null, this.Uri.UserInfo);
             this.host.Open();
         }
 

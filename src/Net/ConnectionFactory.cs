@@ -89,7 +89,7 @@ namespace Amqp
         {
             IAsyncTransport transport;
             if (string.Equals(address.Scheme, Address.Amqp, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(address.Scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase))
+                string.Equals(address.Scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase))
             {
                 TcpTransport tcpTransport = new TcpTransport(this.BufferManager);
                 await tcpTransport.ConnectAsync(address, this);
