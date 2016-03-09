@@ -31,11 +31,16 @@ namespace Test.Amqp
         [TestMethod]
         public void WebSocketContainerHostTests()
         {
+            int total = 0;
+            int passed = 0;
+
             foreach (var mi in typeof(ContainerHostTests).GetMethods())
             {
                 if (mi.GetCustomAttributes(typeof(TestMethodAttribute), false).Length > 0 &&
                     mi.GetCustomAttributes(typeof(IgnoreAttribute), false).Length == 0)
                 {
+                    total++;
+
                     ContainerHostTests test = new ContainerHostTests();
                     test.Uri = new System.Uri(address);
                     test.Initialize();
@@ -44,6 +49,7 @@ namespace Test.Amqp
                     {
                         mi.Invoke(test, new object[0]);
                         System.Diagnostics.Trace.WriteLine(mi.Name + " passed");
+                        passed++;
                     }
                     catch (Exception exception)
                     {
@@ -53,6 +59,8 @@ namespace Test.Amqp
                     test.Cleanup();
                 }
             }
+
+            Assert.AreEqual(total, passed, string.Format("Not all tests passed {0}/{1}", passed, total));
         }
 
         [TestMethod]
