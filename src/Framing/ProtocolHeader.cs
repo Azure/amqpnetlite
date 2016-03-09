@@ -38,7 +38,7 @@ namespace Amqp.Framing
                 buffer[offset + 2] != (byte)Protocol[2] ||
                 buffer[offset + 3] != (byte)Protocol[3])
             {
-                throw new AmqpException(ErrorCode.InvalidField, string.Format("Unexpected protocol name in the header. Expected {0}, but received {1}.", Protocol, Encoding.ASCII.GetString(buffer, offset, 4)));
+                throw new AmqpException(ErrorCode.InvalidField, string.Format("Unexpected protocol name in the header. Expected {0}, but received {1}.", Protocol, Encoding.UTF8.GetString(buffer, offset, 4)));
             }
 
             return new ProtocolHeader()
