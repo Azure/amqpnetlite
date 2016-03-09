@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This is a lightweight AMQP 1.0 client library for .Net frameworks (including .Net Framework, .Net Micro Framework, .Net Compact Framework and .Net Core) and WinRT (Windows Phone and Windows Store).</description>
+    <description>This is a lightweight AMQP 1.0 library for .Net frameworks (including .Net Framework, .Net Micro Framework, .Net Compact Framework and .Net Core), WinRT (Windows Phone and Windows Store), and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP Micro-Framework netmf netcf iot winrt coreclr .NetPlatform .NetCore UWP</tags>

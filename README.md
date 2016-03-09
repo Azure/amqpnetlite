@@ -1,5 +1,5 @@
 # amqpnetlite
-AMQP.Net Lite is a lightweight AMQP 1.0 client library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, and Windows Runtime platforms.
+AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior 
