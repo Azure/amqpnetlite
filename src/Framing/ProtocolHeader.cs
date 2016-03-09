@@ -17,7 +17,7 @@
 
 namespace Amqp.Framing
 {
-    using Amqp.Types;
+    using System.Text;
 
     struct ProtocolHeader
     {
@@ -36,7 +36,8 @@ namespace Amqp.Framing
                 buffer[offset + 2] != (byte)'Q' ||
                 buffer[offset + 3] != (byte)'P')
             {
-                throw new AmqpException(ErrorCode.InvalidField, "ProtocolName");
+                throw new AmqpException(ErrorCode.InvalidField,
+                    "ProtocolName Expect:AMQP Actual:" + new string(Encoding.UTF8.GetChars(buffer, offset, 4)));
             }
 
             return new ProtocolHeader()
