@@ -171,7 +171,7 @@ namespace Amqp
 
         void ITransport.Close()
         {
-            this.socketTransport.Close();
+            this.writer.Close();
         }
 
         void ITransport.Send(ByteBuffer buffer)
@@ -446,6 +446,7 @@ namespace Amqp
             Queue<ByteBuffer> bufferQueue;
             List<ByteBuffer> buffersInProgress;
             bool writing;
+            bool closed;
 
             public Writer(TcpTransport owner, IAsyncTransport transport)
             {
@@ -458,6 +459,20 @@ namespace Amqp
             object SyncRoot
             {
                 get { return this.bufferQueue; }
+            }
+
+            public void Close()
+            {
+                lock (this.SyncRoot)
+                {
+                    this.closed = true;
+                    if (this.writing)
+                    {
+                        return;
+                    }
+                }
+
+                this.transport.Close();
             }
 
             public void Write(ByteBuffer buffer)
@@ -531,6 +546,11 @@ namespace Amqp
                         if (queueDepth == 0)
                         {
                             this.writing = false;
+                            if (this.closed)
+                            {
+                                this.transport.Close();
+                            }
+
                             return;
                         }
                         else if (queueDepth == 1)
