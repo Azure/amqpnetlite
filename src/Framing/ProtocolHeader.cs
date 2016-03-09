@@ -17,7 +17,7 @@
 
 namespace Amqp.Framing
 {
-    using Amqp.Types;
+    using System.Text;
 
     struct ProtocolHeader
     {
@@ -31,12 +31,14 @@ namespace Amqp.Framing
 
         public static ProtocolHeader Create(byte[] buffer, int offset)
         {
-            if (buffer[offset + 0] != (byte)'A' ||
-                buffer[offset + 1] != (byte)'M' ||
-                buffer[offset + 2] != (byte)'Q' ||
-                buffer[offset + 3] != (byte)'P')
+            const string Protocol = "AMQP";
+
+            if (buffer[offset + 0] != (byte)Protocol[0] ||
+                buffer[offset + 1] != (byte)Protocol[1] ||
+                buffer[offset + 2] != (byte)Protocol[2] ||
+                buffer[offset + 3] != (byte)Protocol[3])
             {
-                throw new AmqpException(ErrorCode.InvalidField, "ProtocolName");
+                throw new AmqpException(ErrorCode.InvalidField, string.Format("Unexpected protocol name in the header. Expected {0}, but received {1}.", Protocol, Encoding.ASCII.GetString(buffer, offset, 4)));
             }
 
             return new ProtocolHeader()
