@@ -53,7 +53,7 @@ namespace Amqp.Framing
 #if TRACE
         public override string ToString()
         {
-            return Fx.Format("{0} {1} {2} {3}", this.Id, this.Major, this.Minor, this.Revision);
+            return Fx.Format("Id: {0}, Major: {1}, Minor: {2}, Revision: {3}", this.Id, this.Major, this.Minor, this.Revision);
         }
 #endif
     }
