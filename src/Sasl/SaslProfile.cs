@@ -93,7 +93,7 @@ namespace Amqp.Sasl
             if (theirHeader.Id != myHeader.Id || theirHeader.Major != myHeader.Major ||
                 theirHeader.Minor != myHeader.Minor || theirHeader.Revision != myHeader.Revision)
             {
-                throw new AmqpException(ErrorCode.NotImplemented, string.Format("Expected peer header: '{0}', Actual peer header: '{1}'.", myHeader, theirHeader));
+                throw new AmqpException(ErrorCode.NotImplemented, string.Format("SASL header mismatch. Expected peer header: '{0}', Actual peer header: '{1}'.", myHeader, theirHeader));
             }
         }
 
