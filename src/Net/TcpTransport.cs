@@ -24,13 +24,13 @@ namespace Amqp
     using System.Net.Sockets;
     using System.Threading.Tasks;
 
-    sealed class TcpTransport : IAsyncTransport
+    class TcpTransport : IAsyncTransport
     {
         static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
         readonly IBufferManager bufferManager;
         Connection connection;
-        Writer writer;
-        IAsyncTransport socketTransport;
+        protected Writer writer;
+        protected IAsyncTransport socketTransport;
 
         public TcpTransport()
             : this(null)
@@ -40,22 +40,6 @@ namespace Amqp
         public TcpTransport(IBufferManager bufferManager)
         {
             this.bufferManager = bufferManager;
-        }
-
-        // called by listener
-        public TcpTransport(Socket socket, IBufferManager bufferManager)
-            : this(bufferManager)
-        {
-            this.socketTransport = new TcpSocket(this, socket);
-            this.writer = new Writer(this, this.socketTransport);
-        }
-
-        // called by listener
-        public TcpTransport(SslStream sslStream, IBufferManager bufferManager)
-            : this(bufferManager)
-        {
-            this.socketTransport = new SslSocket(this, sslStream);
-            this.writer = new Writer(this, this.socketTransport);
         }
 
         public void Connect(Connection connection, Address address, bool noVerification)
@@ -203,7 +187,7 @@ namespace Amqp
             this.writer.DisposeQueuedBuffers();
         }
 
-        class TcpSocket : IAsyncTransport
+        protected class TcpSocket : IAsyncTransport
         {
             readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
             readonly TcpTransport transport;
@@ -353,7 +337,7 @@ namespace Amqp
             }
         }
 
-        class SslSocket : IAsyncTransport
+        protected class SslSocket : IAsyncTransport
         {
             readonly TcpTransport transport;
             readonly SslStream sslStream;
@@ -439,7 +423,7 @@ namespace Amqp
             }
         }
 
-        sealed class Writer
+        protected class Writer
         {
             readonly TcpTransport owner;
             readonly IAsyncTransport transport;

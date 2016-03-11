@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Amqp.Micro.nuspec = Amqp.Micro.nuspec
 		Amqp.Net.nuspec = Amqp.Net.nuspec
 		build.cmd = build.cmd
+		dnx\Amqp.DotNet\project.json = dnx\Amqp.DotNet\project.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "src\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"

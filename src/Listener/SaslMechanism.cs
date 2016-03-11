@@ -15,8 +15,10 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Sasl
+namespace Amqp.Listener
 {
+    using Amqp.Sasl;
+
     abstract class SaslMechanism
     {
         public abstract string Name { get; }

@@ -64,7 +64,9 @@
         "System.Reflection.Emit.Lightweight": "4.0.1-beta-23409",
         "System.Reflection.Extensions": "4.0.1-beta-23409",
         "System.Reflection.TypeExtensions": "4.0.1-beta-23409",
-        "System.Runtime.Serialization.Primitives": "4.0.11-beta-23409"
+        "System.Runtime.Serialization.Primitives": "4.0.11-beta-23409",
+        "System.Security.Claims": "4.0.1-beta-23509",
+        "System.Security.Principal":  "4.0.1-beta-23509"
       }
     }
   }

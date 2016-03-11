@@ -27,6 +27,7 @@ namespace Amqp.Listener
 #endif
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
+    using System.Security.Principal;
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
@@ -190,13 +191,27 @@ namespace Amqp.Listener
 
         async Task HandleTransportAsync(IAsyncTransport transport)
         {
+            IPrincipal principal = null;
             if (this.saslSettings != null)
             {
                 ListenerSaslProfile profile = new ListenerSaslProfile(this);
                 transport = await profile.OpenAsync(null, this.BufferManager, transport);
+                principal = profile.GetPrincipal();
             }
 
-            Connection connection = new ListenerConnection(this, this.address, transport);
+            var connection = new ListenerConnection(this, this.address, transport);
+            if (principal == null)
+            {
+                // SASL principal preferred. If not present, check transport.
+                IAuthenticated authenticated = transport as IAuthenticated;
+                if (authenticated != null)
+                {
+                    principal = authenticated.Principal;
+                }
+            }
+
+            connection.Principal = principal;
+
             bool shouldClose = false;
             lock (this.connections)
             {
@@ -355,9 +370,15 @@ namespace Amqp.Listener
                 this.listener = listener;
             }
 
-            public SaslProfile InnerProfile
+            public IPrincipal GetPrincipal()
             {
-                get { return this.innerProfile; }
+                IAuthenticated authenticated = this.innerProfile as IAuthenticated;
+                if (authenticated != null)
+                {
+                    return authenticated.Principal;
+                }
+
+                return null;
             }
 
             protected override ITransport UpgradeTransport(ITransport transport)
@@ -499,7 +520,7 @@ namespace Amqp.Listener
             protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
                 var tcs = new TaskCompletionSource<IAsyncTransport>();
-                tcs.SetResult(new TcpTransport(socket, this.Listener.BufferManager));
+                tcs.SetResult(new ListenerTcpTransport(socket, this.Listener.BufferManager));
                 return tcs.Task;
             }
 
@@ -558,7 +579,36 @@ namespace Amqp.Listener
                         this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation);
                 }
 
-                return new TcpTransport(sslStream, this.Listener.BufferManager);
+                return new ListenerTcpTransport(sslStream, this.Listener.BufferManager);
+            }
+        }
+
+        class ListenerTcpTransport : TcpTransport, IAuthenticated
+        {
+            public ListenerTcpTransport(Socket socket, IBufferManager bufferManager)
+                : base(bufferManager)
+            {
+                this.socketTransport = new TcpSocket(this, socket);
+                this.writer = new Writer(this, this.socketTransport);
+            }
+
+            public ListenerTcpTransport(SslStream sslStream, IBufferManager bufferManager)
+                : base(bufferManager)
+            {
+                this.socketTransport = new SslSocket(this, sslStream);
+                this.writer = new Writer(this, this.socketTransport);
+                if (sslStream.RemoteCertificate != null)
+                {
+                    this.Principal = new GenericPrincipal(
+                        new X509Identity(sslStream.RemoteCertificate),
+                        new string[0]);
+                }
+            }
+
+            public IPrincipal Principal
+            {
+                get;
+                private set;
             }
         }
 
@@ -597,7 +647,7 @@ namespace Amqp.Listener
                 try
                 {
                     var wsContext = await context.AcceptWebSocketAsync(WebSocketTransport.WebSocketSubProtocol);
-                    var wsTransport = new WebSocketTransport(wsContext.WebSocket);
+                    var wsTransport = new ListenerWebSocketTransport(wsContext);
                     await this.listener.HandleTransportAsync(wsTransport);
                 }
                 catch(Exception exception)
@@ -625,6 +675,21 @@ namespace Amqp.Listener
                         Trace.WriteLine(TraceLevel.Error, exception.ToString());
                     }
                 }
+            }
+        }
+
+        class ListenerWebSocketTransport : WebSocketTransport, IAuthenticated
+        {
+            public ListenerWebSocketTransport(HttpListenerWebSocketContext context)
+                : base(context.WebSocket)
+            {
+                this.Principal = context.User;
+            }
+
+            public IPrincipal Principal
+            {
+                get;
+                private set;
             }
         }
 #endif

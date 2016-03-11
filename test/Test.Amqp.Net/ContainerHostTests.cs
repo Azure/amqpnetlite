@@ -18,10 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Listener;
+using Amqp.Sasl;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -58,6 +60,7 @@ namespace Test.Amqp
             this.Uri = new Uri("amqp://guest:guest@localhost:5765");
 
             this.host = new ContainerHost(new List<Uri>() { this.Uri }, null, this.Uri.UserInfo);
+            this.host.Listeners[0].SASL.EnableExternalMechanism = true;
             this.host.Open();
         }
 
@@ -477,6 +480,70 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostPlainPrincipalTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            ListenerLink link = null;
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.OnLinkAttached += a => link = a;
+            this.host.RegisterLinkProcessor(linkProcessor);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, name, name);
+            sender.Send(new Message("msg1"), SendTimeout);
+            connection.Close();
+
+            Assert.IsTrue(link != null, "link is null");
+            var listenerConnection = (ListenerConnection)link.Session.Connection;
+            Assert.IsTrue(listenerConnection.Principal != null, "principal is null");
+            Assert.IsTrue(listenerConnection.Principal.Identity.AuthenticationType == "PLAIN", "wrong auth type");
+        }
+
+        [TestMethod]
+        public void ContainerHostX509PrincipalTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            string address = "amqps://localhost:5676";
+            X509Certificate2 cert = GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+            ContainerHost sslHost = new ContainerHost(new Uri(address));
+            sslHost.Listeners[0].SSL.Certificate = cert;
+            sslHost.Listeners[0].SSL.ClientCertificateRequired = true;
+            sslHost.Listeners[0].SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+            sslHost.Listeners[0].SASL.EnableExternalMechanism = true;
+            ListenerLink link = null;
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.OnLinkAttached += a => link = a;
+            sslHost.RegisterLinkProcessor(linkProcessor);
+            sslHost.Open();
+
+            try
+            {
+                var factory = new ConnectionFactory();
+                factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+                factory.SSL.ClientCertificates.Add(cert);
+                factory.SASL.Profile = SaslProfile.External;
+                var connection = factory.CreateAsync(new Address(address)).Result;
+                var session = new Session(connection);
+                var sender = new SenderLink(session, name, name);
+                sender.Send(new Message("msg1"), SendTimeout);
+                connection.Close();
+
+                Assert.IsTrue(link != null, "link is null");
+                var listenerConnection = (ListenerConnection)link.Session.Connection;
+                Assert.IsTrue(listenerConnection.Principal != null, "principal is null");
+                Assert.IsTrue(listenerConnection.Principal.Identity.AuthenticationType == "X509", "wrong auth type");
+
+                X509Identity identity = (X509Identity)listenerConnection.Principal.Identity;
+                Assert.IsTrue(identity.Certificate != null, "certificate is null");
+            }
+            finally
+            {
+                sslHost.Close();
+            }
+        }
+
+        [TestMethod]
         public void InvalidAddresses()
         {
             var connection = new Connection(Address);
@@ -508,6 +575,23 @@ namespace Test.Amqp
                 session.Close();
                 connection.Close();
             }
+        }
+
+        static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
+        {
+            X509Store store = new X509Store(storeName, storeLocation);
+            store.Open(OpenFlags.OpenExistingOnly);
+            X509Certificate2Collection collection = store.Certificates.Find(
+                X509FindType.FindBySubjectName,
+                certFindValue,
+                false);
+            if (collection.Count == 0)
+            {
+                throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
+            }
+
+            store.Close();
+            return collection[0];
         }
     }
 
@@ -569,8 +653,15 @@ namespace Test.Amqp
 
     class TestLinkProcessor : ILinkProcessor
     {
+        public Action<ListenerLink> OnLinkAttached;
+
         public void Process(AttachContext attachContext)
         {
+            if (this.OnLinkAttached != null)
+            {
+                this.OnLinkAttached(attachContext.Link);
+            }
+
             attachContext.Complete(new TestLinkEndpoint(), attachContext.Attach.Role ? 0 : 30);
         }
 

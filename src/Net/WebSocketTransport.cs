@@ -25,7 +25,7 @@ namespace Amqp
     using System.Threading;
     using System.Threading.Tasks;
 
-    sealed class WebSocketTransport : IAsyncTransport
+    class WebSocketTransport : IAsyncTransport
     {
         public const string WebSocketSubProtocol = "AMQPWSB10";
         public const string WebSockets = "WS";

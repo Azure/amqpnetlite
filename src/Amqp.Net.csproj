@@ -49,6 +49,8 @@
     <Compile Include="Listener\AttachContext.cs" />
     <Compile Include="Listener\ContextState.cs" />
     <Compile Include="Listener\FlowContext.cs" />
+    <Compile Include="Listener\IAuthenticated.cs" />
+    <Compile Include="Listener\X509Identity.cs" />
     <Compile Include="Listener\LinkCollection.cs" />
     <Compile Include="Listener\ILinkProcessor.cs" />
     <Compile Include="Listener\LinkEndpoint.cs" />
@@ -71,8 +73,8 @@
     <Compile Include="Net\ConnectionFactoryBase.cs" />
     <Compile Include="Properties\Version.cs" />
     <Compile Include="Sasl\SaslExternalProfile.cs" />
-    <Compile Include="Sasl\SaslPlainMechanism.cs" />
-    <Compile Include="Sasl\SaslMechanism.cs" />
+    <Compile Include="Listener\SaslPlainMechanism.cs" />
+    <Compile Include="Listener\SaslMechanism.cs" />
     <Compile Include="Listener\IContainer.cs" />
     <Compile Include="Listener\ListenerSession.cs" />
     <Compile Include="Listener\ListenerConnection.cs" />
