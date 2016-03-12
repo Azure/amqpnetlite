@@ -322,24 +322,47 @@ namespace Amqp.Listener
             }
 
             /// <summary>
-            /// Gets or sets a value indicating if SASL EXTERNAL mechanism is enabled.
+            /// Gets or sets a value indicating if SASL ANONYMOUS mechanism is enabled.
             /// </summary>
-            public bool EnableExternalMechanism
+            public bool EnableAnonymousMechanism
             {
                 get
                 {
-                    return this.mechanisms.ContainsKey(SaslExternalProfile.Name);
+                    return this.mechanisms.ContainsKey(SaslProfile.AnonymousName);
                 }
 
                 set
                 {
                     if (value)
                     {
-                        this.mechanisms[SaslExternalProfile.Name] = SaslMechanism.External;
+                        this.mechanisms[SaslProfile.AnonymousName] = SaslMechanism.Anonymous;
                     }
                     else
                     {
-                        this.mechanisms.Remove(SaslExternalProfile.Name);
+                        this.mechanisms.Remove(SaslProfile.AnonymousName);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets a value indicating if SASL EXTERNAL mechanism is enabled.
+            /// </summary>
+            public bool EnableExternalMechanism
+            {
+                get
+                {
+                    return this.mechanisms.ContainsKey(SaslProfile.ExternalName);
+                }
+
+                set
+                {
+                    if (value)
+                    {
+                        this.mechanisms[SaslProfile.ExternalName] = SaslMechanism.External;
+                    }
+                    else
+                    {
+                        this.mechanisms.Remove(SaslProfile.ExternalName);
                     }
                 }
             }

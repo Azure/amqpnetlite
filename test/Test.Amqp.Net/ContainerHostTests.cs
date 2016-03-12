@@ -61,6 +61,7 @@ namespace Test.Amqp
 
             this.host = new ContainerHost(new List<Uri>() { this.Uri }, null, this.Uri.UserInfo);
             this.host.Listeners[0].SASL.EnableExternalMechanism = true;
+            this.host.Listeners[0].SASL.EnableAnonymousMechanism = true;
             this.host.Open();
         }
 
@@ -477,6 +478,28 @@ namespace Test.Amqp
             receiver.Accept(message);
 
             connection.Close();
+        }
+
+        [TestMethod]
+        public void ContainerHostSaslAnonymousTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            ListenerLink link = null;
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.OnLinkAttached += a => link = a;
+            this.host.RegisterLinkProcessor(linkProcessor);
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = SaslProfile.Anonymous;
+            var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).Result;
+            var session = new Session(connection);
+            var sender = new SenderLink(session, name, name);
+            sender.Send(new Message("msg1"), SendTimeout);
+            connection.Close();
+
+            Assert.IsTrue(link != null, "link is null");
+            var listenerConnection = (ListenerConnection)link.Session.Connection;
+            Assert.IsTrue(listenerConnection.Principal == null, "principal should be null");
         }
 
         [TestMethod]

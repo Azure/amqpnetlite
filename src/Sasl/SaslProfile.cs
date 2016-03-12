@@ -27,12 +27,23 @@ namespace Amqp.Sasl
     /// </summary>
     public abstract class SaslProfile
     {
+        internal const string ExternalName = "EXTERNAL";
+        internal const string AnonymousName = "ANONYMOUS";
+
         /// <summary>
-        /// The SASL EXTERNAL profile.
+        /// Gets a SASL ANONYMOUS profile.
+        /// </summary>
+        public static SaslProfile Anonymous
+        {
+            get { return new SaslNoActionProfile(AnonymousName, AnonymousName); }
+        }
+
+        /// <summary>
+        /// Gets a SASL EXTERNAL profile.
         /// </summary>
         public static SaslProfile External
         {
-            get { return new SaslExternalProfile(); }
+            get { return new SaslNoActionProfile(ExternalName, string.Empty); }
         }
 
         internal ITransport Open(string hostname, ITransport transport)

@@ -31,18 +31,39 @@ namespace Amqp.Listener
             }
         }
 
+        public static SaslMechanism Anonymous
+        {
+            get
+            {
+                return new SaslExternalMechanism();
+            }
+        }
+
         public abstract SaslProfile CreateProfile();
 
         class SaslExternalMechanism : SaslMechanism
         {
             public override string Name
             {
-                get { return SaslExternalProfile.Name; }
+                get { return SaslProfile.ExternalName; }
             }
 
             public override SaslProfile CreateProfile()
             {
                 return SaslProfile.External;
+            }
+        }
+
+        class SaslAnonymousMechanism : SaslMechanism
+        {
+            public override string Name
+            {
+                get { return SaslProfile.AnonymousName; }
+            }
+
+            public override SaslProfile CreateProfile()
+            {
+                return SaslProfile.Anonymous;
             }
         }
     }
