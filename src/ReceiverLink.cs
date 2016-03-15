@@ -57,9 +57,9 @@ namespace Amqp
         /// </summary>
         /// <param name="session">The session within which to create the link.</param>
         /// <param name="name">The link name.</param>
-        /// <param name="adderss">The node address.</param>
-        public ReceiverLink(Session session, string name, string adderss)
-            : this(session, name, new Source() { Address = adderss }, null)
+        /// <param name="address">The node address.</param>
+        public ReceiverLink(Session session, string name, string address)
+            : this(session, name, new Source() { Address = address }, null)
         {
         }
 
