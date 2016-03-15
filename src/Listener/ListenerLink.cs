@@ -117,7 +117,7 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Sends a message. This call is non-blocking and it does not wait for acknowledgements.
+        /// Sends a message. This call is non-blocking and it does not wait for acknowledgments.
         /// </summary>
         /// <param name="message"></param>
         public void SendMessage(Message message)
