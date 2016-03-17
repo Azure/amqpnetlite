@@ -216,22 +216,26 @@ namespace Listener.ContainerHost
 
         class OutgoingLinkEndpoint : LinkEndpoint
         {
+            long id;
+
             public override void OnFlow(FlowContext flowContext)
             {
                 for (int i = 0; i < flowContext.Messages; i++)
                 {
                     var message = new Message("Hello!");
-                    message.Properties = new Properties() { Subject = "Welcome Message" };
+                    message.Properties = new Properties() { Subject = "Message" + Interlocked.Increment(ref this.id) };
                     flowContext.Link.SendMessage(message);
                 }
             }
 
             public override void OnDisposition(DispositionContext dispositionContext)
             {
-                if (!dispositionContext.Settled)
+                if (!(dispositionContext.DeliveryState is Accepted))
                 {
-                    dispositionContext.Link.DisposeMessage(dispositionContext.Message, new Accepted(), true);
+                    // Handle the case where message is not accepted by the client
                 }
+
+                dispositionContext.Complete();
             }
         }
     }
