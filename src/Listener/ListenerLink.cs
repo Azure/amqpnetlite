@@ -319,11 +319,35 @@ namespace Amqp.Listener
         }
 
         /// <summary>
+        /// Closes the link.
+        /// </summary>
+        /// <param name="error">The error</param>
+        /// <returns></returns>
+        protected override bool OnClose(Error error)
+        {
+            try
+            {
+                return base.OnClose(error);
+            }
+            finally
+            {
+                if (this.linkEndpoint != null)
+                {
+                    this.linkEndpoint.OnLinkClosed(this, error);
+                }                
+            }
+        }
+
+        /// <summary>
         /// Aborts the link.
         /// </summary>
         /// <param name="error">The error.</param>
         protected override void OnAbort(Error error)
         {
+            if (this.linkEndpoint != null)
+            {
+                this.linkEndpoint.OnLinkClosed(this, error);
+            }
         }
 
         static void ThrowIfNotNull(object obj, string name)
