@@ -85,6 +85,12 @@ namespace Amqp
         /// Initializes a connection from the address.
         /// </summary>
         /// <param name="address">The address.</param>
+        /// <remarks>
+        /// The connection initialization includes establishing the underlying transport,
+        /// which typically has blocking network I/O. Depending on the current synchronization
+        /// context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
+        /// method instead.
+        /// </remarks>
         public Connection(Address address)
             : this(address, null, null, null)
         {
@@ -99,6 +105,12 @@ namespace Amqp
         /// <param name="open">The open frame to send (optional). If not null, all mandatory
         /// fields must be set. Ensure that other fields are set to desired values.</param>
         /// <param name="onOpened">The callback to handle remote open frame (optional).</param>
+        /// <remarks>
+        /// The connection initialization includes establishing the underlying transport,
+        /// which typically has blocking network I/O. Depending on the current synchronization
+        /// context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
+        /// method instead.
+        /// </remarks>
         public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
             : this(DefaultMaxSessions, DefaultMaxFrameSize)
         {

@@ -51,7 +51,7 @@ namespace Amqp
                 factory.SSL.RemoteCertificateValidationCallback = noneCertValidator;
             }
 
-            this.ConnectAsync(address, factory).GetAwaiter().GetResult();
+            this.ConnectAsync(address, factory).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public async Task ConnectAsync(Address address, ConnectionFactory factory)
