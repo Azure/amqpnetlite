@@ -19,6 +19,7 @@ namespace Amqp.Serialization
 {
     using System;
     using System.Collections;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Reflection;
@@ -35,14 +36,14 @@ namespace Amqp.Serialization
     public sealed class AmqpSerializer
     {
         static readonly AmqpSerializer instance = new AmqpSerializer();
-        readonly Dictionary<Type, SerializableType> typeCache;
+        readonly ConcurrentDictionary<Type, SerializableType> typeCache;
 
         /// <summary>
         /// Initializes a new instance of the AmqpSerializer class.
         /// </summary>
         public AmqpSerializer()
         {
-            this.typeCache = new Dictionary<Type, SerializableType>();
+            this.typeCache = new ConcurrentDictionary<Type, SerializableType>();
         }
 
         /// <summary>
@@ -143,7 +144,7 @@ namespace Amqp.Serialization
                 serialiableType = this.CompileType(type, describedOnly);
                 if (serialiableType != null)
                 {
-                    this.typeCache[type] = serialiableType;
+                    serialiableType = this.typeCache.GetOrAdd(type, serialiableType);
                 }
             }
 
@@ -183,7 +184,7 @@ namespace Amqp.Serialization
                                 type.Name, contractAttribute.Encoding, type.BaseType().Name, baseType.Encoding));
                     }
 
-                    this.typeCache[type.BaseType()] = baseType;
+                    baseType = this.typeCache.GetOrAdd(type.BaseType(), baseType);
                 }
             }
 

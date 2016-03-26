@@ -45,6 +45,7 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Net35\ConcurrentDictionary.cs" />
     <Compile Include="Net35\TcpTransport.cs">
       <SubType>Code</SubType>
     </Compile>
