@@ -18,6 +18,7 @@
 namespace Amqp.Listener
 {
     using System;
+    using System.Threading;
     using Amqp.Framing;
     using Amqp.Types;
 
@@ -143,7 +144,8 @@ namespace Amqp.Listener
                 Message = message,
                 Buffer = buffer ?? message.Encode(),
                 Link = this,
-                Settled = this.SettleOnSend
+                Settled = this.SettleOnSend,
+                Tag = Delivery.GetDeliveryTag(this.deliveryCount)
             };
 
             this.Session.SendDelivery(delivery);

@@ -180,7 +180,7 @@ namespace Amqp
                     return;
                 }
 
-                delivery.Tag = GetDeliveryTag(this.deliveryCount);
+                delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
                 this.credit--;
                 this.deliveryCount++;
                 this.writing = true;
@@ -202,7 +202,7 @@ namespace Amqp
 
                 delivery = (Delivery)this.outgoingList.First;
                 this.outgoingList.Remove(delivery);
-                delivery.Tag = GetDeliveryTag(this.deliveryCount);
+                delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
                 this.credit--;
                 this.deliveryCount++;
                 this.writing = true;
@@ -275,13 +275,6 @@ namespace Amqp
             Delivery.ReleaseAll(toRelease, error);
         }
 
-        static byte[] GetDeliveryTag(uint tag)
-        {
-            byte[] buffer = new byte[FixedWidth.UInt];
-            AmqpBitConverter.WriteInt(buffer, 0, (int)tag);
-            return buffer;
-        }
-
         void WriteDelivery(Delivery delivery)
         {
             while (delivery != null)
@@ -313,7 +306,7 @@ namespace Amqp
                     else if (this.credit > 0)
                     {
                         this.outgoingList.Remove(delivery);
-                        delivery.Tag = GetDeliveryTag(this.deliveryCount);
+                        delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
                         this.credit--;
                         this.deliveryCount++;
                     }
