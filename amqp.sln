@@ -14,8 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Amqp.Micro.nuspec = Amqp.Micro.nuspec
 		Amqp.Net.nuspec = Amqp.Net.nuspec
+		src\amqp.snk = src\amqp.snk
 		build.cmd = build.cmd
-		dnx\Amqp.DotNet\project.json = dnx\Amqp.DotNet\project.json
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "src\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
@@ -93,6 +93,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Micro.NetMF", "src\Amqp.Micro.NetMF.csproj", "{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net40", "src\Amqp.Net40.csproj", "{4A250B81-35E9-4D2F-8030-62909F6C8C63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DNX", "DNX", "{57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp", "Amqp", "{C40B5C1E-3ECB-409D-9ED2-D36D4879A485}"
+	ProjectSection(SolutionItems) = preProject
+		dnx\Amqp\project.json = dnx\Amqp\project.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.Listener", "Amqp.Listener", "{B8917277-E208-4F1F-8973-8CA8C1C52AE7}"
+	ProjectSection(SolutionItems) = preProject
+		dnx\Amqp.Listener\project.json = dnx\Amqp.Listener\project.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -549,5 +561,7 @@ Global
 		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{E5D42E35-B5C4-426D-B568-96926EBA588E} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{69E4A20C-EF50-49C6-8DAC-F76B9D565767} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
+		{C40B5C1E-3ECB-409D-9ED2-D36D4879A485} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
+		{B8917277-E208-4F1F-8973-8CA8C1C52AE7} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal

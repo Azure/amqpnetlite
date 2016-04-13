@@ -118,20 +118,20 @@ FOR /L %%I IN (2,1,3) DO (
 )
 
 IF /I "%build-dnx%" EQU "false" GOTO :build-done
-CALL :file-exists dnu cmd
-IF "%dnuPath%" == "" (
-  ECHO dnvm is not installed or "dnvm use" is not run to add a runtime.
+CALL :file-exists dotnet exe
+IF "%dotnetPath%" == "" (
+  ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
   GOTO :exit
 )
-CALL "%dnuPath%" restore dnx\Amqp.DotNet
+CALL "%dotnetPath%" restore dnx
 IF %ERRORLEVEL% NEQ 0 (
-  ECHO dnu restore failed with error %ERRORLEVEL%
+  ECHO dotnet restore failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
   GOTO :exit
 )
-CALL "%dnuPath%" build dnx\Amqp.DotNet --configuration %build-config% --out bin
+CALL "%dotnetPath%" build dnx\Amqp.Listener --configuration %build-config% --build-base-path bin\dnx
 IF %ERRORLEVEL% NEQ 0 (
-  ECHO dnu build failed with error %ERRORLEVEL%
+  ECHO dotnet build failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
   GOTO :exit
 )
