@@ -1,0 +1,243 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>amqpnetlite </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="amqpnetlite ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/README.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1 id="amqpnetlite">amqpnetlite</h1>
+              
+<p>AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Full control of AMQP 1.0 protocol behavior </li>
+<li>Peer-to-peer and brokered messaging </li>
+<li>Secure communication via TLS and SASL </li>
+<li>Sync and async API support </li>
+<li>Listener APIs to enable wide range of listener applications, including brokers, routers, proxies, and more. </li>
+<li>A lightweight messaging library that runs on all popular .NET and Windows Runtime platforms</li>
+</ul>
+<h2 id="supported-platforms">Supported Platforms</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">net45</th>
+<th style="text-align:center">net40</th>
+<th style="text-align:center">net35</th>
+<th style="text-align:center">netmf</th>
+<th style="text-align:center">netcf</th>
+<th style="text-align:center">win8/wp8</th>
+<th style="text-align:center">netcore451/uwp</th>
+<th style="text-align:center">dnxcore50<sup>4</sup></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TLS</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+<sup>1</sup></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td>SASL<sup>2</sup></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td>AMQP Core</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td>Txn</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td>Async API</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+<sup>3</sup></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td>Listener</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td>Serializer</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+</tr>
+<tr>
+<td>WebSockets</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>requires a TLS-capable device.</li>
+<li>only SASL PLAIN and SASL EXTERNAL are currently supported.</li>
+<li>requires Microsoft.Bcl.Async.</li>
+<li>experimenting (not available in the NuGet package)</li>
+</ol>
+<h2 id="tested-platforms">Tested Platforms</h2>
+<ul>
+<li>.Net Framework (up to 4.5) </li>
+<li>.NET Micro Framework 4.2 and 4.3 </li>
+<li>.NET Compact Framework 3.9</li>
+<li>Windows Phone 8 and 8.1</li>
+<li>Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown.)</li>
+</ul>
+<h2 id="getting-started">Getting Started</h2>
+<ul>
+<li>Prerequisites:<ul>
+<li>Visual Studio 2013 (e.g. Community Edition)</li>
+<li>NETMF SDK (4.2-4.4) and Visual Studio project system</li>
+<li>Application Builder for Windows Embedded Compact 2013</li>
+<li>NuGet tools if you want to build the NuGet package</li>
+</ul>
+</li>
+<li>Build: from inside Visual Studio or by running build.cmd script</li>
+<li>Examples: refer to the examples for common scenarios.</li>
+</ul>
+<h2 id="references">References</h2>
+<p>For more information about the Azure Service Bus and AMQP, refer to:</p>
+<ul>
+<li>Azure Service Bus:  <a href="http://msdn.microsoft.com/en-us/library/ee732537.aspx">http://msdn.microsoft.com/en-us/library/ee732537.aspx</a>. </li>
+<li>Azure Service Bus and AMQP:  <a href="http://msdn.microsoft.com/en-us/library/jj841071.aspx">http://msdn.microsoft.com/en-us/library/jj841071.aspx</a> </li>
+<li>Azure Service Bus Event Hub:  <a href="http://azure.microsoft.com/en-us/services/event-hubs/">http://azure.microsoft.com/en-us/services/event-hubs/</a> </li>
+<li>AMQP:  <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html">http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.html</a></li>
+</ul>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

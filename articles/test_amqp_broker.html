@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Usage: </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Usage: ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/articles/test_amqp_broker.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1></h1>
+              <p>The TestAmqpBroker project is built on top of the .Net version of this library. You can run all MSTest tests in the solution and the NETMF tests against this broker.</p>
+<h2 id="usage-">Usage:</h2>
+<pre><code>AmqpTestBroker url [url] [/creds:user:pwd] [/cert:ssl_cert] [/trace:level] [/queues:q1;q2;...]
+  url=amqp|amqps://host[:port] (can be multiple)
+  creds=username:passwrod
+  cert=ssl cert find value (thumbprint or subject)
+  trace=level (info, warn, error, frame)
+  queues: semicolon separated queue names. If not specified, the broker implicitly
+          creates a new node and deletes it when the connection is closed.
+</code></pre><p>At least one Uri should be specified. Multiple are allowed (typically one for &quot;amqp&quot; and one for &quot;amqps&quot;).</p>
+<p>If &quot;amqps&quot; Uri is present, the &quot;cert&quot; option must exist to specify a server certificate for the Tls listener.</p>
+<p>If &quot;queues&quot; option is present, the broker is preconfigured with a list of queues. If it does not exist, the broker implicitly creates a queue upon an attach request and deletes it when the associated connection is closed. This allows running the tests easily without creating or draining the queue. Note that this is different from AMQP dynamic nodes. You can still create dynamic nodes through the protocol.</p>
+<p>When &quot;trace&quot; option is specified, the traces will be printed to the console window.</p>
+<p>Example (for running tests):</p>
+<pre><code> TestAmqpBroker.exe amqp://localhost:5672 amqps://localhost:5671 ws://localhost:80 /cert:localhost /creds:guest:guest /trace:frame
+</code></pre>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

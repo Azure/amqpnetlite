@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Addressing </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Addressing ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/articles/azure_sb_eventhubs.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1></h1>
+              <p>The Azure Service Bus Event Hubs supports the standard AMQP 1.0 protocol. The only thing specific to the Event Hubs is the addressing scheme and message properties (the following assumes you created an Event Hub named &quot;myeventhub&quot;).</p>
+<h2 id="addressing">Addressing</h2>
+<ul>
+<li>Send to event hub: attach.target.address = &quot;myeventhub&quot;  </li>
+<li>Send to event hub partition &quot;0&quot;: attach.target.address = &quot;myeventhub/Partitions/0&quot;  </li>
+<li>Send to a publisher endpoint: attach.target.address = &quot;myeventhub/Publishers/device1&quot;  </li>
+<li>Receive from the default consumer group of partition &quot;0&quot;: attach.source.address = &quot;myeventhub/ConsumerGroups/$default/Partitions/0&quot;  </li>
+</ul>
+<h2 id="message-properties">Message properties</h2>
+<p>In addition to the standard AMQP message properties, the Event Hub defines the following properties stored in the message annotations section (the keys are AMQP symbols). Only the partition key property can be set by the sender.  </p>
+<ul>
+<li>“x-opt-partition-key”: (string) specifies a partition key used for message partitioning. When the target address is the event hub name, this value is used to compute a hash to select a partition to send the message to.  </li>
+<li>“x-opt-offset”: (string) specifies an opaque pointer of the message in the event stream.  </li>
+<li>“x-opt-sequence-number”: (long) specifies the sequence number of the message in the event stream.  </li>
+<li>“x-opt-enqueued-time”: (timestamp) specifies when the message was enqueued.  </li>
+<li>“x-opt-publisher”: (string) specifies the publisher name if the message was sent to a publisher endpoint.  </li>
+</ul>
+<h2 id="filter">Filter</h2>
+<p>A filter specifies the position (in attach.source.filter-set) where the receiver wants to start receiving.<br>key: symbol(“apache.org:selector-filter:string”)<br>value: a described string: descriptor=symbol(“apache.org:selector-filter:string”), value is an expression.  Examples,  </p>
+<ul>
+<li>Start from message at offset 100 exclusively<br><code>”amqp.annotation.x-opt-offset &gt; &#39;100&#39;”</code></li>
+<li>Start from message at offset 100 inclusively<br><code>”amqp.annotation.x-opt-offset &gt;= &#39;100&#39;”</code></li>
+<li>Start from message received after a timestamp. The number is an AMQP timestamp.<br><code>”amqp.annotation.x-opt-enqueuedtimeutc &gt; 1234567”</code></li>
+</ul>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

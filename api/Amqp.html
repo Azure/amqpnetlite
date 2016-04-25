@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Namespace Amqp
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Namespace Amqp
+   ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content">
+              
+              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp.md&amp;value=---%0Auid%3A%20Amqp%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1 id="Amqp" data-uid="Amqp">Namespace Amqp
+              </h1>
+              <div class="markdown level0 summary"></div>
+              <div class="markdown level0 conceptual"></div>
+              <div class="markdown level0 remarks"></div>
+                <h3 id="classes">Classes
+              </h3>
+                  <h4><a class="xref" href="Amqp.Address.html#Amqp_Address">Address</a></h4>
+                  <section><p>Defines the address of an AMQP endpoint. An address has the following form:
+  amqp[s] :// [user:[password]@] domain[:port] [/[path]
+Where domain can be:
+  host | ip | name
+If &quot;amqps&quot; is specified, the connection uses TLS in the underlying transport.
+When port is not specified, it is set to the standard based on scheme (amqp: 5672, amqps: 5671)
+path is not used by the library.
+Note that TLS Server Name Indication (SNI) is signaled only for &quot;amqps&quot; addresses where
+the domain is host | name. SNI is not signaled when the domain is a numeric IP address.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.AmqpBitConverter.html#Amqp_AmqpBitConverter">AmqpBitConverter</a></h4>
+                  <section><p>Reads primitive values from a buffer or writes primitive values to a buffer in networking order.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.AmqpException.html#Amqp_AmqpException">AmqpException</a></h4>
+                  <section><p>The exception that is thrown when an AMQP error occurs.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject">AmqpObject</a></h4>
+                  <section><p>The base class of all AMQP objects.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.AmqpSettings.html#Amqp_AmqpSettings">AmqpSettings</a></h4>
+                  <section><p>Contains the AMQP settings for a connection.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.BufferManager.html#Amqp_BufferManager">BufferManager</a></h4>
+                  <section><p>A BufferManager manages pooled buffers (byte arrays) with different sizes.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></h4>
+                  <section><p>A byte array wrapper that has read and write cursors.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Connection.html#Amqp_Connection">Connection</a></h4>
+                  <section><p>The Connection class represents an AMQP connection.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ConnectionFactory.html#Amqp_ConnectionFactory">ConnectionFactory</a></h4>
+                  <section><p>The factory to create connections asynchronously.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ConnectionFactory.SaslSettings.html#Amqp_ConnectionFactory_SaslSettings">ConnectionFactory.SaslSettings</a></h4>
+                  <section><p>Contains the SASL settings for a connection.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ConnectionFactory.SslSettings.html#Amqp_ConnectionFactory_SslSettings">ConnectionFactory.SslSettings</a></h4>
+                  <section><p>Contains the TLS/SSL settings for a connection.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase">ConnectionFactoryBase</a></h4>
+                  <section><p>The base class of connection factories.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ErrorCode.html#Amqp_ErrorCode">ErrorCode</a></h4>
+                  <section><p>Defines the conditions of AMQP errors.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Fx.html#Amqp_Fx">Fx</a></h4>
+                  <section><p>Provides framework specific routines.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Link.html#Amqp_Link">Link</a></h4>
+                  <section><p>The Link class represents an AMQP link.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></h4>
+                  <section><p>The Message class represents an AMQP message.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ReceiverLink.html#Amqp_ReceiverLink">ReceiverLink</a></h4>
+                  <section><p>The ReceiverLink class represents a link that accepts incoming messages.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.SenderLink.html#Amqp_SenderLink">SenderLink</a></h4>
+                  <section><p>The SenderLink represents a link that sends outgoing messages.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Session.html#Amqp_Session">Session</a></h4>
+                  <section><p>The Session class represents an AMQP session.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.TaskExtensions.html#Amqp_TaskExtensions">TaskExtensions</a></h4>
+                  <section><p>Provides extension methods.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.TcpSettings.html#Amqp_TcpSettings">TcpSettings</a></h4>
+                  <section><p>Contains the TCP settings of a connection.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Trace.html#Amqp_Trace">Trace</a></h4>
+                  <section><p>The Trace class for writing traces.</p>
+</section>
+                <h3 id="interfaces">Interfaces
+              </h3>
+                  <h4><a class="xref" href="Amqp.IAsyncTransport.html#Amqp_IAsyncTransport">IAsyncTransport</a></h4>
+                  <section><p>Provides asynchronous I/O calls.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.IBufferManager.html#Amqp_IBufferManager">IBufferManager</a></h4>
+                  <section><p>The interface defines the methods to manage buffers.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.ITransport.html#Amqp_ITransport">ITransport</a></h4>
+                  <section><p>The transport interface used by a connection for network I/O.</p>
+</section>
+                <h3 id="enums">Enums
+              </h3>
+                  <h4><a class="xref" href="Amqp.TraceLevel.html#Amqp_TraceLevel">TraceLevel</a></h4>
+                  <section><p>Defines the traces levels. Except Frame, levels are forward inclusive.
+For example, Information level includes the Error and Warning levels.</p>
+</section>
+                <h3 id="delegates">Delegates
+              </h3>
+                  <h4><a class="xref" href="Amqp.ClosedCallback.html#Amqp_ClosedCallback">ClosedCallback</a></h4>
+                  <section><p>The callback that is invoked when the AMQP object is closed.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.MessageCallback.html#Amqp_MessageCallback">MessageCallback</a></h4>
+                  <section><p>A callback that is invoked when a message is received.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.OnAttached.html#Amqp_OnAttached">OnAttached</a></h4>
+                  <section><p>The callback that is invoked when an attach frame is received from the peer.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.OnBegin.html#Amqp_OnBegin">OnBegin</a></h4>
+                  <section><p>The callback that is invoked when a begin performative is received from peer.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.OnOpened.html#Amqp_OnOpened">OnOpened</a></h4>
+                  <section><p>The callback that is invoked when an open frame is received from peer.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.OutcomeCallback.html#Amqp_OutcomeCallback">OutcomeCallback</a></h4>
+                  <section><p>A callback that is invoked when an outcome is received from peer for an outgoing message.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.WriteTrace.html#Amqp_WriteTrace">WriteTrace</a></h4>
+                  <section><p>The callback to invoke to write traces.</p>
+</section>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

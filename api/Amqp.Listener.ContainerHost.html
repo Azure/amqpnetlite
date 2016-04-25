@@ -1,0 +1,658 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class ContainerHost
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class ContainerHost
+   ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content">
+              
+              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L46" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              <h1 id="Amqp_Listener_ContainerHost" data-uid="Amqp.Listener.ContainerHost">Class ContainerHost
+              </h1>
+              <div class="markdown level0 summary"><p>The ContainerHost class hosts an AMQP container where connection listeners can be
+created to accept client requests.</p>
+</div>
+              <div class="markdown level0 conceptual"></div>
+              <div class="inheritance">
+                <h5>Inheritance</h5>
+                  <div class="level0"><span class="xref">System.Object</span></div>
+                  <div class="level1"><span class="xref">ContainerHost</span></div>
+              </div>
+              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
+              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
+              <h5 id="Amqp_Listener_ContainerHost_syntax">Syntax</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public class ContainerHost : IContainer</code></pre>
+              </div>
+              <h5 id="Amqp_Listener_ContainerHost_remarks"><strong>Remarks</strong></h5>
+              <div class="markdown level0 remarks"><p>A container has one or more connection endpoints where transport listeners are created.
+Message processors can be registered to accept incoming messages (one-way).
+Request processors can be registered to process request messages and send back response
+messages (two-way).
+Link processor can be registered to process received attach performatives. This is
+useful in implementing scenarios such as:
+(1) Extra resource allocation and/or additional validation of the request is required.
+(2) Accept receiving links from the client. The listener acts as the message source.
+Upon receiving an attach performative, the registered message processor(s)
+and request processor(s) are checked first. If a processor matches the address
+on the received attach performative, it is invoked to handle the command.
+Otherwise, the registered link processor, if any, is invoked to handle the command.
+When no processor is found, the link is detached with error &quot;amqp:not-found&quot;.</p>
+</div>
+              <h3 id="constructors">Constructors
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_Uri__System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.%23ctor(System.Collections.Generic.IList%7BSystem.Uri%7D%2CSystem.Security.Cryptography.X509Certificates.X509Certificate2%2CSystem.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L72">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_Uri__System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{System.Uri},System.Security.Cryptography.X509Certificates.X509Certificate2,System.String)">ContainerHost(IList&lt;Uri&gt;, X509Certificate2, String)</h4>
+              <div class="markdown level1 summary"><p>Initializes a container host object with multiple address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public ContainerHost(IList&lt;Uri&gt; addressUriList, X509Certificate2 certificate, string userInfo)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Collections.Generic.IList</span>&lt;<span class="xref">System.Uri</span>&gt;</td>
+                    <td><em>addressUriList</em></td>
+                    <td><p>The list of listen addresses.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Security.Cryptography.X509Certificates.X509Certificate2</span></td>
+                    <td><em>certificate</em></td>
+                    <td><p>The service certificate for TLS.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>userInfo</em></td>
+                    <td><p>The credentials required by SASL PLAIN authentication. It is of form &quot;user:password&quot;.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost__ctor_System_Uri_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.%23ctor(System.Uri)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L61">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost__ctor_System_Uri_" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Uri)">ContainerHost(Uri)</h4>
+              <div class="markdown level1 summary"><p>Initializes a container host object with one address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public ContainerHost(Uri addressUri)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Uri</span></td>
+                    <td><em>addressUri</em></td>
+                    <td><p>The address Url. Only the scheme, host and port parts are used. Supported schema are &quot;amqp&quot;, &quot;amqps&quot;, &quot;ws&quot; and &quot;wss&quot;.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="properties">Properties
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_ServiceCertificate.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23ServiceCertificate%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L220">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_ServiceCertificate" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#ServiceCertificate">IContainer.ServiceCertificate</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">X509Certificate2 IContainer.ServiceCertificate
+{
+    get;
+}</code></pre>
+              </div>
+              <h5 class="propertyValue">Property Value</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Security.Cryptography.X509Certificates.X509Certificate2</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Listeners.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Listeners%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L91">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Listeners" data-uid="Amqp.Listener.ContainerHost.Listeners">Listeners</h4>
+              <div class="markdown level1 summary"><p>Gets a list of connection listeners in this container.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public IList&lt;ConnectionListener&gt; Listeners
+{
+    get;
+}</code></pre>
+              </div>
+              <h5 class="propertyValue">Property Value</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Collections.Generic.IList</span>&lt;<a class="xref" href="Amqp.Listener.ConnectionListener.html#Amqp_Listener_ConnectionListener">ConnectionListener</a>&gt;</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="methods">Methods
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_AttachLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Link_Amqp_Framing_Attach_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23AttachLink(Amqp.Listener.ListenerConnection%2CAmqp.Listener.ListenerSession%2CAmqp.Link%2CAmqp.Framing.Attach)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L237">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_AttachLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Link_Amqp_Framing_Attach_" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#AttachLink(Amqp.Listener.ListenerConnection,Amqp.Listener.ListenerSession,Amqp.Link,Amqp.Framing.Attach)">IContainer.AttachLink(ListenerConnection, ListenerSession, Link, Attach)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">bool IContainer.AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.ListenerConnection.html#Amqp_Listener_ListenerConnection">ListenerConnection</a></td>
+                    <td><em>connection</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.ListenerSession.html#Amqp_Listener_ListenerSession">ListenerSession</a></td>
+                    <td><em>session</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Link.html#Amqp_Link">Link</a></td>
+                    <td><em>link</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Framing.Attach.html#Amqp_Framing_Attach">Attach</a></td>
+                    <td><em>attach</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23CreateLink(Amqp.Listener.ListenerConnection%2CAmqp.Listener.ListenerSession%2CAmqp.Framing.Attach)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L230">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#CreateLink(Amqp.Listener.ListenerConnection,Amqp.Listener.ListenerSession,Amqp.Framing.Attach)">IContainer.CreateLink(ListenerConnection, ListenerSession, Attach)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">Link IContainer.CreateLink(ListenerConnection connection, ListenerSession session, Attach attach)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.ListenerConnection.html#Amqp_Listener_ListenerConnection">ListenerConnection</a></td>
+                    <td><em>connection</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.ListenerSession.html#Amqp_Listener_ListenerSession">ListenerSession</a></td>
+                    <td><em>session</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Framing.Attach.html#Amqp_Framing_Attach">Attach</a></td>
+                    <td><em>attach</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Link.html#Amqp_Link">Link</a></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateMessage_Amqp_ByteBuffer_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23CreateMessage(Amqp.ByteBuffer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L225">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateMessage_Amqp_ByteBuffer_" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#CreateMessage(Amqp.ByteBuffer)">IContainer.CreateMessage(ByteBuffer)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">Message IContainer.CreateMessage(ByteBuffer buffer)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Close.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Close%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L110">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Close" data-uid="Amqp.Listener.ContainerHost.Close">Close()</h4>
+              <div class="markdown level1 summary"><p>Closes the container host object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void Close()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Open.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Open%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L99">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_Open" data-uid="Amqp.Listener.ContainerHost.Open">Open()</h4>
+              <div class="markdown level1 summary"><p>Opens the container host object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void Open()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterLinkProcessor_Amqp_Listener_ILinkProcessor_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterLinkProcessor(Amqp.Listener.ILinkProcessor)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L129">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_RegisterLinkProcessor_Amqp_Listener_ILinkProcessor_" data-uid="Amqp.Listener.ContainerHost.RegisterLinkProcessor(Amqp.Listener.ILinkProcessor)">RegisterLinkProcessor(ILinkProcessor)</h4>
+              <div class="markdown level1 summary"><p>Registers a link process to handle received attach performatives.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void RegisterLinkProcessor(ILinkProcessor linkProcessor)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.ILinkProcessor.html#Amqp_Listener_ILinkProcessor">ILinkProcessor</a></td>
+                    <td><em>linkProcessor</em></td>
+                    <td><p>The link processor to be registered.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterMessageProcessor_System_String_Amqp_Listener_IMessageProcessor_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterMessageProcessor(System.String%2CAmqp.Listener.IMessageProcessor)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L145">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_RegisterMessageProcessor_System_String_Amqp_Listener_IMessageProcessor_" data-uid="Amqp.Listener.ContainerHost.RegisterMessageProcessor(System.String,Amqp.Listener.IMessageProcessor)">RegisterMessageProcessor(String, IMessageProcessor)</h4>
+              <div class="markdown level1 summary"><p>Registers a message processor to accept incoming messages from the specified address.
+When it is called, the container creates a node where the client can attach.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void RegisterMessageProcessor(string address, IMessageProcessor messageProcessor)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.IMessageProcessor.html#Amqp_Listener_IMessageProcessor">IMessageProcessor</a></td>
+                    <td><em>messageProcessor</em></td>
+                    <td><p>The message processor to be registered.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterRequestProcessor(System.String%2CAmqp.Listener.IRequestProcessor)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L160">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor_" data-uid="Amqp.Listener.ContainerHost.RegisterRequestProcessor(System.String,Amqp.Listener.IRequestProcessor)">RegisterRequestProcessor(String, IRequestProcessor)</h4>
+              <div class="markdown level1 summary"><p>Registers a request processor from the specified address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 id="Amqp_Listener_ContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor__remarks">Remarks</h5>
+              <div class="markdown level1 remarks"><p>Client must create a pair of links (sending and receiving) at the address. The
+source.address on the sending link should contain an unique address in the client
+and it should be specified in target.address on the receiving link.</p>
+</div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.IRequestProcessor.html#Amqp_Listener_IRequestProcessor">IRequestProcessor</a></td>
+                    <td><em>requestProcessor</em></td>
+                    <td><p>The request processor to be registered.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_UnregisterMessageProcessor_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.UnregisterMessageProcessor(System.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L169">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_UnregisterMessageProcessor_System_String_" data-uid="Amqp.Listener.ContainerHost.UnregisterMessageProcessor(System.String)">UnregisterMessageProcessor(String)</h4>
+              <div class="markdown level1 summary"><p>Unregisters a message processor at the specified address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void UnregisterMessageProcessor(string address)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_UnregisterRequestProcessor_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.UnregisterRequestProcessor(System.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L178">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_UnregisterRequestProcessor_System_String_" data-uid="Amqp.Listener.ContainerHost.UnregisterRequestProcessor(System.String)">UnregisterRequestProcessor(String)</h4>
+              <div class="markdown level1 summary"><p>Unregisters a request processor at the specified address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void UnregisterRequestProcessor(string address)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ContainerHost </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="ContainerHost ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/articles/listener.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1></h1>
+              <p>Listener APIs can be used to build applications such as P2P service, router, broker and more. Depending on how much control of the protocol required by the application, different listener APIs can be used.</p>
+<h2 id="containerhost">ContainerHost</h2>
+<p>ContainerHost is the easiest way to start an AMQP listener. Multiple endpoints can be specified in a single host. The host internally listens on all transport endpoints for incoming connections.</p>
+<p>The application is required to register at least one of the following processors to process AMQP events. Multiple message/request processors can be registered as long as their addresses are different. At most one link processor can be registered.</p>
+<p>When the container host receives an attach performative from the remote peer,<br>(1) if a message/request processor is found at the registered address, the host creates a link endpoint for that address and all received messages are routed to that processor.<br>(2) otherwise, if a link processor is registered, the attach request is routed to the processor.<br>(3) otherwise, the attach is rejected with &quot;amqp:not-found&quot; error.  </p>
+<p>Protocol behavior can be configured through the Listeners properties of the container host.</p>
+<h3 id="imessageprocessor">IMessageProcessor</h3>
+<p>For one-way communication from client to listener, application implements this interface to process incoming messages. Application finishes message processing by completing the given MessageContext object, which sends the acknowledgement (AMQP disposition) to the remote peer if required.</p>
+<h3 id="irequestprocessor">IRequestProcessor</h3>
+<p>For two-way bidirectional request/response communication, application implements this interface to process incoming request messages and send back response messages. Application finishes request processing by completing the given RequestContext object with a response message. The container host manages all the request/response links, the correlation between request/response messages and routing the response message to the right response link.</p>
+<h3 id="ilinkprocessor">ILinkProcessor</h3>
+<p>Link processor can be implemented in the following scenarios:<br>(1) application needs extra validation or security check for the link attachment, or to perform link specific initialization and clean up.<br>(2) sending messages from the listener to the client.<br>(3) handling attach requests on addresses which are not known beforehand.  </p>
+<p>Link processor finishes attach processing by completing the given AttachContext with a LinkEndpoint implementation. The subsequent message, flow and disposition contexts are routed to the endpoint for processing.</p>
+<h2 id="connectionlistener-and-icontainer">ConnectionListener and IContainer</h2>
+<p>Application may need access to the lower level of the protocol, or require more capabilities than the container host can provide. In such cases, it can manage connections and container links with these interfaces.
+It is more flexible and gives more control but requires more implementation.</p>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

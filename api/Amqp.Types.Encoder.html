@@ -1,0 +1,2375 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Encoder
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Encoder
+   ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content">
+              
+              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L38" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              <h1 id="Amqp_Types_Encoder" data-uid="Amqp.Types.Encoder">Class Encoder
+              </h1>
+              <div class="markdown level0 summary"><p>Encodes or decodes AMQP types.</p>
+</div>
+              <div class="markdown level0 conceptual"></div>
+              <div class="inheritance">
+                <h5>Inheritance</h5>
+                  <div class="level0"><span class="xref">System.Object</span></div>
+                  <div class="level1"><span class="xref">Encoder</span></div>
+              </div>
+              <h6><strong>Namespace</strong>:Amqp.Types</h6>
+              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
+              <h5 id="Amqp_Types_Encoder_syntax">Syntax</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public class Encoder</code></pre>
+              </div>
+              <h3 id="methods">Methods
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_AddKnownDescribed_Amqp_Types_Descriptor_Amqp_Types_CreateDescribed_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.AddKnownDescribed(Amqp.Types.Descriptor%2CAmqp.Types.CreateDescribed)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L320">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_AddKnownDescribed_Amqp_Types_Descriptor_Amqp_Types_CreateDescribed_" data-uid="Amqp.Types.Encoder.AddKnownDescribed(Amqp.Types.Descriptor,Amqp.Types.CreateDescribed)">AddKnownDescribed(Descriptor, CreateDescribed)</h4>
+              <div class="markdown level1 summary"><p>Adds a factory for a custom described type, usually for decoding.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void AddKnownDescribed(Descriptor descriptor, CreateDescribed ctor)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.Descriptor.html#Amqp_Types_Descriptor">Descriptor</a></td>
+                    <td><em>descriptor</em></td>
+                    <td><p>The descriptor of the type.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.CreateDescribed.html#Amqp_Types_CreateDescribed">CreateDescribed</a></td>
+                    <td><em>ctor</em></td>
+                    <td><p>The delegate to invoke to create the object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_DateTimeToTimestamp_System_DateTime_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.DateTimeToTimestamp(System.DateTime)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L334">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_DateTimeToTimestamp_System_DateTime_" data-uid="Amqp.Types.Encoder.DateTimeToTimestamp(System.DateTime)">DateTimeToTimestamp(DateTime)</h4>
+              <div class="markdown level1 summary"><p>Converts a DateTime value to AMQP timestamp (milliseconds from Unix epoch)</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static long DateTimeToTimestamp(DateTime dateTime)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.DateTime</span></td>
+                    <td><em>dateTime</em></td>
+                    <td><p>The DateTime value to convert.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int64</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadArray_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadArray(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1265">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadArray_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadArray(Amqp.ByteBuffer,System.Byte)">ReadArray(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads an array value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static Array ReadArray(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Array</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadBinary_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadBinary(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1169">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadBinary_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadBinary(Amqp.ByteBuffer,System.Byte)">ReadBinary(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a binary value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static byte[] ReadBinary(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Byte</span>[]</td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadBoolean_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadBoolean(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L898">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadBoolean_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadBoolean(Amqp.ByteBuffer,System.Byte)">ReadBoolean(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a boolean value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool ReadBoolean(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadByte_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadByte(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1008">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadByte_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadByte(Amqp.ByteBuffer,System.Byte)">ReadByte(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a signed byte from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static sbyte ReadByte(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.SByte</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadChar_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadChar(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1084">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadChar_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadChar(Amqp.ByteBuffer,System.Byte)">ReadChar(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a char value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static char ReadChar(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Char</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadDescribed_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadDescribed(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L873">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadDescribed_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadDescribed(Amqp.ByteBuffer,System.Byte)">ReadDescribed(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a described value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static object ReadDescribed(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Object</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadDouble_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadDouble(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1118">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadDouble_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadDouble(Amqp.ByteBuffer,System.Byte)">ReadDouble(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a 64-bit floating-point value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static double ReadDouble(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Double</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadFloat_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadFloat(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1101">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadFloat_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadFloat(Amqp.ByteBuffer,System.Byte)">ReadFloat(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a 32-bit floating-point value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static float ReadFloat(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Single</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadInt_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadInt(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1042">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadInt_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadInt(Amqp.ByteBuffer,System.Byte)">ReadInt(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a signed 32-bit integer from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static int ReadInt(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadList_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadList(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1223">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadList_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadList(Amqp.ByteBuffer,System.Byte)">ReadList(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a list value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static List ReadList(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.List.html#Amqp_Types_List">List</a></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadLong_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadLong(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1063">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadLong_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadLong(Amqp.ByteBuffer,System.Byte)">ReadLong(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a signed 64-bit integer from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static long ReadLong(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int64</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadMap_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadMap(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1311">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadMap_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadMap(Amqp.ByteBuffer,System.Byte)">ReadMap(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a map value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static Map ReadMap(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.Map.html#Amqp_Types_Map">Map</a></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadObject_Amqp_ByteBuffer_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadObject(Amqp.ByteBuffer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L840">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadObject_Amqp_ByteBuffer_" data-uid="Amqp.Types.Encoder.ReadObject(Amqp.ByteBuffer)">ReadObject(ByteBuffer)</h4>
+              <div class="markdown level1 summary"><p>Reads an object from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static object ReadObject(ByteBuffer buffer)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Object</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadObject_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadObject(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L852">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadObject_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadObject(Amqp.ByteBuffer,System.Byte)">ReadObject(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads an object from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static object ReadObject(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Object</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadShort_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadShort(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1025">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadShort_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadShort(Amqp.ByteBuffer,System.Byte)">ReadShort(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a signed 16-bit integer from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static short ReadShort(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int16</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadString_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadString(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1203">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadString_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadString(Amqp.ByteBuffer,System.Byte)">ReadString(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a string value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static string ReadString(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadSymbol_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadSymbol(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1213">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadSymbol_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadSymbol(Amqp.ByteBuffer,System.Byte)">ReadSymbol(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a symbol value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static Symbol ReadSymbol(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.Symbol.html#Amqp_Types_Symbol">Symbol</a></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadTimestamp_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadTimestamp(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1135">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadTimestamp_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadTimestamp(Amqp.ByteBuffer,System.Byte)">ReadTimestamp(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a timestamp value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static DateTime ReadTimestamp(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.DateTime</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadUByte_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadUByte(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L924">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadUByte_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadUByte(Amqp.ByteBuffer,System.Byte)">ReadUByte(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads an unsigned byte value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static byte ReadUByte(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadUInt_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadUInt(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L958">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadUInt_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadUInt(Amqp.ByteBuffer,System.Byte)">ReadUInt(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads an unsigned 32-bit integer from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static uint ReadUInt(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.UInt32</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadULong_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadULong(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L983">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadULong_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadULong(Amqp.ByteBuffer,System.Byte)">ReadULong(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads an unsigned 64-bit integer from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static ulong ReadULong(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.UInt64</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadUShort_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadUShort(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L941">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadUShort_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadUShort(Amqp.ByteBuffer,System.Byte)">ReadUShort(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads an unsigned 16-bit integer from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static ushort ReadUShort(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.UInt16</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_ReadUuid_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.ReadUuid(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L1152">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_ReadUuid_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadUuid(Amqp.ByteBuffer,System.Byte)">ReadUuid(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Reads a uuid value from a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static Guid ReadUuid(ByteBuffer buffer, byte formatCode)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to read.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>formatCode</em></td>
+                    <td><p>The format code of the value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Guid</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_TimestampToDateTime_System_Int64_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.TimestampToDateTime(System.Int64)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L344">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_TimestampToDateTime_System_Int64_" data-uid="Amqp.Types.Encoder.TimestampToDateTime(System.Int64)">TimestampToDateTime(Int64)</h4>
+              <div class="markdown level1 summary"><p>Converts an AMQP timestamp ((milliseconds from Unix epoch)) to a DateTime.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static DateTime TimestampToDateTime(long timestamp)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int64</span></td>
+                    <td><em>timestamp</em></td>
+                    <td><p>The AMQP timestamp to convert.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.DateTime</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteArray_Amqp_ByteBuffer_System_Array_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteArray(Amqp.ByteBuffer%2CSystem.Array)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L740">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteArray_Amqp_ByteBuffer_System_Array_" data-uid="Amqp.Types.Encoder.WriteArray(Amqp.ByteBuffer,System.Array)">WriteArray(ByteBuffer, Array)</h4>
+              <div class="markdown level1 summary"><p>Writes an array value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteArray(ByteBuffer buffer, Array value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Array</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The array value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteBinary_Amqp_ByteBuffer_System_Byte___System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteBinary(Amqp.ByteBuffer%2CSystem.Byte%5B%5D%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L597">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteBinary_Amqp_ByteBuffer_System_Byte___System_Boolean_" data-uid="Amqp.Types.Encoder.WriteBinary(Amqp.ByteBuffer,System.Byte[],System.Boolean)">WriteBinary(ByteBuffer, Byte[], Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a binary value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteBinary(ByteBuffer buffer, byte[] value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span>[]</td>
+                    <td><em>value</em></td>
+                    <td><p>The binary value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteBoolean_Amqp_ByteBuffer_System_Boolean_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteBoolean(Amqp.ByteBuffer%2CSystem.Boolean%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L391">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteBoolean_Amqp_ByteBuffer_System_Boolean_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteBoolean(Amqp.ByteBuffer,System.Boolean,System.Boolean)">WriteBoolean(ByteBuffer, Boolean, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a boolean value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteBoolean(ByteBuffer buffer, bool value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The boolean value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteByte_Amqp_ByteBuffer_System_SByte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteByte(Amqp.ByteBuffer%2CSystem.SByte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L479">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteByte_Amqp_ByteBuffer_System_SByte_" data-uid="Amqp.Types.Encoder.WriteByte(Amqp.ByteBuffer,System.SByte)">WriteByte(ByteBuffer, SByte)</h4>
+              <div class="markdown level1 summary"><p>Writes a signed byte value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteByte(ByteBuffer buffer, sbyte value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.SByte</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The signed byte value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteChar_Amqp_ByteBuffer_System_Char_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteChar(Amqp.ByteBuffer%2CSystem.Char)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L541">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteChar_Amqp_ByteBuffer_System_Char_" data-uid="Amqp.Types.Encoder.WriteChar(Amqp.ByteBuffer,System.Char)">WriteChar(ByteBuffer, Char)</h4>
+              <div class="markdown level1 summary"><p>Writes a char value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteChar(ByteBuffer buffer, char value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Char</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The char value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteDouble_Amqp_ByteBuffer_System_Double_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteDouble(Amqp.ByteBuffer%2CSystem.Double)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L563">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteDouble_Amqp_ByteBuffer_System_Double_" data-uid="Amqp.Types.Encoder.WriteDouble(Amqp.ByteBuffer,System.Double)">WriteDouble(ByteBuffer, Double)</h4>
+              <div class="markdown level1 summary"><p>Writes a 64-bit floating-point value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteDouble(ByteBuffer buffer, double value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Double</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The 64-bit floating-point value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteFloat_Amqp_ByteBuffer_System_Single_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteFloat(Amqp.ByteBuffer%2CSystem.Single)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L552">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteFloat_Amqp_ByteBuffer_System_Single_" data-uid="Amqp.Types.Encoder.WriteFloat(Amqp.ByteBuffer,System.Single)">WriteFloat(ByteBuffer, Single)</h4>
+              <div class="markdown level1 summary"><p>Writes a 32-bit floating-point value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteFloat(ByteBuffer buffer, float value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Single</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The 32-bit floating-point value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteInt_Amqp_ByteBuffer_System_Int32_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteInt(Amqp.ByteBuffer%2CSystem.Int32%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L502">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteInt_Amqp_ByteBuffer_System_Int32_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteInt(Amqp.ByteBuffer,System.Int32,System.Boolean)">WriteInt(ByteBuffer, Int32, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a signed 32-bit integer value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteInt(ByteBuffer buffer, int value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The signed 32-bit integer value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteList_Amqp_ByteBuffer_System_Collections_IList_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteList(Amqp.ByteBuffer%2CSystem.Collections.IList%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L683">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteList_Amqp_ByteBuffer_System_Collections_IList_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteList(Amqp.ByteBuffer,System.Collections.IList,System.Boolean)">WriteList(ByteBuffer, IList, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a list value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteList(ByteBuffer buffer, IList value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Collections.IList</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The list value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteLong_Amqp_ByteBuffer_System_Int64_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteLong(Amqp.ByteBuffer%2CSystem.Int64%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L522">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteLong_Amqp_ByteBuffer_System_Int64_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteLong(Amqp.ByteBuffer,System.Int64,System.Boolean)">WriteLong(ByteBuffer, Int64, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a signed 64-bit integer value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteLong(ByteBuffer buffer, long value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Int64</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The signed 64-bit integer value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteMap_Amqp_ByteBuffer_Amqp_Types_Map_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteMap(Amqp.ByteBuffer%2CAmqp.Types.Map%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L797">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteMap_Amqp_ByteBuffer_Amqp_Types_Map_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteMap(Amqp.ByteBuffer,Amqp.Types.Map,System.Boolean)">WriteMap(ByteBuffer, Map, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a map value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteMap(ByteBuffer buffer, Map value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.Map.html#Amqp_Types_Map">Map</a></td>
+                    <td><em>value</em></td>
+                    <td><p>The map value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteObject_Amqp_ByteBuffer_System_Object_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteObject(Amqp.ByteBuffer%2CSystem.Object%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L360">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteObject_Amqp_ByteBuffer_System_Object_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteObject(Amqp.ByteBuffer,System.Object,System.Boolean)">WriteObject(ByteBuffer, Object, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes an AMQP object to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteObject(ByteBuffer buffer, object value, bool smallEncoding = true)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Object</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The AMQP value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteShort_Amqp_ByteBuffer_System_Int16_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteShort(Amqp.ByteBuffer%2CSystem.Int16)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L490">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteShort_Amqp_ByteBuffer_System_Int16_" data-uid="Amqp.Types.Encoder.WriteShort(Amqp.ByteBuffer,System.Int16)">WriteShort(ByteBuffer, Int16)</h4>
+              <div class="markdown level1 summary"><p>Writes a signed 16-bit integer value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteShort(ByteBuffer buffer, short value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Int16</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The signed 16-bit integer value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteString_Amqp_ByteBuffer_System_String_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteString(Amqp.ByteBuffer%2CSystem.String%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L623">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteString_Amqp_ByteBuffer_System_String_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteString(Amqp.ByteBuffer,System.String,System.Boolean)">WriteString(ByteBuffer, String, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a string value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteString(ByteBuffer buffer, string value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The string value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteSymbol_Amqp_ByteBuffer_Amqp_Types_Symbol_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteSymbol(Amqp.ByteBuffer%2CAmqp.Types.Symbol%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L653">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteSymbol_Amqp_ByteBuffer_Amqp_Types_Symbol_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteSymbol(Amqp.ByteBuffer,Amqp.Types.Symbol,System.Boolean)">WriteSymbol(ByteBuffer, Symbol, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes a symbol value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteSymbol(ByteBuffer buffer, Symbol value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Types.Symbol.html#Amqp_Types_Symbol">Symbol</a></td>
+                    <td><em>value</em></td>
+                    <td><p>The symbol value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteTimestamp_Amqp_ByteBuffer_System_DateTime_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteTimestamp(Amqp.ByteBuffer%2CSystem.DateTime)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L574">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteTimestamp_Amqp_ByteBuffer_System_DateTime_" data-uid="Amqp.Types.Encoder.WriteTimestamp(Amqp.ByteBuffer,System.DateTime)">WriteTimestamp(ByteBuffer, DateTime)</h4>
+              <div class="markdown level1 summary"><p>Writes a timestamp value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteTimestamp(ByteBuffer buffer, DateTime value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.DateTime</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The timestamp value which is the milliseconds since UNIX epoch.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteUByte_Amqp_ByteBuffer_System_Byte_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteUByte(Amqp.ByteBuffer%2CSystem.Byte)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L409">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteUByte_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.WriteUByte(Amqp.ByteBuffer,System.Byte)">WriteUByte(ByteBuffer, Byte)</h4>
+              <div class="markdown level1 summary"><p>Writes an unsigned byte value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteUByte(ByteBuffer buffer, byte value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Byte</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The unsigned byte value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteUInt_Amqp_ByteBuffer_System_UInt32_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteUInt(Amqp.ByteBuffer%2CSystem.UInt32%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L432">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteUInt_Amqp_ByteBuffer_System_UInt32_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteUInt(Amqp.ByteBuffer,System.UInt32,System.Boolean)">WriteUInt(ByteBuffer, UInt32, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes an unsigned 32-bit integer value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteUInt(ByteBuffer buffer, uint value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.UInt32</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The unsigned 32-bit integer value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteULong_Amqp_ByteBuffer_System_UInt64_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteULong(Amqp.ByteBuffer%2CSystem.UInt64%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L456">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteULong_Amqp_ByteBuffer_System_UInt64_System_Boolean_" data-uid="Amqp.Types.Encoder.WriteULong(Amqp.ByteBuffer,System.UInt64,System.Boolean)">WriteULong(ByteBuffer, UInt64, Boolean)</h4>
+              <div class="markdown level1 summary"><p>Writes an unsigned 64-bit integer value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteULong(ByteBuffer buffer, ulong value, bool smallEncoding)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.UInt64</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The unsigned 64-bit integer value.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><em>smallEncoding</em></td>
+                    <td><p>if true, try using small encoding if possible.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteUShort_Amqp_ByteBuffer_System_UInt16_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteUShort(Amqp.ByteBuffer%2CSystem.UInt16)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L420">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteUShort_Amqp_ByteBuffer_System_UInt16_" data-uid="Amqp.Types.Encoder.WriteUShort(Amqp.ByteBuffer,System.UInt16)">WriteUShort(ByteBuffer, UInt16)</h4>
+              <div class="markdown level1 summary"><p>Writes an unsigned 16-bit integer value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteUShort(ByteBuffer buffer, ushort value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.UInt16</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The unsigned 16-bit integer value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Types_Encoder_WriteUuid_Amqp_ByteBuffer_System_Guid_.md&amp;value=---%0Auid%3A%20Amqp.Types.Encoder.WriteUuid(Amqp.ByteBuffer%2CSystem.Guid)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Encoder.cs/#L585">View Source</a>
+              </span>
+              <h4 id="Amqp_Types_Encoder_WriteUuid_Amqp_ByteBuffer_System_Guid_" data-uid="Amqp.Types.Encoder.WriteUuid(Amqp.ByteBuffer,System.Guid)">WriteUuid(ByteBuffer, Guid)</h4>
+              <div class="markdown level1 summary"><p>Writes a uuid value to a buffer.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static void WriteUuid(ByteBuffer buffer, Guid value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td><p>The buffer to write.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Guid</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The uuid value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

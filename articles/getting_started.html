@@ -1,0 +1,125 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Prerequisites </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Prerequisites ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/articles/getting_started.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1 id="prerequisites">Prerequisites</h1>
+              
+<ul>
+<li>Visual Studio 2013. <a href="https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx">Community Edition</a> works.</li>
+<li>NETMF SDK (4.2 and 4.3) and Visual Studio project system. You can build fro <a href="https://github.com/NETMF/netmf-interpreter">sources</a> or download them from the old <a href="https://netmf.codeplex.com">netmf web site</a>.</li>
+<li>Application Builder for Windows Embedded Compact 2013. To build .Net Compact Framework projects, you need to download <a href="http://www.microsoft.com/en-us/download/details.aspx?id=38819">Application Builder for Windows Embedded Compact 2013</a></li>
+<li>NuGet tools if you want to build the NuGet package. </li>
+</ul>
+<h1 id="build-the-projects">Build the projects</h1>
+<ul>
+<li>Build with Visual Studio. Open amqp.sln in Visual Studio. This solution contains both source and test projects for all supported platforms. If the SDK of a particular platform is not present, the project(s) will fail to load. You can either install the required SDK or remove the project(s) from the solution.</li>
+<li>Build from command prompt. Run the build.cmd script to build the solution. If you need to build the NuGet packet, please <a href="http://docs.nuget.org/consume/installing-nuget">install NuGet</a> or download NuGet.exe directly and save it under &quot;.\build\tools\&quot; directory.</li>
+</ul>
+<h1 id="run-the-tests">Run the tests</h1>
+<ul>
+<li>Most of the tests require a broker to run. You need a broker preconfigured with a queue (or an broker specific entity that maps to an AMQP node named &quot;q1&quot;). Update the address (hostname, port, etc) to match the broker config before you run the tests.</li>
+<li>The solution has a test broker which can be used to run tests. It can be started by running the following command. Note that the value of the &quot;/cert&quot; option is the subject name or the thumbprint of the service certificate that is already installed on the machine.
+<code>TestAmqpBroker.exe amqp://localhost:5672 amqps://localhost:5671 ws://localhost:80 /creds:guest:guest /cert:localhost</code></li>
+<li>NETMF tests are in project Test.Amqp.NetMF42/43. It is a NETMF application that runs in the emulator or a real device. It executes all methods whose names begin with &quot;TestMethod_&quot;. </li>
+<li>Test.Amqp.NetCF39 project can be run in a .Net Compact Framework environment. You can try it on a VirtualPC virtual machine created using Platform Builder also with the related SDK. If you have a real device, you need an SDK for it too.</li>
+</ul>
+<h1 id="start-building-applications">Start building applications</h1>
+<ul>
+<li>First take a look at the example projects under the Examples directory. The examples are working code against the Azure Service Bus service or other AMQP 1.0 compliant brokers.</li>
+<li>The API documentation today is in the source code. We will create a wiki page for that soon.</li>
+<li>You may also review the code of a few test cases. Just note that test cases are organized by functionality coverage so it may not be easy to find what you need.</li>
+</ul>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
