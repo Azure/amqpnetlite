@@ -33,6 +33,9 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * Windows Phone 8 and 8.1
 * Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown.)
 
+## Documentation
+* [Articles and API Documentation](http://azure.github.io/amqpnetlite/)
+
 ## Getting Started
 * Prerequisites:
   * Visual Studio 2013 (e.g. Community Edition)
