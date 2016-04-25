@@ -106,6 +106,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.Listener", "Amqp.Liste
 		dnx\Amqp.Listener\project.json = dnx\Amqp.Listener\project.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docfx", "docfx", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
+	ProjectSection(SolutionItems) = preProject
+		docfx.json = docfx.json
+		index.md = index.md
+		toc.yml = toc.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{5637969B-A822-425A-A831-F70AA2275777}"
+	ProjectSection(SolutionItems) = preProject
+		articles\azure_sb_eventhubs.md = articles\azure_sb_eventhubs.md
+		articles\contributing.md = articles\contributing.md
+		articles\faqs.md = articles\faqs.md
+		articles\getting_started.md = articles\getting_started.md
+		articles\listener.md = articles\listener.md
+		articles\test_amqp_broker.md = articles\test_amqp_broker.md
+		articles\toc.yml = articles\toc.yml
+		articles\tracing.md = articles\tracing.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -563,5 +582,6 @@ Global
 		{69E4A20C-EF50-49C6-8DAC-F76B9D565767} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{C40B5C1E-3ECB-409D-9ED2-D36D4879A485} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{B8917277-E208-4F1F-8973-8CA8C1C52AE7} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
+		{5637969B-A822-425A-A831-F70AA2275777} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
 	EndGlobalSection
 EndGlobal
