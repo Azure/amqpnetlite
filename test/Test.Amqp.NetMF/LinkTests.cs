@@ -95,11 +95,11 @@ namespace Test.Amqp
         {
             string testName = "ConnectionFrameSize";
             const int nMsgs = 200;
-            Connection connection = new Connection(address);
+            int frameSize = 4 * 1024;
+            Connection connection = new Connection(address, null, new Open() { ContainerId = "c1", MaxFrameSize = (uint)frameSize }, null);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
-            int frameSize = 16 * 1024;
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message(new string('A', frameSize + (i - nMsgs / 2)));

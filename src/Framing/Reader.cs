@@ -47,7 +47,7 @@ namespace Amqp.Framing
                     Fx.Format(SRAmqp.InvalidFrameSize, size, maxFrameSize));
             }
 
-            ByteBuffer frameBuffer = new ByteBuffer(size, false);
+            ByteBuffer frameBuffer = new ByteBuffer(size, true);
             AmqpBitConverter.WriteInt(frameBuffer, size);
             if (!ReadBuffer(transport, frameBuffer.Buffer, frameBuffer.Length, frameBuffer.Size))
             {

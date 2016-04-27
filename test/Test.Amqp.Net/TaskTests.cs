@@ -112,7 +112,8 @@ namespace Test.Amqp
             string testName = "LargeMessageSendReceiveAsync";
             int nMsgs = 50;
 
-            Connection connection = await Connection.Factory.CreateAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(
+                this.address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
@@ -148,11 +149,12 @@ namespace Test.Amqp
             string testName = "LargeMessageOnMessageCallback";
             int nMsgs = 50;
 
-            Connection connection = await Connection.Factory.CreateAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(
+                this.address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 
-            int messageSize = 100 * 1024;
+            int messageSize = 10 * 1024;
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message(new string('D', messageSize));
