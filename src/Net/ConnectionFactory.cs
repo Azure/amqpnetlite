@@ -130,9 +130,15 @@ namespace Amqp
         /// </summary>
         public class SslSettings
         {
+#if NETFX40
+            internal const SslProtocols DefaultSslProtocols = SslProtocols.Default;
+#else
+            internal const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+#endif
+
             internal SslSettings()
             {
-                this.Protocols = SslProtocols.Ssl3 | SslProtocols.Tls;
+                this.Protocols = SslSettings.DefaultSslProtocols;
                 this.ClientCertificates = new X509CertificateCollection();
             }
 

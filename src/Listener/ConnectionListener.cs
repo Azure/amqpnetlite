@@ -252,7 +252,7 @@ namespace Amqp.Listener
         {
             internal SslSettings()
             {
-                this.Protocols = SslProtocols.Ssl3 | SslProtocols.Tls;
+                this.Protocols = ConnectionFactory.SslSettings.DefaultSslProtocols;
             }
 
             /// <summary>
