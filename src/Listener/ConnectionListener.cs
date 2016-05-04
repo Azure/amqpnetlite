@@ -46,33 +46,39 @@ namespace Amqp.Listener
         SaslSettings saslSettings;
         bool closed;
 
-        /// <summary>
-        /// Initializes the connection listener object.
-        /// </summary>
-        /// <param name="addressUri"></param>
-        /// <param name="userInfo"></param>
-        /// <param name="container"></param>
-        public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
-            : base()
+        ConnectionListener(IContainer container)
         {
             this.connections = new HashSet<Connection>();
             this.container = container;
+        }
 
-            string userName = null;
-            string password = null;
-            if (userInfo != null)
-            {
-                string[] creds = userInfo.Split(':');
-                if (creds.Length != 2)
-                {
-                    throw new ArgumentException("userInfo");
-                }
+        /// <summary>
+        /// Initializes the connection listener object.
+        /// </summary>
+        /// <param name="address">The address to listen on.</param>
+        /// <param name="container">The IContainer implementation to handle client requests.</param>
+        public ConnectionListener(string address, IContainer container)
+            : this(container)
+        {
+            this.address = new Address(address);
+        }
 
-                userName = Uri.UnescapeDataString(creds[0]);
-                password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
-            }
-
-            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, addressUri.AbsolutePath, addressUri.Scheme);
+        /// <summary>
+        /// Initializes the connection listener object.
+        /// </summary>
+        /// <param name="addressUri">The address Uri to listen on.</param>
+        /// <param name="userInfo">The credentials for client authentication using SASL PLAIN mechanism.</param>
+        /// <param name="container">The IContainer implementation to handle client requests.</param>
+        /// <remarks>
+        /// This constructor is deprecated. To set user info, use ConnectionListener.SASL.EnablePlainMechanism method
+        /// after the connection listener is created.
+        /// </remarks>
+        [Obsolete("Use ConnectionListener(string, IContainer) instead.")]
+        public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
+            : this(container)
+        {
+            this.SetUserInfo(userInfo);
+            this.address = new Address(addressUri.Host, addressUri.Port, null, null, addressUri.AbsolutePath, addressUri.Scheme);
         }
 
         /// <summary>
@@ -172,6 +178,17 @@ namespace Amqp.Listener
             foreach (var connection in snapshot)
             {
                 connection.Close(AmqpObject.DefaultCloseTimeout, new Error() { Condition = ErrorCode.ConnectionForced });
+            }
+        }
+
+        internal void SetUserInfo(string userInfo)
+        {
+            if (userInfo != null)
+            {
+                string[] a = userInfo.Split(':');
+                this.SASL.EnablePlainMechanism(
+                    Uri.UnescapeDataString(a[0]),
+                    a.Length == 1 ? string.Empty : Uri.UnescapeDataString(a[1]));
             }
         }
 

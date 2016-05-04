@@ -36,7 +36,7 @@ namespace Listener.IContainer
         bool implicitQueue;
         int dynamidId;
 
-        public TestAmqpBroker(IList<Uri> endpoints, string userInfo, string certValue, string[] queues)
+        public TestAmqpBroker(IList<string> endpoints, string userInfo, string certValue, string[] queues)
         {
             this.txnManager = new TxnManager();
             this.queues = new Dictionary<string, TestQueue>();
@@ -58,11 +58,18 @@ namespace Listener.IContainer
             this.listeners = new ConnectionListener[endpoints.Count];
             for (int i = 0; i < endpoints.Count; i++)
             {
-                this.listeners[i] = new ConnectionListener(endpoints[i], userInfo, this);
+                this.listeners[i] = new ConnectionListener(endpoints[i], this);
                 this.listeners[i].AMQP.MaxSessionsPerConnection = 1000;
                 this.listeners[i].AMQP.ContainerId = containerId;
                 this.listeners[i].AMQP.IdleTimeout = 4 * 60 * 1000;
                 this.listeners[i].AMQP.MaxFrameSize = 64 * 1024;
+                if (userInfo != null)
+                {
+                    string[] a = userInfo.Split(':');
+                    this.listeners[i].SASL.EnablePlainMechanism(
+                        Uri.UnescapeDataString(a[0]),
+                        a.Length == 1 ? string.Empty : Uri.UnescapeDataString(a[1]));
+                }
             }
         }
 

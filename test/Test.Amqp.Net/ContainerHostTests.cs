@@ -600,6 +600,36 @@ namespace Test.Amqp
             }
         }
 
+        [TestMethod]
+        public void ContainerHostWebSocketWildCardAddressTest()
+        {
+            var host = new ContainerHost(new string[] { "ws://+:28080/test/" });
+            host.Listeners[0].SASL.EnablePlainMechanism("guest", "guest");
+            host.RegisterMessageProcessor("q1", new TestMessageProcessor());
+            host.Open();
+
+            try
+            {
+                var connection = Connection.Factory.CreateAsync(new Address("ws://guest:guest@localhost:28080/test/")).Result;
+                var session = new Session(connection);
+                var sender = new SenderLink(session, "ContainerHostWebSocketWildCardAddressTest", "q1");
+                sender.Send(new Message("msg1"), SendTimeout);
+                connection.Close();
+            }
+            catch
+            {
+                System.Diagnostics.Trace.WriteLine("If the test fails with System.Net.HttpListenerException (0x80004005): Access is denied");
+                System.Diagnostics.Trace.WriteLine("Run the following command with admin privilege:");
+                System.Diagnostics.Trace.WriteLine("netsh http add urlacl url=http://+:28080/test/ user=domain\\user");
+
+                throw;
+            }
+            finally
+            {
+                host.Close();
+            }
+        }
+
         static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
         {
             X509Store store = new X509Store(storeName, storeLocation);
