@@ -46,7 +46,6 @@ namespace Amqp.Listener
     public class ContainerHost : IContainer
     {
         readonly string containerId;
-        readonly X509Certificate2 certificate;
         readonly ConnectionListener[] listeners;
         readonly LinkCollection linkCollection;
         readonly ClosedCallback onLinkClosed;
@@ -55,11 +54,35 @@ namespace Amqp.Listener
         ILinkProcessor linkProcessor;
 
         /// <summary>
+        /// Initializes a container host object with multiple address.
+        /// </summary>
+        /// <param name="addressList">The list of listen addresses.</param>
+        /// <remarks>
+        /// Transport and protocol settings (TCP, SSL, SASL and AMQP) can be
+        /// set on the listeners of the host after it is created.
+        /// </remarks>
+        public ContainerHost(IList<string> addressList)
+        {
+            this.containerId = string.Join("-", this.GetType().Name, Guid.NewGuid().ToString("N"));
+            this.linkCollection = new LinkCollection(this.containerId);
+            this.onLinkClosed = this.OnLinkClosed;
+            this.messageProcessors = new Dictionary<string, MessageProcessor>(StringComparer.OrdinalIgnoreCase);
+            this.requestProcessors = new Dictionary<string, RequestProcessor>(StringComparer.OrdinalIgnoreCase);
+            this.listeners = new ConnectionListener[addressList.Count];
+            for (int i = 0; i < addressList.Count; i++)
+            {
+                this.listeners[i] = new ConnectionListener(addressList[i], this);
+                this.listeners[i].AMQP.ContainerId = this.containerId;
+            }
+        }
+
+        /// <summary>
         /// Initializes a container host object with one address.
         /// </summary>
-        /// <param name="addressUri">The address Url. Only the scheme, host and port parts are used. Supported schema are "amqp", "amqps", "ws" and "wss".</param>
+        /// <param name="addressUri">The address Uri. Only the scheme, host and port parts are used.
+        /// Supported schema are "amqp", "amqps", "ws" and "wss".</param>
         public ContainerHost(Uri addressUri)
-            : this(new Uri[] { addressUri }, null, null)
+            : this(new string[] { addressUri.AbsoluteUri })
         {
         }
 
@@ -68,20 +91,15 @@ namespace Amqp.Listener
         /// </summary>
         /// <param name="addressUriList">The list of listen addresses.</param>
         /// <param name="certificate">The service certificate for TLS.</param>
-        /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of form "user:password".</param>
+        /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of
+        /// form "user:password" (parts are URL encoded).</param>
         public ContainerHost(IList<Uri> addressUriList, X509Certificate2 certificate, string userInfo)
+            : this(As(addressUriList, u => u.AbsoluteUri))
         {
-            this.containerId = string.Join("-", this.GetType().Name, Guid.NewGuid().ToString("N"));
-            this.certificate = certificate;
-            this.linkCollection = new LinkCollection(this.containerId);
-            this.onLinkClosed = this.OnLinkClosed;
-            this.messageProcessors = new Dictionary<string, MessageProcessor>(StringComparer.OrdinalIgnoreCase);
-            this.requestProcessors = new Dictionary<string, RequestProcessor>(StringComparer.OrdinalIgnoreCase);
-            this.listeners = new ConnectionListener[addressUriList.Count];
-            for (int i = 0; i < addressUriList.Count; i++)
+            for (int i = 0; i < this.listeners.Length; i++)
             {
-                this.listeners[i] = new ConnectionListener(addressUriList[i], userInfo, this);
-                this.listeners[i].AMQP.ContainerId = this.containerId;
+                this.listeners[i].SSL.Certificate = certificate;
+                this.listeners[i].SetUserInfo(userInfo);
             }
         }
 
@@ -180,6 +198,17 @@ namespace Amqp.Listener
             RemoveProcessor(this.requestProcessors, address);
         }
 
+        static IList<TOut> As<TIn, TOut>(IList<TIn> inList, Func<TIn, TOut> func)
+        {
+            TOut[] outList = new TOut[inList.Count];
+            for (int i = 0; i < outList.Length; i++)
+            {
+                outList[i] = func(inList[i]);
+            }
+            
+            return outList;
+        }
+
         static void AddProcessor<T>(Dictionary<string, T> processors, string address, T processor)
         {
             lock (processors)
@@ -219,7 +248,8 @@ namespace Amqp.Listener
 
         X509Certificate2 IContainer.ServiceCertificate
         {
-            get { return this.certificate; }
+            // listener should get it from SslSettings
+            get { throw new InvalidOperationException(); }
         }
 
         Message IContainer.CreateMessage(ByteBuffer buffer)

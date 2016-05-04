@@ -1,5 +1,5 @@
 # amqpnetlite
-AMQP.Net Lite is a lightweight AMQP 1.0 client library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, and Windows Runtime platforms.
+AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior 
@@ -10,7 +10,7 @@ AMQP.Net Lite is a lightweight AMQP 1.0 client library for the .Net Micro Framew
 * A lightweight messaging library that runs on all popular .NET and Windows Runtime platforms
 
 ## Supported Platforms
-|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451 | dnxcore50<sup>4</sup> |
+|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451/uwp | dnxcore50<sup>4</sup> |
 |------------|:-----:|:-----:|:-----:|:-----:|:-----:|:--------:|:----------:|:----------:|
 | TLS        |  +    |   +   |   +   |   +<sup>1</sup>  |   +   |    +     |     +      |     +      |
 | SASL<sup>2</sup>      |  +    |   +   |   +   |   +   |   +   |    +     |     +      |     +      |
@@ -23,15 +23,18 @@ AMQP.Net Lite is a lightweight AMQP 1.0 client library for the .Net Micro Framew
 
 1. requires a TLS-capable device.
 2. only SASL PLAIN and SASL EXTERNAL are currently supported.
-3. requires on Microsoft.Bcl.Async.
-4. experimenting
+3. requires Microsoft.Bcl.Async.
+4. experimenting (not available in the NuGet package)
 
 ## Tested Platforms
 * .Net Framework (up to 4.5) 
 * .NET Micro Framework 4.2 and 4.3 
 * .NET Compact Framework 3.9
 * Windows Phone 8 and 8.1
-* Mono on Linux
+* Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown.)
+
+## Documentation
+* [Articles and API Documentation](http://azure.github.io/amqpnetlite/)
 
 ## Getting Started
 * Prerequisites:

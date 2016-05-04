@@ -163,6 +163,7 @@ namespace PeerToPeer.Server
                         break;
                     }
 
+                    receiver.Accept(message);
                     Console.WriteLine("Received " + message.Body);
                 }
             }

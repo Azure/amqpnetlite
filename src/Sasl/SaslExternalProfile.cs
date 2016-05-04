@@ -21,12 +21,15 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
-    sealed class SaslExternalProfile : SaslProfile
+    sealed class SaslNoActionProfile : SaslProfile
     {
-        public const string Name = "EXTERNAL";
+        readonly string name;
+        readonly string identity;
 
-        public SaslExternalProfile()
+        public SaslNoActionProfile(string name, string identity)
         {
+            this.name = name;
+            this.identity = identity;
         }
 
         protected override ITransport UpgradeTransport(ITransport transport)
@@ -38,8 +41,8 @@ namespace Amqp.Sasl
         {
             return new SaslInit()
             {
-                Mechanism = Name,
-                InitialResponse = Encoding.UTF8.GetBytes("")
+                Mechanism = this.name,
+                InitialResponse = Encoding.UTF8.GetBytes(this.identity)
             };
         }
 

@@ -56,7 +56,7 @@ namespace TestAmqpBroker
 
         static void Run(string[] args)
         {
-            List<Uri> endpoints = new List<Uri>();
+            List<string> endpoints = new List<string>();
             string creds = null;
             string trace = null;
             string sslValue = null;
@@ -67,7 +67,7 @@ namespace TestAmqpBroker
             {
                 if (args[i][0] != '/' && parseEndpoint)
                 {
-                    endpoints.Add(new Uri(args[i]));
+                    endpoints.Add(args[i]);
                 }
                 else
                 {

@@ -136,7 +136,7 @@ namespace Amqp
                 }
             }
 
-            if (this.onAttached != null && attach.Target != null && attach.Source != null)
+            if (this.onAttached != null)
             {
                 this.onAttached(this, attach);
             }

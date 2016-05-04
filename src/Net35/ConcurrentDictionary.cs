@@ -15,32 +15,41 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Sasl
+namespace System.Collections.Concurrent
 {
-    abstract class SaslMechanism
-    {
-        public abstract string Name { get; }
+    using System.Collections.Generic;
 
-        public static SaslMechanism External
+    class ConcurrentDictionary<TKey, TValue> : Dictionary<TKey, TValue>
+    {
+        readonly object syncRoot;
+
+        public ConcurrentDictionary()
         {
-            get
+            this.syncRoot = new object();
+        }
+
+        public new bool TryGetValue(TKey key, out TValue value)
+        {
+            lock (this.syncRoot)
             {
-                return new SaslExternalMechanism();
+                return this.TryGetValue(key, out value);
             }
         }
 
-        public abstract SaslProfile CreateProfile();
-
-        class SaslExternalMechanism : SaslMechanism
+        public TValue GetOrAdd(TKey key, TValue value)
         {
-            public override string Name
+            lock (this.syncRoot)
             {
-                get { return SaslExternalProfile.Name; }
-            }
-
-            public override SaslProfile CreateProfile()
-            {
-                return SaslProfile.External;
+                TValue temp;
+                if (this.TryGetValue(key, out temp))
+                {
+                    return temp;
+                }
+                else
+                {
+                    this.Add(key, value);
+                    return value;
+                }
             }
         }
     }

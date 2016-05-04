@@ -18,6 +18,7 @@
 namespace Amqp.Listener
 {
     using System;
+    using System.Security.Principal;
     using System.Threading;
     using Amqp.Framing;
 
@@ -33,6 +34,16 @@ namespace Amqp.Listener
             : base(listener.BufferManager, listener.AMQP, address, transport, null, onOpened)
         {
             this.listener = listener;
+        }
+
+        /// <summary>
+        /// Gets a IPrincipal object for the connection. If the value is null,
+        /// the connection is not authenticated.
+        /// </summary>
+        public IPrincipal Principal
+        {
+            get;
+            internal set;
         }
 
         internal ConnectionListener Listener

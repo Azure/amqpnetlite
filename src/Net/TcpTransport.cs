@@ -24,13 +24,13 @@ namespace Amqp
     using System.Net.Sockets;
     using System.Threading.Tasks;
 
-    sealed class TcpTransport : IAsyncTransport
+    class TcpTransport : IAsyncTransport
     {
         static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
         readonly IBufferManager bufferManager;
         Connection connection;
-        Writer writer;
-        IAsyncTransport socketTransport;
+        protected Writer writer;
+        protected IAsyncTransport socketTransport;
 
         public TcpTransport()
             : this(null)
@@ -42,22 +42,6 @@ namespace Amqp
             this.bufferManager = bufferManager;
         }
 
-        // called by listener
-        public TcpTransport(Socket socket, IBufferManager bufferManager)
-            : this(bufferManager)
-        {
-            this.socketTransport = new TcpSocket(this, socket);
-            this.writer = new Writer(this, this.socketTransport);
-        }
-
-        // called by listener
-        public TcpTransport(SslStream sslStream, IBufferManager bufferManager)
-            : this(bufferManager)
-        {
-            this.socketTransport = new SslSocket(this, sslStream);
-            this.writer = new Writer(this, this.socketTransport);
-        }
-
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.connection = connection;
@@ -67,7 +51,7 @@ namespace Amqp
                 factory.SSL.RemoteCertificateValidationCallback = noneCertValidator;
             }
 
-            this.ConnectAsync(address, factory).GetAwaiter().GetResult();
+            this.ConnectAsync(address, factory).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public async Task ConnectAsync(Address address, ConnectionFactory factory)
@@ -171,7 +155,7 @@ namespace Amqp
 
         void ITransport.Close()
         {
-            this.socketTransport.Close();
+            this.writer.Close();
         }
 
         void ITransport.Send(ByteBuffer buffer)
@@ -203,7 +187,7 @@ namespace Amqp
             this.writer.DisposeQueuedBuffers();
         }
 
-        class TcpSocket : IAsyncTransport
+        protected class TcpSocket : IAsyncTransport
         {
             readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
             readonly TcpTransport transport;
@@ -353,7 +337,7 @@ namespace Amqp
             }
         }
 
-        class SslSocket : IAsyncTransport
+        protected class SslSocket : IAsyncTransport
         {
             readonly TcpTransport transport;
             readonly SslStream sslStream;
@@ -439,13 +423,14 @@ namespace Amqp
             }
         }
 
-        sealed class Writer
+        protected class Writer
         {
             readonly TcpTransport owner;
             readonly IAsyncTransport transport;
             Queue<ByteBuffer> bufferQueue;
             List<ByteBuffer> buffersInProgress;
             bool writing;
+            bool closed;
 
             public Writer(TcpTransport owner, IAsyncTransport transport)
             {
@@ -458,6 +443,20 @@ namespace Amqp
             object SyncRoot
             {
                 get { return this.bufferQueue; }
+            }
+
+            public void Close()
+            {
+                lock (this.SyncRoot)
+                {
+                    this.closed = true;
+                    if (this.writing)
+                    {
+                        return;
+                    }
+                }
+
+                this.transport.Close();
             }
 
             public void Write(ByteBuffer buffer)
@@ -531,6 +530,11 @@ namespace Amqp
                         if (queueDepth == 0)
                         {
                             this.writing = false;
+                            if (this.closed)
+                            {
+                                this.transport.Close();
+                            }
+
                             return;
                         }
                         else if (queueDepth == 1)

@@ -27,6 +27,7 @@ namespace Amqp.Listener
 #endif
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
+    using System.Security.Principal;
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
@@ -45,33 +46,39 @@ namespace Amqp.Listener
         SaslSettings saslSettings;
         bool closed;
 
-        /// <summary>
-        /// Initializes the connection listener object.
-        /// </summary>
-        /// <param name="addressUri"></param>
-        /// <param name="userInfo"></param>
-        /// <param name="container"></param>
-        public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
-            : base()
+        ConnectionListener(IContainer container)
         {
             this.connections = new HashSet<Connection>();
             this.container = container;
+        }
 
-            string userName = null;
-            string password = null;
-            if (userInfo != null)
-            {
-                string[] creds = userInfo.Split(':');
-                if (creds.Length != 2)
-                {
-                    throw new ArgumentException("userInfo");
-                }
+        /// <summary>
+        /// Initializes the connection listener object.
+        /// </summary>
+        /// <param name="address">The address to listen on.</param>
+        /// <param name="container">The IContainer implementation to handle client requests.</param>
+        public ConnectionListener(string address, IContainer container)
+            : this(container)
+        {
+            this.address = new Address(address);
+        }
 
-                userName = Uri.UnescapeDataString(creds[0]);
-                password = creds.Length == 1 ? string.Empty : Uri.UnescapeDataString(creds[1]);
-            }
-
-            this.address = new Address(addressUri.Host, addressUri.Port, userName, password, addressUri.AbsolutePath, addressUri.Scheme);
+        /// <summary>
+        /// Initializes the connection listener object.
+        /// </summary>
+        /// <param name="addressUri">The address Uri to listen on.</param>
+        /// <param name="userInfo">The credentials for client authentication using SASL PLAIN mechanism.</param>
+        /// <param name="container">The IContainer implementation to handle client requests.</param>
+        /// <remarks>
+        /// This constructor is deprecated. To set user info, use ConnectionListener.SASL.EnablePlainMechanism method
+        /// after the connection listener is created.
+        /// </remarks>
+        [Obsolete("Use ConnectionListener(string, IContainer) instead.")]
+        public ConnectionListener(Uri addressUri, string userInfo, IContainer container)
+            : this(container)
+        {
+            this.SetUserInfo(userInfo);
+            this.address = new Address(addressUri.Host, addressUri.Port, null, null, addressUri.AbsolutePath, addressUri.Scheme);
         }
 
         /// <summary>
@@ -174,6 +181,17 @@ namespace Amqp.Listener
             }
         }
 
+        internal void SetUserInfo(string userInfo)
+        {
+            if (userInfo != null)
+            {
+                string[] a = userInfo.Split(':');
+                this.SASL.EnablePlainMechanism(
+                    Uri.UnescapeDataString(a[0]),
+                    a.Length == 1 ? string.Empty : Uri.UnescapeDataString(a[1]));
+            }
+        }
+
         X509Certificate2 GetServiceCertificate()
         {
             if (this.sslSettings != null && this.sslSettings.Certificate != null)
@@ -190,13 +208,27 @@ namespace Amqp.Listener
 
         async Task HandleTransportAsync(IAsyncTransport transport)
         {
+            IPrincipal principal = null;
             if (this.saslSettings != null)
             {
                 ListenerSaslProfile profile = new ListenerSaslProfile(this);
                 transport = await profile.OpenAsync(null, this.BufferManager, transport);
+                principal = profile.GetPrincipal();
             }
 
-            Connection connection = new ListenerConnection(this, this.address, transport);
+            var connection = new ListenerConnection(this, this.address, transport);
+            if (principal == null)
+            {
+                // SASL principal preferred. If not present, check transport.
+                IAuthenticated authenticated = transport as IAuthenticated;
+                if (authenticated != null)
+                {
+                    principal = authenticated.Principal;
+                }
+            }
+
+            connection.Principal = principal;
+
             bool shouldClose = false;
             lock (this.connections)
             {
@@ -237,7 +269,7 @@ namespace Amqp.Listener
         {
             internal SslSettings()
             {
-                this.Protocols = SslProtocols.Ssl3 | SslProtocols.Tls;
+                this.Protocols = ConnectionFactory.SslSettings.DefaultSslProtocols;
             }
 
             /// <summary>
@@ -307,24 +339,47 @@ namespace Amqp.Listener
             }
 
             /// <summary>
-            /// Gets or sets a value indicating if SASL EXTERNAL mechanism is enabled.
+            /// Gets or sets a value indicating if SASL ANONYMOUS mechanism is enabled.
             /// </summary>
-            public bool EnableExternalMechanism
+            public bool EnableAnonymousMechanism
             {
                 get
                 {
-                    return this.mechanisms.ContainsKey(SaslExternalProfile.Name);
+                    return this.mechanisms.ContainsKey(SaslProfile.AnonymousName);
                 }
 
                 set
                 {
                     if (value)
                     {
-                        this.mechanisms[SaslExternalProfile.Name] = SaslMechanism.External;
+                        this.mechanisms[SaslProfile.AnonymousName] = SaslMechanism.Anonymous;
                     }
                     else
                     {
-                        this.mechanisms.Remove(SaslExternalProfile.Name);
+                        this.mechanisms.Remove(SaslProfile.AnonymousName);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Gets or sets a value indicating if SASL EXTERNAL mechanism is enabled.
+            /// </summary>
+            public bool EnableExternalMechanism
+            {
+                get
+                {
+                    return this.mechanisms.ContainsKey(SaslProfile.ExternalName);
+                }
+
+                set
+                {
+                    if (value)
+                    {
+                        this.mechanisms[SaslProfile.ExternalName] = SaslMechanism.External;
+                    }
+                    else
+                    {
+                        this.mechanisms.Remove(SaslProfile.ExternalName);
                     }
                 }
             }
@@ -355,9 +410,15 @@ namespace Amqp.Listener
                 this.listener = listener;
             }
 
-            public SaslProfile InnerProfile
+            public IPrincipal GetPrincipal()
             {
-                get { return this.innerProfile; }
+                IAuthenticated authenticated = this.innerProfile as IAuthenticated;
+                if (authenticated != null)
+                {
+                    return authenticated.Principal;
+                }
+
+                return null;
             }
 
             protected override ITransport UpgradeTransport(ITransport transport)
@@ -499,7 +560,7 @@ namespace Amqp.Listener
             protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket)
             {
                 var tcs = new TaskCompletionSource<IAsyncTransport>();
-                tcs.SetResult(new TcpTransport(socket, this.Listener.BufferManager));
+                tcs.SetResult(new ListenerTcpTransport(socket, this.Listener.BufferManager));
                 return tcs.Task;
             }
 
@@ -558,7 +619,36 @@ namespace Amqp.Listener
                         this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation);
                 }
 
-                return new TcpTransport(sslStream, this.Listener.BufferManager);
+                return new ListenerTcpTransport(sslStream, this.Listener.BufferManager);
+            }
+        }
+
+        class ListenerTcpTransport : TcpTransport, IAuthenticated
+        {
+            public ListenerTcpTransport(Socket socket, IBufferManager bufferManager)
+                : base(bufferManager)
+            {
+                this.socketTransport = new TcpSocket(this, socket);
+                this.writer = new Writer(this, this.socketTransport);
+            }
+
+            public ListenerTcpTransport(SslStream sslStream, IBufferManager bufferManager)
+                : base(bufferManager)
+            {
+                this.socketTransport = new SslSocket(this, sslStream);
+                this.writer = new Writer(this, this.socketTransport);
+                if (sslStream.RemoteCertificate != null)
+                {
+                    this.Principal = new GenericPrincipal(
+                        new X509Identity(sslStream.RemoteCertificate),
+                        new string[0]);
+                }
+            }
+
+            public IPrincipal Principal
+            {
+                get;
+                private set;
             }
         }
 
@@ -597,7 +687,7 @@ namespace Amqp.Listener
                 try
                 {
                     var wsContext = await context.AcceptWebSocketAsync(WebSocketTransport.WebSocketSubProtocol);
-                    var wsTransport = new WebSocketTransport(wsContext.WebSocket);
+                    var wsTransport = new ListenerWebSocketTransport(wsContext);
                     await this.listener.HandleTransportAsync(wsTransport);
                 }
                 catch(Exception exception)
@@ -625,6 +715,21 @@ namespace Amqp.Listener
                         Trace.WriteLine(TraceLevel.Error, exception.ToString());
                     }
                 }
+            }
+        }
+
+        class ListenerWebSocketTransport : WebSocketTransport, IAuthenticated
+        {
+            public ListenerWebSocketTransport(HttpListenerWebSocketContext context)
+                : base(context.WebSocket)
+            {
+                this.Principal = context.User;
+            }
+
+            public IPrincipal Principal
+            {
+                get;
+                private set;
             }
         }
 #endif

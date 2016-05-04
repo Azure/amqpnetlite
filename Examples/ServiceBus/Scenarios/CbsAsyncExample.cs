@@ -37,7 +37,7 @@ namespace ServiceBus.Scenarios
         async Task RunSampleAsync()
         {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.SASL.Profile = SaslProfile.External;
+            factory.SASL.Profile = SaslProfile.Anonymous;
 
             Trace.WriteLine(TraceLevel.Information, "Establishing a connection...");
             Address address = new Address(this.Namespace, 5671, null, null, "/", "amqps");

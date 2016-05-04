@@ -15,14 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using System.Reflection;
+namespace Amqp.Listener
+{
+    using System.Security.Principal;
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyVersion("1.1.8")]
-[assembly: AssemblyFileVersion("1.1.8")]
+    interface IAuthenticated
+    {
+        IPrincipal Principal { get; }
+    }
+}

@@ -18,10 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Listener;
+using Amqp.Sasl;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,24 +32,36 @@ namespace Test.Amqp
     [TestClass]
     public class ContainerHostTests
     {
-        // pick a port other than 5762 so that it doesn't conflict with the test broker
-        const string Endpoint = "amqp://guest:guest@localhost:5765";
         const int SendTimeout = 5000;
-        static readonly Uri Uri = new Uri(Endpoint);
-        static readonly Address Address = new Address(Endpoint);
         ContainerHost host;
+
+        public Uri Uri
+        {
+            get;
+            set;
+        }
+
+        Address Address
+        {
+            get { return new Address(this.Uri.AbsoluteUri); }
+        }
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            Trace.TraceLevel = TraceLevel.Frame;
-            Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceLevel = TraceLevel.Frame;
+            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
         }
 
         [TestInitialize]
         public void Initialize()
         {
-            this.host = new ContainerHost(new List<Uri>() { Uri }, null, Uri.UserInfo);
+            // pick a port other than 5762 so that it doesn't conflict with the test broker
+            this.Uri = new Uri("amqp://guest:guest@localhost:5765");
+
+            this.host = new ContainerHost(new List<Uri>() { this.Uri }, null, this.Uri.UserInfo);
+            this.host.Listeners[0].SASL.EnableExternalMechanism = true;
+            this.host.Listeners[0].SASL.EnableAnonymousMechanism = true;
             this.host.Open();
         }
 
@@ -467,6 +481,92 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostSaslAnonymousTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            ListenerLink link = null;
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.OnLinkAttached += a => link = a;
+            this.host.RegisterLinkProcessor(linkProcessor);
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = SaslProfile.Anonymous;
+            var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).Result;
+            var session = new Session(connection);
+            var sender = new SenderLink(session, name, name);
+            sender.Send(new Message("msg1"), SendTimeout);
+            connection.Close();
+
+            Assert.IsTrue(link != null, "link is null");
+            var listenerConnection = (ListenerConnection)link.Session.Connection;
+            Assert.IsTrue(listenerConnection.Principal == null, "principal should be null");
+        }
+
+        [TestMethod]
+        public void ContainerHostPlainPrincipalTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            ListenerLink link = null;
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.OnLinkAttached += a => link = a;
+            this.host.RegisterLinkProcessor(linkProcessor);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, name, name);
+            sender.Send(new Message("msg1"), SendTimeout);
+            connection.Close();
+
+            Assert.IsTrue(link != null, "link is null");
+            var listenerConnection = (ListenerConnection)link.Session.Connection;
+            Assert.IsTrue(listenerConnection.Principal != null, "principal is null");
+            Assert.IsTrue(listenerConnection.Principal.Identity.AuthenticationType == "PLAIN", "wrong auth type");
+        }
+
+        [TestMethod]
+        public void ContainerHostX509PrincipalTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            string address = "amqps://localhost:5676";
+            X509Certificate2 cert = GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+            ContainerHost sslHost = new ContainerHost(new Uri(address));
+            sslHost.Listeners[0].SSL.Certificate = cert;
+            sslHost.Listeners[0].SSL.ClientCertificateRequired = true;
+            sslHost.Listeners[0].SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+            sslHost.Listeners[0].SASL.EnableExternalMechanism = true;
+            ListenerLink link = null;
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.OnLinkAttached += a => link = a;
+            sslHost.RegisterLinkProcessor(linkProcessor);
+            sslHost.Open();
+
+            try
+            {
+                var factory = new ConnectionFactory();
+                factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+                factory.SSL.ClientCertificates.Add(cert);
+                factory.SASL.Profile = SaslProfile.External;
+                var connection = factory.CreateAsync(new Address(address)).Result;
+                var session = new Session(connection);
+                var sender = new SenderLink(session, name, name);
+                sender.Send(new Message("msg1"), SendTimeout);
+                connection.Close();
+
+                Assert.IsTrue(link != null, "link is null");
+                var listenerConnection = (ListenerConnection)link.Session.Connection;
+                Assert.IsTrue(listenerConnection.Principal != null, "principal is null");
+                Assert.IsTrue(listenerConnection.Principal.Identity.AuthenticationType == "X509", "wrong auth type");
+
+                X509Identity identity = (X509Identity)listenerConnection.Principal.Identity;
+                Assert.IsTrue(identity.Certificate != null, "certificate is null");
+            }
+            finally
+            {
+                sslHost.Close();
+            }
+        }
+
+        [TestMethod]
         public void InvalidAddresses()
         {
             var connection = new Connection(Address);
@@ -474,29 +574,77 @@ namespace Test.Amqp
 
             try
             {
-                var invalidAddresses = new List<string>() { null, "", "   " };
-                invalidAddresses.ForEach(addr =>
+                var invalidAddresses = new string[] { null, "", "   " };
+                for (int i = 0; i < invalidAddresses.Length; i++)
                 {
                     var threw = false;
                     try
                     {
-                        var sender = new SenderLink(session, "link with bad address", addr);
+                        var sender = new SenderLink(session, "invalid-address-" + i, invalidAddresses[i]);
                         sender.Send(new Message("1"));
                     }
                     catch (AmqpException e)
                     {
-                        Assert.AreEqual(ErrorCode.InvalidField, e.Error.Condition.ToString(), string.Format("Address '{0}' did not cause an amqp exception with the expected error condition", addr ?? "null"));
+                        Assert.AreEqual(ErrorCode.InvalidField, e.Error.Condition.ToString(),
+                            string.Format("Address '{0}' did not cause an amqp exception with the expected error condition", invalidAddresses[i] ?? "null"));
                         threw = true;
                     }
 
-                    Assert.IsTrue(threw, string.Format("Address '{0}' did not throw an amqp exception", addr ?? "null"));
-                });
+                    Assert.IsTrue(threw, string.Format("Address '{0}' did not throw an amqp exception", invalidAddresses[i] ?? "null"));
+                };
             }
             finally
             {
                 session.Close();
                 connection.Close();
             }
+        }
+
+        [TestMethod]
+        public void ContainerHostWebSocketWildCardAddressTest()
+        {
+            var host = new ContainerHost(new string[] { "ws://+:28080/test/" });
+            host.Listeners[0].SASL.EnablePlainMechanism("guest", "guest");
+            host.RegisterMessageProcessor("q1", new TestMessageProcessor());
+            host.Open();
+
+            try
+            {
+                var connection = Connection.Factory.CreateAsync(new Address("ws://guest:guest@localhost:28080/test/")).Result;
+                var session = new Session(connection);
+                var sender = new SenderLink(session, "ContainerHostWebSocketWildCardAddressTest", "q1");
+                sender.Send(new Message("msg1"), SendTimeout);
+                connection.Close();
+            }
+            catch
+            {
+                System.Diagnostics.Trace.WriteLine("If the test fails with System.Net.HttpListenerException (0x80004005): Access is denied");
+                System.Diagnostics.Trace.WriteLine("Run the following command with admin privilege:");
+                System.Diagnostics.Trace.WriteLine("netsh http add urlacl url=http://+:28080/test/ user=domain\\user");
+
+                throw;
+            }
+            finally
+            {
+                host.Close();
+            }
+        }
+
+        static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
+        {
+            X509Store store = new X509Store(storeName, storeLocation);
+            store.Open(OpenFlags.OpenExistingOnly);
+            X509Certificate2Collection collection = store.Certificates.Find(
+                X509FindType.FindBySubjectName,
+                certFindValue,
+                false);
+            if (collection.Count == 0)
+            {
+                throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
+            }
+
+            store.Close();
+            return collection[0];
         }
     }
 
@@ -558,8 +706,15 @@ namespace Test.Amqp
 
     class TestLinkProcessor : ILinkProcessor
     {
+        public Action<ListenerLink> OnLinkAttached;
+
         public void Process(AttachContext attachContext)
         {
+            if (this.OnLinkAttached != null)
+            {
+                this.OnLinkAttached(attachContext.Link);
+            }
+
             attachContext.Complete(new TestLinkEndpoint(), attachContext.Attach.Role ? 0 : 30);
         }
 

@@ -28,6 +28,8 @@ namespace Amqp
     /// If "amqps" is specified, the connection uses TLS in the underlying transport.
     /// When port is not specified, it is set to the standard based on scheme (amqp: 5672, amqps: 5671)
     /// path is not used by the library.
+    /// Note that TLS Server Name Indication (SNI) is signaled only for "amqps" addresses where
+    /// the domain is host | name. SNI is not signaled when the domain is a numeric IP address.
     /// </summary>
     public sealed class Address
     {

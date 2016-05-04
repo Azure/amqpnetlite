@@ -15,12 +15,14 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp.Sasl
+namespace Amqp.Listener
 {
     using System;
     using System.Text;
     using Amqp.Framing;
     using Amqp.Types;
+    using Amqp.Sasl;
+    using System.Security.Principal;
 
     class SaslPlainMechanism : SaslMechanism
     {
@@ -43,13 +45,19 @@ namespace Amqp.Sasl
             return new SaslPlainProfile(this);
         }
 
-        class SaslPlainProfile : SaslProfile
+        class SaslPlainProfile : SaslProfile, IAuthenticated
         {
             readonly SaslPlainMechanism mechanism;
 
             public SaslPlainProfile(SaslPlainMechanism mechanism)
             {
                 this.mechanism = mechanism;
+            }
+
+            public IPrincipal Principal
+            {
+                get;
+                private set;
             }
 
             protected override ITransport UpgradeTransport(ITransport transport)
@@ -85,6 +93,10 @@ namespace Amqp.Sasl
                         string.Equals(this.mechanism.user, items[1], StringComparison.OrdinalIgnoreCase) &&
                         string.Equals(this.mechanism.password, items[2], StringComparison.Ordinal))
                     {
+                        this.Principal = new GenericPrincipal(
+                            new GenericIdentity(string.IsNullOrEmpty(items[2]) ? items[0] : items[2], this.mechanism.Name),
+                            new string[0]);
+
                         return SaslCode.Ok;
                     }
                 }

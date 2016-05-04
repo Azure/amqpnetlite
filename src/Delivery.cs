@@ -18,6 +18,7 @@
 namespace Amqp
 {
     using Amqp.Framing;
+    using Amqp.Types;
 
     class Delivery : INode
     {
@@ -77,6 +78,13 @@ namespace Amqp
                 delivery.Buffer.ReleaseReference();
                 delivery = (Delivery)delivery.Next;
             }
+        }
+
+        public static byte[] GetDeliveryTag(uint tag)
+        {
+            byte[] buffer = new byte[FixedWidth.UInt];
+            AmqpBitConverter.WriteInt(buffer, 0, (int)tag);
+            return buffer;
         }
 
         public void OnStateChange(DeliveryState state)

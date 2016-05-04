@@ -1,0 +1,29 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [ "src/Amqp.Net.csproj" ],
+          "exclude": [ "**/obj/**", "**/bin/**" ],
+        }
+      ],
+      "dest": "obj/api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [ "**/**.yml" ],
+        "src": "obj/api",
+        "dest": "api"
+      },
+      {
+        "files": [ "articles/**.md", "articles/**/toc.yml", "toc.yml", "*.md" ]
+      }
+    ],
+    "dest": "build/docs",
+    "template": [
+      "default"
+    ]
+  }
+}
