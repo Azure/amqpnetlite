@@ -118,7 +118,7 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Sends a message. This call is non-blocking and it does not wait for acknowledgements.
+        /// Sends a message. This call is non-blocking and it does not wait for acknowledgments.
         /// </summary>
         /// <param name="message"></param>
         public void SendMessage(Message message)
@@ -183,7 +183,7 @@ namespace Amqp.Listener
 
         /// <summary>
         /// Completes the link attach request. This should be called when the IContainer.AttachLink implementation returns false
-        /// and the asynchrounous processing completes. 
+        /// and the asynchronous processing completes. 
         /// </summary>
         /// <param name="attach">The attach to send back.</param>
         /// <param name="error">The error, if any, for the link.</param>
