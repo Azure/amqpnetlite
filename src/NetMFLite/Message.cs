@@ -99,7 +99,14 @@ namespace Amqp
 
             if (this.Body != null)
             {
-                Encoder.WriteObject(buffer, new DescribedValue(0x77ul, this.Body));
+                if (this.Body is byte[])
+                {
+                    Encoder.WriteObject(buffer, new DescribedValue(0x75ul, this.Body));
+                }
+                else
+                {
+                    Encoder.WriteObject(buffer, new DescribedValue(0x77ul, this.Body));
+                }
             }
         }
 
