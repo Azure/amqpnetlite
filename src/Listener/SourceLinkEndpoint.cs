@@ -95,7 +95,7 @@ namespace Amqp.Listener
                             }
                         }
                     }
-                    catch(AmqpException ae)
+                    catch
                     {
                         this.messageSource.DisposeMessage(receiveContext,
                             new DispositionContext(this.link, receiveContext.Message, new Released(), true));

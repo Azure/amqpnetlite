@@ -36,6 +36,3 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("d1389a8f-5b67-4112-9415-8dd5b6bc72c8")]
-
-[assembly: InternalsVisibleTo("Amqp.Listener, PublicKey=0024000004800000940000000602000000240000525341310004000001000100c5af47f5690bc6ab9bef61c7d6f5750cda75f3797077fa70b8c77198d51f6760e5757054321c628da8d572ae641c872803aaa01ccc8d6d19cdfc873ce0a0d520e8f4efe85e1d220ca2bcd5e0e333a01254564d7b6cf1187b8d42dd03c1f2582bafc4f721daea4febff4e879e41023bbeecafc40507d97967a23dbb8ff66c1fe5")]
-[assembly: InternalsVisibleTo("Test.Amqp.Net")]

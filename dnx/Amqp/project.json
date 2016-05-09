@@ -4,6 +4,7 @@
     "compile": [
         "../../src/Properties/AssemblyInfo.cs",
         "../../src/Properties/Version.cs",
+        "../../src/Properties/SNInternalsVisibleTo.cs",
         "../../src/Framing/*.cs",
         "../../src/Net/*.cs",
         "../../src/Sasl/*.cs",
