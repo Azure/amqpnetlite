@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
+using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Listener;
@@ -106,6 +107,57 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostMessageSourceTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            int count = 100;
+            Queue<Message> messages = new Queue<Message>();
+            for (int i = 0; i < count; i++)
+            {
+                messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name + i } });
+            }
+
+            var source = new TestMessageSource(messages);
+            this.host.RegisterMessageSource(name, source);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "receiver0", name);
+            int released = 0;
+            int rejected = 0;
+            int ignored = 0;
+            for (int i = 1; i <= count; i++)
+            {
+                Message message = receiver.Receive();
+                if (i % 5 == 0)
+                {
+                    receiver.Reject(message);
+                    rejected++;
+                }
+                else if (i % 17 == 0)
+                {
+                    receiver.Release(message);
+                    released++;
+                }
+                else if (i % 36 == 0)
+                {
+                    ignored++;
+                }
+                else
+                {
+                    receiver.Accept(message);
+                }
+            }
+
+            receiver.Close();
+            session.Close();
+            connection.Close();
+
+            Assert.AreEqual(released + ignored, messages.Count);
+            Assert.AreEqual(rejected, source.DeadletterMessage.Count);
+        }
+
+        [TestMethod]
         public void ContainerHostRequestProcessorTest()
         {
             string name = MethodInfo.GetCurrentMethod().Name;
@@ -143,7 +195,7 @@ namespace Test.Amqp
             {
                 Message request = new Message("Hello");
                 request.Properties = new Properties() { MessageId = "request" + i, ReplyTo = replyTo };
-                sender.Send(request, SendTimeout);
+                sender.Send(request, null, null);
             }
 
             Assert.IsTrue(doneEvent.WaitOne(10000), "Not completed in time");
@@ -185,10 +237,84 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostTargetLinkEndpointTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            List<Message> messages = new List<Message>();
+            this.host.RegisterLinkProcessor(
+                new TestLinkProcessor(link => new TargetLinkEndpoint(new TestMessageProcessor(50, messages), link)));
+
+            int count = 190;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", "any");
+
+            for (int i = 0; i < count; i++)
+            {
+                var message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = name };
+                sender.Send(message, SendTimeout);
+            }
+
+            sender.Close();
+            session.Close();
+            connection.Close();
+
+            Assert.AreEqual(count, messages.Count);
+        }
+
+        [TestMethod]
+        public void ContainerHostSourceLinkEndpointTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            int count = 100;
+            Queue<Message> messages = new Queue<Message>();
+            for (int i = 0; i < count; i++)
+            {
+                messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name + i } });
+            }
+
+            var source = new TestMessageSource(messages);
+            this.host.RegisterLinkProcessor(new TestLinkProcessor(link => new SourceLinkEndpoint(source, link)));
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "receiver0", name);
+            int released = 0;
+            int rejected = 0;
+            for (int i = 1; i <= count; i++)
+            {
+                Message message = receiver.Receive();
+                if (i % 5 == 0)
+                {
+                    receiver.Reject(message);
+                    rejected++;
+                }
+                else if (i % 17 == 0)
+                {
+                    receiver.Release(message);
+                    released++;
+                }
+                else
+                {
+                    receiver.Accept(message);
+                }
+            }
+
+            receiver.Close();
+            session.Close();
+            connection.Close();
+
+            Assert.AreEqual(released, messages.Count);
+            Assert.AreEqual(rejected, source.DeadletterMessage.Count);
+        }
+
+        [TestMethod]
         public void ContainerHostProcessorOrderTest()
         {
             string name = MethodInfo.GetCurrentMethod().Name;
-            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+            List<Message> messages = new List<Message>();
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor(50, messages));
             this.host.RegisterLinkProcessor(new TestLinkProcessor());
 
             int count = 80;
@@ -204,6 +330,16 @@ namespace Test.Amqp
             }
 
             sender.Close();
+
+            this.host.RegisterMessageSource(name, new TestMessageSource(new Queue<Message>(messages)));
+            var receiver = new ReceiverLink(session, "recv-link", name);
+            for (int i = 0; i < count; i++)
+            {
+                var message = receiver.Receive();
+                receiver.Accept(message);
+            }
+
+            receiver.Close();
 
             sender = new SenderLink(session, "send-link", "any");
             for (int i = 0; i < count; i++)
@@ -241,6 +377,50 @@ namespace Test.Amqp
             }
 
             sender.Close();
+            session.Close();
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ContainerHostIncorrectProcessorTest()
+        {
+            string name = MethodInfo.GetCurrentMethod().Name;
+            this.host.RegisterMessageProcessor("message-processor", new TestMessageProcessor());
+            this.host.RegisterMessageSource("message-source", new TestMessageSource(new Queue<Message>()));
+            Error error;
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", "message-source");
+
+            try
+            {
+                sender.Send(new Message("test"));
+                Assert.IsTrue(false, "sender exception not thrown");
+            }
+            catch (AmqpException exception)
+            {
+                error = exception.Error;
+                Assert.IsTrue(error != null, "Error is null");
+                Assert.IsTrue(error.Condition.Equals((Symbol)ErrorCode.NotFound) ||
+                    error.Condition.Equals((Symbol)ErrorCode.IllegalState), "Wrong error code for sender " + error);
+            }
+
+            var receiver = new ReceiverLink(session, "recv-link", "message-processor");
+            try
+            {
+                var message = receiver.Receive(5000);
+                Thread.Sleep(100);
+                error = receiver.Error;
+            }
+            catch (AmqpException exception)
+            {
+                error = exception.Error;
+            }
+
+            Assert.IsTrue(error != null, "Error is null");
+            Assert.AreEqual((Symbol)ErrorCode.NotFound, error.Condition, "Wrong error code for receiver");
+
             session.Close();
             connection.Close();
         }
@@ -704,9 +884,67 @@ namespace Test.Amqp
         }
     }
 
+    class TestMessageSource : IMessageSource
+    {
+        readonly Queue<Message> messages;
+        readonly List<Message> deadletterMessage;
+
+        public TestMessageSource(Queue<Message> messages)
+        {
+            this.messages = messages;
+            this.deadletterMessage = new List<Message>();
+        }
+
+        public IList<Message> DeadletterMessage
+        {
+            get { return this.deadletterMessage; }
+        }
+
+        public Task<ReceiveContext> GetMessageAsync(ListenerLink link)
+        {
+            lock (this.messages)
+            {
+                ReceiveContext context = null;
+                if (this.messages.Count > 0)
+                {
+                    context = new ReceiveContext(link, this.messages.Dequeue());
+                }
+
+                return Task.FromResult(context);
+            }
+        }
+
+        public void DisposeMessage(ReceiveContext receiveContext, DispositionContext dispositionContext)
+        {
+            if (dispositionContext.DeliveryState is Rejected)
+            {
+                this.deadletterMessage.Add(receiveContext.Message);
+            }
+            else if (dispositionContext.DeliveryState is Released)
+            {
+                lock (this.messages)
+                {
+                    this.messages.Enqueue(receiveContext.Message);
+                }
+            }
+
+            dispositionContext.Complete();
+        }
+    }
+
     class TestLinkProcessor : ILinkProcessor
     {
         public Action<ListenerLink> OnLinkAttached;
+        readonly Func<ListenerLink, LinkEndpoint> factory;
+
+        public TestLinkProcessor()
+        {
+        }
+
+        public TestLinkProcessor(Func<ListenerLink, LinkEndpoint> factory)
+        {
+            this.factory = factory;
+        }
 
         public void Process(AttachContext attachContext)
         {
@@ -715,7 +953,9 @@ namespace Test.Amqp
                 this.OnLinkAttached(attachContext.Link);
             }
 
-            attachContext.Complete(new TestLinkEndpoint(), attachContext.Attach.Role ? 0 : 30);
+            attachContext.Complete(
+                this.factory != null ? this.factory(attachContext.Link) : new TestLinkEndpoint(),
+                attachContext.Attach.Role ? 0 : 30);
         }
 
         class TestLinkEndpoint : LinkEndpoint

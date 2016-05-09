@@ -295,7 +295,6 @@ namespace Amqp
 
         internal Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
         {
-            this.ThrowIfDetaching("Receive");
             if (this.totalCredit < 0)
             {
                 this.SetCredit(DefaultCredit, true);
@@ -304,6 +303,7 @@ namespace Amqp
             Waiter waiter = null;
             lock (this.ThisLock)
             {
+                this.ThrowIfDetaching("Receive");
                 MessageNode first = (MessageNode)this.receivedMessages.First;
                 if (first != null)
                 {

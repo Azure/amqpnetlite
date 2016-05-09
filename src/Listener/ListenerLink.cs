@@ -18,9 +18,7 @@
 namespace Amqp.Listener
 {
     using System;
-    using System.Threading;
     using Amqp.Framing;
-    using Amqp.Types;
 
     /// <summary>
     /// The listener link provides non-blocking methods that can be used by brokers/listener
@@ -30,6 +28,8 @@ namespace Amqp.Listener
     {
         bool role;
         object state;
+        SequenceNumber deliveryCount;
+        uint credit;
 
         // caller can initialize the link for an endpoint, a sender or a receiver
         // based on its needs.
@@ -42,8 +42,6 @@ namespace Amqp.Listener
         Action<Message, DeliveryState, bool, object> onDispose;
 
         // receive
-        SequenceNumber deliveryCount;
-        uint credit;
         bool autoRestore;
         int restored;
         Delivery deliveryCurrent;
@@ -83,6 +81,11 @@ namespace Amqp.Listener
         public object State
         {
             get { return this.state; }
+        }
+
+        internal uint Credit
+        {
+            get { return this.credit; }
         }
 
         /// <summary>
@@ -133,23 +136,7 @@ namespace Amqp.Listener
         /// <param name="buffer">The serialized buffer of the message. It is null, the message is serialized.</param>
         public void SendMessage(Message message, ByteBuffer buffer)
         {
-            if (this.role)
-            {
-                throw new AmqpException(ErrorCode.NotAllowed, "Cannot send a message over a receiving link.");
-            }
-
-            Delivery delivery = new Delivery()
-            {
-                Handle = this.Handle,
-                Message = message,
-                Buffer = buffer ?? message.Encode(),
-                Link = this,
-                Settled = this.SettleOnSend,
-                Tag = Delivery.GetDeliveryTag(this.deliveryCount)
-            };
-
-            this.Session.SendDelivery(delivery);
-            this.deliveryCount++;
+            this.SendMessageInternal(message, buffer, null);
         }
 
         /// <summary>
@@ -195,6 +182,11 @@ namespace Amqp.Listener
             }
             else
             {
+                if (!role)
+                {
+                    this.deliveryCount = attach.InitialDeliveryCount;
+                }
+
                 this.SendAttach(!attach.Role, attach.InitialDeliveryCount, new Attach() { Target = attach.Target, Source = attach.Source });
             }
 
@@ -208,7 +200,7 @@ namespace Amqp.Listener
             {
                 if (this.credit > 0)
                 {
-                    this.SendFlow(this.deliveryCount, credit, false);
+                    this.SendFlow(this.deliveryCount, this.credit, false);
                 }
             }
         }
@@ -232,6 +224,15 @@ namespace Amqp.Listener
             }
         }
 
+        internal void SafeAddClosed(ClosedCallback callback)
+        {
+            this.Closed += callback;
+            if (this.IsDetaching)
+            {
+                callback(this, this.Error);
+            }
+        }
+
         internal void InitializeLinkEndpoint(LinkEndpoint linkEndpoint, uint credit)
         {
             ThrowIfNotNull(this.linkEndpoint, "endpoint");
@@ -243,8 +244,58 @@ namespace Amqp.Listener
             this.linkEndpoint = linkEndpoint;
         }
 
+        internal uint SendMessageInternal(Message message, ByteBuffer buffer, object userToken)
+        {
+            if (this.role)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed, "Cannot send a message over a receiving link.");
+            }
+
+            this.ThrowIfDetaching("Send");
+            uint tag;
+            uint remainingCredit;
+            lock (this.ThisLock)
+            {
+                tag = this.deliveryCount++;
+                remainingCredit = --this.credit;
+            }
+
+            try
+            {
+                Delivery delivery = new Delivery()
+                {
+                    Handle = this.Handle,
+                    Message = message,
+                    Buffer = buffer ?? message.Encode(),
+                    Link = this,
+                    Settled = this.SettleOnSend,
+                    Tag = Delivery.GetDeliveryTag(tag),
+                    UserToken = userToken
+                };
+
+                this.Session.SendDelivery(delivery);
+
+                return remainingCredit;
+            }
+            catch
+            {
+                lock (this.ThisLock)
+                {
+                    this.credit++;
+                    this.deliveryCount--;
+                }
+
+                throw;
+            }
+        }
+
         internal override void OnAttach(uint remoteHandle, Attach attach)
         {
+            if (role)
+            {
+                this.deliveryCount = attach.InitialDeliveryCount;
+            }
+
             var container = ((ListenerConnection)this.Session.Connection).Listener.Container;
 
             Error error = null;
@@ -271,14 +322,31 @@ namespace Amqp.Listener
 
         internal override void OnFlow(Flow flow)
         {
-            var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
-            var myLimit = (SequenceNumber)((uint)this.deliveryCount + this.credit);
-            int delta = theirLimit - myLimit;
+            int delta = 0;
+            if (!role)
+            {
+                lock (this.ThisLock)
+                {
+                    var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
+                    var myLimit = this.deliveryCount + (SequenceNumber)this.credit;
+                    delta = theirLimit - myLimit;
+                    if (delta <= 0)
+                    {
+                        // peer reduced credit
+                        this.credit = 0;
+                    }
+                    else
+                    {
+                        this.credit = (uint)delta;
+                    }
+                }
+            }
+ 
             if (this.linkEndpoint != null)
             {
                 this.linkEndpoint.OnFlow(new FlowContext(this, delta, flow.Properties));
             }
-            else if (delta > 0 && this.onCredit != null)
+            else if (delta != 0 && this.onCredit != null)
             {
                 this.onCredit(delta, this.state);
             }
@@ -333,10 +401,7 @@ namespace Amqp.Listener
             }
             finally
             {
-                if (this.linkEndpoint != null)
-                {
-                    this.linkEndpoint.OnLinkClosed(this, error);
-                }                
+                this.PerformCleanup(error);
             }
         }
 
@@ -346,10 +411,7 @@ namespace Amqp.Listener
         /// <param name="error">The error.</param>
         protected override void OnAbort(Error error)
         {
-            if (this.linkEndpoint != null)
-            {
-                this.linkEndpoint.OnLinkClosed(this, error);
-            }
+            this.PerformCleanup(error);
         }
 
         static void ThrowIfNotNull(object obj, string name)
@@ -371,6 +433,26 @@ namespace Amqp.Listener
             else if (this.linkEndpoint != null)
             {
                 this.linkEndpoint.OnMessage(new MessageContext(this, delivery.Message));
+            }
+        }
+
+        void PerformCleanup(Error error)
+        {
+            // notify upper layers first so they can handle released deliveries correctly
+            this.NotifyClosed(error);
+
+            Delivery pending = this.Session.RemoveDeliveries(this);
+            while (pending != null)
+            {
+                pending.State = new Released();
+                pending.Settled = true;
+                this.OnDeliveryStateChanged(pending);
+                pending = (Delivery)pending.Next;
+            }
+
+            if (this.linkEndpoint != null)
+            {
+                this.linkEndpoint.OnLinkClosed(this, error);
             }
         }
     }

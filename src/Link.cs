@@ -220,8 +220,14 @@ namespace Amqp
 
         internal void SendFlow(uint deliveryCount, uint credit, bool drain)
         {
-            Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
-            this.session.SendFlow(flow);
+            lock (this.ThisLock)
+            {
+                if (!this.IsDetaching)
+                {
+                    Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
+                    this.session.SendFlow(flow);
+                }
+            }
         }
 
         internal void SendAttach(bool role, uint initialDeliveryCount, Attach attach)

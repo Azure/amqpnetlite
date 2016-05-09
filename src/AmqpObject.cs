@@ -33,6 +33,7 @@ namespace Amqp
     public abstract class AmqpObject
     {
         internal const int DefaultCloseTimeout = 60000;
+        bool closedCalled;
         ManualResetEvent endEvent;
 
         /// <summary>
@@ -62,10 +63,14 @@ namespace Amqp
                 temp.Set();
             }
 
-            ClosedCallback closed = this.Closed;
-            if (closed != null)
+            if (!this.closedCalled)
             {
-                closed(this, error);
+                this.closedCalled = true;
+                ClosedCallback closed = this.Closed;
+                if (closed != null)
+                {
+                    closed(this, error);
+                }
             }
         }
 

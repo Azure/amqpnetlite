@@ -50,6 +50,10 @@
     <Compile Include="Listener\ContextState.cs" />
     <Compile Include="Listener\FlowContext.cs" />
     <Compile Include="Listener\IAuthenticated.cs" />
+    <Compile Include="Listener\IMessageSource.cs" />
+    <Compile Include="Listener\TargetLinkEndpoint.cs" />
+    <Compile Include="Listener\SourceLinkEndpoint.cs" />
+    <Compile Include="Listener\ReceiveContext.cs" />
     <Compile Include="Listener\X509Identity.cs" />
     <Compile Include="Listener\LinkCollection.cs" />
     <Compile Include="Listener\ILinkProcessor.cs" />

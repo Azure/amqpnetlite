@@ -49,10 +49,12 @@
     <Compile Include="Listener\ContextState.cs" />
     <Compile Include="Listener\FlowContext.cs" />
     <Compile Include="Listener\IAuthenticated.cs" />
+    <Compile Include="Listener\IMessageSource.cs" />
     <Compile Include="Listener\LinkCollection.cs" />
     <Compile Include="Listener\ILinkProcessor.cs" />
     <Compile Include="Listener\LinkEndpoint.cs" />
     <Compile Include="Listener\DispositionContext.cs" />
+    <Compile Include="Listener\ReceiveContext.cs" />
     <Compile Include="Listener\RequestContext.cs" />
     <Compile Include="Listener\MessageContext.cs" />
     <Compile Include="Listener\IRequestProcessor.cs" />
@@ -61,6 +63,8 @@
     <Compile Include="Listener\ListenerLink.cs" />
     <Compile Include="Listener\SaslMechanism.cs" />
     <Compile Include="Listener\SaslPlainMechanism.cs" />
+    <Compile Include="Listener\SourceLinkEndpoint.cs" />
+    <Compile Include="Listener\TargetLinkEndpoint.cs" />
     <Compile Include="Listener\X509Identity.cs" />
     <Compile Include="Net\ResourceManager.cs" />
     <Compile Include="Net\BufferManager.cs" />

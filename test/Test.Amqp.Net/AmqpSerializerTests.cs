@@ -130,10 +130,14 @@ namespace Test.Amqp
 
             if (typeof(T) == typeof(DateTime))
             {
+                DateTime dt1 = (DateTime)(object)value;
+                DateTime dt2 = (DateTime)(object)o;
+                double diff = Math.Abs((dt2 - dt1).TotalMilliseconds);
                 DateTime now = DateTime.UtcNow;
                 long x = Convert.ToInt64((now - (DateTime)(object)value).TotalMilliseconds);
                 long y = Convert.ToInt64((now - (DateTime)(object)o).TotalMilliseconds);
-                Assert.IsTrue(Math.Abs(x - y) < 2, "timestamp difference should be less than 2");
+                Assert.IsTrue(diff < 2.0, string.Format(
+                    "timestamp difference should be less than 2. ticks 1 {0} ticks 2 {1} diff {2}", dt1.Ticks, dt2.Ticks, diff));
             }
             else if (typeof(T) == typeof(byte[]))
             {

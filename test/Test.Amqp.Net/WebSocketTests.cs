@@ -53,7 +53,7 @@ namespace Test.Amqp
                     }
                     catch (Exception exception)
                     {
-                        System.Diagnostics.Trace.WriteLine(mi.Name + " failed: " + exception.Message);
+                        System.Diagnostics.Trace.WriteLine(mi.Name + " failed: " + exception.ToString());
                     }
 
                     test.Cleanup();
