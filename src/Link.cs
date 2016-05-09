@@ -162,9 +162,12 @@ namespace Amqp
                 }
 
                 this.OnClose(detach.Error);
-                this.NotifyClosed(detach.Error);
-                return true;
             }
+
+            this.session.RemoveLink(this, detach.Handle);
+            this.NotifyClosed(detach.Error);
+
+            return true;
         }
 
         internal abstract void OnFlow(Flow flow);

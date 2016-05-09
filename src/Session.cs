@@ -180,6 +180,15 @@ namespace Amqp
             }
         }
 
+        internal void RemoveLink(Link link, uint remoteHandle)
+        {
+            lock (this.ThisLock)
+            {
+                this.localLinks[link.Handle] = null;
+                this.remoteLinks[remoteHandle] = null;
+            }
+        }
+
         internal void SendDelivery(Delivery delivery)
         {
             lock (this.ThisLock)
@@ -455,14 +464,7 @@ namespace Amqp
         void OnDetach(Detach detach)
         {
             Link link = this.GetLink(detach.Handle);
-            if (link.OnDetach(detach))
-            {
-                lock (this.ThisLock)
-                {
-                    this.localLinks[link.Handle] = null;
-                    this.remoteLinks[detach.Handle] = null;
-                }
-            }
+            link.OnDetach(detach);
         }
 
         void OnFlow(Flow flow)

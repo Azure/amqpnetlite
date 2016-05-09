@@ -775,5 +775,27 @@ namespace Test.Amqp
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
+
+#if NETFX || NETFX_CORE
+        [TestMethod]
+#endif
+        public void TestMethod_LinkReopen()
+        {
+            string testName = "LinkReopen";
+
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender", "q1");
+            sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+            sender.Close();
+
+            sender = new SenderLink(session, "sender", "q1");
+            sender.Send(new Message("test2") { Properties = new Properties() { MessageId = testName } });
+            sender.Close();
+
+            session.Close(0);
+            connection.Close();
+            Assert.IsTrue(connection.Error == null, "connection has error!");
+        }
     }
 }
