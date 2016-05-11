@@ -667,6 +667,8 @@ namespace Amqp
 
         void OnEnded(Error error)
         {
+            this.Error = error;
+
             if (this.heartBeatTimer != null)
             {
                 this.heartBeatTimer.Dispose();

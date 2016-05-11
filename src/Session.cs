@@ -120,6 +120,8 @@ namespace Amqp
 
         internal void Abort(Error error)
         {
+            this.Error = error;
+
             for (int i = 0; i < this.localLinks.Length; i++)
             {
                 if (this.localLinks[i] != null)
@@ -292,6 +294,8 @@ namespace Amqp
 
         internal bool OnEnd(End end)
         {
+            this.Error = end.Error;
+
             lock (this.ThisLock)
             {
                 if (this.state == State.EndSent)

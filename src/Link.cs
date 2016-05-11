@@ -108,6 +108,8 @@ namespace Amqp
 
         internal void Abort(Error error)
         {
+            this.Error = error;
+
             this.OnAbort(error);
 
             if (this.state != LinkState.End)
@@ -144,6 +146,8 @@ namespace Amqp
 
         internal bool OnDetach(Detach detach)
         {
+            this.Error = detach.Error;
+
             lock (this.ThisLock)
             {
                 if (this.state == LinkState.DetachSent)

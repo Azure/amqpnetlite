@@ -51,12 +51,11 @@ namespace Amqp
         public Error Error
         {
             get;
-            private set;
+            internal set;
         }
 
         internal void NotifyClosed(Error error)
         {
-            this.Error = error;
             ManualResetEvent temp = this.endEvent;
             if (temp != null)
             {
@@ -83,6 +82,7 @@ namespace Amqp
         {
             // initialize event first to avoid the race with NotifyClosed
             this.endEvent = new ManualResetEvent(false);
+            this.Error = error;
             if (!this.OnClose(error))
             {
                 if (waitUntilEnded > 0)
