@@ -44,3 +44,4 @@ This directory contains example C# programs using the library. Some of the examp
 | ServiceBus.EventHub.NetMF | Interacting with Event Hubs service on NETMF. |
 | ServiceBus.Cbs | Authentication with CBS (Claim Based Security) |
 | ServiceBus.MessageSession | Working with MessageSession in Service Bus |
+| ServiceBus.Topic | Working with Topic and Subscription in Service Bus |

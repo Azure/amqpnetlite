@@ -22,6 +22,12 @@ namespace ServiceBus.Scenarios
     using Amqp.Framing;
     using Amqp.Types;
 
+    /// <summary>
+    /// This example assumes a sessionful queue is precreated.
+    /// If a topic is used, update the address in Source of the ReceiverLink
+    /// to be "[topic-name]/Subscriptions/[subscription-name]".
+    /// Refer to ServiceBus.Topic example for more details.
+    /// </summary>
     class MessageSessionExample : Example
     {
         public override void Run()
