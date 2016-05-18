@@ -781,6 +781,13 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ConnectionListenerCloseWithoutOpenTest()
+        {
+            ConnectionListener listener = new ConnectionListener("amqp://localhost:12345", null);
+            listener.Close();
+        }
+
+        [TestMethod]
         public void ContainerHostWebSocketWildCardAddressTest()
         {
             var host = new ContainerHost(new string[] { "ws://+:28080/test/" });

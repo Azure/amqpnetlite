@@ -165,6 +165,11 @@ namespace Amqp.Listener
         /// </summary>
         public void Close()
         {
+            if (this.listener == null)
+            {
+                return;
+            }
+
             this.listener.Close();
 
             var snapshot = new List<Connection>();
