@@ -167,6 +167,7 @@ namespace Amqp.Listener
         {
             if (this.listener == null)
             {
+                this.closed = true;
                 return;
             }
 
