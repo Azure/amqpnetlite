@@ -1,32 +1,44 @@
 {
     "version": "1.1.9",
 
-    "compile": [
-        "../../src/Properties/AssemblyInfo.cs",
-        "../../src/Properties/Version.cs",
-        "../../src/Properties/SNInternalsVisibleTo.cs",
-        "../../src/Framing/*.cs",
-        "../../src/Net/*.cs",
-        "../../src/Sasl/*.cs",
-        "../../src/Serialization/*.cs",
-        "../../src/Transactions/*.cs",
-        "../../src/Types/*.cs",
-        "../../src/*.cs"
-    ],
-
-    "namedResource": {
-        "Amqp.SRAmqp": "../../src/SRAmqp.resx"
+    "buildOptions": {
+        "compile": [
+            "../../src/Properties/AssemblyInfo.cs",
+            "../../src/Properties/Version.cs",
+            "../../src/Properties/SNInternalsVisibleTo.cs",
+            "../../src/Framing/*.cs",
+            "../../src/Net/*.cs",
+            "../../src/Sasl/*.cs",
+            "../../src/Serialization/*.cs",
+            "../../src/Transactions/*.cs",
+            "../../src/Types/*.cs",
+            "../../src/*.cs"
+        ],
+        "embed": [
+            "../../src/SRAmqp.resx"
+        ],
+        "allowUnsafe": true,
+        "warningsAsErrors": true,
+        "keyFile": "../../src/amqp.snk",
+        "publicSign": true
     },
 
-    "compilationOptions": {
-        "keyFile":  "../../src/amqp.snk",
-        "publicSign": true
+    "configurations": {
+        "Debug": {
+            "buildOptions": {
+                "defines": [ "DEBUG" ]
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "optimize": true
+            }
+        }
     },
 
     "frameworks": {
         "dnx451": {
-            "compilationOptions": {
-                "allowUnsafe": true,
+            "buildOptions": {
                 "define": [ "TRACE", "NETFX" ]
             },
             "frameworkAssemblies": {
@@ -35,8 +47,7 @@
             }
         },
         "dnxcore50": {
-            "compilationOptions": {
-                "allowUnsafe": true,
+            "buildOptions": {
                 "define": [ "TRACE", "DOTNET" ]
             },
             "dependencies": {

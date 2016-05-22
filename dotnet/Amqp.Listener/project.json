@@ -1,0 +1,48 @@
+{
+    "version": "1.1.9",
+
+    "buildOptions": {
+        "compile": [
+            "../../src/Properties/AssemblyInfo.cs",
+            "../../src/Properties/Version.cs",
+            "../../src/Listener/*.cs"
+        ],
+        "warningsAsErrors": true,
+        "keyFile": "../../src/amqp.snk",
+        "publicSign": true
+    },
+
+    "dependencies": {
+        "Amqp": "1.1.9-*"
+    },
+
+    "configurations": {
+        "Debug": {
+            "buildOptions": {
+                "defines": [ "DEBUG" ]
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "optimize": true
+            }
+        }
+    },
+
+    "frameworks": {
+        "dnx451": {
+            "buildOptions": {
+                "define": [ "TRACE", "NETFX" ]
+            },
+            "frameworkAssemblies": {
+                "System": "",
+                "System.Transactions": ""
+            }
+        },
+        "dnxcore50": {
+            "buildOptions": {
+                "define": [ "TRACE", "DOTNET" ]
+            }
+        }
+    }
+}

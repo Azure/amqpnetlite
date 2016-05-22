@@ -18,7 +18,7 @@ SET build-target=build
 SET build-config=Debug
 SET build-platform=Any CPU
 SET build-verbosity=minimal
-SET build-dnx=false
+SET build-dotnet=true
 SET build-test=true
 SET build-nuget=false
 SET build-version=
@@ -26,7 +26,7 @@ SET build-version=
 IF /I "%1" EQU "release" (
   set build-target=build
   set build-config=Release
-  set build-dnx=true
+  set build-dotnet=true
   set build-nuget=true
   GOTO :args-done
 )
@@ -43,7 +43,7 @@ IF /I "%1" EQU "test" (
 :args-start
 IF /I "%1" EQU "" GOTO args-done
 
-IF /I "%1" EQU "--dnx" SET build-dnx=true&&GOTO args-loop
+IF /I "%1" EQU "--dotnet" SET build-dotnet=true&&GOTO args-loop
 IF /I "%1" EQU "--skiptest" SET build-test=false&&GOTO args-loop
 IF /I "%1" EQU "--nuget" SET build-nuget=true&&GOTO args-loop
 IF /I "%1" EQU "--config" GOTO :args-config
@@ -117,19 +117,19 @@ FOR /L %%I IN (2,1,3) DO (
   )
 )
 
-IF /I "%build-dnx%" EQU "false" GOTO :build-done
+IF /I "%build-dotnet%" EQU "false" GOTO :build-done
 CALL :file-exists dotnet exe
 IF "%dotnetPath%" == "" (
   ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
   GOTO :exit
 )
-CALL "%dotnetPath%" restore dnx
+CALL "%dotnetPath%" restore dotnet
 IF %ERRORLEVEL% NEQ 0 (
   ECHO dotnet restore failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
   GOTO :exit
 )
-CALL "%dotnetPath%" build dnx\Amqp.Listener --configuration %build-config% --build-base-path bin\dnx
+CALL "%dotnetPath%" build dotnet\Amqp.Listener --configuration %build-config% --build-base-path bin\dotnet
 IF %ERRORLEVEL% NEQ 0 (
   ECHO dotnet build failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
@@ -202,11 +202,11 @@ EXIT /b !return-code!
 :usage
 ECHO build.cmd [clean^|release] [options]
 ECHO   clean: clean intermediate files
-ECHO   release: a shortcut for "--config Release --nuget --dnx"
+ECHO   release: a shortcut for "--config Release --nuget --dotnet"
 ECHO options:
 ECHO  --config ^<value^>      [Debug] build configuration (e.g. Debug, Release)
 ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
-ECHO  --dnx                 [false] build dnx
+ECHO  --dotnet              [true] build dotnet
 ECHO  --verbosity ^<value^>   [minimal] build verbosity (q[uiet], m[inimal], n[ormal], d[etailed] and diag[nostic])
 ECHO  --skiptest            [false] skip test
 ECHO  --nuget               [false] create NuGet packet (for Release only)
