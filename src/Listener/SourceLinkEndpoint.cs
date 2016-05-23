@@ -21,9 +21,11 @@ namespace Amqp.Listener
     using Amqp.Framing;
 
     /// <summary>
-    /// The AMQP link endpoint for a message source.
+    /// The AMQP link endpoint for a message source. Use this class to attach a link
+    /// endpoint to an IMessageSource for sending outgoing messages. This class manages
+    /// the link credit (flow control).
     /// </summary>
-    class SourceLinkEndpoint : LinkEndpoint
+    public class SourceLinkEndpoint : LinkEndpoint
     {
         readonly IMessageSource messageSource;
         readonly ListenerLink link;

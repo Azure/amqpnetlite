@@ -20,9 +20,10 @@ namespace Amqp.Listener
     using System;
 
     /// <summary>
-    /// The AMQP link endpoint for a message target.
+    /// The AMQP link endpoint for a message target. Use this class to manage links
+    /// attached to an IMessageProcessor.
     /// </summary>
-    class TargetLinkEndpoint : LinkEndpoint
+    public class TargetLinkEndpoint : LinkEndpoint
     {
         readonly IMessageProcessor messageProcessor;
         readonly ListenerLink link;

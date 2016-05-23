@@ -44,12 +44,25 @@ namespace Amqp.Listener
     /// Link-level Processing
     /// Message level processing only deals with incoming and outgoing messages
     /// without worrying about the links.
-    /// Link processors (ILinkProcessor) can be registered to process received
-    /// attach performatives. This is useful when the application needs to
-    /// participate in link attach/detach for extra resource allocation/cleanup,
-    /// or perform additional validation and security enforcement at the link level.
-    /// Link processors create link endpoints which can be either message sink
-    /// or message source.
+    ///  * ILinkProcessor: link processors can be registered to process received
+    ///    attach performatives. This is useful when the application needs to
+    ///    participate in link attach/detach for extra resource allocation/cleanup,
+    ///    or perform additional validation and security enforcement at the link level.
+    ///  * Link processors create LinkEndpoint objects which can be either message
+    ///    sink or message source. Application can create custom LinkEndpoint class
+    ///    to handle all link events (flow, transfer and disposition). However, it
+    ///    is recommended to use the built-in LinkEndpoint classes.
+    ///  * TargetLinkEndpoint: a TargetLinkEndpoint simply forwards the request
+    ///    to the IMessgeProcessor.
+    ///  * SourceLinkEndpoint: a SourceLinkEndpoint manages link credit and
+    ///    transforms flow state into a receive loop on the IMessageSource. Delivery
+    ///    acknowledgements are simply forwarded to the IMessageSource.
+    /// 
+    /// When per-link handling is required, it is recommended to combine message
+    /// level processing with link level processing.
+    ///  * An IMessageProcessor/Souce should be implemented.
+    ///  * After the link attach is handled, wrap it in a Target/SourceLinkEndpoint
+    ///    that works with the previously implemented message processor or source.
     ///
     /// Upon receiving an attach performative, the registered message level
     /// processors (IMessageProcessor, IMessageSource, IRequestProcessor) are
