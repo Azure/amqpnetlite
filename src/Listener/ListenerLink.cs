@@ -337,7 +337,7 @@ namespace Amqp.Listener
                     }
                     else
                     {
-                        this.credit = (uint)delta;
+                        this.credit += (uint)delta;
                     }
                 }
             }
