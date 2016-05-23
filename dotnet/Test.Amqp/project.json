@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "compile": [
+      "Program.cs",
+      "../../src/Net/TypeExtensions.cs",
+      "../../test/Test.Amqp.NetMF/LinkTests.cs",
+      "../../test/Test.Amqp.NetMF/TestRunner.cs",
+      "../../test/Test.Amqp.NetMF/Assert.cs"
+    ],
+    "emitEntryPoint": true,
+    "define": [ "DOTNET" ]
+  },
+  "dependencies": {
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0-rc2-3002702"
+    },
+    "Amqp": "1.1.9-*"
+  },
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
+  }
+}

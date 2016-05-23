@@ -35,7 +35,6 @@ namespace Test.Amqp
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            LinkTests.Initialize(context);
         }
 
         [TestMethod]

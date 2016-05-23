@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 #if NETMF
 using Microsoft.SPOT;
 #endif
@@ -22,5 +23,12 @@ namespace Test.Amqp
                 throw new Exception(message ?? "Not equal. Expected: " + expected + ", Actual: " + (actual ?? "<NULL>"));
             }
         }
+
+#if COMPACT_FRAMEWORK
+        public static bool WaitOne(this ManualResetEvent e, int ms)
+        {
+            return e.WaitOne(ms, false);
+        }
+#endif
     }
 }

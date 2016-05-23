@@ -39,15 +39,7 @@ namespace Test.Amqp
     {
         public static Address address = new Address("amqp://guest:guest@localhost:5672");
 
-#if !COMPACT_FRAMEWORK
-        bool waitExitContext = true;
-#else
-        bool waitExitContext = false;
-#endif
-
-#if NETFX || NETFX_CORE
-        [ClassInitialize]
-        public static void Initialize(TestContext context)
+        static LinkTests()
         {
             Connection.DisableServerCertValidation = true;
             // uncomment the following to write frame traces
@@ -55,6 +47,7 @@ namespace Test.Amqp
             //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
         }
 
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_BasicSendReceive()
@@ -78,7 +71,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
             }
             
@@ -88,7 +81,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionFrameSize()
@@ -111,7 +104,7 @@ namespace Test.Amqp
             {
                 Message message = receiver.Receive();
                 string value = (string)message.Body;
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}x{1}", value[0], value.Length);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}x{1}", value[0], value.Length);
                 receiver.Accept(message);
             }
 
@@ -121,7 +114,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionChannelMax()
@@ -131,7 +124,7 @@ namespace Test.Amqp
                 address,
                 null,
                 new Open() { ContainerId = "ConnectionChannelMax", HostName = address.Host, ChannelMax = channelMax },
-                (c, o) => Trace.WriteLine(TraceLevel.Information, "{0}", o));
+                (c, o) => Trace.WriteLine(TraceLevel.Verbose, "{0}", o));
 
             for (int i = 0; i <= channelMax; i++)
             {
@@ -151,7 +144,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionWithIPAddress()
@@ -176,7 +169,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
             }
 
@@ -186,7 +179,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionRemoteProperties()
@@ -210,14 +203,14 @@ namespace Test.Amqp
 
             Connection connection = new Connection(address, null, open, onOpen);
 
-            opened.WaitOne(10000, waitExitContext);
+            opened.WaitOne(10000);
 
             connection.Close();
 
             Assert.IsTrue(remoteOpen != null, "remote open not set");
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_OnMessage()
@@ -232,7 +225,7 @@ namespace Test.Amqp
             int received = 0;
             receiver.Start(10, (link, m) =>
                 {
-                    Trace.WriteLine(TraceLevel.Information, "receive: {0}", m.ApplicationProperties["sn"]);
+                    Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", m.ApplicationProperties["sn"]);
                     link.Accept(m);
                     received++;
                     if (received == nMsgs)
@@ -255,7 +248,7 @@ namespace Test.Amqp
             }
 
             int last = -1;
-            while (!done.WaitOne(10000, waitExitContext) && received > last)
+            while (!done.WaitOne(10000) && received > last)
             {
                 last = received;
             }
@@ -268,7 +261,7 @@ namespace Test.Amqp
             Assert.AreEqual(nMsgs, received, "not all messages are received.");
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_CloseBusyReceiver()
@@ -297,13 +290,13 @@ namespace Test.Amqp
                 {
                     if (m.Properties.MessageId == "msg0") r.Close(0);
                 });
-            Assert.IsTrue(closed.WaitOne(10000, waitExitContext));
+            Assert.IsTrue(closed.WaitOne(10000));
 
             ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver2.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
                 receiver2.Accept(message);
             }
 
@@ -313,7 +306,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ReleaseMessage()
@@ -337,7 +330,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
                 if (i % 2 == 0)
                 {
                     receiver.Accept(message);
@@ -353,7 +346,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs / 2; ++i)
             {
                 Message message = receiver2.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
                 receiver2.Accept(message);
             }
 
@@ -363,7 +356,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SendAck()
@@ -377,7 +370,7 @@ namespace Test.Amqp
             ManualResetEvent done = new ManualResetEvent(false);
             OutcomeCallback callback = (m, o, s) =>
             {
-                Trace.WriteLine(TraceLevel.Information, "send complete: sn {0} outcome {1}", m.ApplicationProperties["sn"], o.Descriptor.Name);
+                Trace.WriteLine(TraceLevel.Verbose, "send complete: sn {0} outcome {1}", m.ApplicationProperties["sn"], o.Descriptor.Name);
                 if ((int)m.ApplicationProperties["sn"] == (nMsgs - 1))
                 {
                     done.Set();
@@ -393,13 +386,13 @@ namespace Test.Amqp
                 sender.Send(message, callback, null);
             }
 
-            done.WaitOne(10000, waitExitContext);
+            done.WaitOne(10000);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
             }
             
@@ -409,7 +402,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWaiter()
@@ -423,14 +416,14 @@ namespace Test.Amqp
             Task t = Task.Run(() =>
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
                 receiver.Accept(message);
             });
 #else
             Thread t = new Thread(() =>
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.Properties.MessageId);
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
                 receiver.Accept(message);
             });
 
@@ -453,7 +446,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWithFilter()
@@ -484,7 +477,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_LinkCloseWithPendingSend()
@@ -503,11 +496,11 @@ namespace Test.Amqp
             // but this is not very reliable, so just do a best effort check
             if (cancelled)
             {
-                Trace.WriteLine(TraceLevel.Information, "The send was cancelled as expected");
+                Trace.WriteLine(TraceLevel.Verbose, "The send was cancelled as expected");
             }
             else
             {
-                Trace.WriteLine(TraceLevel.Information, "The send was not cancelled as expected. This can happen if close call loses the race");
+                Trace.WriteLine(TraceLevel.Verbose, "The send was not cancelled as expected. This can happen if close call loses the race");
             }
 
             try
@@ -518,14 +511,14 @@ namespace Test.Amqp
             }
             catch (AmqpException exception)
             {
-                Trace.WriteLine(TraceLevel.Information, "Caught exception: ", exception.Error);
+                Trace.WriteLine(TraceLevel.Verbose, "Caught exception: ", exception.Error);
             }
 
             session.Close();
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SynchronousSend()
@@ -548,7 +541,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_DynamicSenderLink()
@@ -579,7 +572,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_DynamicReceiverLink()
@@ -593,7 +586,7 @@ namespace Test.Amqp
             OnAttached onAttached = (link, attach) => { remoteSource = ((Source)attach.Source).Address; attached.Set(); };
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Dynamic = true }, onAttached);
 
-            attached.WaitOne(10000, waitExitContext);
+            attached.WaitOne(10000);
 
             Assert.IsTrue(remoteSource != null, "dynamic source not attached");
 
@@ -611,7 +604,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_RequestResponse()
@@ -653,7 +646,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_AdvancedLinkFlowControl()
@@ -708,7 +701,7 @@ namespace Test.Amqp
         /// This test proves that issue #14 is fixed.
         /// https://github.com/Azure/amqpnetlite/issues/14
         /// </summary>
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SendEmptyMessage()
@@ -738,7 +731,7 @@ namespace Test.Amqp
             Assert.IsTrue(threwArgEx, "Should throw an argument exception when sending an empty message.");
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionCreateClose()
@@ -748,7 +741,7 @@ namespace Test.Amqp
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SessionCreateClose()
@@ -760,7 +753,7 @@ namespace Test.Amqp
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_LinkCreateClose()
@@ -776,7 +769,7 @@ namespace Test.Amqp
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
 
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_LinkReopen()

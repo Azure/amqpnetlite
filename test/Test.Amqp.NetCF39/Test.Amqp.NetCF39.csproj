@@ -52,6 +52,9 @@
     <Compile Include="..\Test.Amqp.NetMF\Program.cs">
       <Link>Program.cs</Link>
     </Compile>
+    <Compile Include="..\Test.Amqp.NetMF\TestRunner.cs">
+      <Link>TestRunner.cs</Link>
+    </Compile>
     <Compile Include="..\Test.Amqp.NetMF\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>

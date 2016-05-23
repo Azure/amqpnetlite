@@ -32,7 +32,6 @@ namespace Test.Amqp
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
-            LinkTests.Initialize(context);
         }
 
         // if the project is targeted 4.5.1, TransactionScope can be created with

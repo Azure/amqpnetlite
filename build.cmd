@@ -37,7 +37,8 @@ IF /I "%1" EQU "clean" (
 )
 
 IF /I "%1" EQU "test" (
-  GOTO :build-done
+  set build-target=test
+  GOTO :args-done
 )
 
 :args-start
@@ -76,12 +77,23 @@ IF /I "%build-verbosity%" EQU "" GOTO :args-error
 
 ECHO Build configuration: %build-config%
 ECHO Build platform: %build-platform%
+ECHO Build dotnet: %build-dotnet%
 ECHO Run tests: %build-test%
 ECHO Build NuGet package: %build-nuget%
 ECHO.
 
 IF /I "%build-target%" == "clean" GOTO :build-clean
+
+IF /I "%build-dotnet%" EQU "false" GOTO :build-target
+CALL :file-exists dotnet exe
+  IF "%dotnetPath%" == "" (
+  ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
+  GOTO :exit
+)
+
+:build-target
 IF /I "%build-target%" == "build" GOTO :build-sln
+IF /I "%build-target%" == "test" GOTO :build-done
 
 :args-error
 CALL :handle-error 1
@@ -118,11 +130,6 @@ FOR /L %%I IN (2,1,3) DO (
 )
 
 IF /I "%build-dotnet%" EQU "false" GOTO :build-done
-CALL :file-exists dotnet exe
-IF "%dotnetPath%" == "" (
-  ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
-  GOTO :exit
-)
 CALL "%dotnetPath%" restore dotnet
 IF %ERRORLEVEL% NEQ 0 (
   ECHO dotnet restore failed with error %ERRORLEVEL%
@@ -157,9 +164,9 @@ ECHO Starting the test AMQP broker %TestBrokerPath%
 START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 rem Delay to allow broker to start up
 PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
+
 :run-test
 "%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net\Test.Amqp.Net.dll
-
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   ECHO Test failed!
@@ -168,6 +175,15 @@ IF %ERRORLEVEL% NEQ 0 (
   GOTO :exit
 )
 
+IF /I "%build-dotnet%" EQU "false" GOTO done-test
+"%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp
+IF %ERRORLEVEL% NEQ 0 (
+  SET return-code=%ERRORLEVEL%
+  ECHO .Net Core Test failed!
+  GOTO :exit
+)
+
+:done-test
 TASKKILL /F /IM TestAmqpBroker.exe
 
 :nuget-package

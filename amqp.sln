@@ -98,12 +98,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{57BFDB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp", "Amqp", "{C40B5C1E-3ECB-409D-9ED2-D36D4879A485}"
 	ProjectSection(SolutionItems) = preProject
-		dnx\Amqp\project.json = dnx\Amqp\project.json
+		dotnet\Amqp\project.json = dotnet\Amqp\project.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.Listener", "Amqp.Listener", "{B8917277-E208-4F1F-8973-8CA8C1C52AE7}"
 	ProjectSection(SolutionItems) = preProject
-		dnx\Amqp.Listener\project.json = dnx\Amqp.Listener\project.json
+		dotnet\Amqp.Listener\project.json = dotnet\Amqp.Listener\project.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docfx", "docfx", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
@@ -126,6 +126,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{56
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.Topic", "Examples\ServiceBus\ServiceBus.Topic\ServiceBus.Topic.csproj", "{D454DB5E-820F-4A92-B31E-A41A9D20B086}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test.Amqp", "Test.Amqp", "{9B1E629B-4179-4531-BE56-9B9AE7735EBC}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\Test.Amqp\Attribute.cs = dotnet\Test.Amqp\Attribute.cs
+		dotnet\Test.Amqp\Program.cs = dotnet\Test.Amqp\Program.cs
+		dotnet\Test.Amqp\project.json = dotnet\Test.Amqp\project.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -596,5 +603,6 @@ Global
 		{B8917277-E208-4F1F-8973-8CA8C1C52AE7} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{5637969B-A822-425A-A831-F70AA2275777} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
+		{9B1E629B-4179-4531-BE56-9B9AE7735EBC} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal
