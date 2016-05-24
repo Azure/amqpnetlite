@@ -134,6 +134,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test.Amqp", "Test.Amqp", "{
 		dotnet\Test.Amqp\project.json = dotnet\Test.Amqp\project.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net35", "test\Test.Amqp.Net35\Test.Amqp.Net35.csproj", "{7852029D-235C-40B7-8957-8E78414C3F97}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -570,6 +572,16 @@ Global
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086}.Release|ARM.ActiveCfg = Release|Any CPU
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086}.Release|x64.ActiveCfg = Release|Any CPU
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086}.Release|x86.ActiveCfg = Release|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Release|ARM.ActiveCfg = Release|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Release|x64.ActiveCfg = Release|Any CPU
+		{7852029D-235C-40B7-8957-8E78414C3F97}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

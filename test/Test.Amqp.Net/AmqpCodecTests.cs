@@ -99,7 +99,7 @@ namespace Test.Amqp
         DateTime dtValue = DateTime.Parse("2008-11-01T19:35:00.0000000Z").ToUniversalTime();
         byte[] dtValueBin = new byte[] { 0x83, 0x00, 0x00, 0x01, 0x1d, 0x59, 0x8d, 0x1e, 0xa0 };
 
-        Guid uuidValue = Guid.Parse("f275ea5e-0c57-4ad7-b11a-b20c563d3b71");
+        Guid uuidValue = new Guid("f275ea5e-0c57-4ad7-b11a-b20c563d3b71");
         byte[] uuidValueBin = new byte[] { 0x98, 0xf2, 0x75, 0xea, 0x5e, 0x0c, 0x57, 0x4a, 0xd7, 0xb1, 0x1a, 0xb2, 0x0c, 0x56, 0x3d, 0x3b, 0x71 };
 
         byte[] bin8Value = new byte[56];
@@ -473,7 +473,7 @@ namespace Test.Amqp
                     object value = simpleType ? 
                         CreateObject(p.PropertyType, true, true, random) : 
                         CreateRestrictedDescribed(p.PropertyType, random);
-                    p.SetValue(obj, value);
+                    p.SetValue(obj, value, null);
                 }
             }
             else if (typeof(DescribedMap).IsAssignableFrom(type))
@@ -543,8 +543,8 @@ namespace Test.Amqp
                         continue;
                     }
 
-                    object v1 = p.GetValue(x);
-                    object v2 = p.GetValue(y);
+                    object v1 = p.GetValue(x, null);
+                    object v2 = p.GetValue(y, null);
                     if (typeof(RestrictedDescribed).IsAssignableFrom(p.PropertyType))
                     {
                         ValidateRestrictedDescribed(v1, v2);

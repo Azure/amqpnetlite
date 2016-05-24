@@ -14,6 +14,7 @@
 //  See the Apache Version 2.0 License for specific language governing permissions and 
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
+
 using Amqp;
 using Amqp.Framing;
 using Amqp.Sasl;
@@ -23,6 +24,8 @@ using System.Text;
 using System.Threading;
 #if NETFX
 using System.Threading.Tasks;
+#endif
+#if NETFX || NETFX35
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 #if NETFX_CORE
@@ -32,7 +35,7 @@ using System.Threading.Tasks;
 
 namespace Test.Amqp
 {
-#if NETFX || NETFX_CORE
+#if NETFX || NETFX35 || NETFX_CORE
     [TestClass]
 #endif
     public class LinkTests
@@ -47,7 +50,7 @@ namespace Test.Amqp
             //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_BasicSendReceive()
@@ -81,7 +84,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionFrameSize()
@@ -114,7 +117,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionChannelMax()
@@ -144,7 +147,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionWithIPAddress()
@@ -179,7 +182,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionRemoteProperties()
@@ -210,7 +213,7 @@ namespace Test.Amqp
             Assert.IsTrue(remoteOpen != null, "remote open not set");
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_OnMessage()
@@ -261,7 +264,7 @@ namespace Test.Amqp
             Assert.AreEqual(nMsgs, received, "not all messages are received.");
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_CloseBusyReceiver()
@@ -306,7 +309,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ReleaseMessage()
@@ -356,7 +359,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SendAck()
@@ -402,7 +405,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWaiter()
@@ -446,7 +449,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ReceiveWithFilter()
@@ -477,7 +480,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_LinkCloseWithPendingSend()
@@ -518,7 +521,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SynchronousSend()
@@ -541,7 +544,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_DynamicSenderLink()
@@ -572,7 +575,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_DynamicReceiverLink()
@@ -604,7 +607,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_RequestResponse()
@@ -646,7 +649,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_AdvancedLinkFlowControl()
@@ -701,7 +704,7 @@ namespace Test.Amqp
         /// This test proves that issue #14 is fixed.
         /// https://github.com/Azure/amqpnetlite/issues/14
         /// </summary>
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SendEmptyMessage()
@@ -731,7 +734,7 @@ namespace Test.Amqp
             Assert.IsTrue(threwArgEx, "Should throw an argument exception when sending an empty message.");
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_ConnectionCreateClose()
@@ -741,7 +744,7 @@ namespace Test.Amqp
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_SessionCreateClose()
@@ -753,7 +756,7 @@ namespace Test.Amqp
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_LinkCreateClose()
@@ -769,7 +772,7 @@ namespace Test.Amqp
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
 
-#if NETFX || NETFX_CORE || DOTNET
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
         public void TestMethod_LinkReopen()

@@ -160,12 +160,15 @@ IF %ERRORLEVEL% EQU 0 (
 )
 
 SET TestBrokerPath=.\bin\%build-config%\TestAmqpBroker\TestAmqpBroker.exe
-ECHO Starting the test AMQP broker %TestBrokerPath%
+ECHO Starting the test AMQP broker
+ECHO %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 rem Delay to allow broker to start up
 PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
 
 :run-test
+ECHO.
+ECHO Running NET tests...
 "%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net\Test.Amqp.Net.dll
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
@@ -175,6 +178,19 @@ IF %ERRORLEVEL% NEQ 0 (
   GOTO :exit
 )
 
+ECHO.
+ECHO Running NET35 tests...
+"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net35\Test.Amqp.Net35.dll
+IF %ERRORLEVEL% NEQ 0 (
+  SET return-code=%ERRORLEVEL%
+  ECHO Test failed!
+  TASKKILL /F /IM TestAmqpBroker.exe
+  IF /I "%is-elevated%" == "false" ECHO WebSocket tests may be failing because the broker was started without Administrator permission
+  GOTO :exit
+)
+
+ECHO.
+ECHO Running DOTNET (.Net Core 1.0) tests...
 IF /I "%build-dotnet%" EQU "false" GOTO done-test
 "%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp
 IF %ERRORLEVEL% NEQ 0 (
