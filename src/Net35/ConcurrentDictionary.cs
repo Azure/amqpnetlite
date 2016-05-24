@@ -28,14 +28,6 @@ namespace System.Collections.Concurrent
             this.syncRoot = new object();
         }
 
-        public new bool TryGetValue(TKey key, out TValue value)
-        {
-            lock (this.syncRoot)
-            {
-                return this.TryGetValue(key, out value);
-            }
-        }
-
         public TValue GetOrAdd(TKey key, TValue value)
         {
             lock (this.syncRoot)
