@@ -6,13 +6,13 @@
             "Program.cs",
             "Attribute.cs",
             "../../src/Net/TypeExtensions.cs",
-            "../../test/Test.Amqp.NetMF/TestRunner.cs",
-            "../../test/Test.Amqp.NetMF/Assert.cs",
-            "../../test/Test.Amqp.NetMF/LinkTests.cs",
-            "../../test/Test.Amqp.NetMF/UtilityTests.cs",
-            "../../test/Test.Amqp.Net/ContainerHostTests.cs",
-            "../../test/Test.Amqp.Net/Types/*.cs",
-            "../../test/Test.Amqp.Net/AmqpSerializerTests.cs"
+            "../../test/Common/TestRunner.cs",
+            "../../test/Common/Assert.cs",
+            "../../test/Common/LinkTests.cs",
+            "../../test/Common/UtilityTests.cs",
+            "../../test/Common/ContainerHostTests.cs",
+            "../../test/Common/Types/*.cs",
+            "../../test/Common/AmqpSerializerTests.cs"
         ],
         "emitEntryPoint": true,
         "define": [ "DOTNET" ]

@@ -33,12 +33,20 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="Assert.cs" />
-    <Compile Include="LinkTests.cs" />
-    <Compile Include="TestRunner.cs" />
+    <Compile Include="..\Common\Assert.cs">
+      <Link>Assert.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\LinkTests.cs">
+      <Link>LinkTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TestRunner.cs">
+      <Link>TestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\UtilityTests.cs">
+      <Link>UtilityTests.cs</Link>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UtilityTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">

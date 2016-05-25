@@ -114,7 +114,7 @@
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Test.Amqp.NetMF\LinkTests.cs">
+    <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
     <Compile Include="..\Test.Amqp.Net\TaskTests.cs">
