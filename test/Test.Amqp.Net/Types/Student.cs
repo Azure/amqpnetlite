@@ -23,7 +23,7 @@ namespace Test.Amqp
     [AmqpContract(Name = "test.amqp:student", Code = 0x0000123400000001)]
     class Student : Person
     {
-        Student() : base(null) { }
+        public Student() : base(null) { }
 
         public Student(string name)
             : base(name)

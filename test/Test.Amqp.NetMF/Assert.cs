@@ -31,4 +31,36 @@ namespace Test.Amqp
         }
 #endif
     }
+
+#if DOTNET
+    static class CollectionAssert
+    {
+        public static void AreEqual(System.Collections.ICollection expected, System.Collections.ICollection actual)
+        {
+            if (expected == null && actual == null)
+            {
+                return;
+            }
+
+            if (expected == null || actual == null)
+            {
+                Assert.IsTrue(false, expected == null ? "expected" : "actual" + " is null");
+            }
+
+            Assert.AreEqual(expected.Count, actual.Count, "Count not equal");
+
+            var ie = expected.GetEnumerator();
+            var ia = actual.GetEnumerator();
+            while (true)
+            {
+                bool b1 = ie.MoveNext();
+                bool b2 = ia.MoveNext();
+                Assert.AreEqual(b1, b2);
+
+                if (!b1) break;
+                Assert.AreEqual(ie.Current, ia.Current);
+            }
+        }
+    }
+#endif
 }

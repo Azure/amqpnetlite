@@ -444,6 +444,7 @@ namespace Test.Amqp
                 (x, y) => CollectionAssert.AreEqual(x, y));
         }
 
+#if !DOTNET
         [TestMethod]
         public void MessageSerializationTest()
         {
@@ -483,6 +484,7 @@ namespace Test.Amqp
 
             Assert.AreEqual("pass", result);
         }
+#endif
 
         [TestMethod()]
         public void AmqpSerializerNegativeTest()
@@ -526,7 +528,6 @@ namespace Test.Amqp
             }
             catch (SerializationException e)
             {
-                System.Diagnostics.Trace.WriteLine("Caught exception " + e.Message);
                 Assert.IsTrue(e.Message.Contains(error));
             }
         }

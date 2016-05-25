@@ -47,15 +47,14 @@ namespace Test.Amqp
             get { return new Address(this.Uri.AbsoluteUri); }
         }
 
-        [ClassInitialize]
-        public static void Initialize(TestContext context)
+        static ContainerHostTests()
         {
             //Trace.TraceLevel = TraceLevel.Frame;
             //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
         }
 
         [TestInitialize]
-        public void Initialize()
+        public void TestInitialize()
         {
             // pick a port other than 5762 so that it doesn't conflict with the test broker
             this.Uri = new Uri("amqp://guest:guest@localhost:5765");
@@ -67,7 +66,7 @@ namespace Test.Amqp
         }
 
         [TestCleanup]
-        public void Cleanup()
+        public void TestCleanup()
         {
             if (this.host != null)
             {
@@ -78,7 +77,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostMessageProcessorTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostMessageProcessorTest";
             var processor = new TestMessageProcessor();
             this.host.RegisterMessageProcessor(name, processor);
 
@@ -109,7 +108,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostMessageSourceTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostMessageSourceTest";
             int count = 100;
             Queue<Message> messages = new Queue<Message>();
             for (int i = 0; i < count; i++)
@@ -160,7 +159,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostRequestProcessorTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostRequestProcessorTest";
             var processor = new TestRequestProcessor();
             this.host.RegisterRequestProcessor(name, processor);
 
@@ -216,7 +215,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostLinkProcessorTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostLinkProcessorTest";
             this.host.RegisterLinkProcessor(new TestLinkProcessor());
 
             int count = 80;
@@ -239,7 +238,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostTargetLinkEndpointTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostTargetLinkEndpointTest";
             List<Message> messages = new List<Message>();
             this.host.RegisterLinkProcessor(
                 new TestLinkProcessor(link => new TargetLinkEndpoint(new TestMessageProcessor(50, messages), link)));
@@ -266,7 +265,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostSourceLinkEndpointTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostSourceLinkEndpointTest";
             int count = 100;
             Queue<Message> messages = new Queue<Message>();
             for (int i = 0; i < count; i++)
@@ -312,7 +311,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostProcessorOrderTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostProcessorOrderTest";
             List<Message> messages = new List<Message>();
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(50, messages));
             this.host.RegisterLinkProcessor(new TestLinkProcessor());
@@ -357,7 +356,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostUnknownProcessorTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostUnknownProcessorTest";
             this.host.RegisterMessageProcessor("message" + name, new TestMessageProcessor());
             this.host.RegisterRequestProcessor("request" + name, new TestRequestProcessor());
 
@@ -384,7 +383,6 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostIncorrectProcessorTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
             this.host.RegisterMessageProcessor("message-processor", new TestMessageProcessor());
             this.host.RegisterMessageSource("message-source", new TestMessageSource(new Queue<Message>()));
             Error error;
@@ -428,7 +426,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostDefaultValueTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostDefaultValueTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
 
             Open remoteOpen = null;
@@ -460,7 +458,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostMultiplexingTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostMultiplexingTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
 
             int completed = 0;
@@ -489,7 +487,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostCloseTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostCloseTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
 
             //Create a client to send data to the host message processor
@@ -539,7 +537,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostSessionFlowControlTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostSessionFlowControlTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
 
             // this test assumes that nMsgs is greater than session's window size
@@ -562,7 +560,7 @@ namespace Test.Amqp
         [TestMethod]
         public void DuplicateLinkNameSameSessionTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "DuplicateLinkNameSameSessionTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
 
             string linkName = "same-send-link";
@@ -589,7 +587,7 @@ namespace Test.Amqp
         [TestMethod]
         public void DuplicateLinkNameSameConnectionTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "DuplicateLinkNameSameConnectionTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
 
             string linkName = "same-send-link";
@@ -619,7 +617,7 @@ namespace Test.Amqp
         [TestMethod]
         public void DuplicateLinkNameDifferentContainerTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "DuplicateLinkNameDifferentContainerTest";
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(500000, null));
 
             string linkName = "same-send-link";
@@ -641,7 +639,7 @@ namespace Test.Amqp
         [TestMethod]
         public void DuplicateLinkNameDifferentRoleTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "DuplicateLinkNameDifferentRoleTest";
             this.host.RegisterLinkProcessor(new TestLinkProcessor());
 
             string linkName = "same-link-for-different-role";
@@ -663,7 +661,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostSaslAnonymousTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostSaslAnonymousTest";
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
             linkProcessor.OnLinkAttached += a => link = a;
@@ -685,7 +683,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostPlainPrincipalTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostPlainPrincipalTest";
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
             linkProcessor.OnLinkAttached += a => link = a;
@@ -706,7 +704,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostX509PrincipalTest()
         {
-            string name = MethodInfo.GetCurrentMethod().Name;
+            string name = "ContainerHostX509PrincipalTest";
             string address = "amqps://localhost:5676";
             X509Certificate2 cert = GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
             ContainerHost sslHost = new ContainerHost(new Uri(address));
@@ -787,6 +785,7 @@ namespace Test.Amqp
             listener.Close();
         }
 
+#if !DOTNET
         [TestMethod]
         public void ContainerHostWebSocketWildCardAddressTest()
         {
@@ -808,7 +807,6 @@ namespace Test.Amqp
                 System.Diagnostics.Trace.WriteLine("If the test fails with System.Net.HttpListenerException (0x80004005): Access is denied");
                 System.Diagnostics.Trace.WriteLine("Run the following command with admin privilege:");
                 System.Diagnostics.Trace.WriteLine("netsh http add urlacl url=http://+:28080/test/ user=domain\\user");
-
                 throw;
             }
             finally
@@ -816,6 +814,7 @@ namespace Test.Amqp
                 host.Close();
             }
         }
+#endif
 
         static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
         {
@@ -830,7 +829,11 @@ namespace Test.Amqp
                 throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
             }
 
+#if DOTNET
+            store.Dispose();
+#else
             store.Close();
+#endif
             return collection[0];
         }
     }

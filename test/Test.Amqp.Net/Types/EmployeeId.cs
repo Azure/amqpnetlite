@@ -30,6 +30,8 @@ namespace Test.Amqp
             this.uuid = uuid;
         }
 
+        public EmployeeId() { }
+
         public int EncodeSize
         {
             get { return 16; }

@@ -26,6 +26,10 @@ namespace Test.Amqp
     [AmqpProvides(typeof(Teacher))]
     class Person
     {
+        public Person()
+        {
+        }
+
         public Person(string name)
         {
             this.Name = name;

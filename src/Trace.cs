@@ -48,7 +48,12 @@ namespace Amqp
         /// <summary>
         /// Specifies that AMQP frames should be traced.
         /// </summary>
-        Frame = 0x10
+        Frame = 0x10,
+
+        /// <summary>
+        /// Specifies that application output should be traced.
+        /// </summary>
+        Output = 0x80
     }
 
     /// <summary>

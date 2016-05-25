@@ -25,7 +25,7 @@ using System.Threading;
 #if NETFX
 using System.Threading.Tasks;
 #endif
-#if NETFX || NETFX35
+#if NETFX || NETFX35 || DOTNET
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 #if NETFX_CORE
@@ -35,7 +35,7 @@ using System.Threading.Tasks;
 
 namespace Test.Amqp
 {
-#if NETFX || NETFX35 || NETFX_CORE
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
     [TestClass]
 #endif
     public class LinkTests

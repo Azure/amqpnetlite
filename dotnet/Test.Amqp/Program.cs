@@ -8,7 +8,7 @@ namespace Test.Amqp
     {
         public static int Main(string[] args)
         {
-            AmqpTrace.TraceLevel = TraceLevel.Information;
+            AmqpTrace.TraceLevel = TraceLevel.Output;
             AmqpTrace.TraceListener = Program.WriteTrace;
             Connection.DisableServerCertValidation = true;
 
