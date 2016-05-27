@@ -30,19 +30,11 @@
     },
 
     "frameworks": {
-        "dnx451": {
-            "buildOptions": {
-                "define": [ "TRACE", "NETFX" ]
-            },
-            "frameworkAssemblies": {
-                "System": "",
-                "System.Transactions": ""
-            }
-        },
-        "dnxcore50": {
+        "netstandard1.3": {
             "buildOptions": {
                 "define": [ "TRACE", "DOTNET" ]
-            }
+            },
+            "imports": [ "dnxcore50" ]
         }
     }
 }
