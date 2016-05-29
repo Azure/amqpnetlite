@@ -10,7 +10,7 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * A lightweight messaging library that runs on all popular .NET and Windows Runtime platforms
 
 ## Supported Platforms
-|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451/uwp | dnxcore50<sup>4</sup> |
+|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451/uwp | netstandard1.3<sup>4</sup> |
 |------------|:-----:|:-----:|:-----:|:-----:|:-----:|:--------:|:----------:|:----------:|
 | TLS        |  +    |   +   |   +   |   +<sup>1</sup>  |   +   |    +     |     +      |     +      |
 | SASL<sup>2</sup>      |  +    |   +   |   +   |   +   |   +   |    +     |     +      |     +      |
@@ -24,26 +24,29 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 1. requires a TLS-capable device.
 2. only SASL PLAIN and SASL EXTERNAL are currently supported.
 3. requires Microsoft.Bcl.Async.
-4. experimenting (not available in the NuGet package)
+4. available in github release v1.1.9-rc. Please download the NuGet package and include the location directory in your NuGet sources list.
 
 ## Tested Platforms
-* .Net Framework (up to 4.5) 
-* .NET Micro Framework 4.2 and 4.3 
+* .Net Framework 3.5, 4.0 and 4.5+.
+* .NET Micro Framework 4.2, 4.3, 4.4 
 * .NET Compact Framework 3.9
-* Windows Phone 8 and 8.1
+* Windows Phone 8 and 8.1. Windows Universal App 10.
+* .Net Core 1.0 RC2.
 * Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown.)
 
-## Documentation
-* [Articles and API Documentation](http://azure.github.io/amqpnetlite/)
-
 ## Getting Started
-* Prerequisites:
-  * Visual Studio 2013 (e.g. Community Edition)
-  * NETMF SDK (4.2-4.4) and Visual Studio project system
-  * Application Builder for Windows Embedded Compact 2013
-  * NuGet tools if you want to build the NuGet package
-* Build: from inside Visual Studio or by running build.cmd script
-* Examples: refer to the examples for common scenarios.
+* [Articles and API Documentation](http://azure.github.io/amqpnetlite/)
+* [Examples](https://github.com/Azure/amqpnetlite/tree/master/Examples) Please take a minute to look at the examples.
+* [.Net Core](https://github.com/Azure/amqpnetlite/tree/master/dotnet) If you are looking for information about using amqpnetlite on .Net Core (coreclr, dnxcore50, etc.), your can find the code and a Hello AMQP! example here.
+* Interested in the code?  
+  * Prerequisites:  
+    * Visual Studio 2013 (e.g. Community Edition), and optionally  
+    * NETMF SDK (4.2-4.4) and Visual Studio project system  
+    * Application Builder for Windows Embedded Compact 2013  
+    * dotnet/cli for building and testing dotnet projects  
+    * NuGet tools if you want to build the NuGet package  
+  * If you don't have netmf, netcf, dotnet/cli installed, you can still build the .Net projects in Visual Studio.  
+  * To run the build.cmd script to do a full build and test, you need all the prerequisites.  
 
 ## References
 For more information about the Azure Service Bus and AMQP, refer to:
