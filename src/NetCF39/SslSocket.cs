@@ -380,16 +380,34 @@ namespace Amqp
     /// </summary>
     public enum SslPolicyErrors
     {
+        /// <summary>
+        /// No SSL validation error.
+        /// </summary>
         SslErrOkay = 0,
+
+        /// <summary>
+        /// SSL validation failed.
+        /// </summary>
         SslErrFailed = 2,
-        SslErrBadLen = 3,
+
+        /// <summary>
+        /// The remote certificate is not an X509 certificate.
+        /// </summary>
         SslErrBadType = 4,
+
+        /// <summary>
+        /// An X509 certificate cannot be created from the received data.
+        /// </summary>
         SslErrBadData = 5,
-        SslErrNoCert = 6,
-        SslErrBadSig = 7,
+
+        /// <summary>
+        /// The certificate has expired.
+        /// </summary>
         SslErrCertExpired = 8,
-        SslErrCertRevoked = 9,
+
+        /// <summary>
+        /// The certificate issuer is unknown.
+        /// </summary>
         SslErrCertUnknown = 10,
-        SslErrSignature = 11
     }
 }

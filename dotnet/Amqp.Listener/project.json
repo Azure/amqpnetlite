@@ -8,6 +8,7 @@
             "../../src/Listener/*.cs"
         ],
         "warningsAsErrors": true,
+        "xmlDoc": true,
         "keyFile": "../../src/amqp.snk",
         "publicSign": true
     },

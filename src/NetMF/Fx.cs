@@ -23,15 +23,28 @@ namespace Amqp
     using System.Threading;
     using Microsoft.SPOT;
 
-    // Framework specific routines
+    /// <summary>
+    /// Provides framework specific routines.
+    /// </summary>
     public static class Fx
     {
+        /// <summary>
+        /// Asserts a condition is true.
+        /// </summary>
+        /// <param name="condition">A boolean value indicating the condition.</param>
+        /// <param name="message">The error message if condition is not met.</param>
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
             Debug.Assert(condition, message);
         }
 
+        /// <summary>
+        /// Formats a string from a format and an array of arguments.
+        /// </summary>
+        /// <param name="format">The format string.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
         public static string Format(string format, params object[] args)
         {
             if (args == null || args.Length == 0)
@@ -64,11 +77,22 @@ namespace Amqp
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Starts a new thread.
+        /// </summary>
+        /// <param name="threadStart">The thread start callback.</param>
         public static void StartThread(ThreadStart threadStart)
         {
             new Thread(threadStart).Start();
         }
 
+        /// <summary>
+        /// Blocks the current thread until the current System.Threading.WaitHandle receives
+        /// a signal, using a 32-bit signed integer to specify the time interval.
+        /// </summary>
+        /// <param name="mre">The ManualResetEvent object to wait on.</param>
+        /// <param name="milliseconds">The number of milliseconds to wait (-1 for infinite)</param>
+        /// <returns></returns>
         public static bool WaitOne(this ManualResetEvent mre, int milliseconds)
         {
             return mre.WaitOne(milliseconds, false);

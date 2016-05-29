@@ -167,6 +167,9 @@ namespace Amqp.Framing
             this.valueBuffer = new ByteBuffer(buffer.Buffer, offset, size, size);
         }
 #else
+        /// <summary>
+        /// Gets or sets the value in the body section.
+        /// </summary>
         public object Value
         {
             get { return this.value; }

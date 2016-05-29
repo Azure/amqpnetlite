@@ -19,8 +19,15 @@ namespace Amqp
 {
     using System;
 
+    /// <summary>
+    /// The exception that is thrown when the time allotted for a process or operation
+    /// has expired.
+    /// </summary>
     public class TimeoutException : Exception
     {
+        /// <summary>
+        /// Initializes a new instance of the System.TimeoutException class.
+        /// </summary>
         public TimeoutException()
             : base(SRAmqp.AmqpTimeout)
         {

@@ -84,6 +84,9 @@ namespace Amqp.Framing
             this.Buffer = Encoder.ReadBinaryBuffer(buffer);
         }
 #else
+        /// <summary>
+        /// Gets or sets the binary data in this section.
+        /// </summary>
         public byte[] Binary
         {
             get { return this.binary; }

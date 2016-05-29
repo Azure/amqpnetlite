@@ -20,36 +20,44 @@ namespace Amqp
     using System.Diagnostics;
     using System.Threading;
 
-    // Framework specific routines
+    /// <summary>
+    /// Provides framework specific routines.
+    /// </summary>
     public static class Fx
     {
+        /// <summary>
+        /// Asserts a condition is true.
+        /// </summary>
+        /// <param name="condition">A boolean value indicating the condition.</param>
+        /// <param name="message">The error message if condition is not met.</param>
         [Conditional("DEBUG")]
         public static void Assert(bool condition, string message)
         {
             Debug.Assert(condition, message);
         }
 
-        public static bool WaitOne(this WaitHandle waithandle, int msTimeout, bool unused)
-        {
-            return waithandle.WaitOne(msTimeout);
-        }
-
+        /// <summary>
+        /// Formats a string from a format and an array of arguments.
+        /// </summary>
+        /// <param name="format">The format string.</param>
+        /// <param name="args">The arguments.</param>
+        /// <returns></returns>
         public static string Format(string format, params object[] args)
         {
             return string.Format(format, args);
         }
 
 #if WINDOWS_PHONE
-        public static void StartThread(ThreadStart threadStart)
+        internal static void StartThread(ThreadStart threadStart)
         {
             ThreadPool.QueueUserWorkItem(
                 o => { ((ThreadStart)o)(); },
                 threadStart);
         }
 #else
-        public delegate void ThreadStart();
+        internal delegate void ThreadStart();
 
-        public static void StartThread(ThreadStart threadStart)
+        internal static void StartThread(ThreadStart threadStart)
         {
             System.Threading.Tasks.Task.Factory.StartNew(o => ((ThreadStart)o)(), threadStart);
         }

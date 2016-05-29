@@ -136,7 +136,7 @@ IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   GOTO :exit
 )
-CALL "%dotnetPath%" build dotnet\Amqp.Listener --configuration %build-config% --build-base-path bin\dotnet
+CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.Listener dotnet/Test.Amqp --configuration %build-config% --build-base-path obj
 IF %ERRORLEVEL% NEQ 0 (
   ECHO dotnet build failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
