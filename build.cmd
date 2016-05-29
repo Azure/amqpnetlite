@@ -106,7 +106,7 @@ GOTO :exit
 
 :build-sln
 FOR /F "tokens=1-3* delims=() " %%A in (.\src\Properties\Version.cs) do (
-  IF "%%B" == "AssemblyVersion" SET build-version=%%C
+  IF "%%B" == "AssemblyInformationalVersion" SET build-version=%%C
 )
 IF "%build-version%" == "" (
   ECHO Cannot find version from Version.cs.
@@ -136,7 +136,7 @@ IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   GOTO :exit
 )
-CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.Listener dotnet/Test.Amqp --configuration %build-config% --build-base-path obj
+CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.Listener dotnet/Test.Amqp --configuration %build-config%
 IF %ERRORLEVEL% NEQ 0 (
   ECHO dotnet build failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
