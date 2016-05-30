@@ -24,7 +24,7 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 1. requires a TLS-capable device.
 2. only SASL PLAIN and SASL EXTERNAL are currently supported.
 3. requires Microsoft.Bcl.Async.
-4. available in github release v1.1.9-rc. Please download the NuGet package and include the location directory in your NuGet sources list.
+4. pre-release. (v1.1.9-rc).
 
 ## Tested Platforms
 * .Net Framework 3.5, 4.0 and 4.5+.
