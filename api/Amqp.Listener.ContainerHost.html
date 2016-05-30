@@ -68,11 +68,11 @@
             <article class="content wrap" id="_content">
               
               <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L46" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L76" class="btn btn-primary pull-right mobile-hide">View Source</a>
               <h1 id="Amqp_Listener_ContainerHost" data-uid="Amqp.Listener.ContainerHost">Class ContainerHost
               </h1>
-              <div class="markdown level0 summary"><p>The ContainerHost class hosts an AMQP container where connection listeners can be
-created to accept client requests.</p>
+              <div class="markdown level0 summary"><p>The ContainerHost class hosts an AMQP container where connection
+listeners can be created to accept client requests.</p>
 </div>
               <div class="markdown level0 conceptual"></div>
               <div class="inheritance">
@@ -87,28 +87,96 @@ created to accept client requests.</p>
                 <pre><code class="lang-csharp hljs">public class ContainerHost : IContainer</code></pre>
               </div>
               <h5 id="Amqp_Listener_ContainerHost_remarks"><strong>Remarks</strong></h5>
-              <div class="markdown level0 remarks"><p>A container has one or more connection endpoints where transport listeners are created.
-Message processors can be registered to accept incoming messages (one-way).
-Request processors can be registered to process request messages and send back response
-messages (two-way).
-Link processor can be registered to process received attach performatives. This is
-useful in implementing scenarios such as:
-(1) Extra resource allocation and/or additional validation of the request is required.
-(2) Accept receiving links from the client. The listener acts as the message source.
-Upon receiving an attach performative, the registered message processor(s)
-and request processor(s) are checked first. If a processor matches the address
-on the received attach performative, it is invoked to handle the command.
-Otherwise, the registered link processor, if any, is invoked to handle the command.
-When no processor is found, the link is detached with error &quot;amqp:not-found&quot;.</p>
+              <div class="markdown level0 remarks"><p>A container has one or more connection endpoints where transport
+listeners are created.</p>
+<p>Message-level Processing</p>
+<ul>
+<li>IMessageProcessor: message processors can be registered to accept
+incoming messages (one-way incoming).</li>
+<li>IMessageSource: message sources can be registered to handle
+receive requests (one-way outgoing).</li>
+<li>IRequestProcessor: request processors can be registered to
+process request messages and send back response (two-way).</li>
+</ul>
+<p>Link-level Processing
+Message level processing only deals with incoming and outgoing messages
+without worrying about the links.</p>
+<ul>
+<li>ILinkProcessor: link processors can be registered to process received
+attach performatives. This is useful when the application needs to
+participate in link attach/detach for extra resource allocation/cleanup,
+or perform additional validation and security enforcement at the link level.</li>
+<li>Link processors create LinkEndpoint objects which can be either message
+sink or message source. Application can create custom LinkEndpoint class
+to handle all link events (flow, transfer and disposition). However, it
+is recommended to use the built-in LinkEndpoint classes.</li>
+<li>TargetLinkEndpoint: a TargetLinkEndpoint simply forwards the request
+to the IMessgeProcessor.</li>
+<li>SourceLinkEndpoint: a SourceLinkEndpoint manages link credit and
+transforms flow state into a receive loop on the IMessageSource. Delivery
+acknowledgements are simply forwarded to the IMessageSource.</li>
+</ul>
+<p>When per-link handling is required, it is recommended to combine message
+level processing with link level processing.</p>
+<ul>
+<li>An IMessageProcessor/Souce should be implemented.</li>
+<li>After the link attach is handled, wrap it in a Target/SourceLinkEndpoint
+that works with the previously implemented message processor or source.</li>
+</ul>
+<p>Upon receiving an attach performative, the registered message level
+processors (IMessageProcessor, IMessageSource, IRequestProcessor) are
+checked first. If a processor matches the address on the received attach
+performative, a link is automatically created and the send/receive requests
+will be rounted to the associated processor.
+Otherwise, the registered link processor, if any, is invoked to create a
+LinkEndpoint, where subsequent send/receive requests will be routed.
+When none is found, the link is detached with error &quot;amqp:not-found&quot;.</p>
 </div>
               <h3 id="constructors">Constructors
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_String__.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.%23ctor(System.Collections.Generic.IList%7BSystem.String%7D)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L95">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_String__" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{System.String})">ContainerHost(IList&lt;String&gt;)</h4>
+              <div class="markdown level1 summary"><p>Initializes a container host object with multiple address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_String___remarks">Remarks</h5>
+              <div class="markdown level1 remarks"><p>Transport and protocol settings (TCP, SSL, SASL and AMQP) can be
+set on the listeners of the host after it is created.</p>
+</div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public ContainerHost(IList&lt;string&gt; addressList)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Collections.Generic.IList</span>&lt;<span class="xref">System.String</span>&gt;</td>
+                    <td><em>addressList</em></td>
+                    <td><p>The list of listen addresses.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_Uri__System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.%23ctor(System.Collections.Generic.IList%7BSystem.Uri%7D%2CSystem.Security.Cryptography.X509Certificates.X509Certificate2%2CSystem.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L72">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L128">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_Uri__System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{System.Uri},System.Security.Cryptography.X509Certificates.X509Certificate2,System.String)">ContainerHost(IList&lt;Uri&gt;, X509Certificate2, String)</h4>
               <div class="markdown level1 summary"><p>Initializes a container host object with multiple address.</p>
@@ -143,7 +211,8 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                   <tr>
                     <td><span class="xref">System.String</span></td>
                     <td><em>userInfo</em></td>
-                    <td><p>The credentials required by SASL PLAIN authentication. It is of form &quot;user:password&quot;.</p>
+                    <td><p>The credentials required by SASL PLAIN authentication. It is of
+form &quot;user:password&quot; (parts are URL encoded).</p>
 </td>
                   </tr>
                 </tbody>
@@ -153,7 +222,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost__ctor_System_Uri_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.%23ctor(System.Uri)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L61">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L116">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost__ctor_System_Uri_" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Uri)">ContainerHost(Uri)</h4>
               <div class="markdown level1 summary"><p>Initializes a container host object with one address.</p>
@@ -176,7 +245,8 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                   <tr>
                     <td><span class="xref">System.Uri</span></td>
                     <td><em>addressUri</em></td>
-                    <td><p>The address Url. Only the scheme, host and port parts are used. Supported schema are &quot;amqp&quot;, &quot;amqps&quot;, &quot;ws&quot; and &quot;wss&quot;.</p>
+                    <td><p>The address Uri. Only the scheme, host and port parts are used.
+Supported schema are &quot;amqp&quot;, &quot;amqps&quot;, &quot;ws&quot; and &quot;wss&quot;.</p>
 </td>
                   </tr>
                 </tbody>
@@ -188,7 +258,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_ServiceCertificate.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23ServiceCertificate%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L220">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L313">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_ServiceCertificate" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#ServiceCertificate">IContainer.ServiceCertificate</h4>
               <div class="markdown level1 summary"></div>
@@ -220,7 +290,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Listeners.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Listeners%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L91">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L141">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Listeners" data-uid="Amqp.Listener.ContainerHost.Listeners">Listeners</h4>
               <div class="markdown level1 summary"><p>Gets a list of connection listeners in this container.</p>
@@ -255,7 +325,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_AttachLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Link_Amqp_Framing_Attach_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23AttachLink(Amqp.Listener.ListenerConnection%2CAmqp.Listener.ListenerSession%2CAmqp.Link%2CAmqp.Framing.Attach)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L237">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L331">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_AttachLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Link_Amqp_Framing_Attach_" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#AttachLink(Amqp.Listener.ListenerConnection,Amqp.Listener.ListenerSession,Amqp.Link,Amqp.Framing.Attach)">IContainer.AttachLink(ListenerConnection, ListenerSession, Link, Attach)</h4>
               <div class="markdown level1 summary"></div>
@@ -316,7 +386,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23CreateLink(Amqp.Listener.ListenerConnection%2CAmqp.Listener.ListenerSession%2CAmqp.Framing.Attach)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L230">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L324">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#CreateLink(Amqp.Listener.ListenerConnection,Amqp.Listener.ListenerSession,Amqp.Framing.Attach)">IContainer.CreateLink(ListenerConnection, ListenerSession, Attach)</h4>
               <div class="markdown level1 summary"></div>
@@ -372,7 +442,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateMessage_Amqp_ByteBuffer_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Amqp%23Listener%23IContainer%23CreateMessage(Amqp.ByteBuffer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L225">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L319">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Amqp_Listener_IContainer_CreateMessage_Amqp_ByteBuffer_" data-uid="Amqp.Listener.ContainerHost.Amqp#Listener#IContainer#CreateMessage(Amqp.ByteBuffer)">IContainer.CreateMessage(ByteBuffer)</h4>
               <div class="markdown level1 summary"></div>
@@ -418,7 +488,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Close.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Close%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L110">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L160">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Close" data-uid="Amqp.Listener.ContainerHost.Close">Close()</h4>
               <div class="markdown level1 summary"><p>Closes the container host object.</p>
@@ -433,7 +503,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_Open.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.Open%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L99">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L149">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_Open" data-uid="Amqp.Listener.ContainerHost.Open">Open()</h4>
               <div class="markdown level1 summary"><p>Opens the container host object.</p>
@@ -448,7 +518,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterLinkProcessor_Amqp_Listener_ILinkProcessor_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterLinkProcessor(Amqp.Listener.ILinkProcessor)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L129">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L179">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_RegisterLinkProcessor_Amqp_Listener_ILinkProcessor_" data-uid="Amqp.Listener.ContainerHost.RegisterLinkProcessor(Amqp.Listener.ILinkProcessor)">RegisterLinkProcessor(ILinkProcessor)</h4>
               <div class="markdown level1 summary"><p>Registers a link process to handle received attach performatives.</p>
@@ -481,7 +551,7 @@ When no processor is found, the link is detached with error &quot;amqp:not-found
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterMessageProcessor_System_String_Amqp_Listener_IMessageProcessor_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterMessageProcessor(System.String%2CAmqp.Listener.IMessageProcessor)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L145">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L195">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_RegisterMessageProcessor_System_String_Amqp_Listener_IMessageProcessor_" data-uid="Amqp.Listener.ContainerHost.RegisterMessageProcessor(System.String,Amqp.Listener.IMessageProcessor)">RegisterMessageProcessor(String, IMessageProcessor)</h4>
               <div class="markdown level1 summary"><p>Registers a message processor to accept incoming messages from the specified address.
@@ -518,10 +588,50 @@ When it is called, the container creates a node where the client can attach.</p>
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterMessageSource_System_String_Amqp_Listener_IMessageSource_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterMessageSource(System.String%2CAmqp.Listener.IMessageSource)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L207">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_RegisterMessageSource_System_String_Amqp_Listener_IMessageSource_" data-uid="Amqp.Listener.ContainerHost.RegisterMessageSource(System.String,Amqp.Listener.IMessageSource)">RegisterMessageSource(String, IMessageSource)</h4>
+              <div class="markdown level1 summary"><p>Registers a message source at the specified address where client receives messages.
+When it is called, the container creates a node where the client can attach.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void RegisterMessageSource(string address, IMessageSource messageSource)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.IMessageSource.html#Amqp_Listener_IMessageSource">IMessageSource</a></td>
+                    <td><em>messageSource</em></td>
+                    <td><p>The message source to be registered.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.RegisterRequestProcessor(System.String%2CAmqp.Listener.IRequestProcessor)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L160">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L223">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor_" data-uid="Amqp.Listener.ContainerHost.RegisterRequestProcessor(System.String,Amqp.Listener.IRequestProcessor)">RegisterRequestProcessor(String, IRequestProcessor)</h4>
               <div class="markdown level1 summary"><p>Registers a request processor from the specified address.</p>
@@ -565,7 +675,7 @@ and it should be specified in target.address on the receiving link.</p>
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_UnregisterMessageProcessor_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.UnregisterMessageProcessor(System.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L169">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L234">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_UnregisterMessageProcessor_System_String_" data-uid="Amqp.Listener.ContainerHost.UnregisterMessageProcessor(System.String)">UnregisterMessageProcessor(String)</h4>
               <div class="markdown level1 summary"><p>Unregisters a message processor at the specified address.</p>
@@ -595,10 +705,43 @@ and it should be specified in target.address on the receiving link.</p>
               </table>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_UnregisterMessageSource_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.UnregisterMessageSource(System.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L243">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ContainerHost_UnregisterMessageSource_System_String_" data-uid="Amqp.Listener.ContainerHost.UnregisterMessageSource(System.String)">UnregisterMessageSource(String)</h4>
+              <div class="markdown level1 summary"><p>Unregisters a message source at the specified address.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public void UnregisterMessageSource(string address)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ContainerHost_UnregisterRequestProcessor_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ContainerHost.UnregisterRequestProcessor(System.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L178">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ContainerHost.cs/#L252">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ContainerHost_UnregisterRequestProcessor_System_String_" data-uid="Amqp.Listener.ContainerHost.UnregisterRequestProcessor(System.String)">UnregisterRequestProcessor(String)</h4>
               <div class="markdown level1 summary"><p>Unregisters a request processor at the specified address.</p>

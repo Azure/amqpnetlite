@@ -90,18 +90,62 @@
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.%23ctor(System.Uri%2CSystem.String%2CAmqp.Listener.IContainer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener__ctor_System_String_Amqp_Listener_IContainer_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.%23ctor(System.String%2CAmqp.Listener.IContainer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L55">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L60">View Source</a>
               </span>
-              <h4 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.Uri,System.String,Amqp.Listener.IContainer)">ConnectionListener(Uri, String, IContainer)</h4>
+              <h4 id="Amqp_Listener_ConnectionListener__ctor_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.String,Amqp.Listener.IContainer)">ConnectionListener(String, IContainer)</h4>
               <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ConnectionListener(Uri addressUri, string userInfo, IContainer container)</code></pre>
+                <pre><code class="lang-csharp hljs">public ConnectionListener(string address, IContainer container)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><em>address</em></td>
+                    <td><p>The address to listen on.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer">IContainer</a></td>
+                    <td><em>container</em></td>
+                    <td><p>The IContainer implementation to handle client requests.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.%23ctor(System.Uri%2CSystem.String%2CAmqp.Listener.IContainer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L76">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.Uri,System.String,Amqp.Listener.IContainer)">ConnectionListener(Uri, String, IContainer)</h4>
+              <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer__remarks">Remarks</h5>
+              <div class="markdown level1 remarks"><p>This constructor is deprecated. To set user info, use ConnectionListener.SASL.EnablePlainMechanism method
+after the connection listener is created.</p>
+</div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ConnectionListener(string, IContainer) instead.&quot;)]
+public ConnectionListener(Uri addressUri, string userInfo, IContainer container)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -116,17 +160,20 @@
                   <tr>
                     <td><span class="xref">System.Uri</span></td>
                     <td><em>addressUri</em></td>
-                    <td></td>
+                    <td><p>The address Uri to listen on.</p>
+</td>
                   </tr>
                   <tr>
                     <td><span class="xref">System.String</span></td>
                     <td><em>userInfo</em></td>
-                    <td></td>
+                    <td><p>The credentials for client authentication using SASL PLAIN mechanism.</p>
+</td>
                   </tr>
                   <tr>
                     <td><a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer">IContainer</a></td>
                     <td><em>container</em></td>
-                    <td></td>
+                    <td><p>The IContainer implementation to handle client requests.</p>
+</td>
                   </tr>
                 </tbody>
               </table>
@@ -137,7 +184,7 @@
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener_Address.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.Address%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L89">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L95">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ConnectionListener_Address" data-uid="Amqp.Listener.ConnectionListener.Address">Address</h4>
               <div class="markdown level1 summary"><p>Gets the address the listener is listening on.</p>
@@ -170,7 +217,7 @@
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener_Container.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.Container%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L81">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L87">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ConnectionListener_Container" data-uid="Amqp.Listener.ConnectionListener.Container">Container</h4>
               <div class="markdown level1 summary"><p>Gets the AMQP container.</p>
@@ -203,7 +250,7 @@
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener_SASL.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.SASL%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L108">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L114">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ConnectionListener_SASL" data-uid="Amqp.Listener.ConnectionListener.SASL">SASL</h4>
               <div class="markdown level1 summary"><p>Gets the SASL settings on the listener.</p>
@@ -236,7 +283,7 @@
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener_SSL.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.SSL%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L97">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L103">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ConnectionListener_SSL" data-uid="Amqp.Listener.ConnectionListener.SSL">SSL</h4>
               <div class="markdown level1 summary"><p>Gets the TLS/SSL settings on the listener.</p>
@@ -271,7 +318,7 @@
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener_Close.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.Close%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L160">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L166">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ConnectionListener_Close" data-uid="Amqp.Listener.ConnectionListener.Close">Close()</h4>
               <div class="markdown level1 summary"><p>Closes the listener.</p>
@@ -286,7 +333,7 @@
                 <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ConnectionListener_Open.md&amp;value=---%0Auid%3A%20Amqp.Listener.ConnectionListener.Open%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L119">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ConnectionListener.cs/#L125">View Source</a>
               </span>
               <h4 id="Amqp_Listener_ConnectionListener_Open" data-uid="Amqp.Listener.ConnectionListener.Open">Open()</h4>
               <div class="markdown level1 summary"><p>Opens the listener.</p>

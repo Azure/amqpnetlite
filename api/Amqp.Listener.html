@@ -88,8 +88,8 @@
                   <section><p>Contains the TLS/SSL settings for a connection.</p>
 </section>
                   <h4><a class="xref" href="Amqp.Listener.ContainerHost.html#Amqp_Listener_ContainerHost">ContainerHost</a></h4>
-                  <section><p>The ContainerHost class hosts an AMQP container where connection listeners can be
-created to accept client requests.</p>
+                  <section><p>The ContainerHost class hosts an AMQP container where connection
+listeners can be created to accept client requests.</p>
 </section>
                   <h4><a class="xref" href="Amqp.Listener.Context.html#Amqp_Listener_Context">Context</a></h4>
                   <section><p>The base class of request context.</p>
@@ -116,8 +116,21 @@ applications.</p>
                   <h4><a class="xref" href="Amqp.Listener.MessageContext.html#Amqp_Listener_MessageContext">MessageContext</a></h4>
                   <section><p>Provides the context to a message processor to process the received message.</p>
 </section>
+                  <h4><a class="xref" href="Amqp.Listener.ReceiveContext.html#Amqp_Listener_ReceiveContext">ReceiveContext</a></h4>
+                  <section><p>Provides the context of a receive request. It is created by a message source
+to track the delivery of an outgoing message.</p>
+</section>
                   <h4><a class="xref" href="Amqp.Listener.RequestContext.html#Amqp_Listener_RequestContext">RequestContext</a></h4>
                   <section><p>Provides the context to a request processor to process the received request.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Listener.SourceLinkEndpoint.html#Amqp_Listener_SourceLinkEndpoint">SourceLinkEndpoint</a></h4>
+                  <section><p>The AMQP link endpoint for a message source. Use this class to attach a link
+endpoint to an IMessageSource for sending outgoing messages. This class manages
+the link credit (flow control).</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Listener.TargetLinkEndpoint.html#Amqp_Listener_TargetLinkEndpoint">TargetLinkEndpoint</a></h4>
+                  <section><p>The AMQP link endpoint for a message target. Use this class to manage links
+attached to an IMessageProcessor.</p>
 </section>
                   <h4><a class="xref" href="Amqp.Listener.X509Identity.html#Amqp_Listener_X509Identity">X509Identity</a></h4>
                   <section><p>Represents an client identity established by SSL client certificate authentication.</p>
@@ -132,6 +145,9 @@ applications.</p>
 </section>
                   <h4><a class="xref" href="Amqp.Listener.IMessageProcessor.html#Amqp_Listener_IMessageProcessor">IMessageProcessor</a></h4>
                   <section><p>Defines the property and methods of a message processor.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.Listener.IMessageSource.html#Amqp_Listener_IMessageSource">IMessageSource</a></h4>
+                  <section><p>Defines the property and methods of a message source.</p>
 </section>
                   <h4><a class="xref" href="Amqp.Listener.IRequestProcessor.html#Amqp_Listener_IRequestProcessor">IRequestProcessor</a></h4>
                   <section><p>Defines the methods of a request processor.</p>

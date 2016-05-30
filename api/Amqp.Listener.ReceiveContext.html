@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class ConnectionFactory.SaslSettings
+    <title>Class ReceiveContext
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class ConnectionFactory.SaslSettings
+    <meta name="title" content="Class ReceiveContext
    ">
     <meta name="generator" content="docfx 1.7.2.0">
     
@@ -67,40 +67,83 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ConnectionFactory_SaslSettings.md&amp;value=---%0Auid%3A%20Amqp.ConnectionFactory.SaslSettings%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Net/ConnectionFactory.cs/#L194" class="btn btn-primary pull-right mobile-hide">View Source</a>
-              <h1 id="Amqp_ConnectionFactory_SaslSettings" data-uid="Amqp.ConnectionFactory.SaslSettings">Class ConnectionFactory.SaslSettings
+              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ReceiveContext.md&amp;value=---%0Auid%3A%20Amqp.Listener.ReceiveContext%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ReceiveContext.cs/#L26" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              <h1 id="Amqp_Listener_ReceiveContext" data-uid="Amqp.Listener.ReceiveContext">Class ReceiveContext
               </h1>
-              <div class="markdown level0 summary"><p>Contains the SASL settings for a connection.</p>
+              <div class="markdown level0 summary"><p>Provides the context of a receive request. It is created by a message source
+to track the delivery of an outgoing message.</p>
 </div>
               <div class="markdown level0 conceptual"></div>
               <div class="inheritance">
                 <h5>Inheritance</h5>
                   <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><span class="xref">ConnectionFactory.SaslSettings</span></div>
+                  <div class="level1"><a class="xref" href="Amqp.Listener.Context.html#Amqp_Listener_Context">Context</a></div>
+                  <div class="level2"><span class="xref">ReceiveContext</span></div>
               </div>
-              <h6><strong>Namespace</strong>:Amqp</h6>
+              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_ConnectionFactory_SaslSettings_syntax">Syntax</h5>
+              <h5 id="Amqp_Listener_ReceiveContext_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class SaslSettings</code></pre>
+                <pre><code class="lang-csharp hljs">public class ReceiveContext : Context</code></pre>
               </div>
-              <h3 id="properties">Properties
+              <h3 id="constructors">Constructors
               </h3>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ConnectionFactory_SaslSettings_Profile.md&amp;value=---%0Auid%3A%20Amqp.ConnectionFactory.SaslSettings.Profile%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ReceiveContext__ctor_Amqp_Listener_ListenerLink_Amqp_Message_.md&amp;value=---%0Auid%3A%20Amqp.Listener.ReceiveContext.%23ctor(Amqp.Listener.ListenerLink%2CAmqp.Message)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
               </span>
               <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Net/ConnectionFactory.cs/#L199">View Source</a>
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ReceiveContext.cs/#L33">View Source</a>
               </span>
-              <h4 id="Amqp_ConnectionFactory_SaslSettings_Profile" data-uid="Amqp.ConnectionFactory.SaslSettings.Profile">Profile</h4>
-              <div class="markdown level1 summary"><p>The SASL profile to use for SASL negotiation.</p>
+              <h4 id="Amqp_Listener_ReceiveContext__ctor_Amqp_Listener_ListenerLink_Amqp_Message_" data-uid="Amqp.Listener.ReceiveContext.#ctor(Amqp.Listener.ListenerLink,Amqp.Message)">ReceiveContext(ListenerLink, Message)</h4>
+              <div class="markdown level1 summary"><p>Initializes a ReceiveContext object.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public SaslProfile Profile
+                <pre><code class="lang-csharp hljs">public ReceiveContext(ListenerLink link, Message message)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Listener.ListenerLink.html#Amqp_Listener_ListenerLink">ListenerLink</a></td>
+                    <td><em>link</em></td>
+                    <td><p>The listener link to send out the message.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
+                    <td><em>message</em></td>
+                    <td><p>The message to send out.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="properties">Properties
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_ReceiveContext_UserToken.md&amp;value=---%0Auid%3A%20Amqp.Listener.ReceiveContext.UserToken%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/ReceiveContext.cs/#L41">View Source</a>
+              </span>
+              <h4 id="Amqp_Listener_ReceiveContext_UserToken" data-uid="Amqp.Listener.ReceiveContext.UserToken">UserToken</h4>
+              <div class="markdown level1 summary"><p>Gets or sets an object that is associated with the receive context.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public object UserToken
 {
     get;
     set;
@@ -116,7 +159,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><a class="xref" href="Amqp.Sasl.SaslProfile.html#Amqp_Sasl_SaslProfile">SaslProfile</a></td>
+                    <td><span class="xref">System.Object</span></td>
                     <td></td>
                   </tr>
                 </tbody>
