@@ -58,4 +58,45 @@ namespace Test.Amqp
         [AmqpMember]
         public SquareRootOperation SquareRoot { get; set; }
     }
+
+    // SimpleList encoded variants of the above
+    [AmqpContract(Encoding = EncodingType.SimpleList)]
+    abstract class ListOperation
+    {
+        [AmqpMember]
+        public string Name;
+
+        [AmqpMember]
+        public int Version { get; set; }
+    }
+
+    [AmqpContract(Encoding = EncodingType.SimpleList)]
+    class ListAddOperation : ListOperation
+    {
+        [AmqpMember]
+        public int Param1;
+
+        [AmqpMember]
+        public int Param2;
+    }
+
+    [AmqpContract(Encoding = EncodingType.SimpleList)]
+    class ListSquareRootOperation : ListOperation
+    {
+        [AmqpMember]
+        public long Param;
+    }
+
+    [AmqpContract(Encoding = EncodingType.SimpleList)]
+    class ListMultiOperation : ListOperation
+    {
+        [AmqpMember]
+        public string Instruction { get; set; }
+
+        [AmqpMember]
+        public AddOperation Add { get; set; }
+
+        [AmqpMember]
+        public SquareRootOperation SquareRoot { get; set; }
+    }
 }

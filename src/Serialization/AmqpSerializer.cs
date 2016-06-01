@@ -279,6 +279,13 @@ namespace Amqp.Serialization
                     Fx.Format("{0}: SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
             }
 
+            if (contractAttribute.Encoding == EncodingType.SimpleList &&
+                type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
+            {
+                throw new SerializationException(
+                    Fx.Format("{0}: SimpleList encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
+            }
+
             Dictionary<Type, SerializableType> knownTypes = null;
             var providesAttributes = type.GetCustomAttributes<AmqpProvidesAttribute>(false);
             foreach (object o in providesAttributes)
@@ -309,6 +316,10 @@ namespace Amqp.Serialization
             else if (contractAttribute.Encoding == EncodingType.SimpleMap)
             {
                 return SerializableType.CreateDescribedSimpleMapType(this, type, baseType, members, serializationCallbacks);
+            }
+            else if (contractAttribute.Encoding == EncodingType.SimpleList)
+            {
+                return SerializableType.CreateDescribedSimpleListType(this, type, baseType, members, serializationCallbacks);
             }
             else
             {
