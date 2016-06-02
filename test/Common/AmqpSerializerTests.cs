@@ -368,6 +368,60 @@ namespace Test.Amqp
         }
 
         [TestMethod()]
+        public void AmqpSerializerSimpleListEncodingTest()
+        {
+            // serializer test
+            {
+                var add = new ListAddOperation() { Version = 2, Name = "add", Param1 = 4, Param2 = 2 };
+                var buffer = new ByteBuffer(1024, true);
+                AmqpSerializer.Serialize(buffer, add);
+
+                var add2 = AmqpSerializer.Deserialize<ListAddOperation>(buffer);
+                Assert.AreEqual(add2.Name, add.Name);
+                Assert.AreEqual(add2.Version, add.Version);
+                Assert.AreEqual(add2.Param1, add.Param1);
+                Assert.AreEqual(add2.Param2, add.Param2);
+            }
+
+            // serializer - amqp
+            {
+                var sqrt = new ListSquareRootOperation() { Version = 3, Name = "sqrt", Param = 64 };
+                var buffer = new ByteBuffer(1024, true);
+                AmqpSerializer.Serialize(buffer, sqrt);
+
+                var list = Encoder.ReadObject(buffer) as List;
+                Assert.IsTrue(list != null);
+                Assert.AreEqual(sqrt.Version, list[0]);
+                Assert.AreEqual(sqrt.Name, list[1]);
+                Assert.AreEqual(sqrt.Param, list[2]);
+            }
+
+            // amqp - serializer
+            {
+                var list = new List()
+                { 4, "multi-op", "Do add first and then SQRT",
+                    new Map() { { "Param1", 100 }, { "Param2", 200} },
+                    new Map() { { "Param", 81L } }
+                };
+
+                var buffer = new ByteBuffer(1024, true);
+                Encoder.WriteObject(buffer, list);
+
+                var multi = AmqpSerializer.Deserialize<ListMultiOperation>(buffer);
+                Assert.AreEqual(multi.Version, list[0]);
+                Assert.AreEqual(multi.Name, list[1]);
+                Assert.AreEqual(multi.Instruction, list[2]);
+
+                var map1 = (Map)list[3];
+                Assert.AreEqual(multi.Add.Param1, map1["Param1"]);
+                Assert.AreEqual(multi.Add.Param2, map1["Param2"]);
+
+                var map2 = (Map)list[4];
+                Assert.AreEqual(multi.SquareRoot.Param, map2["Param"]);
+            }
+        }
+
+        [TestMethod()]
         public void AmqpSerializerSimpleMapEncodingTest()
         {
             // serializer test
@@ -505,6 +559,12 @@ namespace Test.Amqp
             {
                 var value = new NegativeSimpleMapNoProvides() { Name = "test", Field1 = 9 };
                 NegativeTest(value, "SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute");
+            }
+
+            // SimpleList cannot support AmqpProvides
+            {
+                var value = new NegativeSimpleListNoProvides() { Name = "test", Field1 = 9 };
+                NegativeTest(value, "SimpleList encoding does not include descriptors so it does not support AmqpProvidesAttribute");
             }
         }
 

@@ -36,5 +36,10 @@ namespace Amqp.Serialization
         /// The type is encoded as an AMQP map with string keys.
         /// </summary>
         SimpleMap,
+
+        /// <summary>
+        /// The type is encoded as an AMQP list with no descriptor.
+        /// </summary>
+        SimpleList,
     }
 }

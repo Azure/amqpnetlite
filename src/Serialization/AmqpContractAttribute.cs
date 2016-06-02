@@ -52,6 +52,9 @@ namespace Amqp.Serialization
     /// SimpleMap: value encoding is the same as Map except that the keys are AMQP string.
     /// Because this encoding does not have descriptors, decoding an object with a base type
     /// decorated with AmqpProvidesAttribute is not supported.
+    /// SimpleList: value encoding is the same as List except that no initial descriptor is
+    /// written. Because this encoding does not have descriptors, decoding an object with a
+    /// base type decorated with AmqpProvidesAttribute is not supported.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct,
         AllowMultiple = false, Inherited = true)]

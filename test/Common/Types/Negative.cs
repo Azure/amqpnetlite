@@ -64,4 +64,21 @@ namespace Test.Amqp
         [AmqpMember]
         public int Field1;
     }
+
+    // SimpleList encoding has AmqpProvides attribute
+    [AmqpContract(Encoding = EncodingType.SimpleList)]
+    [AmqpProvides(typeof(NegativeSimpleListNoProvides))]
+    abstract class NegativeSimpleListNoProvidesBase
+    {
+        [AmqpMember]
+        public string Name { get; set; }
+    }
+
+    [AmqpContract(Encoding = EncodingType.SimpleList)]
+    class NegativeSimpleListNoProvides : NegativeSimpleListNoProvidesBase
+    {
+        [AmqpMember]
+        public int Field1;
+    }
 }
+

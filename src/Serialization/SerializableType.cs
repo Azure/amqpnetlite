@@ -140,6 +140,16 @@ namespace Amqp.Serialization
             return new DescribedSimpleMapType(serializer, type, baseType, members, serializationCallbacks);
         }
 
+        public static SerializableType CreateDescribedSimpleListType(
+            AmqpSerializer serializer,
+            Type type,
+            SerializableType baseType,
+            SerialiableMember[] members,
+            MethodAccessor[] serializationCallbacks)
+        {
+            return new DescribedSimpleListType(serializer, type, baseType, members, serializationCallbacks);
+        }
+
         public virtual void ValidateType(SerializableType otherType)
         {
         }
@@ -867,6 +877,62 @@ namespace Amqp.Serialization
                 object value = member.Type.ReadObject(buffer);
                 member.Accessor.Set(container, value);
                 return 2;
+            }
+        }
+
+        sealed class DescribedSimpleListType : DescribedCompoundType
+        {
+            public DescribedSimpleListType(
+                AmqpSerializer serializer,
+                Type type,
+                SerializableType baseType,
+                SerialiableMember[] members,
+                MethodAccessor[] serializationCallbacks)
+                : base(serializer, type, baseType, null, null, members, null, serializationCallbacks)
+            {
+            }
+
+            public override EncodingType Encoding
+            {
+                get
+                {
+                    return EncodingType.SimpleList;
+                }
+            }
+
+            protected override byte Code
+            {
+                get { return FormatCode.List32; }
+            }
+
+            protected override bool WriteFormatCode(ByteBuffer buffer)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.List32);
+                return true;
+            }
+
+            protected override void Initialize(ByteBuffer buffer, byte formatCode, out int size, out int count, out int encodeWidth, out CollectionType effectiveType)
+            {
+                effectiveType = this;
+                ReadSizeAndCount(buffer, formatCode, out size, out count, out encodeWidth);
+            }
+
+            protected override int WriteMemberValue(ByteBuffer buffer, string memberName, object memberValue, SerializableType effectiveType)
+            {
+                if (memberValue != null)
+                {
+                    effectiveType.WriteObject(buffer, memberValue);
+                    return 1;
+                }
+
+                return 0;
+            }
+
+            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
+            {
+                object value = serialiableMember.Type.ReadObject(buffer);
+                serialiableMember.Accessor.Set(container, value);
+                return 1;
             }
         }
     }
