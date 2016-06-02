@@ -922,10 +922,13 @@ namespace Amqp.Serialization
                 if (memberValue != null)
                 {
                     effectiveType.WriteObject(buffer, memberValue);
-                    return 1;
+                }
+                else
+                {
+                    Encoder.WriteObject(buffer, null);
                 }
 
-                return 0;
+                return 1;
             }
 
             protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)

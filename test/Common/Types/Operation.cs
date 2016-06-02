@@ -17,7 +17,8 @@
 
 namespace Test.Amqp
 {
-    using global::Amqp.Serialization;
+    using System;
+using global::Amqp.Serialization;
 
     [AmqpContract(Encoding = EncodingType.SimpleMap)]
     abstract class Operation
@@ -75,6 +76,10 @@ namespace Test.Amqp
     {
         [AmqpMember]
         public int Param1;
+
+        // add a dummy property to check if position is still correct
+        [AmqpMember]
+        public Guid? Dummy { get; set; }
 
         [AmqpMember]
         public int Param2;
