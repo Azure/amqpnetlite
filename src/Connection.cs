@@ -332,9 +332,16 @@ namespace Amqp
         static void OnHeartBeatTimer(object state)
         {
             var thisPtr = (Connection)state;
-            byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
-            thisPtr.transport.Send(new ByteBuffer(frame, 0, frame.Length, frame.Length));
-            Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
+            try
+            {
+                byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
+                thisPtr.transport.Send(new ByteBuffer(frame, 0, frame.Length, frame.Length));
+                Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
+            }
+            catch
+            {
+                // ignore failures
+            }
         }
 
         void Connect(SaslProfile saslProfile, Open open)
