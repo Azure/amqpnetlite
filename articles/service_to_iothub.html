@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>IoT Hub service endpoints </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="IoT Hub service endpoints ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/articles/service_to_iothub.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h2 id="iot-hub-service-endpoints">IoT Hub service endpoints</h2>
+              
+<p>Inside the IoT Hub architecture, the service has two endpoints to communicate with devices :</p>
+<ul>
+<li>C2D (cloud to device) : the back end system can use this endpoint to send messages (for example commands) to the devices. This endpoint acts like a queue and each message has a TTL (Time To Live) so that it’s removed from the queue if the timeout expires (it’s useful to have commands executed in a short period of time and not executed too late when an offline device comes back online but the execution isn’t needed at that time because it could be harmful). The back end system can receive a confirmation message or delivery fault to understand if device has received command or not;</li>
+<li>D2C (device to cloud) : it’s an Event Hubs compatible endpoint used by the back end system to retrieve messages from device (telemetry data) and feedback on command delivery (successful or not). “Event Hubs compatible” means that we can use an Event Hub client to receive messages from this endpoint (for example using an Event Processor Host implementation);</li>
+</ul>
+<p>At AMQP level the endpoints are accessible from different entity paths; if you know Service Bus queues, topics/subscriptions and event hubs we can think them in the same way.</p>
+<p>The entity path for sending command to devices is defined in the following way :</p>
+<pre><code>/messages/devicebound
+</code></pre><p>while the entity path for receiving feedback (on commands sent) from devices is the following :</p>
+<pre><code>/messages/servicebound/feedback
+</code></pre><p>As for the previous article, it means that after creating a connection and a session to our IoT Hub host we need to create two links to above entities (or nodes as defined in the AMQP spec). Using the programming model provided by AMQP .Net Lite library we have :</p>
+<ul>
+<li>A SenderLink to the /messages/devicebound node;</li>
+<li>A ReceiverLink to the /messages/servicebound/feedback node;</li>
+</ul>
+<h2 id="authentication-sending-the-sas-token">Authentication : sending the SAS token</h2>
+<p>The authentication mechanism is the same as device side. In this scenario, we need to send two SAS token on the two different AMQP nodes for sending command and receiving feedback.</p>
+<p>The SAS token audience and resource URI for sending command are the same and defined in the following way :</p>
+<pre><code>string audience = Fx.Format(&quot;{0}/messages/devicebound&quot;, HOST);
+string resourceUri = Fx.Format(&quot;{0}/messages/devicebound&quot;, HOST);
+string sasToken = GetSharedAccessSignature(SHARED_ACCESS_KEY_NAME, SHARED_ACCESS_KEY, resourceUri, new TimeSpan(1, 0, 0));
+bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
+</code></pre><p>For receiving feedback, they are the following :</p>
+<pre><code>string audience = Fx.Format(&quot;{0}/messages/servicebound/feedback&quot;, HOST);
+string resourceUri = Fx.Format(&quot;{0}/messages/servicebound/feedback&quot;, HOST);
+string sasToken = GetSharedAccessSignature(SHARED_ACCESS_KEY_NAME, SHARED_ACCESS_KEY, resourceUri, new TimeSpan(1, 0, 0));
+bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
+</code></pre><h2 id="sending-command">Sending command</h2>
+<p>Using the SenderLink instance the device sends data calling the simple Send() method and passing it a Message class instance contains the data to send.</p>
+<p>The sender link is created inside a new AMQP Session (using the related class of AMQP .Net Lite library) and the great news is that, thanks to the multiplexing feature of AMQP protocol, we can use the same session for both sender and receiver links all inside the same TCP connection.</p>
+<p>The corresponding class in the official SDK is the ServiceClient class that provides the SendAsync() method. Regarding the original Message class (included into official SDK, not AMQP .Net Lite), it exposes the Ack property with following possible values :</p>
+<ul>
+<li>none (default) : the service doesn’t want any feedback on command received by the device;</li>
+<li>positive : the service receives a feedback message if the message was completed;</li>
+<li>negative : the service receives a feedback message if the message expired (or max delivery count was reached) without being completed by the device;</li>
+<li>full : the service receives both positive and negative feedbacks;</li>
+</ul>
+<p>For more information you can refer to the previous article with a clear explanation of the message life cycle.</p>
+<p>Using the AMQP .Net Lite library we don’t have an Ack property on the Message class but we need to use the application properties collection at AMQP level. The Ack property (at high level) is translated in an application property named “iothub-ack” (at AMQP level) which can have the above possible values. If we don’t set this application property, it means the same as “none” value so no feedback.</p>
+<pre><code>static private void SendCommand()
+{
+    string audience = Fx.Format(&quot;{0}/messages/devicebound&quot;, HOST);
+    string resourceUri = Fx.Format(&quot;{0}/messages/devicebound&quot;, HOST);
+
+    string sasToken = GetSharedAccessSignature(SHARED_ACCESS_KEY_NAME, SHARED_ACCESS_KEY, resourceUri, new TimeSpan(1, 0, 0));
+    bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
+
+    if (cbs)
+    {
+         string to = Fx.Format(&quot;/devices/{0}/messages/devicebound&quot;, DEVICE_ID);
+         string entity = &quot;/messages/devicebound&quot;;
+
+         SenderLink senderLink = new SenderLink(session, &quot;sender-link&quot;, entity);
+
+         var messageValue = Encoding.UTF8.GetBytes(&quot;i am a command.&quot;);
+         Message message = new Message()
+         {
+              BodySection = new Data() { Binary = messageValue }
+         };
+         message.Properties = new Properties();
+         message.Properties.To = to;
+         message.Properties.MessageId = Guid.NewGuid().ToString();
+         message.ApplicationProperties = new ApplicationProperties();
+         message.ApplicationProperties[&quot;iothub-ack&quot;] = &quot;full&quot;;
+
+         senderLink.Send(message);
+         senderLink.Close();
+    }
+}
+</code></pre><p>As we can see, the sending path “/messages/devicebound” hasn’t any information about the target device. To do that, the service need to set the To AMQP system property to the following value :</p>
+<pre><code>/devices/&lt;DEVICE_ID&gt;/messages/devicebound
+</code></pre><p>where <device_id> is the id assigned to the device when we create it inside the identity registry.<p>
+<p>Finally, it’s importat to notice that the C2D endpoint queue can hold at most 50 messages.</p>
+<h2 id="receiving-feedback">Receiving feedback</h2>
+<p>Using the ReceiverLink instance the service can receive feedback from the device calling the Receive() method.</p>
+<pre><code>static private void ReceiveFeedback()
+{
+     string audience = Fx.Format(&quot;{0}/messages/servicebound/feedback&quot;, HOST);
+     string resourceUri = Fx.Format(&quot;{0}/messages/servicebound/feedback&quot;, HOST);
+
+     string sasToken = GetSharedAccessSignature(SHARED_ACCESS_KEY_NAME, SHARED_ACCESS_KEY, resourceUri, new TimeSpan(1, 0, 0));
+     bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
+
+     if (cbs)
+     {
+          string entity = &quot;/messages/servicebound/feedback&quot;;
+
+          ReceiverLink receiveLink = new ReceiverLink(session, &quot;receive-link&quot;, entity);
+
+          Message received = receiveLink.Receive();
+          if (received != null)
+          {
+               receiveLink.Accept(received);
+               System.Diagnostics.Trace.WriteLine(Encoding.UTF8.GetString(received.GetBody&lt;byte[]&gt;()));
+          }
+
+          receiveLink.Close();
+     }
+}
+</code></pre><p>The received message has a body in JSON format with an array of records (feedback from more different devices) each with following properties :</p>
+<ul>
+<li>OriginalMessageId : it’s the MessageId of the original command (message) sent from the service to the device;</li>
+<li>Description : description result that is related to the possible outcomes (success, message expired, maximum delivery count exceeded, message rejected);</li>
+<li>DeviceGenerationId : device generation id related to the device that sent the feedback for a specific command;</li>
+<li>DeviceId : device id related to the device that sent the feedback for a specific command;</li>
+<li>EnqueuedTimeUtc : timestamp related to the outcome (it means when the feedback was enqueued);</li>
+</ul>
+<p>For a single feedback, the JSON should be as following :</p>
+<pre><code>[{&quot;originalMessageId&quot;:&quot;5aac3169-af00-4536-acdb-cb9ea6b3980e&quot;,&quot;description&quot;:&quot;Success&quot;,&quot;deviceGenerationId&quot;:&quot;635794823643795743&quot;,&quot;deviceId&quot;:&quot;&lt;device_id&gt;&quot;,&quot;enqueuedTimeUtc&quot;:&quot;2015-10-29T07:59:00.9772497Z&quot;}]
+</code></pre><h2 id="the-full-source-code">The full source code</h2>
+<p>As for all examples related to my blog posts, I update sample from previous article on <a href="https://github.com/ppatierno/codesamples/tree/master/IoTHubAmqp">GitHub</a>. Now you can find a simple console application and a UWP application that are able to send command to a device and receive related feedback.</p>
+</device_id>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

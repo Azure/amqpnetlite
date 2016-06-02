@@ -1,0 +1,178 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>IoT Hub : connection and device endpoints </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="IoT Hub : connection and device endpoints ">
+    <meta name="generator" content="docfx 1.7.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/Azure/amqpnetlite/blob/master/articles/device_to_iothub.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h2 id="iot-hub-connection-and-device-endpoints">IoT Hub : connection and device endpoints</h2>
+              
+<p>The IoT Hub is reachable using an address that has the following format</p>
+<pre><code>&lt;IOT_HUB_NAME&gt;.azure-devices.net
+</code></pre><p>that we can retrieve from the Azure portal after creating the new IoT Hub instance service. As for all the services inside the Service Bus family (queues, topics/subscriptions and event hubs) the IoT Hub needs an SSL/TLS connection for data encryption and server authentication; it means that we have to connect to the host address to the default AMQPS (AMQP Secure) port that is the 5671.</p>
+<p>We can create a new device inside the registry and get related credentials information using the Device Explorer application you can download <a href="https://github.com/Azure/azure-iot-sdks/blob/master/tools/DeviceExplorer/doc/how_to_use_device_explorer.md">here</a>. After getting all needed information we can set them into the code.</p>
+<pre><code>private const string HOST = &quot;IOT_HUB_NAME.azure-devices.net&quot;;
+private const int PORT = 5671;
+private const string DEVICE_ID = &quot;DEVICE_ID&quot;;
+private const string DEVICE_KEY = &quot;DEVICE_KEY&quot;;
+</code></pre><p>Using above information we can create an instance of the Address class and using it to establish the connection with the host thanks to the Connection class.</p>
+<pre><code>address = new Address(HOST, PORT, null, null);
+connection = new Connection(address);
+</code></pre><p>Inside the IoT Hub architecture, each device has two endpoints for accessing the Cloud :</p>
+<ul>
+<li>D2C (device to cloud) : the device uses this endpoint to send messages to the cloud both as telemetry data and feedback for a received command (on the other endpoint, see below). It means that when we send a command to the device, it replies with a feedback at application level to confirm that the command is acquired and it’s going to be executed. Of course, it’s always true for a rejected command by the device;</li>
+<li>C2D (cloud to device) : the device receives commands on this endpoint for executing the requested action. As already said, the device sends a confirmation (or rejection) of received command to the cloud using the other endpoint (D2C);</li>
+</ul>
+<p>At AMQP level the endpoints are accessible from different entity paths; if you know Service Bus queues, topics/subscriptions and event hubs we can think them in the same way.</p>
+<p>The entity path for sending data for telemetry purpose is defined in the following way :</p>
+<pre><code>/devices/&lt;DEVICE_ID&gt;/messages/events
+</code></pre><p>where <device_id> is the id assigned to the device when we create it inside the identity registry.<p>
+<p>The entity path for receiving command from the Cloud is defined in the following way :</p>
+<pre><code>/devices/&lt;DEVICE_ID&gt;/messages/deviceBound
+</code></pre><p>and as for the previous entity you need to provide the <device_id> in the path.<p>
+<p>It means that after creating a connection and a session to our IoT Hub host we need to create two links to above entities (or nodes as defined in the AMQP spec). Using the programming model provided by AMQP .Net Lite library we have :</p>
+<ul>
+<li>A SenderLink to the /devices/<device_id>/messages/events node;</device_id></li>
+<li>A ReceiverLink to the /devices/<device_id>/messages/deviceBound node;</device_id></li>
+</ul>
+<h2 id="authentication-sending-the-sas-token">Authentication : sending the SAS token</h2>
+<p>IoT Hub offers a per-device authentication through a SAS token that we can generate starting from device id and device key. After connection establishment we need to send such token to a specific CBS (Claim Based Security) endpoint to authorize the access to the specific entity.</p>
+<p>As usual for Azure services, the token has the following format :</p>
+<pre><code>SharedAccessSignature sig={signature-string}&amp;se={expiry}&amp;skn={policyName}&amp;sr={URL-encoded-resourceURI}
+</code></pre><p>The big difference is that the skn field is absent in our case using device credentials .To get the SAS token I used the same code from my Azure SB Lite library because it’s processed almost in the same way.</p>
+<pre><code>string audience = Fx.Format(&quot;{0}/devices/{1}&quot;, HOST, DEVICE_ID);
+string resourceUri = Fx.Format(&quot;{0}/devices/{1}&quot;, HOST, DEVICE_ID);
+string sasToken = GetSharedAccessSignature(null, DEVICE_KEY, resourceUri, new TimeSpan(1, 0, 0));
+bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
+</code></pre><p>The PutCbsToken creates a new session and a new link to connect to the specific $cbs node always using the same TCP connection. The content of the message is well defined by the <a href="https://www.oasis-open.org/committees/download.php/50506/amqp-cbs-v1%200-wd02%202013-08-12.doc">AMQP CBS draft spec</a>. After sending the token we are authorized to access IoT Hub from the device.</p>
+<p>Just a note : I’m using the Fx class provided by AMQP .Net Lite library to have the Format method that doesn’t exist in the String class for the .Net Micro Framework.</p>
+<h2 id="sending-telemetry-data">Sending telemetry data</h2>
+<p>Using the SenderLink instance the device sends data calling the simple Send() method and passing it a Message class instance contains the data to send.</p>
+<p>The sender link is created inside a new AMQP Session (using the related class of AMQP .Net Lite library) and the great news is that, thanks to the multiplexing feature of AMQP protocol, we can use the same session for both sender and receiver links all inside the same TCP connection.</p>
+<pre><code>static private void SendEvent()
+{
+    string entity = Fx.Format(&quot;/devices/{0}/messages/events&quot;, DEVICE_ID);
+
+    SenderLink senderLink = new SenderLink(session, &quot;sender-link&quot;, entity);
+
+    var messageValue = Encoding.UTF8.GetBytes(&quot;i am a message.&quot;);
+    Message message = new Message()
+    {
+        BodySection = new Data() { Binary = messageValue }
+    };
+
+    senderLink.Send(message);
+    senderLink.Close();
+}
+</code></pre><p>Running the code, we can interact with the device using the Device Explorer application to receive the messages it sends.</p>
+<h2 id="receiving-command-and-send-feedback">Receiving command and send feedback</h2>
+<p>Using the ReceiverLink instance the device can receive command from the service in the Cloud calling the Receive() method. In addition to the sending commands features, the IoT Hub provides a feedback feature at application level for them; it means that the device is able to send a confirmation of received command to the service to accept or reject it. If the device is offline and doesn’t receive the command, the IoT Hub provides a TTL (Time To Live) you can set on every single message so that the command isn’t delivered to the device when it comes back online if the timeout is expired; this feature avoids to deliver a command that makes sense only if it’s executed on the device in a short time.</p>
+<p>The device doesn’t need to send the feedback as a message on a specific AMQP node/entity but it’s handled by the IoT Hub when the ReceiverLink accepts or rejects the command. Using AMQP .Net Lite we can call the Accept() or Reject() methods on the ReceiverLink instance; at AMQP level it means that a “disposition” performative is sent to the IoT Hub with an outcome of “accepted” or “rejected”. Receiving this outcome the IoT Hub sends a feedback message to the D2C endpoint on the Cloud service side. With such outcomes the message goes into a completed state (positive feedback to the Cloud) or dead letter state (negative feedback).</p>
+<pre><code>static private void ReceiveCommands()
+{
+    string entity = Fx.Format(&quot;/devices/{0}/messages/deviceBound&quot;, DEVICE_ID);
+
+    ReceiverLink receiveLink = new ReceiverLink(session, &quot;receive-link&quot;, entity);
+
+    Message received = receiveLink.Receive();
+    if (received != null)
+         receiveLink.Accept(received);
+
+    receiveLink.Close();
+}
+</code></pre><p>Pay attention on the available Release() method in the library; in this case the outcome is “released” and the message returns into the command queue (enqueued state) ready to be re-delivered to the device if it calls the Receive() method again. If the device receives the messages more times and always calls the Release() method, the IoT Hub moves it into the dead letter state (removing it from the command queue) if the messages reaches the max delivery count; the same happens if the device doesn’t call neither Accept() nor Reject() methods and the TTL expires.</p>
+<p>Executing the code and using Device Explorer to send the command we can see the feedback from the device too.</p>
+<h2 id="the-full-source-code">The full source code</h2>
+<p>The full source code I showed in the previous paragraphs is available on <a href="https://github.com/ppatierno/codesamples/tree/master/IoTHubAmqp">GitHub</a> and it has projects for .Net Framework (so you can test very quickly it on your PC), generic .Net Micro Framework (for testing on your real device) and a third project for <a href="http://www.netduino.com/netduino3wifi/specs.htm">Netduino 3 WiFi</a> as example of embedded device.</p>
+<p>Of course, you can use any other board that support .Net Micro Framework and SSL/TLS protocol that is needed to connect to the IoT Hub. Other then Netduino 3 board, there are the FEZ Raptor and FEZ Spider from <a href="https://www.ghielectronics.com/">GHI Electronics</a> (soon an example using them).</p>
+</device_id></device_id>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
