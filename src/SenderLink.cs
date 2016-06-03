@@ -221,7 +221,7 @@ namespace Amqp
             // some broker may not settle the message when sending dispositions
             if (!delivery.Settled)
             {
-                this.Session.DisposeDelivery(false, delivery, new Accepted(), true);
+                this.Session.DisposeDelivery(false, delivery, delivery.State, true);
             }
 
             if (delivery.OnOutcome != null)
