@@ -42,7 +42,7 @@ namespace PerfTest
                 if (perfArgs.TraceLevel != 0)
                 {
                     Trace.TraceLevel = perfArgs.TraceLevel;
-                    Trace.TraceListener = (f, o) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, o));
+                    Trace.TraceListener = (f, o) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, o));
                 }
 
                 Role role;

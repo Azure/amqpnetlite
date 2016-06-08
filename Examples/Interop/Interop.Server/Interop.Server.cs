@@ -52,7 +52,7 @@ namespace Interop.Server
             Connection.DisableServerCertValidation = true;
             // uncomment the following to write frame traces
             //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
             Connection connection = null;
             try
