@@ -26,7 +26,7 @@ namespace ServiceBus.Cbs
         static void Main(string[] args)
         {
             Trace.TraceLevel = TraceLevel.Information;
-            Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
             try
             {

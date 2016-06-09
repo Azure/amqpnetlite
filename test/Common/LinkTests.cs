@@ -47,7 +47,7 @@ namespace Test.Amqp
             Connection.DisableServerCertValidation = true;
             // uncomment the following to write frame traces
             //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET

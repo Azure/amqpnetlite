@@ -39,7 +39,7 @@ namespace Listener.ContainerHost
 
             // uncomment the following to write frame traces
             //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
             Uri addressUri = new Uri(address);
             ContainerHost host = new ContainerHost(new Uri[] { addressUri }, null, addressUri.UserInfo);
