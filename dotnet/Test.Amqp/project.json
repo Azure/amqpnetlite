@@ -7,6 +7,7 @@
             "Attribute.cs",
             "../../src/Net/TypeExtensions.cs",
             "../../test/Common/TestRunner.cs",
+            "../../test/Common/TestAmqpBroker.cs",
             "../../test/Common/Assert.cs",
             "../../test/Common/LinkTests.cs",
             "../../test/Common/UtilityTests.cs",

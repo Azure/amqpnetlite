@@ -26,11 +26,7 @@ namespace Test.Amqp
     {
         public static int RunTests()
         {
-#if DOTNET
-            Assembly assembly = typeof(TestRunner).Assembly();
-#else
-            Assembly assembly = typeof(TestRunner).Assembly;
-#endif
+            Assembly assembly = GetAssembly();
             AmqpTrace.WriteLine(TraceLevel.Output, "Running all unit tests in {0}", assembly.FullName);
             Type[] types = assembly.GetTypes();
             int passed = 0;
@@ -43,25 +39,31 @@ namespace Test.Amqp
             {
                 MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
                 MethodInfo[] testMethods = new MethodInfo[methods.Length];
+                MethodInfo testClassInitialize = null;
+                MethodInfo testClassCleanup = null;
                 MethodInfo testInitialize = null;
                 MethodInfo testCleanup = null;
                 int count = 0;
 
                 foreach (var method in methods)
                 {
-                    if (method.Name.Equals("TestInitialize"))
+                    if (method.Name == "ClassInitialize")
+                    {
+                        testClassInitialize = method;
+                    }
+                    else if (method.Name == "ClassCleanup")
+                    {
+                        testClassCleanup = method;
+                    }
+                    else if (method.Name == "TestInitialize")
                     {
                         testInitialize = method;
                     }
-                    else if (method.Name.Equals("TestCleanup"))
+                    else if (method.Name == "TestCleanup")
                     {
                         testCleanup = method;
                     }
-#if DOTNET
-                    else if (method.GetCustomAttribute<Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute>(true) != null)
-#else
-                    else if (method.Name.Length > 11 && method.Name.Substring(0, 11).Equals("TestMethod_"))
-#endif
+                    else if (IsTestMethod(method))
                     {
                         testMethods[count++] = method;
                     }
@@ -70,6 +72,20 @@ namespace Test.Amqp
                 if (count > 0)
                 {
                     object instance = type.GetConstructor(new Type[0]).Invoke(new object[0]);
+
+                    if (testClassInitialize != null)
+                    {
+                        try
+                        {
+                            testClassInitialize.Invoke(instance, null);
+                        }
+                        catch(Exception exception)
+                        {
+                            failed += count;
+                            AmqpTrace.WriteLine(TraceLevel.Output, exception.ToString());
+                            continue;
+                        }
+                    }
 
                     for (int i = 0; i < count; i++)
                     {
@@ -89,14 +105,27 @@ namespace Test.Amqp
                                 testCleanup.Invoke(instance, null);
                             }
 
-                            ++passed;
+                            passed++;
                             AmqpTrace.WriteLine(TraceLevel.Output, "Passed\t\t{0}", testName);
                         }
                         catch (Exception exception)
                         {
-                            ++failed;
+                            failed++;
                             AmqpTrace.WriteLine(TraceLevel.Output, "Failed\t\t{0}", testName);
                             AmqpTrace.WriteLine(TraceLevel.Output, exception.ToString());
+                        }
+                    }
+
+                    if (testClassCleanup != null)
+                    {
+                        try
+                        {
+                            testClassCleanup.Invoke(instance, null);
+                        }
+                        catch(Exception exception)
+                        {
+                            AmqpTrace.WriteLine(TraceLevel.Output, exception.ToString());
+                            continue;
                         }
                     }
                 }
@@ -105,6 +134,24 @@ namespace Test.Amqp
             AmqpTrace.WriteLine(TraceLevel.Output, "{0}/{1} test(s) Passed, {2} Failed", passed, passed + failed, failed);
 
             return failed;
+        }
+
+        static Assembly GetAssembly()
+        {
+#if DOTNET
+            return typeof(TestRunner).Assembly();
+#else
+            return typeof(TestRunner).Assembly;
+#endif
+        }
+
+        static bool IsTestMethod(MethodInfo mi)
+        {
+#if DOTNET
+            return mi.GetCustomAttribute<Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute>(true) != null;
+#else
+            return mi.Name.Length > 11 && mi.Name.Substring(0, 11) == "TestMethod_";
+#endif
         }
     }
 }

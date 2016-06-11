@@ -35,6 +35,7 @@ namespace Test.Amqp
     {
         const int SendTimeout = 5000;
         ContainerHost host;
+        ILinkProcessor linkProcessor;
 
         public Uri Uri
         {
@@ -53,11 +54,10 @@ namespace Test.Amqp
             //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
-        [TestInitialize]
-        public void TestInitialize()
+        public void ClassInitialize()
         {
             // pick a port other than 5762 so that it doesn't conflict with the test broker
-            this.Uri = new Uri("amqp://guest:guest@localhost:5765");
+            this.Uri = new Uri("amqp://guest:guest@localhost:15672");
 
             this.host = new ContainerHost(new List<Uri>() { this.Uri }, null, this.Uri.UserInfo);
             this.host.Listeners[0].SASL.EnableExternalMechanism = true;
@@ -65,13 +65,34 @@ namespace Test.Amqp
             this.host.Open();
         }
 
-        [TestCleanup]
-        public void TestCleanup()
+        public void ClassCleanup()
         {
             if (this.host != null)
             {
                 this.host.Close();
             }
+        }
+
+        public void TestCleanup()
+        {
+            if (this.linkProcessor != null)
+            {
+                this.host.UnregisterLinkProcessor(this.linkProcessor);
+                this.linkProcessor = null;
+            }
+        }
+
+        [TestInitialize]
+        public void MyTestInitialize()
+        {
+            this.ClassInitialize();
+        }
+
+        [TestCleanup]
+        public void MyTestCleanup()
+        {
+            this.linkProcessor = null;
+            this.ClassCleanup();
         }
 
         [TestMethod]
@@ -216,7 +237,7 @@ namespace Test.Amqp
         public void ContainerHostLinkProcessorTest()
         {
             string name = "ContainerHostLinkProcessorTest";
-            this.host.RegisterLinkProcessor(new TestLinkProcessor());
+            this.host.RegisterLinkProcessor(this.linkProcessor = new TestLinkProcessor());
 
             int count = 80;
             var connection = new Connection(Address);
@@ -240,8 +261,9 @@ namespace Test.Amqp
         {
             string name = "ContainerHostTargetLinkEndpointTest";
             List<Message> messages = new List<Message>();
-            this.host.RegisterLinkProcessor(
-                new TestLinkProcessor(link => new TargetLinkEndpoint(new TestMessageProcessor(50, messages), link)));
+            this.linkProcessor = new TestLinkProcessor(
+                link => new TargetLinkEndpoint(new TestMessageProcessor(50, messages), link));
+            this.host.RegisterLinkProcessor(this.linkProcessor);
 
             int count = 190;
             var connection = new Connection(Address);
@@ -274,7 +296,8 @@ namespace Test.Amqp
             }
 
             var source = new TestMessageSource(messages);
-            this.host.RegisterLinkProcessor(new TestLinkProcessor(link => new SourceLinkEndpoint(source, link)));
+            this.linkProcessor = new TestLinkProcessor(link => new SourceLinkEndpoint(source, link));
+            this.host.RegisterLinkProcessor(this.linkProcessor);
 
             var connection = new Connection(Address);
             var session = new Session(connection);
@@ -304,6 +327,7 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
 
+            Thread.Sleep(200);
             Assert.AreEqual(released, messages.Count);
             Assert.AreEqual(rejected, source.DeadletterMessage.Count);
         }
@@ -314,7 +338,8 @@ namespace Test.Amqp
             string name = "ContainerHostProcessorOrderTest";
             List<Message> messages = new List<Message>();
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(50, messages));
-            this.host.RegisterLinkProcessor(new TestLinkProcessor());
+            this.linkProcessor = new TestLinkProcessor();
+            this.host.RegisterLinkProcessor(this.linkProcessor);
 
             int count = 80;
             var connection = new Connection(Address);
@@ -488,11 +513,15 @@ namespace Test.Amqp
         public void ContainerHostCloseTest()
         {
             string name = "ContainerHostCloseTest";
-            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+            Uri uri = new Uri("amqp://guest:guest@localhost:15673");
+
+            ContainerHost h = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            h.Open();
+            h.RegisterMessageProcessor(name, new TestMessageProcessor());
 
             //Create a client to send data to the host message processor
             var closedEvent = new ManualResetEvent(false);
-            var connection = new Connection(Address);
+            var connection = new Connection(new Address(uri.AbsoluteUri));
             connection.Closed += (AmqpObject obj, Error error) =>
             {
                 closedEvent.Set();
@@ -505,7 +534,7 @@ namespace Test.Amqp
             sender.Send(new Message("Hello"), SendTimeout);
 
             //Close the host. this should close existing connections
-            this.host.Close();
+            h.Close();
 
             Assert.IsTrue(closedEvent.WaitOne(10000), "connection is not closed after host is closed.");
 
@@ -523,15 +552,19 @@ namespace Test.Amqp
             connection.Close();
 
             // Reopen the host and send again
-            this.host = new ContainerHost(new List<Uri>() { Uri }, null, Uri.UserInfo);
-            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
-            this.host.Open();
+            // Use a different port as on some system the port is not released immediately
+            uri = new Uri("amqp://guest:guest@localhost:15674");
+            h = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            h.RegisterMessageProcessor(name, new TestMessageProcessor());
+            h.Open();
 
-            connection = new Connection(Address);
+            connection = new Connection(new Address(uri.AbsoluteUri));
             session = new Session(connection);
             sender = new SenderLink(session, "sender-link", name);
             sender.Send(new Message("Hello"), SendTimeout);
             connection.Close();
+
+            h.Close();
         }
 
         [TestMethod]
@@ -640,7 +673,8 @@ namespace Test.Amqp
         public void DuplicateLinkNameDifferentRoleTest()
         {
             string name = "DuplicateLinkNameDifferentRoleTest";
-            this.host.RegisterLinkProcessor(new TestLinkProcessor());
+            this.linkProcessor = new TestLinkProcessor();
+            this.host.RegisterLinkProcessor(this.linkProcessor);
 
             string linkName = "same-link-for-different-role";
             var connection = new Connection(Address);
@@ -665,7 +699,7 @@ namespace Test.Amqp
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
             linkProcessor.OnLinkAttached += a => link = a;
-            this.host.RegisterLinkProcessor(linkProcessor);
+            this.host.RegisterLinkProcessor(this.linkProcessor = linkProcessor);
 
             var factory = new ConnectionFactory();
             factory.SASL.Profile = SaslProfile.Anonymous;
@@ -687,7 +721,7 @@ namespace Test.Amqp
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
             linkProcessor.OnLinkAttached += a => link = a;
-            this.host.RegisterLinkProcessor(linkProcessor);
+            this.host.RegisterLinkProcessor(this.linkProcessor = linkProcessor);
 
             var connection = new Connection(Address);
             var session = new Session(connection);
@@ -706,7 +740,18 @@ namespace Test.Amqp
         {
             string name = "ContainerHostX509PrincipalTest";
             string address = "amqps://localhost:5676";
-            X509Certificate2 cert = GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+            X509Certificate2 cert = null;
+            
+            try
+            {
+                cert = GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+            }
+            catch (PlatformNotSupportedException)
+            {
+                // Unix machine, ignored
+                return;
+            }
+
             ContainerHost sslHost = new ContainerHost(new Uri(address));
             sslHost.Listeners[0].SSL.Certificate = cert;
             sslHost.Listeners[0].SSL.ClientCertificateRequired = true;

@@ -40,7 +40,8 @@ namespace Test.Amqp
 #endif
     public class LinkTests
     {
-        public static Address address = new Address("amqp://guest:guest@localhost:5672");
+        public const string AddressString = "amqp://guest:guest@localhost:5672";
+        public static Address address = new Address(AddressString);
 
         static LinkTests()
         {

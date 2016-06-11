@@ -173,7 +173,7 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Registers a link process to handle received attach performatives.
+        /// Registers a link processor to handle received attach performatives.
         /// </summary>
         /// <param name="linkProcessor">The link processor to be registered.</param>
         public void RegisterLinkProcessor(ILinkProcessor linkProcessor)
@@ -252,6 +252,22 @@ namespace Amqp.Listener
         public void UnregisterRequestProcessor(string address)
         {
             RemoveProcessor(this.requestProcessors, address);
+        }
+
+        /// <summary>
+        /// Unregisters a link processor that was previously registered.
+        /// </summary>
+        /// <param name="linkProcessor">The link processor to unregister.</param>
+        /// <remarks>If the linkProcessor was not registered or is different
+        /// from the current registered one, an exception is thrown.</remarks>
+        public void UnregisterLinkProcessor(ILinkProcessor linkProcessor)
+        {
+            if (this.linkProcessor != linkProcessor)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed, "The provided linkProcessor was not registered");
+            }
+
+            this.linkProcessor = null;
         }
 
         static IList<TOut> As<TIn, TOut>(IList<TIn> inList, Func<TIn, TOut> func)

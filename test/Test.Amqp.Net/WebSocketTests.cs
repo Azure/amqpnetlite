@@ -43,7 +43,7 @@ namespace Test.Amqp
 
                     ContainerHostTests test = new ContainerHostTests();
                     test.Uri = new System.Uri(address);
-                    test.TestInitialize();
+                    test.ClassInitialize();
 
                     try
                     {
@@ -56,7 +56,7 @@ namespace Test.Amqp
                         System.Diagnostics.Trace.WriteLine(mi.Name + " failed: " + exception.ToString());
                     }
 
-                    test.TestCleanup();
+                    test.ClassCleanup();
                 }
             }
 

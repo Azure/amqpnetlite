@@ -133,8 +133,11 @@ namespace Listener.IContainer
                         false);
                 }
 
+#if DOTNET
+                store.Dispose();
+#else
                 store.Close();
-
+#endif
                 if (collection.Count > 0)
                 {
                     return collection[0];

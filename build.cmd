@@ -192,7 +192,7 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO Running DOTNET (.Net Core 1.0) tests...
 IF /I "%build-dotnet%" EQU "false" GOTO done-test
-"%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp
+"%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp -- no-broker
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   ECHO .Net Core Test failed!
