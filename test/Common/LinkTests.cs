@@ -790,6 +790,14 @@ namespace Test.Amqp
             sender.Send(new Message("test2") { Properties = new Properties() { MessageId = testName } });
             sender.Close();
 
+            ReceiverLink receiver = new ReceiverLink(session, "receiver", "q1");
+            for (int i = 1; i <= 2; i++)
+            {
+                var m = receiver.Receive();
+                Assert.IsTrue(m != null, "Didn't receive message " + i);
+                receiver.Accept(m);
+            }
+
             session.Close(0);
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
