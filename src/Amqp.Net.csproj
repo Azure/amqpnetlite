@@ -75,7 +75,6 @@
     <Compile Include="Net\TcpSettings.cs" />
     <Compile Include="Net\AmqpSettings.cs" />
     <Compile Include="Net\ConnectionFactoryBase.cs" />
-    <Compile Include="Properties\InternalsVisibleTo.cs" />
     <Compile Include="Properties\Version.cs" />
     <Compile Include="Sasl\SaslExternalProfile.cs" />
     <Compile Include="Listener\SaslPlainMechanism.cs" />
