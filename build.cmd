@@ -115,7 +115,7 @@ IF "%build-version%" == "" (
 )
 
 echo Build version %build-version%
-"%MSBuildPath%" amqp.sln /t:Rebuild /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
+"%MSBuildPath%" amqp-vs2013.sln /t:Rebuild /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   GOTO :exit
