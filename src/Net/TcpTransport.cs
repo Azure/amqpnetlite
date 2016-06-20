@@ -28,9 +28,8 @@ namespace Amqp
     {
         static readonly RemoteCertificateValidationCallback noneCertValidator = (a, b, c, d) => true;
         readonly IBufferManager bufferManager;
-        Connection connection;
-        protected Writer writer;
         protected IAsyncTransport socketTransport;
+        Connection connection;
 
         public TcpTransport()
             : this(null)
@@ -129,7 +128,6 @@ namespace Amqp
             }
 
             this.socketTransport = transport;
-            this.writer = new Writer(this, this.socketTransport);
         }
 
         void IAsyncTransport.SetConnection(Connection connection)
@@ -137,59 +135,33 @@ namespace Amqp
             this.connection = connection;
         }
 
-        async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
+        Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
-            int received = await this.socketTransport.ReceiveAsync(buffer, offset, count);
-            if (received == 0)
-            {
-                throw new SocketException((int)SocketError.ConnectionReset);
-            }
-
-            return received;
+            return this.socketTransport.ReceiveAsync(buffer, offset, count);
         }
 
-        bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        Task IAsyncTransport.SendAsync(IList<ByteBuffer> bufferList, int listSize)
         {
-            throw new InvalidOperationException();
+            return this.socketTransport.SendAsync(bufferList, listSize);
         }
 
         void ITransport.Close()
         {
-            this.writer.Close();
+            this.socketTransport.Close();
         }
 
         void ITransport.Send(ByteBuffer buffer)
         {
-            this.writer.Write(buffer);
+            this.socketTransport.Send(buffer);
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
         {
-            int received = this.socketTransport.Receive(buffer, offset, count);
-            if (received == 0)
-            {
-                throw new SocketException((int)SocketError.ConnectionReset);
-            }
-
-            return received;
-        }
-
-        void OnWriteSuccess()
-        {
-            this.writer.DisposeWriteBuffers();
-            this.writer.ContinueWrite();
-        }
-
-        void OnWriteFailure(Exception exception)
-        {
-            this.connection.OnIoException(exception);
-            this.writer.DisposeWriteBuffers();
-            this.writer.DisposeQueuedBuffers();
+            return this.socketTransport.Receive(buffer, offset, count);
         }
 
         protected class TcpSocket : IAsyncTransport
         {
-            readonly static EventHandler<SocketAsyncEventArgs> onWriteComplete = OnWriteComplete;
             readonly TcpTransport transport;
             readonly Socket socket;
             readonly SocketAsyncEventArgs sendArgs;
@@ -203,24 +175,9 @@ namespace Amqp
                 this.socket = socket;
                 this.receiveTracker = new IopsTracker();
                 this.sendArgs = new SocketAsyncEventArgs();
-                this.sendArgs.Completed += onWriteComplete;
-                this.sendArgs.UserToken = this;
-
+                this.sendArgs.Completed += (s, a) => SocketExtensions.Complete(s, a, true, 0);
                 this.receiveArgs = new SocketAsyncEventArgs();
-                this.receiveArgs.Completed += (s, a) => ((TaskCompletionSource<int>)a.UserToken).Complete(a, b => b.BytesTransferred);
-            }
-
-            static void OnWriteComplete(object sender, SocketAsyncEventArgs eventArgs)
-            {
-                var thisPtr = (TcpSocket)eventArgs.UserToken;
-                if (eventArgs.SocketError != SocketError.Success)
-                {
-                    thisPtr.transport.OnWriteFailure(new SocketException((int)eventArgs.SocketError));
-                }
-                else
-                {
-                    thisPtr.transport.OnWriteSuccess();
-                }
+                this.receiveArgs.Completed += (s, a) => SocketExtensions.Complete(s, a, true, a.BytesTransferred);
             }
 
             void IAsyncTransport.SetConnection(Connection connection)
@@ -228,20 +185,16 @@ namespace Amqp
                 throw new NotImplementedException();
             }
 
-            bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+            Task IAsyncTransport.SendAsync(IList<ByteBuffer> bufferList, int listSize)
             {
-                if (buffer != null)
+                var segments = new ArraySegment<byte>[bufferList.Count];
+                for (int i = 0; i < bufferList.Count; i++)
                 {
-                    this.sendArgs.BufferList = null;
-                    this.sendArgs.SetBuffer(buffer.Buffer, buffer.Offset, buffer.Length);
-                }
-                else
-                {
-                    this.sendArgs.SetBuffer(null, 0, 0);
-                    this.sendArgs.BufferList = bufferList;
+                    ByteBuffer f = bufferList[i];
+                    segments[i] = new ArraySegment<byte>(f.Buffer, f.Offset, f.Length);
                 }
 
-                return this.socket.SendAsync(this.sendArgs);
+                return this.socket.SendAsync(this.sendArgs, segments);
             }
 
             async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
@@ -285,7 +238,8 @@ namespace Amqp
                     try
                     {
                         this.receiveBuffer.AddReference();
-                        int bytes = await this.socket.ReceiveAsync(this.receiveArgs, this.receiveBuffer.Buffer, 0, this.receiveBuffer.Size);
+                        int bytes = await this.socket.ReceiveAsync(this.receiveArgs, this.receiveBuffer.Buffer,
+                            this.receiveBuffer.WritePos, this.receiveBuffer.Size);
                         this.receiveBuffer.Append(bytes);
                         return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
                     }
@@ -298,19 +252,17 @@ namespace Amqp
 
             void ITransport.Send(ByteBuffer buffer)
             {
-                throw new InvalidOperationException();
+                this.socket.Send(buffer.Buffer, buffer.Offset, buffer.Length, SocketFlags.None);
             }
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
+                return this.socket.Receive(buffer, offset, count, SocketFlags.None);
             }
 
             void ITransport.Close()
             {
                 this.socket.Dispose();
-                this.sendArgs.Dispose();
-                this.receiveArgs.Dispose();
 
                 var temp = this.receiveBuffer;
                 if (temp != null)
@@ -353,53 +305,37 @@ namespace Amqp
                 throw new NotImplementedException();
             }
 
-            bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+            async Task IAsyncTransport.SendAsync(IList<ByteBuffer> bufferList, int listSize)
             {
                 ByteBuffer writeBuffer;
-                if (buffer != null)
+                bool releaseBuffer = false;
+                if (bufferList.Count == 1)
                 {
-                    buffer.AddReference();
-                    writeBuffer = buffer;
+                    writeBuffer = bufferList[0];
                 }
                 else
                 {
+                    releaseBuffer = true;
                     writeBuffer = this.transport.bufferManager.GetByteBuffer(listSize);
                     for (int i = 0; i < bufferList.Count; i++)
                     {
-                        ArraySegment<byte> segment = bufferList[i];
-                        Buffer.BlockCopy(segment.Array, segment.Offset, writeBuffer.Buffer, writeBuffer.WritePos, segment.Count);
-                        writeBuffer.Append(segment.Count);
+                        ByteBuffer segment = bufferList[i];
+                        Buffer.BlockCopy(segment.Buffer, segment.Offset, writeBuffer.Buffer, writeBuffer.WritePos, segment.Length);
+                        writeBuffer.Append(segment.Length);
                     }
                 }
 
-                Task task = this.sslStream.WriteAsync(writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Length);
-                bool pending = !task.IsCompleted;
-                if (pending)
+                try
                 {
-                    task.ContinueWith(
-                        (t, s) =>
-                        {
-                            var tuple = (Tuple<SslSocket, ByteBuffer>)s;
-                            tuple.Item2.ReleaseReference();
-
-                            var thisPtr = tuple.Item1;
-                            if (t.IsFaulted)
-                            {
-                                thisPtr.transport.OnWriteFailure(t.Exception.InnerException);
-                            }
-                            else
-                            {
-                                thisPtr.transport.OnWriteSuccess();
-                            }
-                        },
-                        Tuple.Create(this, writeBuffer));
+                    await this.sslStream.WriteAsync(writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Length);
                 }
-                else
+                finally
                 {
-                    writeBuffer.ReleaseReference();
+                    if (releaseBuffer)
+                    {
+                        writeBuffer.ReleaseReference();
+                    }
                 }
-
-                return pending;
             }
 
             Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
@@ -409,7 +345,7 @@ namespace Amqp
 
             void ITransport.Send(ByteBuffer buffer)
             {
-                throw new InvalidOperationException();
+                this.sslStream.Write(buffer.Buffer, buffer.Offset, buffer.Length);
             }
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
@@ -420,168 +356,6 @@ namespace Amqp
             void ITransport.Close()
             {
                 this.sslStream.Dispose();
-            }
-        }
-
-        protected class Writer
-        {
-            readonly TcpTransport owner;
-            readonly IAsyncTransport transport;
-            Queue<ByteBuffer> bufferQueue;
-            List<ByteBuffer> buffersInProgress;
-            bool writing;
-            bool closed;
-
-            public Writer(TcpTransport owner, IAsyncTransport transport)
-            {
-                this.owner = owner;
-                this.transport = transport;
-                this.bufferQueue = new Queue<ByteBuffer>();
-                this.buffersInProgress = new List<ByteBuffer>();
-            }
-
-            object SyncRoot
-            {
-                get { return this.bufferQueue; }
-            }
-
-            public void Close()
-            {
-                lock (this.SyncRoot)
-                {
-                    this.closed = true;
-                    if (this.writing)
-                    {
-                        return;
-                    }
-                }
-
-                this.transport.Close();
-            }
-
-            public void Write(ByteBuffer buffer)
-            {
-                lock (this.SyncRoot)
-                {
-                    if (this.writing)
-                    {
-                        this.bufferQueue.Enqueue(buffer);
-                        return;
-                    }
-
-                    this.buffersInProgress.Add(buffer);
-                    this.writing = true;
-                }
-
-                bool pending = false;
-                try
-                {
-                    pending = this.transport.SendAsync(buffer, null, 0);
-                    if (!pending)
-                    {
-                        this.ContinueWrite();
-                    }
-                }
-                finally
-                {
-                    if (!pending)
-                    {
-                        this.DisposeWriteBuffers();
-                    }
-                }
-            }
-
-            public void DisposeWriteBuffers()
-            {
-                lock (this.SyncRoot)
-                {
-                    for (int i = 0; i < this.buffersInProgress.Count; i++)
-                    {
-                        this.buffersInProgress[i].ReleaseReference();
-                    }
-
-                    this.buffersInProgress.Clear();
-                }
-            }
-
-            public void DisposeQueuedBuffers()
-            {
-                lock (this.SyncRoot)
-                {
-                    foreach (var buffer in this.bufferQueue)
-                    {
-                        buffer.ReleaseReference();
-                    }
-
-                    this.bufferQueue.Clear();
-                }
-            }
-
-            public void ContinueWrite()
-            {
-                ByteBuffer buffer = null;
-                IList<ArraySegment<byte>> buffers = null;
-                int listSize = 0;
-                do
-                {
-                    lock (this.SyncRoot)
-                    {
-                        int queueDepth = this.bufferQueue.Count;
-                        if (queueDepth == 0)
-                        {
-                            this.writing = false;
-                            if (this.closed)
-                            {
-                                this.transport.Close();
-                            }
-
-                            return;
-                        }
-                        else if (queueDepth == 1)
-                        {
-                            buffer = this.bufferQueue.Dequeue();
-                            this.buffersInProgress.Add(buffer);
-                            buffers = null;
-                        }
-                        else
-                        {
-                            buffer = null;
-                            listSize = 0;
-                            buffers = new ArraySegment<byte>[queueDepth];
-                            for (int i = 0; i < queueDepth; i++)
-                            {
-                                ByteBuffer item = this.bufferQueue.Dequeue();
-                                this.buffersInProgress.Add(item);
-                                buffers[i] = new ArraySegment<byte>(item.Buffer, item.Offset, item.Length);
-                                listSize += item.Length;
-                            }
-                        }
-                    }
-
-                    bool pending = false;
-                    try
-                    {
-                        pending = this.transport.SendAsync(buffer, buffers, listSize);
-                        if (pending)
-                        {
-                            break;
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        this.owner.connection.OnIoException(exception);
-                        this.DisposeQueuedBuffers();
-                        break;
-                    }
-                    finally
-                    {
-                        if (!pending)
-                        {
-                            this.DisposeWriteBuffers();
-                        }
-                    }
-                }
-                while (true);
             }
         }
 

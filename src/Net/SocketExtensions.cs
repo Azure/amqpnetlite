@@ -18,22 +18,24 @@
 namespace Amqp
 {
     using System;
+    using System.Collections.Generic;
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
 
     static class SocketExtensions
     {
-        public static void Complete<T>(this TaskCompletionSource<T> tcs, SocketAsyncEventArgs args, Func<SocketAsyncEventArgs, T> getResult)
+        public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)
         {
+            var tcs = (TaskCompletionSource<T>)args.UserToken;
             args.UserToken = null;
-            if (args.SocketError != SocketError.Success)
+            if (args.SocketError != SocketError.Success && throwOnError)
             {
                 tcs.SetException(new SocketException((int)args.SocketError));
             }
             else
             {
-                tcs.SetResult(getResult(args));
+                tcs.SetResult(result);
             }
         }
 
@@ -43,10 +45,10 @@ namespace Amqp
             var args = new SocketAsyncEventArgs();
             args.RemoteEndPoint = new IPEndPoint(addr, port);
             args.UserToken = tcs;
-            args.Completed += (s, a) => { ((TaskCompletionSource<int>)a.UserToken).Complete(a, _ => 0); a.Dispose(); };
+            args.Completed += (s, a) => { Complete(s, a, true, 0); a.Dispose(); };
             if (!socket.ConnectAsync(args))
             {
-                tcs.Complete(args, _ => 0);
+                Complete(socket, args, true, 0);
                 args.Dispose();
             }
 
@@ -60,7 +62,21 @@ namespace Amqp
             args.UserToken = tcs;
             if (!socket.ReceiveAsync(args))
             {
-                tcs.Complete<int>(args, a => a.BytesTransferred);
+                Complete(socket, args, true, args.BytesTransferred);
+            }
+
+            return tcs.Task;
+        }
+
+        public static Task<int> SendAsync(this Socket socket, SocketAsyncEventArgs args, IList<ArraySegment<byte>> buffers)
+        {
+            var tcs = new TaskCompletionSource<int>();
+            args.SetBuffer(null, 0, 0);
+            args.BufferList = buffers;
+            args.UserToken = tcs;
+            if (!socket.SendAsync(args))
+            {
+                Complete(socket, args, true, 0);
             }
 
             return tcs.Task;
@@ -72,7 +88,7 @@ namespace Amqp
             args.UserToken = tcs;
             if (!socket.AcceptAsync(args))
             {
-                tcs.Complete(args, a => a.AcceptSocket);
+                Complete(socket, args, false, args.AcceptSocket);
             }
 
             return tcs.Task;

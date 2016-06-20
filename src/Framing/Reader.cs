@@ -17,29 +17,21 @@
 
 namespace Amqp.Framing
 {
-    using Amqp.Types;
     using System;
+    using Amqp.Types;
 
     static class Reader
     {
         public static ProtocolHeader ReadHeader(ITransport transport)
         {
             byte[] smallBuffer = new byte[8];
-            if (!ReadBuffer(transport, smallBuffer, 0, 8))
-            {
-                throw new ObjectDisposedException(transport.GetType().Name);
-            }
-
+            ReadBuffer(transport, smallBuffer, 0, 8);
             return ProtocolHeader.Create(smallBuffer, 0);
         }
 
         public static ByteBuffer ReadFrameBuffer(ITransport transport, byte[] sizeBuffer, uint maxFrameSize)
         {
-            if (!ReadBuffer(transport, sizeBuffer, 0, FixedWidth.UInt))
-            {
-                return null;
-            }
-
+            ReadBuffer(transport, sizeBuffer, 0, FixedWidth.UInt);
             int size = AmqpBitConverter.ReadInt(sizeBuffer, 0);
             if ((uint)size > maxFrameSize)
             {
@@ -49,29 +41,24 @@ namespace Amqp.Framing
 
             ByteBuffer frameBuffer = new ByteBuffer(size, true);
             AmqpBitConverter.WriteInt(frameBuffer, size);
-            if (!ReadBuffer(transport, frameBuffer.Buffer, frameBuffer.Length, frameBuffer.Size))
-            {
-                return null;
-            }
-
+            ReadBuffer(transport, frameBuffer.Buffer, frameBuffer.Length, frameBuffer.Size);
             frameBuffer.Append(frameBuffer.Size);
             return frameBuffer;
         }
 
-        static bool ReadBuffer(ITransport transport, byte[] buffer, int offset, int count)
+        static void ReadBuffer(ITransport transport, byte[] buffer, int offset, int count)
         {
             while (count > 0)
             {
                 int bytes = transport.Receive(buffer, offset, count);
-                offset += bytes;
-                count -= bytes;
                 if (bytes == 0)
                 {
-                    break;
+                    throw new ObjectDisposedException(transport.GetType().Name);
                 }
-            }
 
-            return count == 0;
+                offset += bytes;
+                count -= bytes;
+            }
         }
     }
 }

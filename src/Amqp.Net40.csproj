@@ -70,6 +70,7 @@
     <Compile Include="Net\ResourceManager.cs" />
     <Compile Include="Net\BufferManager.cs" />
     <Compile Include="Net\SocketExtensions.cs" />
+    <Compile Include="Net\TransportWriter.cs" />
     <Compile Include="Net\TypeExtensions.cs" />
     <Compile Include="Net\WrappedByteBuffer.cs" />
     <Compile Include="Net\RefCountedByteBuffer.cs" />

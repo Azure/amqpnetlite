@@ -32,16 +32,13 @@ namespace Amqp
         const int WebSocketsPort = 80;
         const int SecureWebSocketsPort = 443;
         StreamWebSocket webSocket;
-        Queue<ByteBuffer> writeQueue;
         Connection connection;
 
         public WebSocketTransport()
         {
-            this.writeQueue = new Queue<ByteBuffer>();
         }
 
         public WebSocketTransport(StreamWebSocket webSocket)
-            : this()
         {
             this.webSocket = webSocket;
         }
@@ -93,45 +90,31 @@ namespace Amqp
         async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
             var ret = await this.webSocket.InputStream.ReadAsync(buffer.AsBuffer(offset, count), (uint)count, InputStreamOptions.None);
-            if (ret.Length == 0)
-            {
-                throw new ObjectDisposedException(this.GetType().Name);
-            }
-
             return (int)ret.Length;
         }
 
-        bool IAsyncTransport.SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        async Task IAsyncTransport.SendAsync(IList<ByteBuffer> bufferList, int listSize)
         {
-            if (buffer != null)
+            for (int i = 0; i < bufferList.Count; i++)
             {
-                this.SendInternal(buffer);
+                ByteBuffer segment = bufferList[i];
+                await this.webSocket.OutputStream.WriteAsync(segment.Buffer.AsBuffer(segment.Offset, segment.Length));
             }
-            else
-            {
-                for (int i = 0; i < bufferList.Count; i++)
-                {
-                    ArraySegment<byte> segment = bufferList[i];
-                    this.SendInternal(new ByteBuffer(segment.Array, segment.Offset, segment.Count, segment.Count));
-                }
-            }
-
-            return true;
         }
 
         void ITransport.Close()
         {
-            this.SendInternal(null);
+            this.webSocket.Close(1000, "close");
         }
 
         void ITransport.Send(ByteBuffer buffer)
         {
-            this.SendInternal(buffer);
+            ((IAsyncTransport)this).SendAsync(new ByteBuffer[] { buffer }, buffer.Length).GetAwaiter().GetResult();
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
         {
-            return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).Result;
+            return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
         }
 
         static int GetDefaultPort(string scheme, int port)
@@ -150,74 +133,6 @@ namespace Amqp
             }
             
             return port;
-        }
-
-        void SendInternal(ByteBuffer buffer)
-        {
-            lock (this.writeQueue)
-            {
-                this.writeQueue.Enqueue(buffer);
-                if (this.writeQueue.Count > 1)
-                {
-                    return;
-                }
-                else if (buffer == null)
-                {
-                    // close
-                    this.CloseWebSocket(0, "normal");
-                    return;
-                }
-            }
-
-            this.SendAsync(buffer);
-        }
-
-        async void SendAsync(ByteBuffer buffer)
-        {
-            while (buffer != null)
-            {
-                try
-                {
-                    await this.webSocket.OutputStream.WriteAsync(buffer.Buffer.AsBuffer(buffer.Offset, buffer.Length));
-                }
-                catch (Exception exception)
-                {
-                    this.connection.OnIoException(exception);
-                    this.CloseWebSocket(1, "fault");
-                    break;
-                }
-
-                lock (this.writeQueue)
-                {
-                    this.writeQueue.Dequeue();
-                    if (this.writeQueue.Count == 0)
-                    {
-                        buffer = null;
-                    }
-                    else
-                    {
-                        buffer = this.writeQueue.Peek();
-                        if (buffer == null)
-                        {
-                            // delayed close
-                            this.CloseWebSocket(0, "normal");
-                        }
-                    }
-                }
-            }
-        }
-
-        void CloseWebSocket(ushort code, string reason)
-        {
-            lock (this.writeQueue)
-            {
-                this.writeQueue.Clear();
-            }
-
-            if (this.webSocket != null)
-            {
-                this.webSocket.Close(code, reason);
-            }
         }
     }
 }

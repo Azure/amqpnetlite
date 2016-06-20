@@ -27,20 +27,18 @@ namespace Amqp
 
     sealed class TcpTransport : IAsyncTransport
     {
-        readonly Queue<ByteBuffer> writeQueue;
         Connection connection;
         StreamSocket socket;
 
         public TcpTransport()
         {
-            this.writeQueue = new Queue<ByteBuffer>();
         }
 
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.connection = connection;
             var factory = new ConnectionFactory();
-            this.ConnectAsync(address, factory).GetAwaiter().GetResult();
+            this.ConnectAsync(address, factory).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public void SetConnection(Connection connection)
@@ -66,113 +64,31 @@ namespace Amqp
         public async Task<int> ReceiveAsync(byte[] buffer, int offset, int count)
         {
             var ret = await this.socket.InputStream.ReadAsync(buffer.AsBuffer(offset, count), (uint)count, InputStreamOptions.None);
-            if (ret.Length == 0)
-            {
-                throw new ObjectDisposedException(this.GetType().Name);
-            }
-
             return (int)ret.Length;
         }
 
-        public bool SendAsync(ByteBuffer buffer, IList<ArraySegment<byte>> bufferList, int listSize)
+        public async Task SendAsync(IList<ByteBuffer> bufferList, int listSize)
         {
-            if (buffer != null)
+            for (int i = 0; i < bufferList.Count; i++)
             {
-                this.SendInternal(buffer);
+                ByteBuffer segment = bufferList[i];
+                await this.socket.OutputStream.WriteAsync(segment.Buffer.AsBuffer(segment.Offset, segment.Length));
             }
-            else
-            {
-                for (int i = 0; i < bufferList.Count; i++)
-                {
-                    ArraySegment<byte> segment = bufferList[i];
-                    this.SendInternal(new ByteBuffer(segment.Array, segment.Offset, segment.Count, segment.Count));
-                }
-            }
-
-            return true;
         }
 
         public void Close()
         {
-            this.SendInternal(null);
+            this.socket.Dispose();
         }
 
         public void Send(ByteBuffer buffer)
         {
-            this.SendInternal(buffer);
+            this.SendAsync(new ByteBuffer[] { buffer }, buffer.Length).GetAwaiter().GetResult();
         }
 
         public int Receive(byte[] buffer, int offset, int count)
         {
-            return this.ReceiveAsync(buffer, offset, count).Result;
-        }
-
-        void SendInternal(ByteBuffer buffer)
-        {
-            lock (this.writeQueue)
-            {
-                this.writeQueue.Enqueue(buffer);
-                if (this.writeQueue.Count > 1)
-                {
-                    return;
-                }
-                else if (buffer == null)
-                {
-                    // close
-                    this.CloseSocket();
-                    return;
-                }
-            }
-
-            this.SendAsync(buffer);
-        }
-
-        async void SendAsync(ByteBuffer buffer)
-        {
-            while (buffer != null)
-            {
-                try
-                {
-                    await this.socket.OutputStream.WriteAsync(buffer.Buffer.AsBuffer(buffer.Offset, buffer.Length));
-                }
-                catch (Exception exception)
-                {
-                    this.connection.OnIoException(exception);
-                    this.CloseSocket();
-                    break;
-                }
-
-                lock (this.writeQueue)
-                {
-                    this.writeQueue.Dequeue();
-                    if (this.writeQueue.Count == 0)
-                    {
-                        buffer = null;
-                    }
-                    else
-                    {
-                        buffer = this.writeQueue.Peek();
-                        if (buffer == null)
-                        {
-                            // delayed close
-                            this.CloseSocket();
-                        }
-                    }
-                }
-            }
-        }
-
-        void CloseSocket()
-        {
-            lock (this.writeQueue)
-            {
-                this.writeQueue.Clear();
-            }
-
-            if (this.socket != null)
-            {
-                this.socket.Dispose();
-            }
+            return this.ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
         }
     }
 }

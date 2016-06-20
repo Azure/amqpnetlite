@@ -95,6 +95,10 @@ namespace Amqp
             while (count > 0)
             {
                 int received = await this.transport.ReceiveAsync(buffer, offset, count);
+                if (received == 0)
+                {
+                    throw new ObjectDisposedException(this.transport.GetType().Name);
+                }
 
                 offset += received;
                 count -= received;

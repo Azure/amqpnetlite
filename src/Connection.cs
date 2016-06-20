@@ -145,12 +145,13 @@ namespace Amqp
             IAsyncTransport transport, Open open, OnOpened onOpened)
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
         {
+            transport.SetConnection(this);
+
             this.BufferManager = bufferManager;
             this.MaxLinksPerSession = amqpSettings.MaxLinksPerSession;
             this.address = address;
             this.onOpened = onOpened;
-            this.transport = transport;
-            transport.SetConnection(this);
+            this.transport = new TransportWriter(transport, this.OnIoException);
 
             // after getting the transport, move state to open pipe before starting the pump
             if (open == null)
@@ -726,19 +727,12 @@ namespace Amqp
                 }
 
                 byte[] sizeBuffer = new byte[FixedWidth.UInt];
-                while (sizeBuffer != null && this.connection.state != State.End)
+                while (this.connection.state != State.End)
                 {
                     try
                     {
                         ByteBuffer buffer = Reader.ReadFrameBuffer(this.connection.transport, sizeBuffer, this.connection.maxFrameSize);
-                        if (buffer != null)
-                        {
-                            this.connection.OnFrame(buffer);
-                        }
-                        else
-                        {
-                            sizeBuffer = null;
-                        }
+                        this.connection.OnFrame(buffer);
                     }
                     catch (Exception exception)
                     {

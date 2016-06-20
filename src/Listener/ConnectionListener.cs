@@ -573,7 +573,7 @@ namespace Amqp.Listener
             async Task AcceptAsync(Socket socket)
             {
                 SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-                args.Completed += (s, a) => ((TaskCompletionSource<Socket>)a.UserToken).Complete(a, b => b.AcceptSocket);
+                args.Completed += (s, a) => SocketExtensions.Complete(s, a, false, a.SocketError == SocketError.Success ? a.AcceptSocket : null);
 
                 while (!this.closed)
                 {
@@ -581,7 +581,10 @@ namespace Amqp.Listener
                     {
                         args.AcceptSocket = null;
                         Socket acceptSocket = await socket.AcceptAsync(args, SocketFlags.None);
-                        var task = this.HandleSocketAsync(acceptSocket);
+                        if (acceptSocket != null)
+                        {
+                            var task = this.HandleSocketAsync(acceptSocket);
+                        }
                     }
                     catch (ObjectDisposedException)
                     {
@@ -635,14 +638,12 @@ namespace Amqp.Listener
                 : base(bufferManager)
             {
                 this.socketTransport = new TcpSocket(this, socket);
-                this.writer = new Writer(this, this.socketTransport);
             }
 
             public ListenerTcpTransport(SslStream sslStream, IBufferManager bufferManager)
                 : base(bufferManager)
             {
                 this.socketTransport = new SslSocket(this, sslStream);
-                this.writer = new Writer(this, this.socketTransport);
                 if (sslStream.RemoteCertificate != null)
                 {
                     this.Principal = new GenericPrincipal(
