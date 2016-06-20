@@ -37,13 +37,9 @@ namespace Amqp
         ManualResetEvent endEvent;
 
         /// <summary>
-        /// Gets or sets the closed callback.
+        /// Gets the event used to notify that the object is closed.
         /// </summary>
-        public ClosedCallback Closed
-        {
-            get;
-            set;
-        }
+        public event ClosedCallback Closed;
 
         /// <summary>
         /// Gets the last error, if any, of the object.
