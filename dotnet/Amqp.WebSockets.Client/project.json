@@ -1,0 +1,46 @@
+{
+    "version": "1.1.9",
+
+    "buildOptions": {
+        "compile": {
+            "include": [
+                "../../src/Properties/AssemblyInfo.cs",
+                "../../src/Properties/Version.cs",
+                "../../src/Net/WebSocketTransport.cs"
+            ]
+        },
+        "warningsAsErrors": true,
+        "xmlDoc": true,
+        "keyFile": "../../src/amqp.snk",
+        "publicSign": true
+    },
+
+    "dependencies": {
+        "Amqp": "1.1.9-*"
+    },
+
+    "configurations": {
+        "Debug": {
+            "buildOptions": {
+                "defines": [ "DEBUG" ]
+            }
+        },
+        "Release": {
+            "buildOptions": {
+                "optimize": true
+            }
+        }
+    },
+
+    "frameworks": {
+        "netstandard1.3": {
+            "buildOptions": {
+                "define": [ "TRACE", "DOTNET" ]
+            },
+            "imports": [ "dnxcore50" ],
+            "dependencies": {
+                "System.Net.WebSockets.Client": "4.0.0-rc2-24027"
+            }
+        }
+    }
+}

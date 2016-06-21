@@ -41,6 +41,12 @@ namespace Amqp
             this.bufferManager = bufferManager;
         }
 
+        public static bool MatchScheme(string scheme)
+        {
+            return string.Equals(scheme, Address.Amqp, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase);
+        }
+
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             this.connection = connection;

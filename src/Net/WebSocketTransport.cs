@@ -17,7 +17,6 @@
 
 namespace Amqp
 {
-#if NETFX
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -25,32 +24,47 @@ namespace Amqp
     using System.Threading;
     using System.Threading.Tasks;
 
-    class WebSocketTransport : IAsyncTransport
+    /// <summary>
+    /// The WebSocketTransport class allows applications to send and receive AMQP traffic
+    /// using the AMQP-WebSockets binding protocol.
+    /// </summary>
+    public class WebSocketTransport : IAsyncTransport
     {
-        public const string WebSocketSubProtocol = "AMQPWSB10";
-        public const string WebSockets = "WS";
-        public const string SecureWebSockets = "WSS";
+        internal const string WebSocketSubProtocol = "AMQPWSB10";
+        internal const string WebSockets = "WS";
+        internal const string SecureWebSockets = "WSS";
         const int WebSocketsPort = 80;
         const int SecureWebSocketsPort = 443;
         WebSocket webSocket;
         Connection connection;
 
-        public WebSocketTransport()
+        internal WebSocketTransport()
         {
         }
 
-        public WebSocketTransport(WebSocket webSocket)
+        internal WebSocketTransport(WebSocket webSocket)
         {
             this.webSocket = webSocket;
         }
 
-        public static bool MatchScheme(string scheme)
+        /// <summary>
+        /// Creates a WebSocketTransport to the given address.
+        /// </summary>
+        /// <param name="address">The destination address to connect.</param>
+        /// <returns>An IAsyncTransport object that represends the WebSocket transport.</returns>
+        public static Task<IAsyncTransport> CreateAsync(Address address)
+        {
+            WebSocketTransport wst = new WebSocketTransport();
+            return wst.ConnectAsync(address);
+        }
+
+        internal static bool MatchScheme(string scheme)
         {
             return string.Equals(scheme, WebSockets, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(scheme, SecureWebSockets, StringComparison.OrdinalIgnoreCase);
         }
 
-        public async Task ConnectAsync(Address address)
+        internal async Task<IAsyncTransport> ConnectAsync(Address address)
         {
             Uri uri = new UriBuilder()
             {
@@ -75,6 +89,8 @@ namespace Amqp
             }
 
             this.webSocket = cws;
+
+            return this;
         }
 
         void IAsyncTransport.SetConnection(Connection connection)
@@ -137,5 +153,4 @@ namespace Amqp
             return port;
         }
     }
-#endif
 }

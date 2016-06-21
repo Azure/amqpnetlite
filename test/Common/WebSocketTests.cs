@@ -28,6 +28,14 @@ namespace Test.Amqp
     {
         const string address = "ws://guest:guest@localhost:18080/test";
 
+#if DOTNET
+        static WebSocketTests()
+        {
+            ConnectionFactory.RegisterTransportFactory("ws", a => WebSocketTransport.CreateAsync(a));
+        }
+#endif
+
+#if NETFX
         [TestMethod]
         public void WebSocketContainerHostTests()
         {
@@ -62,10 +70,17 @@ namespace Test.Amqp
 
             Assert.AreEqual(total, passed, string.Format("Not all tests passed {0}/{1}", passed, total));
         }
+#endif
 
         [TestMethod]
         public async Task WebSocketSendReceiveAsync()
         {
+            if (Environment.GetEnvironmentVariable("CoreBroker") == "1")
+            {
+                // No Websocket listener on .Net Core
+                return;
+            }
+
             string testName = "WebSocketSendReceiveAsync";
 
             // assuming it matches the broker's setup and port is not taken

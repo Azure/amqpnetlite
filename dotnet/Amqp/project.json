@@ -2,18 +2,23 @@
     "version": "1.1.9",
 
     "buildOptions": {
-        "compile": [
-            "../../src/Properties/AssemblyInfo.cs",
-            "../../src/Properties/Version.cs",
-            "../../src/Properties/SNInternalsVisibleTo.cs",
-            "../../src/Framing/*.cs",
-            "../../src/Net/*.cs",
-            "../../src/Sasl/*.cs",
-            "../../src/Serialization/*.cs",
-            "../../src/Transactions/*.cs",
-            "../../src/Types/*.cs",
-            "../../src/*.cs"
-        ],
+        "compile": {
+            "include": [
+                "../../src/Properties/AssemblyInfo.cs",
+                "../../src/Properties/Version.cs",
+                "../../src/Properties/SNInternalsVisibleTo.cs",
+                "../../src/Framing/*.cs",
+                "../../src/Net/*.cs",
+                "../../src/Sasl/*.cs",
+                "../../src/Serialization/*.cs",
+                "../../src/Transactions/*.cs",
+                "../../src/Types/*.cs",
+                "../../src/*.cs"
+            ],
+            "exclude": [
+                "../../src/Net/WebSocketTransport.cs"
+            ]
+        },
         "embed": [
             "../../src/SRAmqp.resx"
         ],

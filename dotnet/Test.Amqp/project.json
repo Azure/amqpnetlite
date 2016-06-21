@@ -13,7 +13,8 @@
             "../../test/Common/UtilityTests.cs",
             "../../test/Common/ContainerHostTests.cs",
             "../../test/Common/Types/*.cs",
-            "../../test/Common/AmqpSerializerTests.cs"
+            "../../test/Common/AmqpSerializerTests.cs",
+            "../../test/Common/WebSocketTests.cs"
         ],
         "emitEntryPoint": true,
         "define": [ "DOTNET" ]
@@ -25,7 +26,8 @@
             "version": "1.0.0-rc2-3002702"
         },
         "Amqp": "1.1.9-*",
-        "Amqp.Listener": "1.1.9-*"
+        "Amqp.Listener": "1.1.9-*",
+        "Amqp.WebSockets.Client": "1.1.9-*"
     },
 
     "frameworks": {

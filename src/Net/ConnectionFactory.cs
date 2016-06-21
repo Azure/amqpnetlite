@@ -18,6 +18,7 @@
 namespace Amqp
 {
     using System;
+    using System.Collections.Generic;
     using System.Net.Security;
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
@@ -30,8 +31,14 @@ namespace Amqp
     /// </summary>
     public class ConnectionFactory : ConnectionFactoryBase
     {
+        static readonly Dictionary<string, Func<Address, Task<IAsyncTransport>>> transportFactories;
         SslSettings sslSettings;
         SaslSettings saslSettings;
+
+        static ConnectionFactory()
+        {
+            transportFactories = new Dictionary<string, Func<Address, Task<IAsyncTransport>>>(StringComparer.OrdinalIgnoreCase);
+        }
 
         /// <summary>
         /// Constructor to create a connection factory.
@@ -69,6 +76,22 @@ namespace Amqp
         }
 
         /// <summary>
+        /// Register a factory for the specified scheme to create an asynchrous transport.
+        /// </summary>
+        /// <param name="scheme">The address scheme that can be handled by the transport factory.</param>
+        /// <param name="factory">The factory to create an transport for a given address.</param>
+        /// <remarks>Application can provide a custom transport implementation for a given address scheme.
+        /// For a given scheme, if a transport factory exists (e.g. a standard built-in factory for 'amqps'),
+        /// It is overwritten by the custom implementation.
+        /// If the standard 'amqp' and 'amqps' transport implementation is replaced, the TCP and SSL settings
+        /// of the connection factory will not be applied to the custom implementation.
+        /// </remarks>
+        public static void RegisterTransportFactory(string scheme, Func<Address, Task<IAsyncTransport>> factory)
+        {
+            transportFactories[scheme] = factory;
+        }
+
+        /// <summary>
         /// Creates a new connection.
         /// </summary>
         /// <param name="address">The address of remote endpoint to connect to.</param>
@@ -88,8 +111,12 @@ namespace Amqp
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
-            if (string.Equals(address.Scheme, Address.Amqp, StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(address.Scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase))
+            Func<Address, Task<IAsyncTransport>> factory;
+            if (transportFactories.TryGetValue(address.Scheme, out factory))
+            {
+                transport = await factory(address);
+            }
+            else if (TcpTransport.MatchScheme(address.Scheme))
             {
                 TcpTransport tcpTransport = new TcpTransport(this.BufferManager);
                 await tcpTransport.ConnectAsync(address, this);
@@ -98,9 +125,7 @@ namespace Amqp
 #if NETFX
             else if (WebSocketTransport.MatchScheme(address.Scheme))
             {
-                WebSocketTransport wsTransport = new WebSocketTransport();
-                await wsTransport.ConnectAsync(address);
-                transport = wsTransport;
+                transport = await WebSocketTransport.CreateAsync(address);
             }
 #endif
             else

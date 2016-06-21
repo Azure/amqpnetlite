@@ -77,7 +77,7 @@ namespace Test.Amqp
                     {
                         try
                         {
-                            testClassInitialize.Invoke(instance, null);
+                            InvokeMethod(testClassInitialize, instance);
                         }
                         catch(Exception exception)
                         {
@@ -95,14 +95,14 @@ namespace Test.Amqp
                         {
                             if (testInitialize != null)
                             {
-                                testInitialize.Invoke(instance, null);
+                                InvokeMethod(testInitialize, instance);
                             }
 
-                            testMethods[i].Invoke(instance, null);
+                            InvokeMethod(testMethods[i], instance);
 
                             if (testCleanup != null)
                             {
-                                testCleanup.Invoke(instance, null);
+                                InvokeMethod(testCleanup, instance);
                             }
 
                             passed++;
@@ -120,7 +120,7 @@ namespace Test.Amqp
                     {
                         try
                         {
-                            testClassCleanup.Invoke(instance, null);
+                            InvokeMethod(testClassCleanup, instance);
                         }
                         catch(Exception exception)
                         {
@@ -151,6 +151,17 @@ namespace Test.Amqp
             return mi.GetCustomAttribute<Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute>(true) != null;
 #else
             return mi.Name.Length > 11 && mi.Name.Substring(0, 11) == "TestMethod_";
+#endif
+        }
+
+        static void InvokeMethod(MethodInfo mi, object instance)
+        {
+            object ret = mi.Invoke(instance, null);
+#if DOTNET
+            if (ret is System.Threading.Tasks.Task)
+            {
+                ((System.Threading.Tasks.Task)ret).GetAwaiter().GetResult();
+            }
 #endif
         }
     }
