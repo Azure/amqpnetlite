@@ -95,7 +95,8 @@ namespace Amqp
         /// Starts the message pump.
         /// </summary>
         /// <param name="credit">The link credit to issue.</param>
-        /// <param name="onMessage">If specified, the callback to invoke when messages are received. If not specified, call Receive method to get the messages.</param>
+        /// <param name="onMessage">If specified, the callback to invoke when messages are received.
+        /// If not specified, call Receive method to get the messages.</param>
         public void Start(int credit, MessageCallback onMessage = null)
         {
             this.onMessage = onMessage;
@@ -106,7 +107,8 @@ namespace Amqp
         /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted/rejected by the caller. If false, caller is responsible for manage link credits.</param>
+        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted
+        /// or rejected by the caller. If false, caller is responsible for manage link credits.</param>
         public void SetCredit(int credit, bool autoRestore = true)
         {
             uint dc;
@@ -127,10 +129,10 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Receives a message. The call is blocked for the timeout in seconds or a message is available.
+        /// Receives a message. The call is blocked until the timeout duration expires or a message is available.
         /// </summary>
-        /// <param name="timeout">Number of seconds to wait.</param>
-        /// <returns></returns>
+        /// <param name="timeout">Number of milliseconds to wait for a message.</param>
+        /// <returns>A Message object if available; otherwise a null value.</returns>
         public Message Receive(int timeout = 60000)
         {
             return this.ReceiveInternal(null, timeout);

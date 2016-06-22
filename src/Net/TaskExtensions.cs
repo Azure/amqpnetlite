@@ -157,8 +157,8 @@ namespace Amqp
         /// Closes an AMQP object asynchronously.
         /// </summary>
         /// <param name="amqpObject">The object to close.</param>
-        /// <param name="timeout">The timeout in seconds.</param>
-        /// <returns></returns>
+        /// <param name="timeout">The timeout in milliseconds. Refer to AmqpObject.Close for details.</param>
+        /// <returns>A Task for the asynchronous close operation.</returns>
         public static Task CloseAsync(this AmqpObject amqpObject, int timeout = 60000)
         {
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
@@ -189,9 +189,9 @@ namespace Amqp
         /// <summary>
         /// Sends a message asynchronously.
         /// </summary>
-        /// <param name="sender">The link.</param>
-        /// <param name="message">The message.</param>
-        /// <returns></returns>
+        /// <param name="sender">The sender link.</param>
+        /// <param name="message">The message to send.</param>
+        /// <returns>A Task for the asynchronous send operation.</returns>
         public static async Task SendAsync(this SenderLink sender, Message message)
         {
             DeliveryState txnState = null;
@@ -226,9 +226,22 @@ namespace Amqp
         /// <summary>
         /// Receives a message asynchronously.
         /// </summary>
-        /// <param name="receiver">The link.</param>
-        /// <param name="timeout">The timeout in seconds.</param>
-        /// <returns></returns>
+        /// <param name="receiver">The receiver link.</param>
+        /// <param name="timeout">The timeout to wait for a message.</param>
+        /// <returns>A Task for the asynchronous receive operation. The result is a Message object
+        /// if available; otherwise a null value.</returns>
+        public static Task<Message> ReceiveAsync(this ReceiverLink receiver, TimeSpan timeout)
+        {
+            return ReceiveAsync(receiver, (int)timeout.TotalMilliseconds);
+        }
+
+        /// <summary>
+        /// Receives a message asynchronously.
+        /// </summary>
+        /// <param name="receiver">The receiver link.</param>
+        /// <param name="timeout">The timeout in milliseconds to wait for a message.</param>
+        /// <returns>A Task for the asynchronous receive operation. The result is a Message object
+        /// if available; otherwise a null value.</returns>
         public static Task<Message> ReceiveAsync(this ReceiverLink receiver, int timeout = 60000)
         {
             TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();

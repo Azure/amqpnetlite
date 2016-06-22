@@ -72,7 +72,8 @@ namespace Amqp
         /// <summary>
         /// Closes the AMQP object, optionally with an error.
         /// </summary>
-        /// <param name="waitUntilEnded">The number of seconds to block until a closing frame is received from the peer. If it is 0, the call is non-blocking.</param>
+        /// <param name="waitUntilEnded">The number of milliseconds to block until a closing frame is
+        /// received from the peer. If it is 0, the call is non-blocking.</param>
         /// <param name="error">The AMQP error to send to the peer, indicating why the object is being closed.</param>
         public void Close(int waitUntilEnded = DefaultCloseTimeout, Error error = null)
         {
