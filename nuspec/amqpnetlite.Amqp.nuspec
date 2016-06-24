@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>amqpnetlite.Amqp</id>
+    <title>AMQP.Net Lite: AMQP 1.0 client library for .Net Core</title>
+    <version>0.0.0</version>
+    <authors>xinchen</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is the AmqpNetLite package (client portion) on .Net Core.</description>
+    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>AMQP coreclr .NetCore netstandard</tags>
+    <dependencies>
+      <group targetFramework="netstandard1.3">
+        <dependency id="System.Collections" version="4.0.10" />
+        <dependency id="System.Collections.Concurrent" version="4.0.10" />
+        <dependency id="System.Collections.NonGeneric" version="4.0.0" />
+        <dependency id="System.Diagnostics.Tools" version="4.0.0" />
+        <dependency id="System.Threading" version="4.0.10" />
+        <dependency id="System.Threading.Tasks" version="4.0.10" />
+        <dependency id="System.Threading.Thread" version="4.0.0-beta-23516" />
+        <dependency id="System.Threading.ThreadPool" version="4.0.10-beta-23516" />
+        <dependency id="System.Threading.Timer" version="4.0.0" />
+        <dependency id="System.Net.NameResolution" version="4.0.0-beta-23516" />
+        <dependency id="System.Net.Security" version="4.0.0-beta-23516" />
+        <dependency id="System.Net.Sockets" version="4.1.0-beta-23516" />
+        <dependency id="System.Reflection" version="4.0.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.0.0" />
+        <dependency id="System.Reflection.Extensions" version="4.0.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.0.0" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.1.0" />
+        <dependency id="System.Security.Claims" version="4.0.0" />
+        <dependency id="System.Security.Principal" version="4.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.dll" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.pdb" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.xml" target="lib\netstandard1.3" />
+  </files>
+</package>

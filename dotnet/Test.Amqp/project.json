@@ -25,9 +25,9 @@
             "type": "platform",
             "version": "1.0.0-rc2-3002702"
         },
-        "Amqp": "1.1.9-*",
-        "Amqp.Listener": "1.1.9-*",
-        "Amqp.WebSockets.Client": "1.1.9-*"
+        "Amqp": "1.2.0-*",
+        "Amqp.Listener": "1.2.0-*",
+        "Amqp.WebSockets.Client": "1.2.0-*"
     },
 
     "frameworks": {

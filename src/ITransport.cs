@@ -20,8 +20,7 @@ namespace Amqp
     using System;
 
     /// <summary>
-    /// The transport interface used by a connection for network I/O. To perform
-    /// asynchronous network I/O, use <see cref="IAsyncTransport"/>.
+    /// The transport interface used by a connection for network I/O.
     /// </summary>
     public interface ITransport
     {

@@ -12,9 +12,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net", "test\Test.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
 	ProjectSection(SolutionItems) = preProject
-		Amqp.Micro.nuspec = Amqp.Micro.nuspec
-		Amqp.Net.nuspec = Amqp.Net.nuspec
+		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
+		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
 		src\amqp.snk = src\amqp.snk
+		nuspec\amqpnetlite.Amqp.Listener.nuspec = nuspec\amqpnetlite.Amqp.Listener.nuspec
+		nuspec\amqpnetlite.Amqp.nuspec = nuspec\amqpnetlite.Amqp.nuspec
+		nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec = nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject
@@ -135,6 +138,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test.Amqp", "Test.Amqp", "{
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net35", "test\Test.Amqp.Net35\Test.Amqp.Net35.csproj", "{7852029D-235C-40B7-8957-8E78414C3F97}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.WebSockets.Client", "Amqp.WebSockets.Client", "{487977C7-C125-4F23-956D-D3DB7B78E843}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\Amqp.WebSockets.Client\project.json = dotnet\Amqp.WebSockets.Client\project.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -616,5 +624,6 @@ Global
 		{5637969B-A822-425A-A831-F70AA2275777} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{9B1E629B-4179-4531-BE56-9B9AE7735EBC} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
+		{487977C7-C125-4F23-956D-D3DB7B78E843} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal

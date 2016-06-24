@@ -21,8 +21,7 @@ namespace Amqp
     using System.Diagnostics;
 
     /// <summary>
-    /// The base class of connection factories, e.g. <see cref="ConnectionFactory"/> and
-    /// <see cref="ConnectionListener"/>
+    /// The base class of connection factories.
     /// </summary>
     public class ConnectionFactoryBase
     {
