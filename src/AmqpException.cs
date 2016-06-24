@@ -28,7 +28,7 @@ namespace Amqp
         /// <summary>
         /// Initializes a new instance of the AmqpException class with the AMQP error.
         /// </summary>
-        /// <param name="error">The AMQP error.</param>
+        /// <param name="error">The AMQP <see cref="Error"/> object.</param>
         public AmqpException(Error error)
             : base(error.Description ?? error.Condition)
         {
@@ -46,7 +46,7 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Gets the AMQP error stored in this exception.
+        /// Gets the AMQP <see cref="Error"/> stored in this exception.
         /// </summary>
         public Error Error
         {

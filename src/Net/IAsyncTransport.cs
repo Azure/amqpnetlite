@@ -29,7 +29,7 @@ namespace Amqp
         /// <summary>
         /// Sets a connection to the transport.
         /// </summary>
-        /// <param name="connection"></param>
+        /// <param name="connection">The <see cref="Connection"/> to attach to the transport.</param>
         void SetConnection(Connection connection);
 
         /// <summary>

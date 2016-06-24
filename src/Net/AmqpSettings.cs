@@ -18,7 +18,7 @@
 namespace Amqp
 {
     /// <summary>
-    /// Contains the AMQP settings for a connection.
+    /// Contains the AMQP settings for a <see cref="Connection"/>.
     /// </summary>
     public class AmqpSettings
     {

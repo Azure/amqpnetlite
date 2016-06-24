@@ -183,13 +183,13 @@ namespace Amqp
         /// <summary>
         /// Aborts the link.
         /// </summary>
-        /// <param name="error"></param>
+        /// <param name="error">The <see cref="Error"/> for aborting the link.</param>
         protected abstract void OnAbort(Error error);
 
         /// <summary>
         /// Closes the link.
         /// </summary>
-        /// <param name="error">The error.</param>
+        /// <param name="error">The <see cref="Error"/> for closing the link.</param>
         /// <returns></returns>
         protected override bool OnClose(Error error)
         {

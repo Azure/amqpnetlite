@@ -20,7 +20,7 @@ namespace Amqp
     using System;
 
     /// <summary>
-    /// A byte array wrapper that has read and write cursors.
+    /// A byte array wrapper that has a read and a write cursor.
     /// </summary>
     public class ByteBuffer
     {

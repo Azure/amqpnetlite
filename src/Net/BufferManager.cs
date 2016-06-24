@@ -23,7 +23,8 @@ namespace Amqp
     using System.Threading;
 
     /// <summary>
-    /// A BufferManager manages pooled buffers (byte arrays) with different sizes.
+    /// A BufferManager class manages pooled buffers (byte arrays) with different sizes.
+    /// It provides an implementation of the <see cref="IBufferManager"/> interface.
     /// </summary>
     public class BufferManager : IBufferManager
     {
@@ -37,9 +38,9 @@ namespace Amqp
         /// <summary>
         /// Initializes a new instance of the BufferManager class.
         /// </summary>
-        /// <param name="minBufferSize">The minimum size of pooled buffers.</param>
-        /// <param name="maxBufferSize">The maximum size of pooled buffers.</param>
-        /// <param name="maxMemorySize">The maximum totoal size of pooled buffers.</param>
+        /// <param name="minBufferSize">The minimum size in bytes of pooled buffers.</param>
+        /// <param name="maxBufferSize">The maximum size in bytes of pooled buffers.</param>
+        /// <param name="maxMemorySize">The maximum totoal size in bytes of pooled buffers.</param>
         public BufferManager(int minBufferSize, int maxBufferSize, long maxMemorySize)
         {
             CheckBufferSize(minBufferSize, "minBufferSize");

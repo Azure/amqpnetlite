@@ -24,11 +24,14 @@ namespace Amqp
     /// The callback that is invoked when the AMQP object is closed.
     /// </summary>
     /// <param name="sender">The AMQP object.</param>
-    /// <param name="error">The AMQP error, if any.</param>
+    /// <param name="error">The AMQP <see cref="Error"/>, if any.</param>
     public delegate void ClosedCallback(AmqpObject sender, Error error);
 
     /// <summary>
     /// The base class of all AMQP objects.
+    /// <seealso cref="Session"/>
+    /// <seealso cref="SenderLink"/>
+    /// <seealso cref="ReceiverLink"/>
     /// </summary>
     public abstract class AmqpObject
     {
@@ -42,7 +45,7 @@ namespace Amqp
         public event ClosedCallback Closed;
 
         /// <summary>
-        /// Gets the last error, if any, of the object.
+        /// Gets the last <see cref="Error"/>, if any, of the object.
         /// </summary>
         public Error Error
         {
@@ -74,7 +77,7 @@ namespace Amqp
         /// </summary>
         /// <param name="waitUntilEnded">The number of milliseconds to block until a closing frame is
         /// received from the peer. If it is 0, the call is non-blocking.</param>
-        /// <param name="error">The AMQP error to send to the peer, indicating why the object is being closed.</param>
+        /// <param name="error">The AMQP <see cref="Error"/> to send to the peer, indicating why the object is being closed.</param>
         public void Close(int waitUntilEnded = DefaultCloseTimeout, Error error = null)
         {
             // initialize event first to avoid the race with NotifyClosed
@@ -97,8 +100,8 @@ namespace Amqp
         /// <summary>
         /// When overridden in a derived class, performs the actual close operation required by the object.
         /// </summary>
-        /// <param name="error"></param>
-        /// <returns></returns>
+        /// <param name="error">The <see cref="Error"/> for closing the object.</param>
+        /// <returns>A boolean value indicating if the object has been fully closed.</returns>
         protected abstract bool OnClose(Error error);
     }
 }
