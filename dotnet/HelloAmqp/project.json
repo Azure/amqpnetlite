@@ -8,7 +8,7 @@
       "type": "platform",
       "version": "1.0.0-rc2-3002702"
     },
-    "AmqpNetLite": "1.1.9-rc"
+    "Amqp": "1.2.0"
   },
   "frameworks": {
     "netcoreapp1.0": {
