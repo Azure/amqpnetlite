@@ -28,13 +28,6 @@ namespace Test.Amqp
     {
         const string address = "ws://guest:guest@localhost:18080/test";
 
-#if DOTNET
-        static WebSocketTests()
-        {
-            ConnectionFactory.RegisterTransportFactory("ws", a => WebSocketTransport.CreateAsync(a));
-        }
-#endif
-
 #if NETFX
         [TestMethod]
         public void WebSocketContainerHostTests()
@@ -87,7 +80,9 @@ namespace Test.Amqp
             Address wsAddress = new Address(address);
             int nMsgs = 50;
 
-            Connection connection = await Connection.Factory.CreateAsync(wsAddress);
+            ConnectionFactory connectionFactory = new ConnectionFactory(
+                new TransportFactory() { AddressSchemes = new[] { "ws" }, CreateAsync = WebSocketTransport.CreateAsync });
+            Connection connection = await connectionFactory.CreateAsync(wsAddress);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
 

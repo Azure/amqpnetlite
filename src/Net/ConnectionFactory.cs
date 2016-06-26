@@ -31,14 +31,9 @@ namespace Amqp
     /// </summary>
     public class ConnectionFactory : ConnectionFactoryBase
     {
-        static readonly Dictionary<string, Func<Address, Task<IAsyncTransport>>> transportFactories;
+        Dictionary<string, Func<Address, Task<IAsyncTransport>>> transportFactories;
         SslSettings sslSettings;
         SaslSettings saslSettings;
-
-        static ConnectionFactory()
-        {
-            transportFactories = new Dictionary<string, Func<Address, Task<IAsyncTransport>>>(StringComparer.OrdinalIgnoreCase);
-        }
 
         /// <summary>
         /// Constructor to create a connection factory.
@@ -46,6 +41,38 @@ namespace Amqp
         public ConnectionFactory()
             : base()
         {
+        }
+
+        /// <summary>
+        /// Creates a connection factory with a custom transport factory.
+        /// </summary>
+        /// <param name="transportFactory">The custom transport factory.</param>
+        public ConnectionFactory(TransportFactory transportFactory)
+            : this(new TransportFactory[] { transportFactory })
+        {
+        }
+
+        /// <summary>
+        /// Creates a connection factory with additional custom transport factories.
+        /// </summary>
+        /// <param name="transportFactories">The custom transport factories.</param>
+        /// <remarks>The library provides built-in transport implementation for address schemes
+        /// "amqp", "amqps" (and "ws", "wss" on .Net framework). Application can provide transport
+        /// implementations for a custom or a standard address scheme. When the built-in implementation
+        /// is replaced, the TCP and SSL settings of the connection factory will not be applied to
+        /// the custom implementation.
+        /// </remarks>
+        public ConnectionFactory(IEnumerable<TransportFactory> transportFactories)
+            : this()
+        {
+            this.transportFactories = new Dictionary<string, Func<Address, Task<IAsyncTransport>>>(StringComparer.OrdinalIgnoreCase);
+            foreach (var factory in transportFactories)
+            {
+                foreach (string scheme in factory.AddressSchemes)
+                {
+                    this.transportFactories[scheme] = factory.CreateAsync;
+                }
+            }
         }
 
         /// <summary>
@@ -76,22 +103,6 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Register a factory for the specified scheme to create an asynchrous transport.
-        /// </summary>
-        /// <param name="scheme">The address scheme that can be handled by the transport factory.</param>
-        /// <param name="factory">The factory to create an transport for a given address.</param>
-        /// <remarks>Application can provide a custom transport implementation for a given address scheme.
-        /// For a given scheme, if a transport factory exists (e.g. a standard built-in factory for 'amqps'),
-        /// It is overwritten by the custom implementation.
-        /// If the standard 'amqp' and 'amqps' transport implementation is replaced, the TCP and SSL settings
-        /// of the connection factory will not be applied to the custom implementation.
-        /// </remarks>
-        public static void RegisterTransportFactory(string scheme, Func<Address, Task<IAsyncTransport>> factory)
-        {
-            transportFactories[scheme] = factory;
-        }
-
-        /// <summary>
         /// Creates a new connection asynchronously.
         /// </summary>
         /// <param name="address">The address of remote endpoint to connect to.</param>
@@ -112,7 +123,7 @@ namespace Amqp
         {
             IAsyncTransport transport;
             Func<Address, Task<IAsyncTransport>> factory;
-            if (transportFactories.TryGetValue(address.Scheme, out factory))
+            if (this.transportFactories != null && this.transportFactories.TryGetValue(address.Scheme, out factory))
             {
                 transport = await factory(address);
             }

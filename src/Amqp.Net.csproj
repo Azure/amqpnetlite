@@ -69,6 +69,7 @@
     <Compile Include="Listener\IMessageProcessor.cs" />
     <Compile Include="Listener\Context.cs" />
     <Compile Include="Listener\ListenerLink.cs" />
+    <Compile Include="Net\TransportFactory.cs" />
     <Compile Include="Net\SocketExtensions.cs" />
     <Compile Include="Net\ResourceManager.cs" />
     <Compile Include="Net\BufferManager.cs" />
