@@ -81,7 +81,7 @@ namespace Test.Amqp
             int nMsgs = 50;
 
             ConnectionFactory connectionFactory = new ConnectionFactory(
-                new TransportFactory() { AddressSchemes = new[] { "ws" }, CreateAsync = WebSocketTransport.CreateAsync });
+                new TransportProvider[] { new WebSocketTransportFactory() });
             Connection connection = await connectionFactory.CreateAsync(wsAddress);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");

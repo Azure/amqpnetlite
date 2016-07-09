@@ -16,7 +16,8 @@
                 "../../src/*.cs"
             ],
             "exclude": [
-                "../../src/Net/WebSocketTransport.cs"
+                "../../src/Net/WebSocketTransport.cs",
+                "../../src/Net/WebSocketTransportFactory.cs"
             ]
         },
         "embed": [

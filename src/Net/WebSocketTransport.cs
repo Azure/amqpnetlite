@@ -33,8 +33,8 @@ namespace Amqp
         internal const string WebSocketSubProtocol = "AMQPWSB10";
         internal const string WebSockets = "WS";
         internal const string SecureWebSockets = "WSS";
-        const int WebSocketsPort = 80;
-        const int SecureWebSocketsPort = 443;
+        internal const int WebSocketsPort = 80;
+        internal const int SecureWebSocketsPort = 443;
         WebSocket webSocket;
         Connection connection;
 
@@ -47,24 +47,13 @@ namespace Amqp
             this.webSocket = webSocket;
         }
 
-        /// <summary>
-        /// Creates a WebSocketTransport to the given address.
-        /// </summary>
-        /// <param name="address">The destination address to connect.</param>
-        /// <returns>An IAsyncTransport object that represends the WebSocket transport.</returns>
-        public static Task<IAsyncTransport> CreateAsync(Address address)
-        {
-            WebSocketTransport wst = new WebSocketTransport();
-            return wst.ConnectAsync(address);
-        }
-
         internal static bool MatchScheme(string scheme)
         {
             return string.Equals(scheme, WebSockets, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(scheme, SecureWebSockets, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal async Task<IAsyncTransport> ConnectAsync(Address address)
+        internal async Task<IAsyncTransport> ConnectAsync(Address address, Action<ClientWebSocketOptions> options)
         {
             Uri uri = new UriBuilder()
             {
@@ -76,6 +65,11 @@ namespace Amqp
 
             ClientWebSocket cws = new ClientWebSocket();
             cws.Options.AddSubProtocol(WebSocketSubProtocol);
+            if (options != null)
+            {
+                options(cws.Options);
+            }
+
             await cws.ConnectAsync(uri, CancellationToken.None);
             if (cws.SubProtocol != WebSocketSubProtocol)
             {
@@ -83,9 +77,9 @@ namespace Amqp
 
                 throw new NotSupportedException(
                     string.Format(
-                    CultureInfo.InvariantCulture,
-                    "WebSocket SubProtocol used by the host is not the same that was requested: {0}",
-                    cws.SubProtocol ?? "<null>"));
+                        CultureInfo.InvariantCulture,
+                        "WebSocket SubProtocol used by the host is not the same that was requested: {0}",
+                        cws.SubProtocol ?? "<null>"));
             }
 
             this.webSocket = cws;

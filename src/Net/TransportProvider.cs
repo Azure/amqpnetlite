@@ -17,22 +17,23 @@
 
 namespace Amqp
 {
-    using System;
     using System.Threading.Tasks;
 
     /// <summary>
-    /// The TransportFactory class creates transports for given address schemes.
+    /// The TransportProvider class provides transport implementation for given address schemes.
     /// </summary>
-    public class TransportFactory
+    public abstract class TransportProvider
     {
         /// <summary>
-        /// The address schmes supported by the transport factory.
+        /// Gets or sets the supported address schemes.
         /// </summary>
-        public string[] AddressSchemes { get; set; }
+        public string[] AddressSchemes { get; protected set; }
 
         /// <summary>
-        /// The function to create a transport for a given address.
+        /// Creates a transport for the given address.
         /// </summary>
-        public Func<Address, Task<IAsyncTransport>> CreateAsync { get; set; }
+        /// <param name="address">The address to connect.</param>
+        /// <returns>An IAsyncTransport object representing the transport.</returns>
+        public abstract Task<IAsyncTransport> CreateAsync(Address address);
     }
 }

@@ -31,12 +31,13 @@ namespace Amqp
     /// </summary>
     public class ConnectionFactory : ConnectionFactoryBase
     {
-        Dictionary<string, Func<Address, Task<IAsyncTransport>>> transportFactories;
+        Dictionary<string, TransportProvider> transportFactories;
         SslSettings sslSettings;
         SaslSettings saslSettings;
 
         /// <summary>
-        /// Constructor to create a connection factory.
+        /// Constructor to create a connection factory with default transport
+        /// implementations.
         /// </summary>
         public ConnectionFactory()
             : base()
@@ -46,31 +47,22 @@ namespace Amqp
         /// <summary>
         /// Creates a connection factory with a custom transport factory.
         /// </summary>
-        /// <param name="transportFactory">The custom transport factory.</param>
-        public ConnectionFactory(TransportFactory transportFactory)
-            : this(new TransportFactory[] { transportFactory })
-        {
-        }
-
-        /// <summary>
-        /// Creates a connection factory with additional custom transport factories.
-        /// </summary>
-        /// <param name="transportFactories">The custom transport factories.</param>
+        /// <param name="providers">The custom transport providers.</param>
         /// <remarks>The library provides built-in transport implementation for address schemes
-        /// "amqp", "amqps" (and "ws", "wss" on .Net framework). Application can provide transport
-        /// implementations for a custom or a standard address scheme. When the built-in implementation
-        /// is replaced, the TCP and SSL settings of the connection factory will not be applied to
-        /// the custom implementation.
+        /// "amqp", "amqps" (and "ws", "wss" on .Net framework). Application can replace or
+        /// extend it with custom implementations. When the built-in provider is replaced,
+        /// the TCP and SSL settings of the connection factory will not be applied to the
+        /// custom implementation.
         /// </remarks>
-        public ConnectionFactory(IEnumerable<TransportFactory> transportFactories)
+        public ConnectionFactory(IEnumerable<TransportProvider> providers)
             : this()
         {
-            this.transportFactories = new Dictionary<string, Func<Address, Task<IAsyncTransport>>>(StringComparer.OrdinalIgnoreCase);
-            foreach (var factory in transportFactories)
+            this.transportFactories = new Dictionary<string, TransportProvider>(StringComparer.OrdinalIgnoreCase);
+            foreach (var provider in providers)
             {
-                foreach (string scheme in factory.AddressSchemes)
+                foreach (var scheme in provider.AddressSchemes)
                 {
-                    this.transportFactories[scheme] = factory.CreateAsync;
+                    this.transportFactories[scheme] = provider;
                 }
             }
         }
@@ -122,10 +114,10 @@ namespace Amqp
         public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
         {
             IAsyncTransport transport;
-            Func<Address, Task<IAsyncTransport>> factory;
-            if (this.transportFactories != null && this.transportFactories.TryGetValue(address.Scheme, out factory))
+            TransportProvider provider;
+            if (this.transportFactories != null && this.transportFactories.TryGetValue(address.Scheme, out provider))
             {
-                transport = await factory(address);
+                transport = await provider.CreateAsync(address);
             }
             else if (TcpTransport.MatchScheme(address.Scheme))
             {
@@ -136,7 +128,9 @@ namespace Amqp
 #if NETFX
             else if (WebSocketTransport.MatchScheme(address.Scheme))
             {
-                transport = await WebSocketTransport.CreateAsync(address);
+                WebSocketTransport wsTransport = new WebSocketTransport();
+                await wsTransport.ConnectAsync(address, null);
+                transport = wsTransport;
             }
 #endif
             else
