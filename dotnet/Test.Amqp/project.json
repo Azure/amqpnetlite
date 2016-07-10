@@ -23,10 +23,9 @@
     "dependencies": {
         "Microsoft.NETCore.App": {
             "type": "platform",
-            "version": "1.0.0-rc2-3002702"
+            "version": "1.0.0"
         },
         "Amqp": "1.2.0-*",
-        "Amqp.Listener": "1.2.0-*",
         "Amqp.WebSockets.Client": "1.2.0-*"
     },
 

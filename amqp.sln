@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2
 		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
 		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\amqpnetlite.Amqp.Listener.nuspec = nuspec\amqpnetlite.Amqp.Listener.nuspec
-		nuspec\amqpnetlite.Amqp.nuspec = nuspec\amqpnetlite.Amqp.nuspec
 		nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec = nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
@@ -117,8 +115,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net35", "test\Test.Amqp.Net35\Test.Amqp.Net35.csproj", "{7852029D-235C-40B7-8957-8E78414C3F97}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Amqp", "dotnet\Amqp\Amqp.xproj", "{1B98F2AA-006C-479F-A580-DF677BB26950}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Amqp.Listener", "dotnet\Amqp.Listener\Amqp.Listener.xproj", "{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Test.Amqp", "dotnet\Test.Amqp\Test.Amqp.xproj", "{B02D02E0-0AD5-45FD-B5DF-E52B29656710}"
 EndProject
@@ -550,22 +546,6 @@ Global
 		{1B98F2AA-006C-479F-A580-DF677BB26950}.Release|x64.Build.0 = Release|Any CPU
 		{1B98F2AA-006C-479F-A580-DF677BB26950}.Release|x86.ActiveCfg = Release|Any CPU
 		{1B98F2AA-006C-479F-A580-DF677BB26950}.Release|x86.Build.0 = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|ARM.Build.0 = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|x64.Build.0 = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Debug|x86.Build.0 = Debug|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|ARM.ActiveCfg = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|ARM.Build.0 = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|x64.ActiveCfg = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|x64.Build.0 = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|x86.ActiveCfg = Release|Any CPU
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE}.Release|x86.Build.0 = Release|Any CPU
 		{B02D02E0-0AD5-45FD-B5DF-E52B29656710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B02D02E0-0AD5-45FD-B5DF-E52B29656710}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B02D02E0-0AD5-45FD-B5DF-E52B29656710}.Debug|ARM.ActiveCfg = Debug|Any CPU
@@ -646,7 +626,6 @@ Global
 		{5637969B-A822-425A-A831-F70AA2275777} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{1B98F2AA-006C-479F-A580-DF677BB26950} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
-		{AA825CCF-D9AF-4D2F-B954-90DA4A6DFEAE} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{B02D02E0-0AD5-45FD-B5DF-E52B29656710} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{F5D12AA8-D2E7-42F2-BC9D-D52904EC2B44} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{6B1B8843-FF74-4EFD-BB5E-7354A41D219A} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}

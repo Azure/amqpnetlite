@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AMQPNetLite</id>
-    <title>AMQP.Net Lite: AMQP 1.0 client library for .Net and WinRT</title>
+    <title>AMQP.Net Lite: AMQP 1.0 library for .Net and WinRT</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>
     <owners>Microsoft</owners>
@@ -24,9 +24,35 @@
         <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
       </group>
       <group targetFramework="net45" />
+      <group targetFramework="netcore451" />
+      <group targetFramework="netstandard1.3">
+        <dependency id="System.Collections" version="4.0.11" />
+        <dependency id="System.Collections.Concurrent" version="4.0.12" />
+        <dependency id="System.Collections.NonGeneric" version="4.0.0" />
+        <dependency id="System.Diagnostics.Tools" version="4.0.0" />
+        <dependency id="System.Threading" version="4.0.11" />
+        <dependency id="System.Threading.Tasks" version="4.0.11" />
+        <dependency id="System.Threading.Thread" version="4.0.0" />
+        <dependency id="System.Threading.ThreadPool" version="4.0.10" />
+        <dependency id="System.Threading.Timer" version="4.0.0" />
+        <dependency id="System.Net.NameResolution" version="4.0.0" />
+        <dependency id="System.Net.Security" version="4.0.0" />
+        <dependency id="System.Net.Sockets" version="4.1.0" />
+        <dependency id="System.Reflection" version="4.1.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.0.0" />
+        <dependency id="System.Reflection.Extensions" version="4.0.1" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.1.0" />
+        <dependency id="System.Security.Claims" version="4.0.1" />
+        <dependency id="System.Security.Principal" version="4.0.1" />
+      </group>
     </dependencies>
   </metadata>
   <files>
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.dll" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.pdb" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.xml" target="lib\netstandard1.3" />
+    
     <file src="bin\Release\Amqp.Net\Amqp.Net.dll" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.pdb" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.XML" target="lib\net45" />

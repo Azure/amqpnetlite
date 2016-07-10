@@ -136,7 +136,7 @@ IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   GOTO :exit
 )
-CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.Listener dotnet/Test.Amqp --configuration %build-config%
+CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.WebSockets.Client dotnet\HelloAmqp dotnet/Test.Amqp --configuration %build-config%
 IF %ERRORLEVEL% NEQ 0 (
   ECHO dotnet build failed with error %ERRORLEVEL%
   SET return-code=%ERRORLEVEL%
@@ -223,8 +223,6 @@ IF "%NuGetPath%" == "" (
   ECHO Building NuGet package with version %build-version%
   "%NuGetPath%" pack .\nuspec\Amqp.Net.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   "%NuGetPath%" pack .\nuspec\Amqp.Micro.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.Listener.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
 )
 

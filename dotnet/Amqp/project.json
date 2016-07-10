@@ -6,13 +6,13 @@
             "include": [
                 "../../src/Properties/AssemblyInfo.cs",
                 "../../src/Properties/Version.cs",
-                "../../src/Properties/SNInternalsVisibleTo.cs",
                 "../../src/Framing/*.cs",
                 "../../src/Net/*.cs",
                 "../../src/Sasl/*.cs",
                 "../../src/Serialization/*.cs",
                 "../../src/Transactions/*.cs",
                 "../../src/Types/*.cs",
+                "../../src/Listener/*.cs",
                 "../../src/*.cs"
             ],
             "exclude": [
@@ -64,8 +64,8 @@
                 "System.Net.Sockets": "4.1.0",
                 "System.Reflection": "4.1.0",
                 "System.Reflection.Emit.Lightweight": "4.0.0",
-                "System.Reflection.Extensions": "4.0.0",
-                "System.Reflection.TypeExtensions": "4.0.0",
+                "System.Reflection.Extensions": "4.0.1",
+                "System.Reflection.TypeExtensions": "4.1.0",
                 "System.Runtime.Serialization.Primitives": "4.1.0",
                 "System.Security.Claims": "4.0.1",
                 "System.Security.Principal": "4.0.1"
