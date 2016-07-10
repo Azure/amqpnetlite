@@ -129,7 +129,12 @@ namespace Amqp.Listener
                 throw new ObjectDisposedException(this.GetType().Name);
             }
 
-            if (this.address.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
+            TransportProvider provider;
+            if (this.container.CustomTransports.TryGetValue(this.address.Scheme, out provider))
+            {
+                this.listener = new CustomTransportListener(this, provider);
+            }
+            else if (this.address.Scheme.Equals(Address.Amqp, StringComparison.OrdinalIgnoreCase))
             {
                 this.listener = new TcpTransportListener(this, this.address.Host, this.address.Port);
             }
@@ -629,6 +634,47 @@ namespace Amqp.Listener
                 }
 
                 return new ListenerTcpTransport(sslStream, this.Listener.BufferManager);
+            }
+        }
+
+        class CustomTransportListener : TransportListener
+        {
+            readonly TransportProvider provider;
+
+            public CustomTransportListener(ConnectionListener listener, TransportProvider provider)
+            {
+                this.Listener = listener;
+                this.provider = provider;
+            }
+
+            public override void Open()
+            {
+                var t = this.AcceptAsync();
+            }
+
+            public override void Close()
+            {
+                this.provider.Dispose();
+            }
+
+            async Task AcceptAsync()
+            {
+                while (!this.closed)
+                {
+                    try
+                    {
+                        var transport = await this.provider.CreateAsync(this.Listener.address);
+                        await this.Listener.HandleTransportAsync(transport);
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        // listener is closed
+                    }
+                    catch (Exception exception)
+                    {
+                        Trace.WriteLine(TraceLevel.Warning, exception.ToString());
+                    }
+                }
             }
         }
 

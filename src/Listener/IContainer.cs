@@ -17,8 +17,9 @@
 
 namespace Amqp.Listener
 {
-    using System.Security.Cryptography.X509Certificates;
     using Amqp.Framing;
+    using System.Collections.Generic;
+    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Represents an AMQP container.
@@ -31,11 +32,16 @@ namespace Amqp.Listener
         X509Certificate2 ServiceCertificate { get; }
 
         /// <summary>
+        /// Gets the collection of custom transport providers. Key is the address scheme.
+        /// </summary>
+        IDictionary<string, TransportProvider> CustomTransports { get; }
+
+        /// <summary>
         /// Creates an AMQP message from the buffer. This is useful for brokers/listen applications
         /// to create lightweight message objects without paying the full serialization cost. 
         /// </summary>
         /// <param name="buffer">The serialized message.</param>
-        /// <returns></returns>
+        /// <returns>A message object created from the buffer.</returns>
         Message CreateMessage(ByteBuffer buffer);
 
         /// <summary>
@@ -44,7 +50,7 @@ namespace Amqp.Listener
         /// <param name="connection">The connection where attach was received.</param>
         /// <param name="session">The session where attach was received.</param>
         /// <param name="attach">The received attach frame.</param>
-        /// <returns></returns>
+        /// <returns>A Link object to be attached to the node specified by the attach performative.</returns>
         Link CreateLink(ListenerConnection connection, ListenerSession session, Attach attach);
 
         /// <summary>
@@ -56,7 +62,7 @@ namespace Amqp.Listener
         /// <param name="session">The session where attach was received.</param>
         /// <param name="link">The link created in CreateLink call.</param>
         /// <param name="attach">The received attach frame.</param>
-        /// <returns></returns>
+        /// <returns>A boolean value indicating if attaching the link has completed.</returns>
         bool AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach);
     }
 }

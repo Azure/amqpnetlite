@@ -17,12 +17,13 @@
 
 namespace Amqp
 {
+    using System;
     using System.Threading.Tasks;
 
     /// <summary>
     /// The TransportProvider class provides transport implementation for given address schemes.
     /// </summary>
-    public abstract class TransportProvider
+    public abstract class TransportProvider : IDisposable
     {
         /// <summary>
         /// Gets or sets the supported address schemes.
@@ -35,5 +36,12 @@ namespace Amqp
         /// <param name="address">The address to connect.</param>
         /// <returns>An IAsyncTransport object representing the transport.</returns>
         public abstract Task<IAsyncTransport> CreateAsync(Address address);
+
+        /// <summary>
+        /// Disposes the provider and release any associated resources.
+        /// </summary>
+        public virtual void Dispose()
+        {
+        }
     }
 }

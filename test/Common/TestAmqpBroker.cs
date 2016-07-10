@@ -30,6 +30,7 @@ namespace Listener.IContainer
     public sealed class TestAmqpBroker : IContainer
     {
         readonly X509Certificate2 certificate;
+        readonly Dictionary<string, TransportProvider> customTransports;
         readonly Dictionary<string, TestQueue> queues;
         readonly ConnectionListener[] listeners;
         readonly TxnManager txnManager;
@@ -38,6 +39,7 @@ namespace Listener.IContainer
 
         public TestAmqpBroker(IList<string> endpoints, string userInfo, string certValue, string[] queues)
         {
+            this.customTransports = new Dictionary<string, TransportProvider>(StringComparer.OrdinalIgnoreCase);
             this.txnManager = new TxnManager();
             this.queues = new Dictionary<string, TestQueue>();
             if (queues != null)
@@ -71,6 +73,11 @@ namespace Listener.IContainer
                         a.Length == 1 ? string.Empty : Uri.UnescapeDataString(a[1]));
                 }
             }
+        }
+
+        public IDictionary<string, TransportProvider> CustomTransports
+        {
+            get { return this.customTransports; }
         }
 
         public void Start()

@@ -76,6 +76,7 @@ namespace Amqp.Listener
     public class ContainerHost : IContainer
     {
         readonly string containerId;
+        readonly Dictionary<string, TransportProvider> customTransports;
         readonly ConnectionListener[] listeners;
         readonly LinkCollection linkCollection;
         readonly ClosedCallback onLinkClosed;
@@ -95,6 +96,7 @@ namespace Amqp.Listener
         public ContainerHost(IList<string> addressList)
         {
             this.containerId = string.Join("-", this.GetType().Name, Guid.NewGuid().ToString("N"));
+            this.customTransports = new Dictionary<string, TransportProvider>(StringComparer.OrdinalIgnoreCase);
             this.linkCollection = new LinkCollection(this.containerId);
             this.onLinkClosed = this.OnLinkClosed;
             this.messageProcessors = new Dictionary<string, MessageProcessor>(StringComparer.OrdinalIgnoreCase);
@@ -112,7 +114,7 @@ namespace Amqp.Listener
         /// Initializes a container host object with one address.
         /// </summary>
         /// <param name="addressUri">The address Uri. Only the scheme, host and port parts are used.
-        /// Supported schema are "amqp", "amqps", "ws" and "wss".</param>
+        /// Supported schemes are "amqp", "amqps", "ws" and "wss".</param>
         public ContainerHost(Uri addressUri)
             : this(new string[] { addressUri.AbsoluteUri })
         {
@@ -133,6 +135,14 @@ namespace Amqp.Listener
                 this.listeners[i].SSL.Certificate = certificate;
                 this.listeners[i].SetUserInfo(userInfo);
             }
+        }
+
+        /// <summary>
+        /// Gets the collection of custom transport providers. Key is the address scheme.
+        /// </summary>
+        public IDictionary<string, TransportProvider> CustomTransports
+        {
+            get { return this.customTransports; }
         }
 
         /// <summary>
