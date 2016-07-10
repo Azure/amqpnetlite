@@ -21,12 +21,12 @@
         <dependency id="System.Diagnostics.Tools" version="4.0.0" />
         <dependency id="System.Threading" version="4.0.10" />
         <dependency id="System.Threading.Tasks" version="4.0.10" />
-        <dependency id="System.Threading.Thread" version="4.0.0-beta-23516" />
-        <dependency id="System.Threading.ThreadPool" version="4.0.10-beta-23516" />
+        <dependency id="System.Threading.Thread" version="4.0.0" />
+        <dependency id="System.Threading.ThreadPool" version="4.0.10" />
         <dependency id="System.Threading.Timer" version="4.0.0" />
-        <dependency id="System.Net.NameResolution" version="4.0.0-beta-23516" />
-        <dependency id="System.Net.Security" version="4.0.0-beta-23516" />
-        <dependency id="System.Net.Sockets" version="4.1.0-beta-23516" />
+        <dependency id="System.Net.NameResolution" version="4.0.0" />
+        <dependency id="System.Net.Security" version="4.0.0" />
+        <dependency id="System.Net.Sockets" version="4.1.0" />
         <dependency id="System.Reflection" version="4.0.0" />
         <dependency id="System.Reflection.Emit.Lightweight" version="4.0.0" />
         <dependency id="System.Reflection.Extensions" version="4.0.0" />

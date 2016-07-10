@@ -15,7 +15,7 @@
     <tags>AMQP coreclr .NetCore netstandard</tags>
     <dependencies>
       <group targetFramework="netstandard1.3">
-        <dependency id="amqpnetlite.Amqp" version="1.2.0-rc" />
+        <dependency id="amqpnetlite.Amqp" version="1.2.0" />
       </group>
     </dependencies>
   </metadata>

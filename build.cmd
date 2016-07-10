@@ -223,9 +223,9 @@ IF "%NuGetPath%" == "" (
   ECHO Building NuGet package with version %build-version%
   "%NuGetPath%" pack .\nuspec\Amqp.Net.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   "%NuGetPath%" pack .\nuspec\Amqp.Micro.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.nuspec -Version %build-version%-rc -BasePath .\ -OutputDirectory ".\Build\Packages"
-  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.Listener.nuspec -Version %build-version%-rc -BasePath .\ -OutputDirectory ".\Build\Packages"
-  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec -Version %build-version%-rc -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.Listener.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
 )
 
 GOTO :exit

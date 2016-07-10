@@ -40,7 +40,7 @@
             },
             "imports": [ "dnxcore50" ],
             "dependencies": {
-                "System.Net.WebSockets.Client": "4.0.0-rc2-24027"
+                "System.Net.WebSockets.Client": "4.0.0"
             }
         }
     }

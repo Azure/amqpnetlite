@@ -15,8 +15,8 @@
     <tags>AMQP coreclr .NetCore netstandard WebSockets</tags>
     <dependencies>
       <group targetFramework="netstandard1.3">
-        <dependency id="System.Net.WebSockets.Client" version="4.0.0-rc2-24027" />
-        <dependency id="amqpnetlite.Amqp" version="1.2.0-rc" />
+        <dependency id="System.Net.WebSockets.Client" version="4.0.0" />
+        <dependency id="amqpnetlite.Amqp" version="1.2.0" />
       </group>
     </dependencies>
   </metadata>

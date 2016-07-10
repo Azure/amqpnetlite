@@ -14,8 +14,8 @@
 //  See the Apache Version 2.0 License for specific language governing permissions and 
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
+
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -33,6 +33,3 @@ using System.Runtime.InteropServices;
 // to COM components.  If you need to access a type in this assembly from 
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d1389a8f-5b67-4112-9415-8dd5b6bc72c8")]
