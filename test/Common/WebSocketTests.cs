@@ -16,6 +16,7 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
@@ -34,11 +35,16 @@ namespace Test.Amqp
         {
             int total = 0;
             int passed = 0;
+            string[] excluded = new string[]
+            {
+                "ContainerHostCustomTransportTest"
+            };
 
             foreach (var mi in typeof(ContainerHostTests).GetMethods())
             {
                 if (mi.GetCustomAttributes(typeof(TestMethodAttribute), false).Length > 0 &&
-                    mi.GetCustomAttributes(typeof(IgnoreAttribute), false).Length == 0)
+                    mi.GetCustomAttributes(typeof(IgnoreAttribute), false).Length == 0 &&
+                    !excluded.Contains(mi.Name))
                 {
                     total++;
 

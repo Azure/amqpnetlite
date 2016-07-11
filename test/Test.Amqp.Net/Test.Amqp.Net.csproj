@@ -61,6 +61,9 @@
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\NamedPipeTransport.cs">
+      <Link>NamedPipeTransport.cs</Link>
+    </Compile>
     <Compile Include="..\Common\Types\EmployeeId.cs">
       <Link>Types\EmployeeId.cs</Link>
     </Compile>

@@ -830,6 +830,31 @@ namespace Test.Amqp
             listener.Close();
         }
 
+        [TestMethod]
+        public void ContainerHostCustomTransportTest()
+        {
+            string name = "ContainerHostCustomTransportTest";
+            string address = "pipe://./" + name;
+            ContainerHost host = new ContainerHost(new Uri(address));
+            host.CustomTransports.Add("pipe", NamedPipeTransport.Listener);
+            host.RegisterMessageProcessor(name, new TestMessageProcessor());
+            host.Open();
+
+            try
+            {
+                var factory = new ConnectionFactory(new TransportProvider[] { NamedPipeTransport.Factory });
+                var connection = factory.CreateAsync(new Address(address)).GetAwaiter().GetResult();
+                var session = new Session(connection);
+                var sender = new SenderLink(session, name, name);
+                sender.Send(new Message("msg1"), SendTimeout);
+                connection.Close();
+            }
+            finally
+            {
+                host.Close();
+            }
+        }
+
 #if !DOTNET
         [TestMethod]
         public void ContainerHostWebSocketWildCardAddressTest()
