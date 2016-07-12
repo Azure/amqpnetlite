@@ -1,22 +1,22 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>amqpnetlite.Amqp.WebSockets.Client</id>
-    <title>AMQP.Net Lite: AMQP 1.0 WebSockets client library for .Net Core</title>
+    <id>AMQPNetLite.WebSockets</id>
+    <title>AMQP.Net Lite WebSockets Client on .Net Core</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>
     <owners>Microsoft</owners>
     <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This is the AmqpNetLite package (WebSockets client portion) on .Net Core.</description>
+    <description>This package provides the WebSockets client transport of AMQP.Net Lite on .Net Core (netstandard1.3).</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP coreclr .NetCore netstandard WebSockets</tags>
     <dependencies>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Net.WebSockets.Client" version="4.0.0" />
-        <dependency id="amqpnetlite.Amqp" version="1.2.0" />
+        <dependency id="AMQPNetLite" version="1.2.0" />
       </group>
     </dependencies>
   </metadata>
