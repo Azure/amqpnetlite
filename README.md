@@ -5,12 +5,13 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * Full control of AMQP 1.0 protocol behavior.
 * Peer-to-peer and brokered messaging.
 * Secure communication via TLS and SASL.
+* Extensible transport providers.
 * Sync and async API support.
 * Listener APIs to enable wide range of listener applications, including brokers, routers, proxies, and more.
 * A lightweight messaging library that runs on all popular .NET and Windows Runtime platforms.
 
 ## Supported Platforms
-|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451/uap | netstandard1.3<sup>4</sup> |
+|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451/uap | netstandard1.3 |
 |------------|:-----:|:-----:|:-----:|:-----:|:-----:|:--------:|:----------:|:----------:|
 | TLS        |  +    |   +   |   +   |   +<sup>1</sup>  |   +   |    +     |     +      |     +      |
 | SASL<sup>2</sup>      |  +    |   +   |   +   |   +   |   +   |    +     |     +      |     +      |
@@ -19,14 +20,13 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 | Async API  |  +    |   +<sup>3</sup>   |       |       |       |    +     |     +      |     +      |
 | Listener   |  +    |   +   |       |       |       |          |            |     +      |
 | Serializer |  +    |   +   |   +   |       |       |          |            |     +      |
-| WebSockets |  +    |       |       |       |       |          |            |     +<sup>5</sup>      |
+| WebSockets |  +    |       |       |       |       |          |            |     +<sup>4</sup>      |
 | Buffer Pooling |  +    |   +   |       |       |       |          |            |     +      |
 
 1. requires a TLS-capable device.
 2. only SASL PLAIN, EXTERNAL, and ANONYMOUS are currently supported.
 3. requires Microsoft.Bcl.Async.
-4. pre-release. (v1.1.9-rc).
-5. support WebSocket client but not listener.
+4. supports WebSocket client but not listener.
 
 ## Tested Platforms
 * .Net Framework 3.5, 4.0 and 4.5+.
@@ -34,7 +34,7 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * .NET Compact Framework 3.9.
 * Windows Phone 8 and 8.1.
 * Windows Store 8 and 8.1. Universal Windows App 10.
-* .Net Core 1.0 RC2 on Windows 10 and Ubuntu 14.04.
+* .Net Core 1.0 on Windows 10 and Ubuntu 14.04.
 * Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown).
 
 ## Getting Started
