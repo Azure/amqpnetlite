@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class X509Identity
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,8 +67,7 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_X509Identity.md&amp;value=---%0Auid%3A%20Amqp.Listener.X509Identity%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/X509Identity.cs/#L26" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_Listener_X509Identity" data-uid="Amqp.Listener.X509Identity">Class X509Identity
               </h1>
               <div class="markdown level0 summary"><p>Represents an client identity established by SSL client certificate authentication.</p>
@@ -79,6 +78,30 @@
                   <div class="level0"><span class="xref">System.Object</span></div>
                   <div class="level1"><span class="xref">X509Identity</span></div>
               </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
+              </div>
               <h6><strong>Namespace</strong>:Amqp.Listener</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
               <h5 id="Amqp_Listener_X509Identity_syntax">Syntax</h5>
@@ -87,23 +110,13 @@
               </div>
               <h3 id="properties">Properties
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_X509Identity_AuthenticationType.md&amp;value=---%0Auid%3A%20Amqp.Listener.X509Identity.AuthenticationType%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/X509Identity.cs/#L45">View Source</a>
-              </span>
               <h4 id="Amqp_Listener_X509Identity_AuthenticationType" data-uid="Amqp.Listener.X509Identity.AuthenticationType">AuthenticationType</h4>
               <div class="markdown level1 summary"><p>Gets the type of authentication used. (&quot;X509&quot;).</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string AuthenticationType
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string AuthenticationType { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -120,23 +133,15 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_X509Identity_Certificate.md&amp;value=---%0Auid%3A%20Amqp.Listener.X509Identity.Certificate%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/X509Identity.cs/#L36">View Source</a>
-              </span>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.Security.Principal.IIdentity.AuthenticationType</span></div>
               <h4 id="Amqp_Listener_X509Identity_Certificate" data-uid="Amqp.Listener.X509Identity.Certificate">Certificate</h4>
               <div class="markdown level1 summary"><p>Gets the client certificate.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public X509Certificate Certificate
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public X509Certificate Certificate { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -153,23 +158,13 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_X509Identity_IsAuthenticated.md&amp;value=---%0Auid%3A%20Amqp.Listener.X509Identity.IsAuthenticated%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/X509Identity.cs/#L53">View Source</a>
-              </span>
               <h4 id="Amqp_Listener_X509Identity_IsAuthenticated" data-uid="Amqp.Listener.X509Identity.IsAuthenticated">IsAuthenticated</h4>
               <div class="markdown level1 summary"><p>Gets a value that indicates whether the user has been authenticated.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public bool IsAuthenticated
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public bool IsAuthenticated { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -186,23 +181,15 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_X509Identity_Name.md&amp;value=---%0Auid%3A%20Amqp.Listener.X509Identity.Name%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/X509Identity.cs/#L61">View Source</a>
-              </span>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.Security.Principal.IIdentity.IsAuthenticated</span></div>
               <h4 id="Amqp_Listener_X509Identity_Name" data-uid="Amqp.Listener.X509Identity.Name">Name</h4>
               <div class="markdown level1 summary"><p>Gets the name of the identity.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Name
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string Name { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -219,6 +206,8 @@
                   </tr>
                 </tbody>
               </table>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.Security.Principal.IIdentity.Name</span></div>
             </article>
           </div>
           
@@ -237,6 +226,7 @@
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

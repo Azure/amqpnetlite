@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ByteBuffer
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,17 +67,40 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L25" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_ByteBuffer" data-uid="Amqp.ByteBuffer">Class ByteBuffer
               </h1>
-              <div class="markdown level0 summary"><p>A byte array wrapper that has read and write cursors.</p>
+              <div class="markdown level0 summary"><p>A byte array wrapper that has a read and a write cursor.</p>
 </div>
               <div class="markdown level0 conceptual"></div>
               <div class="inheritance">
                 <h5>Inheritance</h5>
                   <div class="level0"><span class="xref">System.Object</span></div>
                   <div class="level1"><span class="xref">ByteBuffer</span></div>
+              </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
               </div>
               <h6><strong>Namespace</strong>:Amqp</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
@@ -87,13 +110,6 @@
               </div>
               <h3 id="constructors">Constructors
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer__ctor_System_Byte___System_Int32_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.%23ctor(System.Byte%5B%5D%2CSystem.Int32%2CSystem.Int32%2CSystem.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L50">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer__ctor_System_Byte___System_Int32_System_Int32_System_Int32_" data-uid="Amqp.ByteBuffer.#ctor(System.Byte[],System.Int32,System.Int32,System.Int32)">ByteBuffer(Byte[], Int32, Int32, Int32)</h4>
               <div class="markdown level1 summary"><p>Initializes a new buffer from a byte array.</p>
 </div>
@@ -138,13 +154,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer__ctor_System_Int32_System_Boolean_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.%23ctor(System.Int32%2CSystem.Boolean)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L60">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer__ctor_System_Int32_System_Boolean_" data-uid="Amqp.ByteBuffer.#ctor(System.Int32,System.Boolean)">ByteBuffer(Int32, Boolean)</h4>
               <div class="markdown level1 summary"><p>Initializes a new buffer of a specified size.</p>
 </div>
@@ -179,23 +188,13 @@
               </table>
               <h3 id="properties">Properties
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Buffer.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Buffer%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L78">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Buffer" data-uid="Amqp.ByteBuffer.Buffer">Buffer</h4>
               <div class="markdown level1 summary"><p>Gets the byte array.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public byte[] Buffer
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public byte[] Buffer { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -212,23 +211,13 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Capacity.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Capacity%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L86">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Capacity" data-uid="Amqp.ByteBuffer.Capacity">Capacity</h4>
               <div class="markdown level1 summary"><p>Gets the capacity.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Capacity
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public int Capacity { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -245,23 +234,13 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Length.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Length%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L110">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Length" data-uid="Amqp.ByteBuffer.Length">Length</h4>
               <div class="markdown level1 summary"><p>Gets the available size for read.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Length
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public int Length { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -278,23 +257,13 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Offset.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Offset%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L94">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Offset" data-uid="Amqp.ByteBuffer.Offset">Offset</h4>
               <div class="markdown level1 summary"><p>Gets the current offset (read position).</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Offset
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public int Offset { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -311,23 +280,13 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Size.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Size%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L102">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Size" data-uid="Amqp.ByteBuffer.Size">Size</h4>
               <div class="markdown level1 summary"><p>Gets the remaining size for write.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Size
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public int Size { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -344,23 +303,13 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_WritePos.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.WritePos%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L118">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_WritePos" data-uid="Amqp.ByteBuffer.WritePos">WritePos</h4>
               <div class="markdown level1 summary"><p>Gets the write position.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int WritePos
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public int WritePos { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -379,13 +328,6 @@
               </table>
               <h3 id="methods">Methods
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_AdjustPosition_System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.AdjustPosition(System.Int32%2CSystem.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L219">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_AdjustPosition_System_Int32_System_Int32_" data-uid="Amqp.ByteBuffer.AdjustPosition(System.Int32,System.Int32)">AdjustPosition(Int32, Int32)</h4>
               <div class="markdown level1 summary"><p>Adjusts the read and write position.</p>
 </div>
@@ -418,13 +360,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Append_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Append(System.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L166">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Append_System_Int32_" data-uid="Amqp.ByteBuffer.Append(System.Int32)">Append(Int32)</h4>
               <div class="markdown level1 summary"><p>Advances the write position. As a result, length is increased by size.</p>
 </div>
@@ -451,13 +386,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Complete_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Complete(System.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L177">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Complete_System_Int32_" data-uid="Amqp.ByteBuffer.Complete(System.Int32)">Complete(Int32)</h4>
               <div class="markdown level1 summary"><p>Advances the read position.</p>
 </div>
@@ -484,13 +412,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Reset.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Reset%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L208">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Reset" data-uid="Amqp.ByteBuffer.Reset">Reset()</h4>
               <div class="markdown level1 summary"><p>Resets read and write position to the initial state.</p>
 </div>
@@ -499,13 +420,6 @@
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
               </div>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Seek_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Seek(System.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L188">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Seek_System_Int32_" data-uid="Amqp.ByteBuffer.Seek(System.Int32)">Seek(Int32)</h4>
               <div class="markdown level1 summary"><p>Sets the read position.</p>
 </div>
@@ -532,13 +446,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Shrink_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Shrink(System.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L199">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Shrink_System_Int32_" data-uid="Amqp.ByteBuffer.Shrink(System.Int32)">Shrink(Int32)</h4>
               <div class="markdown level1 summary"><p>Moves back the write position. As a result, length is decreased by size.</p>
 </div>
@@ -564,13 +471,6 @@
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ByteBuffer_Validate_System_Boolean_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ByteBuffer.Validate(System.Boolean%2CSystem.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ByteBuffer.cs/#L128">View Source</a>
-              </span>
               <h4 id="Amqp_ByteBuffer_Validate_System_Boolean_System_Int32_" data-uid="Amqp.ByteBuffer.Validate(System.Boolean,System.Int32)">Validate(Boolean, Int32)</h4>
               <div class="markdown level1 summary"><p>Verifies that if the buffer has enough bytes for read or enough room for write and grow the buffer if needed.</p>
 </div>
@@ -621,6 +521,7 @@
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

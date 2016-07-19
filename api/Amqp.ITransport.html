@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface ITransport
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,8 +67,7 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ITransport.md&amp;value=---%0Auid%3A%20Amqp.ITransport%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ITransport.cs/#L25" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_ITransport" data-uid="Amqp.ITransport">Interface ITransport
               </h1>
               <div class="markdown level0 summary"><p>The transport interface used by a connection for network I/O.</p>
@@ -82,13 +81,6 @@
               </div>
               <h3 id="methods">Methods
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ITransport_Close.md&amp;value=---%0Auid%3A%20Amqp.ITransport.Close%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ITransport.cs/#L45">View Source</a>
-              </span>
               <h4 id="Amqp_ITransport_Close" data-uid="Amqp.ITransport.Close">Close()</h4>
               <div class="markdown level1 summary"><p>Closes the transport.</p>
 </div>
@@ -97,13 +89,6 @@
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">void Close()</code></pre>
               </div>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ITransport_Receive_System_Byte___System_Int32_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.ITransport.Receive(System.Byte%5B%5D%2CSystem.Int32%2CSystem.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ITransport.cs/#L40">View Source</a>
-              </span>
               <h4 id="Amqp_ITransport_Receive_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.ITransport.Receive(System.Byte[],System.Int32,System.Int32)">Receive(Byte[], Int32, Int32)</h4>
               <div class="markdown level1 summary"><p>Receives a buffer.</p>
 </div>
@@ -153,17 +138,12 @@
                 <tbody>
                   <tr>
                     <td><span class="xref">System.Int32</span></td>
-                    <td></td>
+                    <td><p>The number of bytes received. It may be less than <em>count</em>.
+A value of 0 means that the transport is closed.</p>
+</td>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ITransport_Send_Amqp_ByteBuffer_.md&amp;value=---%0Auid%3A%20Amqp.ITransport.Send(Amqp.ByteBuffer)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/ITransport.cs/#L31">View Source</a>
-              </span>
               <h4 id="Amqp_ITransport_Send_Amqp_ByteBuffer_" data-uid="Amqp.ITransport.Send(Amqp.ByteBuffer)">Send(ByteBuffer)</h4>
               <div class="markdown level1 summary"><p>Sends a buffer.</p>
 </div>
@@ -208,6 +188,7 @@
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

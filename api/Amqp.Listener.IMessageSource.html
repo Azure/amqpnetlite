@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IMessageSource
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,8 +67,7 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_IMessageSource.md&amp;value=---%0Auid%3A%20Amqp.Listener.IMessageSource%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/IMessageSource.cs/#L26" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_Listener_IMessageSource" data-uid="Amqp.Listener.IMessageSource">Interface IMessageSource
               </h1>
               <div class="markdown level0 summary"><p>Defines the property and methods of a message source.</p>
@@ -82,23 +81,11 @@
               </div>
               <h3 id="methods">Methods
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext_.md&amp;value=---%0Auid%3A%20Amqp.Listener.IMessageSource.DisposeMessage(Amqp.Listener.ReceiveContext%2CAmqp.Listener.DispositionContext)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/IMessageSource.cs/#L50">View Source</a>
-              </span>
               <h4 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext_" data-uid="Amqp.Listener.IMessageSource.DisposeMessage(Amqp.Listener.ReceiveContext,Amqp.Listener.DispositionContext)">DisposeMessage(ReceiveContext, DispositionContext)</h4>
               <div class="markdown level1 summary"><p>Disposes the message by releasing any associated resources.
 This is called when a disposition frame is received from the peer.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
-              <h5 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>The implementation typically performs the following actions in this event.
-(1) release any internal state associated with the message found by receiveContext.UserToken.
-(2) complete the delivery by calling dispositionContext.Complete().</p>
-</div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">void DisposeMessage(ReceiveContext receiveContext, DispositionContext dispositionContext)</code></pre>
@@ -127,22 +114,16 @@ This is called when a disposition frame is received from the peer.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink_.md&amp;value=---%0Auid%3A%20Amqp.Listener.IMessageSource.GetMessageAsync(Amqp.Listener.ListenerLink)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Listener/IMessageSource.cs/#L37">View Source</a>
-              </span>
+              <h5 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext__remarks">Remarks</h5>
+              <div class="markdown level1 remarks"><p>The implementation typically performs the following actions in this event.
+(1) release any internal state associated with the message found by receiveContext.UserToken.
+(2) complete the delivery by calling dispositionContext.Complete().</p>
+</div>
               <h4 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink_" data-uid="Amqp.Listener.IMessageSource.GetMessageAsync(Amqp.Listener.ListenerLink)">GetMessageAsync(ListenerLink)</h4>
               <div class="markdown level1 summary"><p>Gets a message to send to the remote peer. The implementation may set
 a UserToken object so that internal state can be found by the context later.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
-              <h5 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>Implementation must not throw exception. If a null context is returned and there
-are outstanding link credits, the library calls the method again.</p>
-</div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">Task&lt;ReceiveContext&gt; GetMessageAsync(ListenerLink link)</code></pre>
@@ -180,6 +161,10 @@ are outstanding link credits, the library calls the method again.</p>
                   </tr>
                 </tbody>
               </table>
+              <h5 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink__remarks">Remarks</h5>
+              <div class="markdown level1 remarks"><p>Implementation must not throw exception. If a null context is returned and there
+are outstanding link credits, the library calls the method again.</p>
+</div>
             </article>
           </div>
           
@@ -198,6 +183,7 @@ are outstanding link credits, the library calls the method again.</p>
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

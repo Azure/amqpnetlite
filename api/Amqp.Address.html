@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Address
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,19 +67,10 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address.md&amp;value=---%0Auid%3A%20Amqp.Address%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L34" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_Address" data-uid="Amqp.Address">Class Address
               </h1>
-              <div class="markdown level0 summary"><p>Defines the address of an AMQP endpoint. An address has the following form:
-  amqp[s] :// [user:[password]@] domain[:port] [/[path]
-Where domain can be:
-  host | ip | name
-If &quot;amqps&quot; is specified, the connection uses TLS in the underlying transport.
-When port is not specified, it is set to the standard based on scheme (amqp: 5672, amqps: 5671)
-path is not used by the library.
-Note that TLS Server Name Indication (SNI) is signaled only for &quot;amqps&quot; addresses where
-the domain is host | name. SNI is not signaled when the domain is a numeric IP address.</p>
+              <div class="markdown level0 summary"><p>Defines the address of an AMQP endpoint.</p>
 </div>
               <div class="markdown level0 conceptual"></div>
               <div class="inheritance">
@@ -87,21 +78,49 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   <div class="level0"><span class="xref">System.Object</span></div>
                   <div class="level1"><span class="xref">Address</span></div>
               </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
+              </div>
               <h6><strong>Namespace</strong>:Amqp</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
               <h5 id="Amqp_Address_syntax">Syntax</h5>
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">public sealed class Address</code></pre>
               </div>
+              <h5 id="Amqp_Address_remarks"><strong>Remarks</strong></h5>
+              <div class="markdown level0 remarks"><p>An address has the following form:<p>
+  amqp[s] :// [user:[password]@] domain[:port] [/[path]<p>
+Where domain can be:<p>
+  host | ip | name<p>
+If &quot;amqps&quot; is specified, the connection uses TLS in the underlying transport.
+When port is not specified, it is set to the standard based on scheme (amqp: 5672, amqps: 5671)
+path is not used by the library.
+Note that TLS Server Name Indication (SNI) is signaled only for &quot;amqps&quot; addresses where
+the domain is host | name. SNI is not signaled when the domain is a numeric IP address.</p>
+</div>
               <h3 id="constructors">Constructors
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address__ctor_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Address.%23ctor(System.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L45">View Source</a>
-              </span>
               <h4 id="Amqp_Address__ctor_System_String_" data-uid="Amqp.Address.#ctor(System.String)">Address(String)</h4>
               <div class="markdown level1 summary"><p>Initializes a new instance of the Address class from a string.</p>
 </div>
@@ -128,13 +147,6 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address__ctor_System_String_System_Int32_System_String_System_String_System_String_System_String_.md&amp;value=---%0Auid%3A%20Amqp.Address.%23ctor(System.String%2CSystem.Int32%2CSystem.String%2CSystem.String%2CSystem.String%2CSystem.String)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L61">View Source</a>
-              </span>
               <h4 id="Amqp_Address__ctor_System_String_System_Int32_System_String_System_String_System_String_System_String_" data-uid="Amqp.Address.#ctor(System.String,System.Int32,System.String,System.String,System.String,System.String)">Address(String, Int32, String, String, String, String)</h4>
               <div class="markdown level1 summary"><p>Initializes a new instance of the Address class from individual components.</p>
 </div>
@@ -193,23 +205,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
               </table>
               <h3 id="properties">Properties
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_Host.md&amp;value=---%0Auid%3A%20Amqp.Address.Host%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L93">View Source</a>
-              </span>
               <h4 id="Amqp_Address_Host" data-uid="Amqp.Address.Host">Host</h4>
               <div class="markdown level1 summary"><p>Gets the host of the address.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Host
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string Host { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -226,23 +228,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_Password.md&amp;value=---%0Auid%3A%20Amqp.Address.Password%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L120">View Source</a>
-              </span>
               <h4 id="Amqp_Address_Password" data-uid="Amqp.Address.Password">Password</h4>
               <div class="markdown level1 summary"><p>Gets the password that is used for SASL PLAIN profile.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Password
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string Password { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -259,23 +251,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_Path.md&amp;value=---%0Auid%3A%20Amqp.Address.Path%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L129">View Source</a>
-              </span>
               <h4 id="Amqp_Address_Path" data-uid="Amqp.Address.Path">Path</h4>
               <div class="markdown level1 summary"><p>Gets the path of the address.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Path
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string Path { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -292,23 +274,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_Port.md&amp;value=---%0Auid%3A%20Amqp.Address.Port%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L102">View Source</a>
-              </span>
               <h4 id="Amqp_Address_Port" data-uid="Amqp.Address.Port">Port</h4>
               <div class="markdown level1 summary"><p>Gets the port number of the address.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Port
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public int Port { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -325,23 +297,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_Scheme.md&amp;value=---%0Auid%3A%20Amqp.Address.Scheme%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L75">View Source</a>
-              </span>
               <h4 id="Amqp_Address_Scheme" data-uid="Amqp.Address.Scheme">Scheme</h4>
               <div class="markdown level1 summary"><p>Gets the protocol scheme.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Scheme
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string Scheme { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -358,23 +320,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_User.md&amp;value=---%0Auid%3A%20Amqp.Address.User%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L111">View Source</a>
-              </span>
               <h4 id="Amqp_Address_User" data-uid="Amqp.Address.User">User</h4>
               <div class="markdown level1 summary"><p>Gets the user name that is used for SASL PLAIN profile.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string User
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public string User { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -391,23 +343,13 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_Address_UseSsl.md&amp;value=---%0Auid%3A%20Amqp.Address.UseSsl%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Address.cs/#L84">View Source</a>
-              </span>
               <h4 id="Amqp_Address_UseSsl" data-uid="Amqp.Address.UseSsl">UseSsl</h4>
               <div class="markdown level1 summary"><p>Gets a value indicating where TLS is enabled.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public bool UseSsl
-{
-    get;
-}</code></pre>
+                <pre><code class="lang-csharp hljs">public bool UseSsl { get; }</code></pre>
               </div>
               <h5 class="propertyValue">Property Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -442,6 +384,7 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class Connection
+    <title>Class WebSocketTransport
    </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class Connection
+    <meta name="title" content="Class WebSocketTransport
    ">
     <meta name="generator" content="docfx 2.2.0.0">
     
@@ -68,28 +68,19 @@
             <article class="content wrap" id="_content">
               
               
-              <h1 id="Amqp_Connection" data-uid="Amqp.Connection">Class Connection
+              <h1 id="Amqp_WebSocketTransport" data-uid="Amqp.WebSocketTransport">Class WebSocketTransport
               </h1>
-              <div class="markdown level0 summary"><p>The Connection class represents an AMQP connection.</p>
+              <div class="markdown level0 summary"><p>The WebSocketTransport class allows applications to send and receive AMQP traffic
+using the AMQP-WebSockets binding protocol.</p>
 </div>
               <div class="markdown level0 conceptual"></div>
               <div class="inheritance">
                 <h5>Inheritance</h5>
                   <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject">AmqpObject</a></div>
-                  <div class="level2"><span class="xref">Connection</span></div>
+                  <div class="level1"><span class="xref">WebSocketTransport</span></div>
               </div>
               <div class="inheritedMembers">
                 <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Closed">AmqpObject.Closed</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Error">AmqpObject.Error</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close_System_Int32_Amqp_Framing_Error_">AmqpObject.Close(Int32, Error)</a>
-                </div>
                 <div>
                   <span class="xref">System.Object.ToString()</span>
                 </div>
@@ -114,19 +105,18 @@
               </div>
               <h6><strong>Namespace</strong>:Amqp</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Connection_syntax">Syntax</h5>
+              <h5 id="Amqp_WebSocketTransport_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class Connection : AmqpObject</code></pre>
+                <pre><code class="lang-csharp hljs">public class WebSocketTransport : IAsyncTransport, ITransport</code></pre>
               </div>
-              <h3 id="constructors">Constructors
+              <h3 id="eii">Explicit Interface Implementations
               </h3>
-              <h4 id="Amqp_Connection__ctor_Amqp_Address_" data-uid="Amqp.Connection.#ctor(Amqp.Address)">Connection(Address)</h4>
-              <div class="markdown level1 summary"><p>Initializes a connection from the address.</p>
-</div>
+              <h4 id="Amqp_WebSocketTransport_Amqp_IAsyncTransport_ReceiveAsync_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.WebSocketTransport.Amqp#IAsyncTransport#ReceiveAsync(System.Byte[],System.Int32,System.Int32)">IAsyncTransport.ReceiveAsync(Byte[], Int32, Int32)</h4>
+              <div class="markdown level1 summary"></div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Connection(Address address)</code></pre>
+                <pre><code class="lang-csharp hljs">Task&lt;int&gt; IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -139,144 +129,18 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><a class="xref" href="Amqp.Address.html#Amqp_Address">Address</a></td>
-                    <td><em>address</em></td>
-                    <td><p>The address.</p>
-</td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 id="Amqp_Connection__ctor_Amqp_Address__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>The connection initialization includes establishing the underlying transport,
-which typically has blocking network I/O. Depending on the current synchronization
-context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
-method instead.</p>
-</div>
-              <h4 id="Amqp_Connection__ctor_Amqp_Address_Amqp_Sasl_SaslProfile_Amqp_Framing_Open_Amqp_OnOpened_" data-uid="Amqp.Connection.#ctor(Amqp.Address,Amqp.Sasl.SaslProfile,Amqp.Framing.Open,Amqp.OnOpened)">Connection(Address, SaslProfile, Open, OnOpened)</h4>
-              <div class="markdown level1 summary"><p>Initializes a connection with SASL profile, open and open callback.</p>
-</div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Address.html#Amqp_Address">Address</a></td>
-                    <td><em>address</em></td>
-                    <td><p>The address.</p>
-</td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Sasl.SaslProfile.html#Amqp_Sasl_SaslProfile">SaslProfile</a></td>
-                    <td><em>saslProfile</em></td>
-                    <td><p>The SASL profile to do authentication (optional). If it is
-null and address has user info, SASL PLAIN profile is used.</p>
-</td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Open.html#Amqp_Framing_Open">Open</a></td>
-                    <td><em>open</em></td>
-                    <td><p>The open frame to send (optional). If not null, all mandatory
-fields must be set. Ensure that other fields are set to desired values.</p>
-</td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.OnOpened.html#Amqp_OnOpened">OnOpened</a></td>
-                    <td><em>onOpened</em></td>
-                    <td><p>The callback to handle remote open frame (optional).</p>
-</td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 id="Amqp_Connection__ctor_Amqp_Address_Amqp_Sasl_SaslProfile_Amqp_Framing_Open_Amqp_OnOpened__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>The connection initialization includes establishing the underlying transport,
-which typically has blocking network I/O. Depending on the current synchronization
-context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
-method instead.</p>
-</div>
-              <h3 id="fields">Fields
-              </h3>
-              <h4 id="Amqp_Connection_DisableServerCertValidation" data-uid="Amqp.Connection.DisableServerCertValidation">DisableServerCertValidation</h4>
-              <div class="markdown level1 summary"><p>A flag to disable server certificate validation when TLS is used.</p>
-</div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static bool DisableServerCertValidation</code></pre>
-              </div>
-              <h5 class="fieldValue">Field Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
+                    <td><span class="xref">System.Byte</span>[]</td>
+                    <td><em>buffer</em></td>
                     <td></td>
                   </tr>
-                </tbody>
-              </table>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Connection_Factory" data-uid="Amqp.Connection.Factory">Factory</h4>
-              <div class="markdown level1 summary"><p>Gets a factory with default settings.</p>
-</div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static ConnectionFactory Factory { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
                   <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ConnectionFactory.html#Amqp_ConnectionFactory">ConnectionFactory</a></td>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><em>offset</em></td>
                     <td></td>
                   </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Connection_OnClose_Amqp_Framing_Error_" data-uid="Amqp.Connection.OnClose(Amqp.Framing.Error)">OnClose(Error)</h4>
-              <div class="markdown level1 summary"><p>Closes the connection.</p>
-</div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">protected override bool OnClose(Error error)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
                   <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Error.html#Amqp_Framing_Error">Error</a></td>
-                    <td><em>error</em></td>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><em>count</em></td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -291,17 +155,171 @@ method instead.</p>
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">System.Boolean</span></td>
+                    <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
                     <td></td>
                   </tr>
                 </tbody>
               </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_OnClose_Amqp_Framing_Error_">AmqpObject.OnClose(Error)</a></div>
-              <h3 id="extensionmethods">Extension Methods</h3>
-              <div>
-                  <a class="xref" href="Amqp.TaskExtensions.html#Amqp_TaskExtensions_CloseAsync_Amqp_AmqpObject_System_Int32_">TaskExtensions.CloseAsync(Int32)</a>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Amqp.IAsyncTransport.html#Amqp_IAsyncTransport_ReceiveAsync_System_Byte___System_Int32_System_Int32_">IAsyncTransport.ReceiveAsync(Byte[], Int32, Int32)</a></div>
+              <h4 id="Amqp_WebSocketTransport_Amqp_IAsyncTransport_SendAsync_System_Collections_Generic_IList_Amqp_ByteBuffer__System_Int32_" data-uid="Amqp.WebSocketTransport.Amqp#IAsyncTransport#SendAsync(System.Collections.Generic.IList{Amqp.ByteBuffer},System.Int32)">IAsyncTransport.SendAsync(IList&lt;ByteBuffer&gt;, Int32)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">Task IAsyncTransport.SendAsync(IList&lt;ByteBuffer&gt; bufferList, int listSize)</code></pre>
               </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Collections.Generic.IList</span>&lt;<a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a>&gt;</td>
+                    <td><em>bufferList</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><em>listSize</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Threading.Tasks.Task</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Amqp.IAsyncTransport.html#Amqp_IAsyncTransport_SendAsync_System_Collections_Generic_IList_Amqp_ByteBuffer__System_Int32_">IAsyncTransport.SendAsync(IList&lt;ByteBuffer&gt;, Int32)</a></div>
+              <h4 id="Amqp_WebSocketTransport_Amqp_IAsyncTransport_SetConnection_Amqp_Connection_" data-uid="Amqp.WebSocketTransport.Amqp#IAsyncTransport#SetConnection(Amqp.Connection)">IAsyncTransport.SetConnection(Connection)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void IAsyncTransport.SetConnection(Connection connection)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.Connection.html#Amqp_Connection">Connection</a></td>
+                    <td><em>connection</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Amqp.IAsyncTransport.html#Amqp_IAsyncTransport_SetConnection_Amqp_Connection_">IAsyncTransport.SetConnection(Connection)</a></div>
+              <h4 id="Amqp_WebSocketTransport_Amqp_ITransport_Close" data-uid="Amqp.WebSocketTransport.Amqp#ITransport#Close">ITransport.Close()</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void ITransport.Close()</code></pre>
+              </div>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Amqp.ITransport.html#Amqp_ITransport_Close">ITransport.Close()</a></div>
+              <h4 id="Amqp_WebSocketTransport_Amqp_ITransport_Receive_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.WebSocketTransport.Amqp#ITransport#Receive(System.Byte[],System.Int32,System.Int32)">ITransport.Receive(Byte[], Int32, Int32)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">int ITransport.Receive(byte[] buffer, int offset, int count)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Byte</span>[]</td>
+                    <td><em>buffer</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><em>offset</em></td>
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><em>count</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Amqp.ITransport.html#Amqp_ITransport_Receive_System_Byte___System_Int32_System_Int32_">ITransport.Receive(Byte[], Int32, Int32)</a></div>
+              <h4 id="Amqp_WebSocketTransport_Amqp_ITransport_Send_Amqp_ByteBuffer_" data-uid="Amqp.WebSocketTransport.Amqp#ITransport#Send(Amqp.ByteBuffer)">ITransport.Send(ByteBuffer)</h4>
+              <div class="markdown level1 summary"></div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void ITransport.Send(ByteBuffer buffer)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
+                    <td><em>buffer</em></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Amqp.ITransport.html#Amqp_ITransport_Send_Amqp_ByteBuffer_">ITransport.Send(ByteBuffer)</a></div>
             </article>
           </div>
           

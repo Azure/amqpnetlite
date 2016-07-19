@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ErrorCode
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,8 +67,7 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L23" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_ErrorCode" data-uid="Amqp.ErrorCode">Class ErrorCode
               </h1>
               <div class="markdown level0 summary"><p>Defines the conditions of AMQP errors.</p>
@@ -79,21 +78,38 @@
                   <div class="level0"><span class="xref">System.Object</span></div>
                   <div class="level1"><span class="xref">ErrorCode</span></div>
               </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
+              </div>
               <h6><strong>Namespace</strong>:Amqp</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
               <h5 id="Amqp_ErrorCode_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class ErrorCode</code></pre>
+                <pre><code class="lang-csharp hljs">public static class ErrorCode</code></pre>
               </div>
               <h3 id="fields">Fields
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_ConnectionForced.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.ConnectionForced%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L104">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_ConnectionForced" data-uid="Amqp.ErrorCode.ConnectionForced">ConnectionForced</h4>
               <div class="markdown level1 summary"><p>An operator intervened to close the Connection for some reason.
 The client may retry at some later date.</p>
@@ -101,7 +117,7 @@ The client may retry at some later date.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string ConnectionForced</code></pre>
+                <pre><code class="lang-csharp hljs">public const string ConnectionForced = &quot;amqp:connection:forced&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -118,20 +134,13 @@ The client may retry at some later date.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_ConnectionRedirect.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.ConnectionRedirect%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L114">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_ConnectionRedirect" data-uid="Amqp.ErrorCode.ConnectionRedirect">ConnectionRedirect</h4>
               <div class="markdown level1 summary"><p>The container is no longer available on the current connection. </p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string ConnectionRedirect</code></pre>
+                <pre><code class="lang-csharp hljs">public const string ConnectionRedirect = &quot;amqp:connection:redirect&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -148,20 +157,13 @@ The client may retry at some later date.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_DecodeError.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.DecodeError%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L47">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_DecodeError" data-uid="Amqp.ErrorCode.DecodeError">DecodeError</h4>
               <div class="markdown level1 summary"><p>Data could not be decoded.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string DecodeError</code></pre>
+                <pre><code class="lang-csharp hljs">public const string DecodeError = &quot;amqp:decode-error&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -178,20 +180,13 @@ The client may retry at some later date.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_DetachForced.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.DetachForced%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L144">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_DetachForced" data-uid="Amqp.ErrorCode.DetachForced">DetachForced</h4>
               <div class="markdown level1 summary"><p>An operator intervened to detach for some reason.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string DetachForced</code></pre>
+                <pre><code class="lang-csharp hljs">public const string DetachForced = &quot;amqp:link:detach-forced&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -208,20 +203,13 @@ The client may retry at some later date.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_ErrantLink.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.ErrantLink%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L126">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_ErrantLink" data-uid="Amqp.ErrorCode.ErrantLink">ErrantLink</h4>
               <div class="markdown level1 summary"><p>Input was received for a link that was detached with an error.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string ErrantLink</code></pre>
+                <pre><code class="lang-csharp hljs">public const string ErrantLink = &quot;amqp:session:errant-link&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -238,13 +226,6 @@ The client may retry at some later date.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_FrameSizeTooSmall.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.FrameSizeTooSmall%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L96">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_FrameSizeTooSmall" data-uid="Amqp.ErrorCode.FrameSizeTooSmall">FrameSizeTooSmall</h4>
               <div class="markdown level1 summary"><p>The peer cannot send a frame because the smallest encoding of the performative
 with the currently valid values would be too large to fit within a frame of
@@ -253,7 +234,7 @@ the agreed maximum frame size. </p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string FrameSizeTooSmall</code></pre>
+                <pre><code class="lang-csharp hljs">public const string FrameSizeTooSmall = &quot;amqp:frame-size-too-small&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -270,20 +251,13 @@ the agreed maximum frame size. </p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_FramingError.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.FramingError%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L109">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_FramingError" data-uid="Amqp.ErrorCode.FramingError">FramingError</h4>
               <div class="markdown level1 summary"><p>A valid frame header cannot be formed from the incoming byte stream.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string FramingError</code></pre>
+                <pre><code class="lang-csharp hljs">public const string FramingError = &quot;amqp:connection:framing-error&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -300,20 +274,13 @@ the agreed maximum frame size. </p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_HandleInUse.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.HandleInUse%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L131">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_HandleInUse" data-uid="Amqp.ErrorCode.HandleInUse">HandleInUse</h4>
               <div class="markdown level1 summary"><p>An attach was received using a handle that is already in use for an attached Link.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string HandleInUse</code></pre>
+                <pre><code class="lang-csharp hljs">public const string HandleInUse = &quot;amqp:session:handle-in-use&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -330,20 +297,13 @@ the agreed maximum frame size. </p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_IllegalState.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.IllegalState%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L89">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_IllegalState" data-uid="Amqp.ErrorCode.IllegalState">IllegalState</h4>
               <div class="markdown level1 summary"><p>The peer sent a frame that is not permitted in the current state of the Session.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string IllegalState</code></pre>
+                <pre><code class="lang-csharp hljs">public const string IllegalState = &quot;amqp:illegal-state&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -360,13 +320,6 @@ the agreed maximum frame size. </p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_InternalError.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.InternalError%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L31">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_InternalError" data-uid="Amqp.ErrorCode.InternalError">InternalError</h4>
               <div class="markdown level1 summary"><p>An internal error occurred. Operator intervention may be required to resume
 normal operation.</p>
@@ -374,7 +327,7 @@ normal operation.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string InternalError</code></pre>
+                <pre><code class="lang-csharp hljs">public const string InternalError = &quot;amqp:internal-error&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -391,20 +344,13 @@ normal operation.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_InvalidField.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.InvalidField%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L63">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_InvalidField" data-uid="Amqp.ErrorCode.InvalidField">InvalidField</h4>
               <div class="markdown level1 summary"><p>An invalid field was passed in a frame body, and the operation could not proceed.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string InvalidField</code></pre>
+                <pre><code class="lang-csharp hljs">public const string InvalidField = &quot;amqp:invalid-field&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -421,20 +367,13 @@ normal operation.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_LinkRedirect.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.LinkRedirect%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L159">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_LinkRedirect" data-uid="Amqp.ErrorCode.LinkRedirect">LinkRedirect</h4>
               <div class="markdown level1 summary"><p>The address provided cannot be resolved to a terminus at the current container.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string LinkRedirect</code></pre>
+                <pre><code class="lang-csharp hljs">public const string LinkRedirect = &quot;amqp:link:redirect&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -451,20 +390,13 @@ normal operation.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_MessageReleased.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.MessageReleased%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L189">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_MessageReleased" data-uid="Amqp.ErrorCode.MessageReleased">MessageReleased</h4>
               <div class="markdown level1 summary"><p>The message has been released by the peer.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string MessageReleased</code></pre>
+                <pre><code class="lang-csharp hljs">public const string MessageReleased = &quot;amqp:message:released&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -481,20 +413,13 @@ normal operation.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_MessageSizeExceeded.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.MessageSizeExceeded%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L154">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_MessageSizeExceeded" data-uid="Amqp.ErrorCode.MessageSizeExceeded">MessageSizeExceeded</h4>
               <div class="markdown level1 summary"><p>The peer sent a larger message than is supported on the link.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string MessageSizeExceeded</code></pre>
+                <pre><code class="lang-csharp hljs">public const string MessageSizeExceeded = &quot;amqp:link:message-size-exceeded&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -511,13 +436,6 @@ normal operation.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_NotAllowed.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.NotAllowed%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L58">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_NotAllowed" data-uid="Amqp.ErrorCode.NotAllowed">NotAllowed</h4>
               <div class="markdown level1 summary"><p>The peer tried to use a frame in a manner that is inconsistent with
 the semantics defined in the specification.</p>
@@ -525,7 +443,7 @@ the semantics defined in the specification.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string NotAllowed</code></pre>
+                <pre><code class="lang-csharp hljs">public const string NotAllowed = &quot;amqp:not-allowed&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -542,20 +460,13 @@ the semantics defined in the specification.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_NotFound.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.NotFound%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L36">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_NotFound" data-uid="Amqp.ErrorCode.NotFound">NotFound</h4>
               <div class="markdown level1 summary"><p>A peer attempted to work with a remote entity that does not exist.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string NotFound</code></pre>
+                <pre><code class="lang-csharp hljs">public const string NotFound = &quot;amqp:not-found&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -572,20 +483,13 @@ the semantics defined in the specification.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_NotImplemented.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.NotImplemented%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L68">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_NotImplemented" data-uid="Amqp.ErrorCode.NotImplemented">NotImplemented</h4>
               <div class="markdown level1 summary"><p>The peer tried to use functionality that is not implemented in its partner.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string NotImplemented</code></pre>
+                <pre><code class="lang-csharp hljs">public const string NotImplemented = &quot;amqp:not-implemented&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -602,20 +506,13 @@ the semantics defined in the specification.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_PreconditionFailed.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.PreconditionFailed%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L79">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_PreconditionFailed" data-uid="Amqp.ErrorCode.PreconditionFailed">PreconditionFailed</h4>
               <div class="markdown level1 summary"><p>The client made a request that was not allowed because some precondition failed.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string PreconditionFailed</code></pre>
+                <pre><code class="lang-csharp hljs">public const string PreconditionFailed = &quot;amqp:precondition-failed&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -632,20 +529,13 @@ the semantics defined in the specification.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_ResourceDeleted.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.ResourceDeleted%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L84">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_ResourceDeleted" data-uid="Amqp.ErrorCode.ResourceDeleted">ResourceDeleted</h4>
               <div class="markdown level1 summary"><p>A server entity the client is working with has been deleted.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string ResourceDeleted</code></pre>
+                <pre><code class="lang-csharp hljs">public const string ResourceDeleted = &quot;amqp:resource-deleted&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -662,20 +552,13 @@ the semantics defined in the specification.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_ResourceLimitExceeded.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.ResourceLimitExceeded%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L52">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_ResourceLimitExceeded" data-uid="Amqp.ErrorCode.ResourceLimitExceeded">ResourceLimitExceeded</h4>
               <div class="markdown level1 summary"><p>Data could not be decoded.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string ResourceLimitExceeded</code></pre>
+                <pre><code class="lang-csharp hljs">public const string ResourceLimitExceeded = &quot;amqp:resource-limit-exceeded&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -692,13 +575,6 @@ the semantics defined in the specification.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_ResourceLocked.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.ResourceLocked%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L74">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_ResourceLocked" data-uid="Amqp.ErrorCode.ResourceLocked">ResourceLocked</h4>
               <div class="markdown level1 summary"><p>The client attempted to work with a server entity to which it has no access
 because another client is working with it.</p>
@@ -706,7 +582,7 @@ because another client is working with it.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string ResourceLocked</code></pre>
+                <pre><code class="lang-csharp hljs">public const string ResourceLocked = &quot;amqp:resource-locked&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -723,13 +599,6 @@ because another client is working with it.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_Stolen.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.Stolen%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L165">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_Stolen" data-uid="Amqp.ErrorCode.Stolen">Stolen</h4>
               <div class="markdown level1 summary"><p>The link has been attached elsewhere, causing the existing attachment
 to be forcibly closed.</p>
@@ -737,7 +606,7 @@ to be forcibly closed.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string Stolen</code></pre>
+                <pre><code class="lang-csharp hljs">public const string Stolen = &quot;amqp:link:stolen&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -754,20 +623,13 @@ to be forcibly closed.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_TransactionRollback.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.TransactionRollback%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L177">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_TransactionRollback" data-uid="Amqp.ErrorCode.TransactionRollback">TransactionRollback</h4>
               <div class="markdown level1 summary"><p>The transaction was rolled back for an unspecified reason.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string TransactionRollback</code></pre>
+                <pre><code class="lang-csharp hljs">public const string TransactionRollback = &quot;amqp:transaction:rollback&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -784,20 +646,13 @@ to be forcibly closed.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_TransactionTimeout.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.TransactionTimeout%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L182">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_TransactionTimeout" data-uid="Amqp.ErrorCode.TransactionTimeout">TransactionTimeout</h4>
               <div class="markdown level1 summary"><p>The work represented by this transaction took too long.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string TransactionTimeout</code></pre>
+                <pre><code class="lang-csharp hljs">public const string TransactionTimeout = &quot;amqp:transaction:timeout&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -814,20 +669,13 @@ to be forcibly closed.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_TransactionUnknownId.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.TransactionUnknownId%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L172">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_TransactionUnknownId" data-uid="Amqp.ErrorCode.TransactionUnknownId">TransactionUnknownId</h4>
               <div class="markdown level1 summary"><p>The specified txn-id does not exist.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string TransactionUnknownId</code></pre>
+                <pre><code class="lang-csharp hljs">public const string TransactionUnknownId = &quot;amqp:transaction:unknown-id&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -844,20 +692,13 @@ to be forcibly closed.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_TransferLimitExceeded.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.TransferLimitExceeded%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L149">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_TransferLimitExceeded" data-uid="Amqp.ErrorCode.TransferLimitExceeded">TransferLimitExceeded</h4>
               <div class="markdown level1 summary"><p>The peer sent more Message transfers than currently allowed on the link.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string TransferLimitExceeded</code></pre>
+                <pre><code class="lang-csharp hljs">public const string TransferLimitExceeded = &quot;amqp:link:transfer-limit-exceeded&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -874,13 +715,6 @@ to be forcibly closed.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_UnattachedHandle.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.UnattachedHandle%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L137">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_UnattachedHandle" data-uid="Amqp.ErrorCode.UnattachedHandle">UnattachedHandle</h4>
               <div class="markdown level1 summary"><p>A frame (other than attach) was received referencing a handle which is not currently
 in use of an attached Link.</p>
@@ -888,7 +722,7 @@ in use of an attached Link.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string UnattachedHandle</code></pre>
+                <pre><code class="lang-csharp hljs">public const string UnattachedHandle = &quot;amqp:session:unattached-handle&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -905,13 +739,6 @@ in use of an attached Link.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_UnauthorizedAccess.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.UnauthorizedAccess%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L42">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_UnauthorizedAccess" data-uid="Amqp.ErrorCode.UnauthorizedAccess">UnauthorizedAccess</h4>
               <div class="markdown level1 summary"><p>A peer attempted to work with a remote entity to which it has no access
 due to security settings.</p>
@@ -919,7 +746,7 @@ due to security settings.</p>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string UnauthorizedAccess</code></pre>
+                <pre><code class="lang-csharp hljs">public const string UnauthorizedAccess = &quot;amqp:unauthorized-access&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -936,20 +763,13 @@ due to security settings.</p>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_ErrorCode_WindowViolation.md&amp;value=---%0Auid%3A%20Amqp.ErrorCode.WindowViolation%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/ErrorCode.cs/#L121">View Source</a>
-              </span>
               <h4 id="Amqp_ErrorCode_WindowViolation" data-uid="Amqp.ErrorCode.WindowViolation">WindowViolation</h4>
               <div class="markdown level1 summary"><p>The peer violated incoming window for the session.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public const string WindowViolation</code></pre>
+                <pre><code class="lang-csharp hljs">public const string WindowViolation = &quot;amqp:session:window-violation&quot;</code></pre>
               </div>
               <h5 class="fieldValue">Field Value</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -984,6 +804,7 @@ due to security settings.</p>
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

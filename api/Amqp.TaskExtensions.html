@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class TaskExtensions
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,8 +67,7 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_TaskExtensions.md&amp;value=---%0Auid%3A%20Amqp.TaskExtensions%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
-              <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Net/TaskExtensions.cs/#L29" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              
               <h1 id="Amqp_TaskExtensions" data-uid="Amqp.TaskExtensions">Class TaskExtensions
               </h1>
               <div class="markdown level0 summary"><p>Provides extension methods.</p>
@@ -79,28 +78,45 @@
                   <div class="level0"><span class="xref">System.Object</span></div>
                   <div class="level1"><span class="xref">TaskExtensions</span></div>
               </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
+              </div>
               <h6><strong>Namespace</strong>:Amqp</h6>
               <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
               <h5 id="Amqp_TaskExtensions_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class TaskExtensions</code></pre>
+                <pre><code class="lang-csharp hljs">public static class TaskExtensions</code></pre>
               </div>
               <h3 id="methods">Methods
               </h3>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_TaskExtensions_CloseAsync_Amqp_AmqpObject_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.TaskExtensions.CloseAsync(Amqp.AmqpObject%2CSystem.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Net/TaskExtensions.cs/#L162">View Source</a>
-              </span>
               <h4 id="Amqp_TaskExtensions_CloseAsync_Amqp_AmqpObject_System_Int32_" data-uid="Amqp.TaskExtensions.CloseAsync(Amqp.AmqpObject,System.Int32)">CloseAsync(AmqpObject, Int32)</h4>
               <div class="markdown level1 summary"><p>Closes an AMQP object asynchronously.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static Task CloseAsync(AmqpObject amqpObject, int timeout = 60000)</code></pre>
+                <pre><code class="lang-csharp hljs">public static Task CloseAsync(this AmqpObject amqpObject, int timeout = 60000)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -121,7 +137,7 @@
                   <tr>
                     <td><span class="xref">System.Int32</span></td>
                     <td><em>timeout</em></td>
-                    <td><p>The timeout in seconds.</p>
+                    <td><p>The timeout in milliseconds. Refer to AmqpObject.Close for details.</p>
 </td>
                   </tr>
                 </tbody>
@@ -137,24 +153,18 @@
                 <tbody>
                   <tr>
                     <td><span class="xref">System.Threading.Tasks.Task</span></td>
-                    <td></td>
+                    <td><p>A Task for the asynchronous close operation.</p>
+</td>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_TaskExtensions_ReceiveAsync_Amqp_ReceiverLink_System_Int32_.md&amp;value=---%0Auid%3A%20Amqp.TaskExtensions.ReceiveAsync(Amqp.ReceiverLink%2CSystem.Int32)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Net/TaskExtensions.cs/#L232">View Source</a>
-              </span>
               <h4 id="Amqp_TaskExtensions_ReceiveAsync_Amqp_ReceiverLink_System_Int32_" data-uid="Amqp.TaskExtensions.ReceiveAsync(Amqp.ReceiverLink,System.Int32)">ReceiveAsync(ReceiverLink, Int32)</h4>
               <div class="markdown level1 summary"><p>Receives a message asynchronously.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static Task&lt;Message&gt; ReceiveAsync(ReceiverLink receiver, int timeout = 60000)</code></pre>
+                <pre><code class="lang-csharp hljs">public static Task&lt;Message&gt; ReceiveAsync(this ReceiverLink receiver, int timeout = 60000)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -169,13 +179,13 @@
                   <tr>
                     <td><a class="xref" href="Amqp.ReceiverLink.html#Amqp_ReceiverLink">ReceiverLink</a></td>
                     <td><em>receiver</em></td>
-                    <td><p>The link.</p>
+                    <td><p>The receiver link.</p>
 </td>
                   </tr>
                   <tr>
                     <td><span class="xref">System.Int32</span></td>
                     <td><em>timeout</em></td>
-                    <td><p>The timeout in seconds.</p>
+                    <td><p>The timeout in milliseconds to wait for a message.</p>
 </td>
                   </tr>
                 </tbody>
@@ -191,24 +201,68 @@
                 <tbody>
                   <tr>
                     <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a>&gt;</td>
-                    <td></td>
+                    <td><p>A Task for the asynchronous receive operation. The result is a Message object
+if available; otherwise a null value.</p>
+</td>
                   </tr>
                 </tbody>
               </table>
-              <span class="small pull-right mobile-hide">
-                <span class="divider">|</span>
-                <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp_TaskExtensions_SendAsync_Amqp_SenderLink_Amqp_Message_.md&amp;value=---%0Auid%3A%20Amqp.TaskExtensions.SendAsync(Amqp.SenderLink%2CAmqp.Message)%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
-              </span>
-              <span class="small pull-right mobile-hide">
-                <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Net/TaskExtensions.cs/#L195">View Source</a>
-              </span>
+              <h4 id="Amqp_TaskExtensions_ReceiveAsync_Amqp_ReceiverLink_System_TimeSpan_" data-uid="Amqp.TaskExtensions.ReceiveAsync(Amqp.ReceiverLink,System.TimeSpan)">ReceiveAsync(ReceiverLink, TimeSpan)</h4>
+              <div class="markdown level1 summary"><p>Receives a message asynchronously.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static Task&lt;Message&gt; ReceiveAsync(this ReceiverLink receiver, TimeSpan timeout)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Amqp.ReceiverLink.html#Amqp_ReceiverLink">ReceiverLink</a></td>
+                    <td><em>receiver</em></td>
+                    <td><p>The receiver link.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">System.TimeSpan</span></td>
+                    <td><em>timeout</em></td>
+                    <td><p>The timeout to wait for a message.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a>&gt;</td>
+                    <td><p>A Task for the asynchronous receive operation. The result is a Message object
+if available; otherwise a null value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
               <h4 id="Amqp_TaskExtensions_SendAsync_Amqp_SenderLink_Amqp_Message_" data-uid="Amqp.TaskExtensions.SendAsync(Amqp.SenderLink,Amqp.Message)">SendAsync(SenderLink, Message)</h4>
               <div class="markdown level1 summary"><p>Sends a message asynchronously.</p>
 </div>
               <div class="markdown level1 conceptual"></div>
               <h5 class="decalaration">Declaration</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static Task SendAsync(SenderLink sender, Message message)</code></pre>
+                <pre><code class="lang-csharp hljs">public static Task SendAsync(this SenderLink sender, Message message)</code></pre>
               </div>
               <h5 class="parameters">Parameters</h5>
               <table class="table table-bordered table-striped table-condensed">
@@ -223,13 +277,13 @@
                   <tr>
                     <td><a class="xref" href="Amqp.SenderLink.html#Amqp_SenderLink">SenderLink</a></td>
                     <td><em>sender</em></td>
-                    <td><p>The link.</p>
+                    <td><p>The sender link.</p>
 </td>
                   </tr>
                   <tr>
                     <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
                     <td><em>message</em></td>
-                    <td><p>The message.</p>
+                    <td><p>The message to send.</p>
 </td>
                   </tr>
                 </tbody>
@@ -245,7 +299,8 @@
                 <tbody>
                   <tr>
                     <td><span class="xref">System.Threading.Tasks.Task</span></td>
-                    <td></td>
+                    <td><p>A Task for the asynchronous send operation.</p>
+</td>
                   </tr>
                 </tbody>
               </table>
@@ -267,6 +322,7 @@
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>

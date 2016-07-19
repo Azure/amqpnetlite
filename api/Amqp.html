@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Amqp
    ">
-    <meta name="generator" content="docfx 1.7.2.0">
+    <meta name="generator" content="docfx 2.2.0.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -33,7 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="../">
+              <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
             </div>
@@ -67,7 +67,6 @@
           <div class="col-md-10">
             <article class="content wrap" id="_content">
               
-              <a href="https://github.com/Azure/amqpnetlite/new/master/apispec/new?filename=Amqp.md&amp;value=---%0Auid%3A%20Amqp%0Aremarks%3A%20'*THIS*%20is%20remarks%20overriden%20in%20*MARKDOWN*%20file'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
               <h1 id="Amqp" data-uid="Amqp">Namespace Amqp
               </h1>
               <div class="markdown level0 summary"></div>
@@ -76,15 +75,7 @@
                 <h3 id="classes">Classes
               </h3>
                   <h4><a class="xref" href="Amqp.Address.html#Amqp_Address">Address</a></h4>
-                  <section><p>Defines the address of an AMQP endpoint. An address has the following form:
-  amqp[s] :// [user:[password]@] domain[:port] [/[path]
-Where domain can be:
-  host | ip | name
-If &quot;amqps&quot; is specified, the connection uses TLS in the underlying transport.
-When port is not specified, it is set to the standard based on scheme (amqp: 5672, amqps: 5671)
-path is not used by the library.
-Note that TLS Server Name Indication (SNI) is signaled only for &quot;amqps&quot; addresses where
-the domain is host | name. SNI is not signaled when the domain is a numeric IP address.</p>
+                  <section><p>Defines the address of an AMQP endpoint.</p>
 </section>
                   <h4><a class="xref" href="Amqp.AmqpBitConverter.html#Amqp_AmqpBitConverter">AmqpBitConverter</a></h4>
                   <section><p>Reads primitive values from a buffer or writes primitive values to a buffer in networking order.</p>
@@ -94,15 +85,19 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
 </section>
                   <h4><a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject">AmqpObject</a></h4>
                   <section><p>The base class of all AMQP objects.</p>
+<a class="xref" href="Amqp.Session.html#Amqp_Session">Session</a>
+<a class="xref" href="Amqp.SenderLink.html#Amqp_SenderLink">SenderLink</a>
+<a class="xref" href="Amqp.ReceiverLink.html#Amqp_ReceiverLink">ReceiverLink</a>
 </section>
                   <h4><a class="xref" href="Amqp.AmqpSettings.html#Amqp_AmqpSettings">AmqpSettings</a></h4>
-                  <section><p>Contains the AMQP settings for a connection.</p>
+                  <section><p>Contains the AMQP settings for a <a class="xref" href="Amqp.Connection.html#Amqp_Connection">Connection</a>.</p>
 </section>
                   <h4><a class="xref" href="Amqp.BufferManager.html#Amqp_BufferManager">BufferManager</a></h4>
-                  <section><p>A BufferManager manages pooled buffers (byte arrays) with different sizes.</p>
+                  <section><p>A BufferManager class manages pooled buffers (byte arrays) with different sizes.
+It provides an implementation of the <a class="xref" href="Amqp.IBufferManager.html#Amqp_IBufferManager">IBufferManager</a> interface.</p>
 </section>
                   <h4><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></h4>
-                  <section><p>A byte array wrapper that has read and write cursors.</p>
+                  <section><p>A byte array wrapper that has a read and a write cursor.</p>
 </section>
                   <h4><a class="xref" href="Amqp.Connection.html#Amqp_Connection">Connection</a></h4>
                   <section><p>The Connection class represents an AMQP connection.</p>
@@ -148,6 +143,17 @@ the domain is host | name. SNI is not signaled when the domain is a numeric IP a
 </section>
                   <h4><a class="xref" href="Amqp.Trace.html#Amqp_Trace">Trace</a></h4>
                   <section><p>The Trace class for writing traces.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider">TransportProvider</a></h4>
+                  <section><p>The TransportProvider class provides transport implementation for given address schemes.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.WebSocketTransport.html#Amqp_WebSocketTransport">WebSocketTransport</a></h4>
+                  <section><p>The WebSocketTransport class allows applications to send and receive AMQP traffic
+using the AMQP-WebSockets binding protocol.</p>
+</section>
+                  <h4><a class="xref" href="Amqp.WebSocketTransportFactory.html#Amqp_WebSocketTransportFactory">WebSocketTransportFactory</a></h4>
+                  <section><p>The factory to create <a class="xref" href="Amqp.WebSocketTransport.html#Amqp_WebSocketTransport">WebSocketTransport</a> client for address
+scheme &quot;ws&quot; and &quot;wss&quot;.</p>
 </section>
                 <h3 id="interfaces">Interfaces
               </h3>
@@ -207,6 +213,7 @@ For example, Information level includes the Error and Warning levels.</p>
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
+            
             <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
