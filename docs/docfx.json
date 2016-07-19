@@ -5,25 +5,25 @@
         {
           "files": [ "src/Amqp.Net.csproj" ],
           "exclude": [ "**/obj/**", "**/bin/**" ],
+          "src": "../"
         }
       ],
-      "dest": "obj/api"
+     "dest": "api"
     }
   ],
   "build": {
     "content": [
       {
-        "files": [ "**/**.yml" ],
-        "src": "obj/api",
-        "dest": "api"
+        "files": [ "api/**/*.yml" ]
       },
       {
         "files": [ "articles/**.md", "articles/**/toc.yml", "toc.yml", "*.md" ]
       }
     ],
-    "dest": "build/docs",
-    "template": [
-      "default"
-    ]
+    "dest": "../build/_site",
+    "template": [ "default", "template" ],
+    "globalMetadata": {
+      "_disableContribution": true
+    }
   }
 }
