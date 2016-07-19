@@ -38,6 +38,7 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown).
 
 ## Getting Started
+* [Download from NuGet](https://www.nuget.org/packages/AMQPNetLite)
 * [Articles and API Documentation](http://azure.github.io/amqpnetlite/)
 * [Examples](https://github.com/Azure/amqpnetlite/tree/master/Examples) Please take a minute to look at the examples.
 * [.Net Core](https://github.com/Azure/amqpnetlite/tree/master/dotnet) If you are looking for information about using amqpnetlite on .Net Core (coreclr, dnxcore50, etc.), your can find the code and a Hello AMQP! example here.
