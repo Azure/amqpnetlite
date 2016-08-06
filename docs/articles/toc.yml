@@ -1,9 +1,9 @@
 - name: Getting Started
   items:
-  - name: Summary
-    href: summary.md
-  - name: Work with Code
-    href: getting_started.md
+  - name: Building Application
+    href: building_application.md
+  - name: Working with Code
+    href: working_with_code.md
 - name: Library
   items:
   - name: Listener
@@ -14,11 +14,11 @@
     href: test_amqp_broker.md
 - name: Use Cases
   items:
-  - name: Azure Service Bus & Event Hubs
-    href: azure_sb_eventhubs.md
-  - name: IoT Hub device endpoints
+  - name: Azure Event Hubs
+    href: azure_eventhubs.md
+  - name: IoT Hub Device Endpoints
     href: device_to_iothub.md
-  - name: IoT Hub service endpoints
+  - name: IoT Hub Service Endpoints
     href: service_to_iothub.md
 - name: Frequently Asked Questions
   href: faqs.md

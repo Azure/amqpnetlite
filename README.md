@@ -1,4 +1,6 @@
-# amqpnetlite
+# AMQP.Net Lite
+[Download from NuGet](https://www.nuget.org/packages/AMQPNetLite) | [Documentation](http://azure.github.io/amqpnetlite/)
+
 AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, .Net Core, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.
 
 ## Features
@@ -38,20 +40,10 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown).
 
 ## Getting Started
-* [Download from NuGet](https://www.nuget.org/packages/AMQPNetLite)
-* [Articles and API Documentation](http://azure.github.io/amqpnetlite/)
+* [Quick Start](docs/articles/building_application.md) Build applications from simple to complex.
 * [Examples](https://github.com/Azure/amqpnetlite/tree/master/Examples) Please take a minute to look at the examples.
 * [.Net Core](https://github.com/Azure/amqpnetlite/tree/master/dotnet) If you are looking for information about using amqpnetlite on .Net Core (coreclr, dnxcore50, etc.), your can find the code and a Hello AMQP! example here.
-* Interested in the code?
-  * Prerequisites:
-    * Visual Studio 2013 (e.g. Community Edition), and optionally
-    * NETMF SDK (4.2-4.4) and Visual Studio project system.
-    * Application Builder for Windows Embedded Compact 2013.
-    * dotnet/cli for building and testing dotnet projects.
-    * NuGet tools if you want to build the NuGet package.
-  * Visual Studio 2015 is supported but the netcf and win8 projects are excluded because they are not supported by VS2015.
-  * If you don't have netmf, netcf, dotnet/cli installed, you can still build the .Net projects in Visual Studio.
-  * To run the build.cmd script to do a full build and test, you need all the prerequisites.
+* [Interested in the code?](docs/articles/working_with_code.md) Clone and build the projects.
 
 ## Contributing
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
