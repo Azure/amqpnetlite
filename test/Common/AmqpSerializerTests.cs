@@ -36,7 +36,7 @@ namespace Test.Amqp
 
             RunPrimitiveTypeTest<bool>(true);
             RunPrimitiveTypeTest<bool>(false);
-            
+
             RunPrimitiveTypeTest<byte>(byte.MinValue);
             RunPrimitiveTypeTest<byte>(222);
             RunPrimitiveTypeTest<byte>(byte.MaxValue);
@@ -276,7 +276,7 @@ namespace Test.Amqp
         {
             // serializer test
             {
-                var specification = new ComputerSpecification() {  Cores = 2, RamSize = 4, Description = "netbook" };
+                var specification = new ComputerSpecification() { Cores = 2, RamSize = 4, Description = "netbook" };
                 var product = new Product() { Name = "Computer", Price = 499.98, Weight = 30, Specification = specification, Category = Category.Electronic };
 
                 var buffer = new ByteBuffer(1024, true);
@@ -327,9 +327,9 @@ namespace Test.Amqp
                 Assert.AreEqual(specification.Description, specMap[new Symbol("Description")]);
             }
 
-            // amqp - serializer
+            // amqp - serializer (symbols keys)
             {
-                // keys MUST be symbols
+                // keys MUST be symbols or strings
                 // the value types MUST match the field/property types in the class
                 var specification = new DescribedValue(
                     new Symbol("test.amqp:automotive-specification"),
@@ -348,6 +348,45 @@ namespace Test.Amqp
                         { new Symbol("Weight"), 5600L },
                         { new Symbol("Specification"), specification },
                         { new Symbol("Category"), (sbyte)Category.Automotive }
+                    });
+
+                var buffer = new ByteBuffer(1024, true);
+                Encoder.WriteObject(buffer, product);
+
+                var product2 = AmqpSerializer.Deserialize<Product>(buffer);
+                Assert.AreEqual("Car", product2.Name);
+                Assert.AreEqual(41200.0, product2.Price);
+                Assert.AreEqual(5600L, product2.Weight);
+                Assert.AreEqual(Category.Automotive, product2.Category);
+
+                var specification2 = product2.Specification as CarSpecification;
+                Assert.IsTrue(specification2 != null);
+                Assert.AreEqual("V8", specification2.Engine);
+                Assert.AreEqual(222, specification2.HorsePower);
+                Assert.AreEqual("AWD SUV", specification2.Description);
+            }
+
+            // amqp - serializer (string keys)
+            {
+                // keys MUST be symbols or strings
+                // the value types MUST match the field/property types in the class
+                var specification = new DescribedValue(
+                    new Symbol("test.amqp:automotive-specification"),
+                    new Map()
+                    {
+                        { "Engine", "V8" },
+                        { "HorsePower", 222 },
+                        { "Description", "AWD SUV" },
+                    });
+                var product = new DescribedValue(
+                    new Symbol("test.amqp:product"),
+                    new Map()
+                    {
+                        { "Name", "Car" },
+                        { "Price", 41200.0 },
+                        { "Weight", 5600L },
+                        { "Specification", specification },
+                        { "Category", (sbyte)Category.Automotive }
                     });
 
                 var buffer = new ByteBuffer(1024, true);
