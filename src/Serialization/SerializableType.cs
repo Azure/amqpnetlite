@@ -17,11 +17,12 @@
 
 namespace Amqp.Serialization
 {
-    using Amqp.Types;
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Runtime.Serialization;
+    using Amqp.Types;
 
     static class SerializationCallback
     {
