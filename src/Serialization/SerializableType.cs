@@ -663,7 +663,7 @@ namespace Amqp.Serialization
                     callback.Invoke(container, new object[] { default(StreamingContext) });
                 }
             }
-            
+
             static KeyValuePair<Type, SerializableType>[] GetKnownTypes(Dictionary<Type, SerializableType> types)
             {
                 if (types == null || types.Count == 0)
@@ -763,7 +763,7 @@ namespace Amqp.Serialization
                 : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
                 this.membersMap = new Dictionary<string, SerialiableMember>();
-                foreach(SerialiableMember member in members)
+                foreach (SerialiableMember member in members)
                 {
                     this.membersMap.Add(member.Name, member);
                 }
@@ -796,7 +796,7 @@ namespace Amqp.Serialization
 
             protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
             {
-                string key = Encoder.ReadSymbol(buffer, Encoder.ReadFormatCode(buffer));
+                string key = this.ReadKey(buffer);
                 SerialiableMember member = null;
                 if (!this.membersMap.TryGetValue(key, out member))
                 {
@@ -806,6 +806,24 @@ namespace Amqp.Serialization
                 object value = member.Type.ReadObject(buffer);
                 member.Accessor.Set(container, value);
                 return 2;
+            }
+
+            private string ReadKey(ByteBuffer buffer)
+            {
+                var formatCode = Encoder.ReadFormatCode(buffer);
+                switch (formatCode)
+                {
+                    case FormatCode.String32Utf8:
+                    case FormatCode.String8Utf8:
+                        return Encoder.ReadString(buffer, formatCode);
+
+                    case FormatCode.Symbol8:
+                    case FormatCode.Symbol32:
+                        return Encoder.ReadSymbol(buffer, formatCode);
+
+                    default:
+                        throw new SerializationException("Format code " + formatCode + " not supported for map key");
+                }
             }
         }
 
