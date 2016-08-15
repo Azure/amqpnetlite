@@ -110,5 +110,5 @@ Many async operation completion and callback invoke are triggered by an incoming
 
 ## Advanced topics
 * [Listener](listener.md)
-* Serialization
+* [Serialization](serialization.md)
 * Buffer Management

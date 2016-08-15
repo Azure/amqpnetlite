@@ -6,6 +6,8 @@
     href: working_with_code.md
 - name: Library
   items:
+  - name: Serialization
+    href: serialization.md
   - name: Listener
     href: listener.md
   - name: Tracing
