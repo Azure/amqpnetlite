@@ -27,7 +27,7 @@ namespace Test.Amqp
     [TestClass]
     public class TransactionTests
     {
-        Address address = LinkTests.address;
+        TestTarget testTarget = new TestTarget();
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -43,9 +43,9 @@ namespace Test.Amqp
             string testName = "TransactedPosting";
             int nMsgs = 5;
 
-            Connection connection = new Connection(this.address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             // commit
             using (var ts = new TransactionScope())
@@ -84,7 +84,7 @@ namespace Test.Amqp
                 ts.Complete();
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs * 2; i++)
             {
                 Message message = receiver.Receive();
@@ -102,9 +102,9 @@ namespace Test.Amqp
             string testName = "TransactedRetiring";
             int nMsgs = 10;
 
-            Connection connection = new Connection(this.address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             // send one extra for validation
             for (int i = 0; i < nMsgs + 1; i++)
@@ -114,7 +114,7 @@ namespace Test.Amqp
                 sender.Send(message);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             Message[] messages = new Message[nMsgs];
             for (int i = 0; i < nMsgs; i++)
             {
@@ -179,9 +179,9 @@ namespace Test.Amqp
             string testName = "TransactedRetiringAndPosting";
             int nMsgs = 10;
 
-            Connection connection = new Connection(this.address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             for (int i = 0; i < nMsgs; i++)
             {
@@ -190,7 +190,7 @@ namespace Test.Amqp
                 sender.Send(message);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
 
             receiver.SetCredit(2, false);
             Message message1 = receiver.Receive();

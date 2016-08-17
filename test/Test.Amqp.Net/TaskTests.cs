@@ -30,7 +30,7 @@ namespace Test.Amqp
     [TestClass]
     public class TaskTests
     {
-        Address address = LinkTests.address;
+        TestTarget testTarget = new TestTarget();
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -43,9 +43,9 @@ namespace Test.Amqp
             string testName = "BasicSendReceiveAsync";
             int nMsgs = 100;
 
-            Connection connection = await Connection.Factory.CreateAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             for (int i = 0; i < nMsgs; ++i)
             {
@@ -56,7 +56,7 @@ namespace Test.Amqp
                 await sender.SendAsync(message);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = await receiver.ReceiveAsync();
@@ -76,9 +76,9 @@ namespace Test.Amqp
         {
             string testName = "CustomMessgeBody";
 
-            Connection connection = await Connection.Factory.CreateAsync(this.address);
+            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             Student student = new Student("Tom");
             student.Age = 16;
@@ -89,7 +89,7 @@ namespace Test.Amqp
             message.Properties = new Properties() { MessageId = "student" };
             await sender.SendAsync(message);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             Message message2 = await receiver.ReceiveAsync();
             Trace.WriteLine(TraceLevel.Information, "receive: {0}", message2.Properties);
             receiver.Accept(message);
@@ -112,9 +112,9 @@ namespace Test.Amqp
             int nMsgs = 50;
 
             Connection connection = await Connection.Factory.CreateAsync(
-                this.address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
+                this.testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             int messageSize = 100 * 1024;
             for (int i = 0; i < nMsgs; ++i)
@@ -126,7 +126,7 @@ namespace Test.Amqp
                 await sender.SendAsync(message);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = await receiver.ReceiveAsync();
@@ -149,9 +149,9 @@ namespace Test.Amqp
             int nMsgs = 50;
 
             Connection connection = await Connection.Factory.CreateAsync(
-                this.address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
+                this.testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             int messageSize = 10 * 1024;
             for (int i = 0; i < nMsgs; ++i)
@@ -163,7 +163,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             ManualResetEvent done = new ManualResetEvent(false);
             int count = 0;
             receiver.Start(30, (link, message) =>
@@ -198,13 +198,13 @@ namespace Test.Amqp
             Address sslAddress = new Address("amqps://guest:guest@127.0.0.1:5671");
             Connection connection = await factory.CreateAsync(sslAddress);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             Message message = new Message("custom transport config");
             message.Properties = new Properties() { MessageId = testName };
             await sender.SendAsync(message);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             Message message2 = await receiver.ReceiveAsync();
             Assert.IsTrue(message2 != null, "no message received");
             receiver.Accept(message2);
