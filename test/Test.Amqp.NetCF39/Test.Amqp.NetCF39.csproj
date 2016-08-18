@@ -52,6 +52,9 @@
     <Compile Include="..\Common\TestRunner.cs">
       <Link>TestRunner.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TestTarget.cs">
+      <Link>TestTarget.cs</Link>
+    </Compile>
     <Compile Include="..\Common\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>

@@ -40,8 +40,7 @@ namespace Test.Amqp
 #endif
     public class LinkTests
     {
-        public const string AddressString = "amqp://guest:guest@localhost:5672";
-        public static Address address = new Address(AddressString);
+        TestTarget testTarget = new TestTarget();
 
         static LinkTests()
         {
@@ -58,9 +57,9 @@ namespace Test.Amqp
         {
             string testName = "BasicSendReceive";
             const int nMsgs = 200;
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             for (int i = 0; i < nMsgs; ++i)
             {
@@ -71,7 +70,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
@@ -93,9 +92,9 @@ namespace Test.Amqp
             string testName = "ConnectionFrameSize";
             const int nMsgs = 200;
             int frameSize = 4 * 1024;
-            Connection connection = new Connection(address, null, new Open() { ContainerId = "c1", MaxFrameSize = (uint)frameSize }, null);
+            Connection connection = new Connection(testTarget.Address, null, new Open() { ContainerId = "c1", MaxFrameSize = (uint)frameSize }, null);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             for (int i = 0; i < nMsgs; ++i)
             {
@@ -103,7 +102,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
@@ -125,9 +124,9 @@ namespace Test.Amqp
         {
             ushort channelMax = 5;
             Connection connection = new Connection(
-                address,
+                testTarget.Address,
                 null,
-                new Open() { ContainerId = "ConnectionChannelMax", HostName = address.Host, ChannelMax = channelMax },
+                new Open() { ContainerId = "ConnectionChannelMax", HostName = testTarget.Address.Host, ChannelMax = channelMax },
                 (c, o) => Trace.WriteLine(TraceLevel.Verbose, "{0}", o));
 
             for (int i = 0; i <= channelMax; i++)
@@ -155,10 +154,20 @@ namespace Test.Amqp
         {
             string testName = "ConnectionWithIPAddress";
             const int nMsgs = 20;
-            Address address = new Address("127.0.0.1", 5672, "guest", "guest", "/", "amqp");
-            Connection connection = new Connection(address);
+            // If the test target is 'localhost' then verify that '127.0.0.1' also works.
+            if (testTarget.Address.Host != "localhost")
+            {
+                Trace.WriteLine(TraceLevel.Verbose,
+                    "Test {0} skipped. Test target '{1}' is not 'localhost'.",
+                    testName, testTarget.Address.Host);
+                return;
+            }
+            Address address2 = new Address("127.0.0.1", testTarget.Address.Port,
+                testTarget.Address.User, testTarget.Address.Password,
+                testTarget.Address.Path, testTarget.Address.Scheme);
+            Connection connection = new Connection(address2);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             for (int i = 0; i < nMsgs; ++i)
             {
@@ -169,7 +178,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
@@ -205,7 +214,7 @@ namespace Test.Amqp
                 OfferedCapabilities = new Symbol[] { new Symbol("oc") }
             };
 
-            Connection connection = new Connection(address, null, open, onOpen);
+            Connection connection = new Connection(testTarget.Address, null, open, onOpen);
 
             opened.WaitOne(10000);
 
@@ -221,10 +230,10 @@ namespace Test.Amqp
         {
             string testName = "OnMessage";
             const int nMsgs = 200;
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             ManualResetEvent done = new ManualResetEvent(false);
             int received = 0;
             receiver.Start(10, (link, m) =>
@@ -238,7 +247,7 @@ namespace Test.Amqp
                     }
                 });
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message()
@@ -272,10 +281,10 @@ namespace Test.Amqp
         {
             string testName = "CloseBusyReceiver";
             const int nMsgs = 20;
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
@@ -285,7 +294,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             ManualResetEvent closed = new ManualResetEvent(false);
             receiver.Closed += (o, e) => closed.Set();
             receiver.Start(
@@ -296,7 +305,7 @@ namespace Test.Amqp
                 });
             Assert.IsTrue(closed.WaitOne(10000));
 
-            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver2.Receive();
@@ -317,10 +326,10 @@ namespace Test.Amqp
         {
             string testName = "ReleaseMessage";
             const int nMsgs = 20;
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
@@ -330,7 +339,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
@@ -346,7 +355,7 @@ namespace Test.Amqp
             }
             receiver.Close();
 
-            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs / 2; ++i)
             {
                 Message message = receiver2.Receive();
@@ -367,10 +376,10 @@ namespace Test.Amqp
         {
             string testName = "SendAck";
             const int nMsgs = 20;
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             ManualResetEvent done = new ManualResetEvent(false);
             OutcomeCallback callback = (m, o, s) =>
             {
@@ -392,7 +401,7 @@ namespace Test.Amqp
 
             done.WaitOne(10000);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = receiver.Receive();
@@ -412,10 +421,10 @@ namespace Test.Amqp
         public void TestMethod_ReceiveWaiter()
         {
             string testName = "ReceiveWaiter";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
 #if NETFX || NETFX_CORE
             Task t = Task.Run(() =>
             {
@@ -434,7 +443,7 @@ namespace Test.Amqp
             t.Start();
 #endif
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             Message msg = new Message() { Properties = new Properties() { MessageId = "123456" } };
             sender.Send(msg, null, null);
 
@@ -456,7 +465,7 @@ namespace Test.Amqp
         public void TestMethod_ReceiveWithFilter()
         {
             string testName = "ReceiveWithFilter";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
             Message message = new Message("I can match a filter");
@@ -464,14 +473,14 @@ namespace Test.Amqp
             message.ApplicationProperties = new ApplicationProperties();
             message.ApplicationProperties["sn"] = 100;
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             sender.Send(message, null, null);
 
             // update the filter descriptor and expression according to the broker
             Map filters = new Map();
             // JMS selector filter: code = 0x0000468C00000004L, symbol="apache.org:selector-filter:string"
             filters.Add(new Symbol("f1"), new DescribedValue(new Symbol("apache.org:selector-filter:string"), "sn = 100"));
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Address = "q1", FilterSet = filters }, null);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, new Source() { Address = testTarget.Path, FilterSet = filters }, null);
             Message message2 = receiver.Receive();
             receiver.Accept(message2);
 
@@ -487,9 +496,9 @@ namespace Test.Amqp
         public void TestMethod_LinkCloseWithPendingSend()
         {
             string testName = "LinkCloseWithPendingSend";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             bool cancelled = false;
             Message message = new Message("released");
@@ -528,13 +537,13 @@ namespace Test.Amqp
         public void TestMethod_SynchronousSend()
         {
             string testName = "SynchronousSend";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             Message message = new Message("hello");
             sender.Send(message, 60000);
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
             receiver.Accept(message);
@@ -551,7 +560,7 @@ namespace Test.Amqp
         public void TestMethod_DynamicSenderLink()
         {
             string testName = "DynamicSenderLink";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
             string targetAddress = null;
@@ -582,7 +591,7 @@ namespace Test.Amqp
         public void TestMethod_DynamicReceiverLink()
         {
             string testName = "DynamicReceiverLink";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
             string remoteSource = null;
@@ -614,11 +623,11 @@ namespace Test.Amqp
         public void TestMethod_RequestResponse()
         {
             string testName = "RequestResponse";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
             // server app: the request handler
-            ReceiverLink requestLink = new ReceiverLink(session, "srv.requester-" + testName, "q1");
+            ReceiverLink requestLink = new ReceiverLink(session, "srv.requester-" + testName, testTarget.Path);
             requestLink.Start(10, (l, m) =>
                 {
                     l.Accept(m);
@@ -634,7 +643,7 @@ namespace Test.Amqp
             OnAttached onAttached = (l, at) =>
                 {
                     // client: sends a request to the request queue, specifies the temp queue as the reply queue
-                    SenderLink sender = new SenderLink(session, "cli.requester-" + testName, "q1");
+                    SenderLink sender = new SenderLink(session, "cli.requester-" + testName, testTarget.Path);
                     Message request = new Message("hello");
                     request.Properties = new Properties() { MessageId = "request1", ReplyTo = ((Source)at.Source).Address };
                     sender.Send(request, (a, b, c) => ((Link)c).Close(0), sender);
@@ -657,10 +666,10 @@ namespace Test.Amqp
         {
             string testName = "AdvancedLinkFlowControl";
             int nMsgs = 20;
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
@@ -668,7 +677,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             receiver.SetCredit(2, false);
             Message m1 = receiver.Receive();
             Message m2 = receiver.Receive();
@@ -677,7 +686,7 @@ namespace Test.Amqp
             receiver.Accept(m1);
             receiver.Accept(m2);
 
-            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "q1");
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, testTarget.Path);
             receiver2.SetCredit(2, false);
             Message m3 = receiver2.Receive();
             Message m4 = receiver2.Receive();
@@ -712,9 +721,9 @@ namespace Test.Amqp
         {
             string testName = "SendEmptyMessage";
 
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             bool threwArgEx = false;
             try
@@ -740,7 +749,7 @@ namespace Test.Amqp
 #endif
         public void TestMethod_ConnectionCreateClose()
         {
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
@@ -750,7 +759,7 @@ namespace Test.Amqp
 #endif
         public void TestMethod_SessionCreateClose()
         {
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
             session.Close(0);
             connection.Close();
@@ -762,10 +771,10 @@ namespace Test.Amqp
 #endif
         public void TestMethod_LinkCreateClose()
         {
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender", "q1");
-            ReceiverLink receiver = new ReceiverLink(session, "receiver", "q1");
+            SenderLink sender = new SenderLink(session, "sender", testTarget.Path);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver", testTarget.Path);
             sender.Close(0);
             receiver.Close(0);
             session.Close(0);
@@ -780,17 +789,17 @@ namespace Test.Amqp
         {
             string testName = "LinkReopen";
 
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            SenderLink sender = new SenderLink(session, "sender", "q1");
+            SenderLink sender = new SenderLink(session, "sender", testTarget.Path);
             sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
             sender.Close();
 
-            sender = new SenderLink(session, "sender", "q1");
+            sender = new SenderLink(session, "sender", testTarget.Path);
             sender.Send(new Message("test2") { Properties = new Properties() { MessageId = testName } });
             sender.Close();
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver", "q1");
+            ReceiverLink receiver = new ReceiverLink(session, "receiver", testTarget.Path);
             for (int i = 1; i <= 2; i++)
             {
                 var m = receiver.Receive();

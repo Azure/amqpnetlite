@@ -25,7 +25,7 @@ namespace Test.Amqp
     [TestClass]
     public class PerfTests
     {
-        Address address = LinkTests.address;
+        TestTarget testTarget = new TestTarget();
 
         [ClassInitialize]
         public static void Initialize(TestContext context)
@@ -45,9 +45,9 @@ namespace Test.Amqp
         public void PerfAtLeastOnceSend()
         {
             string testName = "PerfAtLeastOnceSend";
-            Connection connection = new Connection(address);
+            Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            this.sender = new SenderLink(session, "sender-" + testName, "q1");
+            this.sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
             this.onOutcome = OnSendComplete;
             this.done = new ManualResetEvent(false);

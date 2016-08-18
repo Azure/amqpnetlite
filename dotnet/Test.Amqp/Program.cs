@@ -34,8 +34,10 @@ namespace Test.Amqp
             if (args.Length == 0)
             {
                 Environment.SetEnvironmentVariable("CoreBroker", "1");
-                broker = new TestAmqpBroker(new string[] { LinkTests.AddressString },
-                    string.Join(":", LinkTests.address.User, LinkTests.address.Password), null, null);
+                TestTarget target = new TestTarget();
+                Address address = target.Address;
+                broker = new TestAmqpBroker(new string[] { target.address },
+                    string.Join(":", address.User, address.Password), null, null);
                 broker.Start();
             }
             else
