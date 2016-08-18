@@ -10,6 +10,7 @@
             "../../test/Common/TestAmqpBroker.cs",
             "../../test/Common/Assert.cs",
             "../../test/Common/NamedPipeTransport.cs",
+            "../../test/Common/TestTarget.cs",
             "../../test/Common/LinkTests.cs",
             "../../test/Common/UtilityTests.cs",
             "../../test/Common/ContainerHostTests.cs",

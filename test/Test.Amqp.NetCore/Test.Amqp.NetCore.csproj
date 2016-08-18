@@ -117,6 +117,9 @@
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TestTarget.cs">
+      <Link>TestTarget.cs</Link>
+    </Compile>
     <Compile Include="..\Test.Amqp.Net\TaskTests.cs">
       <Link>TaskTests.cs</Link>
     </Compile>

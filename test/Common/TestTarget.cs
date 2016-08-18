@@ -12,21 +12,11 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using Amqp;
 using System;
-#if NETFX || NETFX35 || DOTNET
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-#endif
-#if NETFX_CORE
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-#endif
+using Amqp;
 
 namespace Test.Amqp
 {
-#if NETFX || NETFX35 || NETFX_CORE || DOTNET
-    [TestClass]
-#endif
-
     /// <summary>
     /// For self tests that create AMQP connections to a broker
     /// define the URI of the broker and the name of the queue to use.
@@ -41,18 +31,21 @@ namespace Test.Amqp
     {
         internal const string envVarName = "AMQPNETLITE_TESTTARGET";
         internal const string defaultAddress = "amqp://guest:guest@localhost:5672/q1";
-        internal string addr;
+        internal string address;
         internal string path;
 
         public TestTarget()
         {
-            this.addr = Environment.GetEnvironmentVariable(envVarName);
-            if (this.addr == null)
+#if !COMPACT_FRAMEWORK && !NETFX_CORE && !NETMF
+            this.address = Environment.GetEnvironmentVariable(envVarName);
+#endif
+            if (this.address == null)
             {
-                this.addr = defaultAddress;
+                this.address = defaultAddress;
             }
+
             // Verify that the URI is well formed.
-            Address addr = new Address(this.addr);
+            Address addr = new Address(this.address);
             // Extract the path without the leading "/".
             path = addr.Path.Substring(1);
         }
@@ -69,7 +62,7 @@ namespace Test.Amqp
         {
             get
             {
-                return new Address(addr);
+                return new Address(address);
             }
         }
     }
