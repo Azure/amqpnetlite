@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Serialization </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Serialization ">
+    <meta name="generator" content="docfx 2.2.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <h1 id="serialization">Serialization</h1>
+              
+<p>AMQP defines a type system for primitive types and custom types. The serializer converts any serializable .NET object into AMQP bytes, and vice visa. Since the payload contains a complete valid sequence of AMQP values, it becomes easy for the application to send .NET objects across the network, and also interoperate with any other AMQP compliant clients that can read/write AMQP values.</p>
+<h2 id="serializable-types">Serializable Types</h2>
+<p>The following types are serializable.</p>
+<ul>
+<li>Primitives</li>
+<li>Custom Types - User defined classes are encoded as AMQP described types when the class and its fields/properties are annotated with the AMQP serialization attributes. See <a href="#amqpcontract">AmqpContract</a> for details.</li>
+<li><a href="#iamqpserializable">IAmqpSerializable</a> - User defined classes that implement this interface can be serialized using the Encode and Decode implementation provided by the user.</li>
+</ul>
+<p>The mapping between .NET and AMQP primitive types is defined in the following table.</p>
+<table>
+<thead>
+<tr>
+<th>.NET</th>
+<th>AMQP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>null</td>
+<td>null</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>booean</td>
+</tr>
+<tr>
+<td>byte</td>
+<td>ubyte</td>
+</tr>
+<tr>
+<td>sbyte</td>
+<td>byte</td>
+</tr>
+<tr>
+<td>ushort</td>
+<td>ushort</td>
+</tr>
+<tr>
+<td>short</td>
+<td>short</td>
+</tr>
+<tr>
+<td>uint</td>
+<td>uint</td>
+</tr>
+<tr>
+<td>int</td>
+<td>int</td>
+</tr>
+<tr>
+<td>ulong</td>
+<td>ulong</td>
+</tr>
+<tr>
+<td>long</td>
+<td>long</td>
+</tr>
+<tr>
+<td>float</td>
+<td>float</td>
+</tr>
+<tr>
+<td>double</td>
+<td>double</td>
+</tr>
+<tr>
+<td>char</td>
+<td>char</td>
+</tr>
+<tr>
+<td>DateTime</td>
+<td>timestamp</td>
+</tr>
+<tr>
+<td>Guid</td>
+<td>uuid</td>
+</tr>
+<tr>
+<td>byte[]</td>
+<td>binary</td>
+</tr>
+<tr>
+<td>string</td>
+<td>string</td>
+</tr>
+<tr>
+<td>Symbol</td>
+<td>symbol</td>
+</tr>
+<tr>
+<td>Array</td>
+<td>array</td>
+</tr>
+<tr>
+<td>IList</td>
+<td>list</td>
+</tr>
+<tr>
+<td>IDictionary</td>
+<td>map</td>
+</tr>
+<tr>
+<td>Enum</td>
+<td>the underlying type, e.g. int</td>
+</tr>
+<tr>
+<td><code>Nullable&lt;T&gt;</code></td>
+<td>null or the supported type T</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>decimal is not supported</li>
+</ul>
+<h2 id="amqpcontract">AmqpContract</h2>
+<p>A user defined class can be annotated with a few attribute classes to be serializable.</p>
+<h3 id="example">Example</h3>
+<pre><code>namespace Amqp.Examples;
+[AmqpContract]
+class Person
+{
+    [AmqpMember]
+    public string Name { get; set; }
+
+    [AmqpMember]
+    public DateTime DateOfBirth;
+
+    [AmqpMember]
+    Dictionary&lt;string, object&gt; properties;
+    public IDictionary&lt;string, object&gt; Properties
+    {
+        get
+        {
+            if (this.properties == null)
+            {
+                this.properties = new Dictionary&lt;string, object&gt;();
+            }
+
+            return this.properties;
+        }
+    }
+}
+</code></pre><p>With these annotations, the class is serialized as an AMQP described list. The descriptor name is the class&#39;s full name. The following is the equivalent xml definition.</p>
+<pre><code>&lt;type name=&quot;Person&quot; class=&quot;composite&quot; source=&quot;list&quot;&gt;
+  &lt;descriptor name=&quot;Amqp.Examples.Person&quot;/&gt;
+  &lt;field name=&quot;Name&quot; type=&quot;string&quot;/&gt;
+  &lt;field name=&quot;DateOfBirth&quot; type=&quot;timestamp&quot;/&gt;
+  &lt;field name=&quot;properties&quot; type=&quot;map&quot;/&gt;
+&lt;/type&gt;
+</code></pre><h3 id="amqpcontractattribute">AmqpContractAttribute</h3>
+<p>A class annotated with this attribute is serializable. The attribute specifies the descriptor name and code, and also the AMQP type to contain the fields/properties.</p>
+<pre><code>[AmqpContract(Name = &quot;amqp.examples:person&quot;, Code = 0x0000123400000000, Encoding = EncodingType.Map)]
+</code></pre><p>By default, the descriptor name is the class full name. If descriptor code is provided, the name is ignored. The descriptor is scoped to the instance of AmqpSerializer that performs the serialization. The static methods of AmqpSerializer belong to the default static instance. Application SHOULD ensure that the descriptor is unique in the serialization scope to avoid conflicts.<br>When Encoding is set to SimpleList or SimpleMap, the descriptor is not serialized. The object is encoded directly as an AMQP list or map.</p>
+<h3 id="amqpmemberattribute">AmqpMemberAttribute</h3>
+<p>This attribute specifies that a field or a property should be included in serialization.</p>
+<pre><code>[AmqpMember(Name = &quot;name&quot;, Order = 0)]
+</code></pre><p>The Name property defines the member name, and the Order property defines the position of the member in all members. For list type of encoding, Name is not used, and Order is used to sort the members to decide the final position of each member in the list. Order does not need to contiguous, but must be unique. For map type of encoding, Order is not used, and Name is used as the key of the item in the map. EncodingType.Map encodes the key as AMQP symbol and decodes both symbol and string keys. EncodingType.SimpleMap encodes keys as strings.</p>
+<h3 id="amqpprovidesattribute">AmqpProvidesAttribute</h3>
+<p>This attribute is used by the decoder to resolve types based on the given type and the descriptor in the payload. After the descriptor is read from the payload, it is compared to the descriptors of the known types and the matching one is chosen. This attribute can only be used for encoding type List or Map because descriptors are required in serialization. A common scenario is class inheritance. The base and derived classes must have the same EncodingType.</p>
+<pre><code>[AmqpContract]
+class Student : Person
+{
+    [AmqpMember]
+    public double GPA { get; set; }
+}
+
+[AmqpContract]
+class Teacher : Person
+{
+    [AmqpMember]
+    public string Department { get; set; }
+}
+
+[AmqpContract]
+[AmqpProvides(typeof(Student))]
+[AmqpProvides(typeof(Teacher))]
+class Person
+{
+}
+</code></pre><p>Student and Teacher are now known types of Person, so it is possible to deserialize objects by calling.</p>
+<pre><code>var person = AmqpSerializer.Deserialize&lt;Person&gt;(ByteBuffer);
+</code></pre><p>If the payload contains Student, Teacher, or Person objects, the concrete object will be returned and referenced by person variable.</p>
+<p>This attribute can also be used just as a type resolver without class inheritance. In this case, the generic argument type is only a registry for knowns types. Since the generic argument type is not the base class of its known types, the serializer will fail to cast the decoded object to the generic argument type. This issue can be resolved by calling the <code>AmqpSerializer.Deserialize&lt;T, TAs&gt;(ByteBuffer)</code> method, where T is the registry type and TAs is the base type of all decoded objects. Let�s assume we have another class Address which is not related to Person and its derived classes.</p>
+<pre><code>[AmqpContract]
+class Address
+{
+    [AmqpMember]
+    public string Street { get; set; }
+}
+
+[AmqpContract]
+[AmqpProvides(typeof(Person))]
+[AmqpProvides(typeof(Student))]
+[AmqpProvides(typeof(Teacher))]
+[AmqpProvides(typeof(Address))]
+class Resolver
+{
+}
+</code></pre><p>In addition to Person objects, if the buffer could also contain Address objects, using Person as deserialization type will fail. With the Resolver class, we can decode all objects by calling <code>AmqpSerializer.Deserialize&lt;Resolver, object&gt;(ByteBuffer)</code>.
+Note that Student and Teacher should be added even when Person is added.</p>
+<h3 id="serialization-callbacks">Serialization Callbacks</h3>
+<p>Extra logic can be inserted before and after serialization/deserialization by serialization callbacks. The callback methods should be annotated with the system runtime serialization attributes.</p>
+<ul>
+<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.onserializingattribute(v=vs.110).aspx">OnSerializingAttribute</a> - invoked before writing members</li>
+<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.onserializedattribute(v=vs.110).aspx">OnSerializedAttribute</a> - invoked after writing members</li>
+<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ondeserializingattribute(v=vs.110).aspx">OnDeserializingAttribute</a> - invoked before reading members</li>
+<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ondeserializedattribute(v=vs.110).aspx">OnDeserializedAttribute</a> - invoked after reading members</li>
+</ul>
+<h2 id="iamqpserializable">IAmqpSerializable</h2>
+<p>The interface enables the application to have full control on how a type should be serialized by implementing Encode and Decode methods.</p>
+<h2 id="message-integration">Message Integration</h2>
+<p>The library provides a seamless integration of the serializer and the messaging layer. When a message is created from a serializable object, the object is automatically serialized in the AMQP Value body. When a message is received, the object can be read by calling <code>Message.GetBody&lt;T&gt;()</code>. </p>
+<pre><code>// sending an object in a message
+var Student = new Student() { Name = &quot;Bob&quot; };
+sender.Send(new Message(student));
+
+// reading an object from a message
+var message = receiver.Receive();
+var person = message.GetBody&lt;Person&gt;();
+</code></pre><p>Here are some benefits you will get.</p>
+<ul>
+<li>Serialization is completely transparent. The application works with strongly typed objects.</li>
+<li>No need of another serializer to handle message body. It minimizes dependency of your application, and very likely improves the performance.</li>
+<li>It is standard and open. Any client that supports the AMQP type system is able to produce and consume the data.</li>
+</ul>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

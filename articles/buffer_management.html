@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Buffer Manager </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Buffer Manager ">
+    <meta name="generator" content="docfx 2.2.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <h1 id="buffer-manager">Buffer Manager</h1>
+              
+<p>On .Net Framework (4.0 and above) and .Net Core, the library supports buffer pooling to reduce allocation and improve performance.</p>
+<h2 id="ibuffermanager">IBufferManager</h2>
+<p>Application can implement this interface to manage byte array allocation and pooling. There are different pooling strategies.</p>
+<ul>
+<li>Allocate fixed-size byte[] objects and create smaller pools of each size.</li>
+<li>Allocate a large byte array and manage it like a heap.</li>
+</ul>
+<p>The library provides a built-in buffer manager (<code>BufferManager</code>) which should be sufficient for most scenarios. If the application has a buffer manager for application data, it makes sense to use it as well for the library.</p>
+<p>The buffer manager can be set to <code>ConnectionFactory.BufferManager</code> or <code>ConnectionListener.BufferManager</code>. Once it is set, most if not all byte array allocations will be through the buffer manager.</p>
+<pre><code>ConnectionFactory factory = new ConnectionFactory();
+factory.BufferManager = new BufferManager(64, 1024 * 1024, 50 * 1024 * 1024);
+</code></pre><p>In this example, a buffer manager is created to pool buffers from 64 bytes to 1 MB with a limit of 50 MB on total memory usage.</p>
+<h2 id="application-responsibility">Application Responsibility</h2>
+<h3 id="sending-messages">Sending Messages</h3>
+<p>In most cases, no special actions are required for sending messages. However, if the application has a lot of binary data to transfer, it should take advantage of <code>Data.Buffer</code> to reduce allocation. <code>Data.Buffer</code> is of type <code>ByteBuffer</code> which can wrap an existing <code>byte[]</code> or <code>ArraySegment&lt;byte&gt;</code> which in turn can be taken from the buffer manager. The following example shows how to use pooled buffers to initialize message for send.</p>
+<pre><code>ArraySegment&lt;byte&gt; segment = bufferManager.TakeBuffer(1024);
+int len = WriteBuffer(segment);  // initialize the buffer and return payload length
+ByteBuffer buffer = new ByteBuffer(segment.Array, segment.Offset, len, segment.Count);
+Message message = new Message() { BodySection = new Data() { Buffer = buffer } };
+try
+{
+    await sender.SendAsync(message);
+}
+finally
+{
+    bufferManager.ReturnBuffer(segment);
+}
+</code></pre><h3 id="receiving-messages">Receiving Messages</h3>
+<p>The received message is backed up by a buffer taken from the buffer manager. The ownership of the message is transferred to the application after the receive call. Therefore, the application must ensure that <code>Message.Dispose</code> is called after the message is processed, otherwise a buffer is leaked (not returned to the buffer manager). To access the message body, the application should avoid reading <code>Message.Body</code> or <code>((Data)Message.BodySection).Binary</code>. Internally the library wraps the body payload in a <code>ByteBuffer</code> object, and it requires an allocation of <code>byte[]</code> with the exact size and a copy of the payload into the <code>byte[]</code> object. The recommended way to access the body is to get back the <code>ByteBuffer</code> object and process it as follows.</p>
+<pre><code>Message message = await receiver.ReceiveAsync();
+try
+{
+    ByteBuffer buffer = message.GetBody&lt;ByteBuffer&gt;();
+    await ProcessBufferAsync(buffer);
+    receiver.Accept(message);
+}
+finally
+{
+    message.Dispose();
+}
+</code></pre>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
