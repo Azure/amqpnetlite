@@ -10,6 +10,8 @@
     href: serialization.md
   - name: Listener
     href: listener.md
+  - name: Buffer Management
+    href: buffer_management.md
   - name: Tracing
     href: tracing.md
   - name: Test Amqp Broker
