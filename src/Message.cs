@@ -245,7 +245,7 @@ namespace Amqp
             EncodeIfNotNull(this.Footer, buffer);
         }
 
-#if NETFX || NETFX40 || DOTNET
+#if NETFX || NETFX40 || DOTNET || __IOS__ || ANDROID
         /// <summary>
         /// Disposes the current message to release resources.
         /// </summary>

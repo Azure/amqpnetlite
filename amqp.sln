@@ -124,6 +124,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Amqp.WebSockets.Client", "d
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomTransport", "Examples\PeerToPeer\PeerToPeer.CustomTransport\PeerToPeer.CustomTransport.csproj", "{4573C570-520F-4F49-90B4-03D4532C2BA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.iOS", "src\Amqp.iOS.csproj", "{449F567D-8ED9-48F5-AAD5-251E0542637F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Android", "src\Amqp.Android.csproj", "{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

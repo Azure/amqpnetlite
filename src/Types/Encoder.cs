@@ -1424,7 +1424,7 @@ namespace Amqp.Types
         }
 #endif
 
-#if NETFX || NETFX40 || DOTNET || NETFX35
+#if NETFX || NETFX40 || DOTNET || NETFX35 || __IOS__ || ANDROID
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {

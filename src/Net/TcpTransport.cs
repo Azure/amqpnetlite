@@ -87,7 +87,9 @@ namespace Amqp
                 socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
+
                     await socket.ConnectAsync(ipAddresses[i], address.Port);
+
                     exception = null;
                     break;
                 }
