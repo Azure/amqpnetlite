@@ -35,7 +35,7 @@ namespace Amqp.Framing
         {
         }
 
-#if (NETFX || NETFX40 || DOTNET || NETFX35)
+#if (NETFX || NETFX40 || DOTNET || NETFX35 || __IOS__ || ANDROID)
         /// <summary>
         /// Gets or sets the binary data in this section.
         /// </summary>
