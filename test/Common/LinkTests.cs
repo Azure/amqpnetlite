@@ -673,7 +673,7 @@ namespace Test.Amqp
             for (int i = 0; i < nMsgs; ++i)
             {
                 Message message = new Message();
-                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
+                message.Properties = new Properties() { MessageId = "msg" + i };
                 sender.Send(message, null, null);
             }
 
