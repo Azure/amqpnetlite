@@ -15,15 +15,32 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using System.Reflection;
+namespace Amqp.Framing
+{
+    using Amqp.Serialization;
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyVersion("2.0.0")]
-[assembly: AssemblyFileVersion("2.0.0")]
-[assembly: AssemblyInformationalVersion("2.0.0")]
+    /// <summary>
+    /// An AMQP Value section contains a single strongly typed value.
+    /// </summary>
+    public sealed class AmqpValue<T> : AmqpValue
+    {
+        /// <summary>
+        /// Initializes an AmqpValue object.
+        /// </summary>
+        public AmqpValue(T value)
+            : base()
+        {
+            this.Value = value;
+        }
+
+        /// <summary>
+        /// Writes the value into the buffer using AmqpSerializer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write the encoded object.</param>
+        /// <param name="value">The object to be written.</param>
+        protected override void WriteValue(ByteBuffer buffer, object value)
+        {
+            AmqpSerializer.Serialize(buffer, this.Value);
+        }
+    }
+}

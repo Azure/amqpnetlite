@@ -2,17 +2,23 @@
 <package >
   <metadata>
     <id>AMQPNetLite</id>
-    <title>AMQP.Net Lite: AMQP 1.0 library for .Net and WinRT</title>
+    <title>AMQP.Net Lite: AMQP 1.0 library for .Net platforms</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>
     <owners>Microsoft</owners>
     <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This is a lightweight AMQP 1.0 library for .Net frameworks (including .Net Framework, .Net Micro Framework, .Net Compact Framework and .Net Core), WinRT (Windows Phone and Windows Store), and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.</description>
+    <summary>AMQP 1.0 library for .Net platforms</summary>
+    <description>
+      This is a lightweight AMQP 1.0 library for .Net platforms, including .Net Framework,
+      .Net Micro Framework, .Net Core, Universal Windows Platform, Windows Phone, Windows Store, Mono,
+      and Mono Xamarin. The library includes both a client and listener to enable peer to peer and
+      broker based messaging. A more compact version for NETMF is available in the AmqpNetMicro package.
+    </description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>AMQP Micro-Framework netmf netcf iot winrt coreclr .NetPlatform .NetCore UWP</tags>
+    <tags>AMQP net netmf netcf coreclr UWP mono</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf42, netmf43, netmf44" />
       <frameworkAssembly assemblyName="Microsoft.SPOT.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
@@ -29,17 +35,17 @@
         <dependency id="System.Collections" version="4.0.11" />
         <dependency id="System.Collections.Concurrent" version="4.0.12" />
         <dependency id="System.Collections.NonGeneric" version="4.0.0" />
-        <dependency id="System.Diagnostics.Tools" version="4.0.0" />
+        <dependency id="System.Diagnostics.Tools" version="4.0.1" />
         <dependency id="System.Threading" version="4.0.11" />
         <dependency id="System.Threading.Tasks" version="4.0.11" />
         <dependency id="System.Threading.Thread" version="4.0.0" />
         <dependency id="System.Threading.ThreadPool" version="4.0.10" />
-        <dependency id="System.Threading.Timer" version="4.0.0" />
+        <dependency id="System.Threading.Timer" version="4.0.1" />
         <dependency id="System.Net.NameResolution" version="4.0.0" />
         <dependency id="System.Net.Security" version="4.0.0" />
         <dependency id="System.Net.Sockets" version="4.1.0" />
         <dependency id="System.Reflection" version="4.1.0" />
-        <dependency id="System.Reflection.Emit.Lightweight" version="4.0.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.0.1" />
         <dependency id="System.Reflection.Extensions" version="4.0.1" />
         <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
         <dependency id="System.Runtime.Serialization.Primitives" version="4.1.0" />
@@ -49,10 +55,13 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.dll" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.pdb" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.xml" target="lib\netstandard1.3" />
-    
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.Net.dll" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.Net.pdb" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.Net.xml" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.dll" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.pdb" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.xml" target="lib\netstandard1.3" />
+
     <file src="bin\Release\Amqp.Net\Amqp.Net.dll" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.pdb" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.XML" target="lib\net45" />
@@ -60,22 +69,20 @@
     <file src="bin\Release\Amqp.Net40\Amqp.Net.pdb" target="lib\net40" />
     <file src="bin\Release\Amqp.Net40\Amqp.Net.xml" target="lib\net40" />
     <file src="bin\Release\Amqp.Net40\Amqp.Net.dll.config" target="lib\net40" />
-    <file src="bin\Release\Amqp.Net35\Amqp.Net35.dll" target="lib\net35" />
-    <file src="bin\Release\Amqp.Net35\Amqp.Net35.pdb" target="lib\net35" />
-    <file src="bin\Release\Amqp.Net35\Amqp.Net35.xml" target="lib\net35" />
+    <file src="bin\Release\Amqp.Net35\Amqp.Net.dll" target="lib\net35" />
+    <file src="bin\Release\Amqp.Net35\Amqp.Net.pdb" target="lib\net35" />
+    <file src="bin\Release\Amqp.Net35\Amqp.Net.xml" target="lib\net35" />
 
-    <file src="bin\Release\Amqp.NetCore\Amqp.NetCore.dll" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.NetCore.pdb" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.NetCore.xml" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.NetCore.dll" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.NetCore.pdb" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.NetCore.xml" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.Store\Amqp.Store.dll" target="lib\windows8" />
-    <file src="bin\Release\Amqp.Store\Amqp.Store.pdb" target="lib\windows8" />
-    <file src="bin\Release\Amqp.Store\Amqp.Store.xml" target="lib\windows8" />
-    <file src="bin\Release\Amqp.WP\Amqp.WP.dll" target="lib\windowsphone8" />
-    <file src="bin\Release\Amqp.WP\Amqp.WP.pdb" target="lib\windowsphone8" />
-    <file src="bin\Release\Amqp.WP\Amqp.WP.xml" target="lib\windowsphone8" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\portable-win81+wpa81" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\portable-win81+wpa81" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\portable-win81+wpa81" />
+    <file src="bin\Release\Amqp.Store\Amqp.Net.dll" target="lib\win8" />
+    <file src="bin\Release\Amqp.Store\Amqp.Net.pdb" target="lib\win8" />
+    <file src="bin\Release\Amqp.Store\Amqp.Net.xml" target="lib\win8" />
+    <file src="bin\Release\Amqp.WP\Amqp.Net.dll" target="lib\wp8" />
+    <file src="bin\Release\Amqp.WP\Amqp.Net.pdb" target="lib\wp8" />
+    <file src="bin\Release\Amqp.WP\Amqp.Net.xml" target="lib\wp8" />
+
     <file src="bin\Release\Amqp.NetCF39\Amqp.NetCF39.dll" target="lib\net-cf" />
     <file src="bin\Release\Amqp.NetCF39\Amqp.NetCF39.pdb" target="lib\net-cf" />
     <file src="bin\Release\Amqp.NetCF39\Amqp.NetCF39.xml" target="lib\net-cf" />

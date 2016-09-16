@@ -1,5 +1,5 @@
 {
-    "version": "1.2.0",
+    "version": "2.0.0",
 
     "buildOptions": {
         "compile": {
@@ -9,7 +9,6 @@
                 "../../src/Framing/*.cs",
                 "../../src/Net/*.cs",
                 "../../src/Sasl/*.cs",
-                "../../src/Serialization/*.cs",
                 "../../src/Transactions/*.cs",
                 "../../src/Types/*.cs",
                 "../../src/Listener/*.cs",
@@ -23,6 +22,7 @@
         "embed": [
             "../../src/SRAmqp.resx"
         ],
+        "outputName": "Amqp.Net",
         "allowUnsafe": true,
         "warningsAsErrors": true,
         "xmlDoc": true,
@@ -53,20 +53,16 @@
                 "System.Collections": "4.0.11",
                 "System.Collections.Concurrent": "4.0.12",
                 "System.Collections.NonGeneric": "4.0.0",
-                "System.Diagnostics.Tools": "4.0.0",
+                "System.Diagnostics.Tools": "4.0.1",
                 "System.Threading": "4.0.11",
                 "System.Threading.Tasks": "4.0.11",
                 "System.Threading.Thread": "4.0.0",
                 "System.Threading.ThreadPool": "4.0.10",
-                "System.Threading.Timer": "4.0.0",
+                "System.Threading.Timer": "4.0.1",
                 "System.Net.NameResolution": "4.0.0",
                 "System.Net.Security": "4.0.0",
                 "System.Net.Sockets": "4.1.0",
                 "System.Reflection": "4.1.0",
-                "System.Reflection.Emit.Lightweight": "4.0.0",
-                "System.Reflection.Extensions": "4.0.1",
-                "System.Reflection.TypeExtensions": "4.1.0",
-                "System.Runtime.Serialization.Primitives": "4.1.0",
                 "System.Security.Claims": "4.0.1",
                 "System.Security.Principal": "4.0.1"
             }

@@ -28,8 +28,9 @@
             "version": "1.0.0"
         },
         "System.IO.Pipes": "4.0.0",
-        "Amqp": "1.2.0-*",
-        "Amqp.WebSockets.Client": "1.2.0-*"
+        "Amqp": "2.0.0",
+        "Amqp.Serialization": "2.0.0",
+        "Amqp.WebSockets.Client": "2.0.0"
     },
 
     "frameworks": {

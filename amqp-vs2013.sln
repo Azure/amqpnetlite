@@ -14,8 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2
 	ProjectSection(SolutionItems) = preProject
 		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
 		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
+		nuspec\Amqp.NetStandard.nuspec = nuspec\Amqp.NetStandard.nuspec
+		nuspec\Amqp.Serialization.nuspec = nuspec\Amqp.Serialization.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec = nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec
+		nuspec\Amqp.WebSockets.nuspec = nuspec\Amqp.WebSockets.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject
@@ -138,6 +140,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.WebSockets.Client", "A
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomTransport", "Examples\PeerToPeer\PeerToPeer.CustomTransport\PeerToPeer.CustomTransport.csproj", "{4573C570-520F-4F49-90B4-03D4532C2BA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HelloAmqp", "HelloAmqp", "{AE0D7067-E707-4620-ADC4-1F2055AF2BBF}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\HelloAmqp\Program.cs = dotnet\HelloAmqp\Program.cs
+		dotnet\HelloAmqp\project.json = dotnet\HelloAmqp\project.json
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Android", "src\Amqp.Android.csproj", "{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.iOS", "src\Amqp.iOS.csproj", "{449F567D-8ED9-48F5-AAD5-251E0542637F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -595,6 +607,26 @@ Global
 		{4573C570-520F-4F49-90B4-03D4532C2BA2}.Release|ARM.ActiveCfg = Release|Any CPU
 		{4573C570-520F-4F49-90B4-03D4532C2BA2}.Release|x64.ActiveCfg = Release|Any CPU
 		{4573C570-520F-4F49-90B4-03D4532C2BA2}.Release|x86.ActiveCfg = Release|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Release|ARM.ActiveCfg = Release|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Release|x64.ActiveCfg = Release|Any CPU
+		{EBB2E44C-7678-4818-8AA2-0548E1B1E6EA}.Release|x86.ActiveCfg = Release|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Release|x64.ActiveCfg = Release|Any CPU
+		{449F567D-8ED9-48F5-AAD5-251E0542637F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -630,5 +662,6 @@ Global
 		{9B1E629B-4179-4531-BE56-9B9AE7735EBC} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{487977C7-C125-4F23-956D-D3DB7B78E843} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{4573C570-520F-4F49-90B4-03D4532C2BA2} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
+		{AE0D7067-E707-4620-ADC4-1F2055AF2BBF} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal

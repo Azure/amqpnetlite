@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Amqp</RootNamespace>
-    <AssemblyName>Amqp.Net35</AssemblyName>
+    <AssemblyName>Amqp.Net</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -119,6 +119,8 @@
     <Compile Include="Serialization\AmqpSerializer.cs" />
     <Compile Include="Serialization\AmqpMemberAttribute.cs" />
     <Compile Include="Serialization\AmqpProvidesAttribute.cs" />
+    <Compile Include="Serialization\AmqpValue.cs" />
+    <Compile Include="Serialization\Extensions.cs" />
     <Compile Include="Serialization\IAmqpSerializable.cs" />
     <Compile Include="Serialization\EncodingType.cs" />
     <Compile Include="Serialization\MemberAccessor.cs" />

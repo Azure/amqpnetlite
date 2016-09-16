@@ -609,7 +609,13 @@ namespace Test.Amqp
 
         static void MessageBodyTest<T>(T value, Action<T, T> validator)
         {
+#if DOTNET
+            // on .Net Core, serializer is in seperated package
+            // the generic AmqpValue<T> must be used to support custom types
+            var inputMessage = new Message() { BodySection = new AmqpValue<T>(value) };
+#else
             var inputMessage = new Message(value);
+#endif
             var buffer = inputMessage.Encode();
             var outputMessage = Message.Decode(buffer);
             Assert.IsTrue(outputMessage.Body != null, "Body is not null");
