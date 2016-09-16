@@ -38,6 +38,8 @@ This directory contains example C# programs using the library. Some of the examp
 | PeerToPeer.CustomType | Usage of the built-in serializer to send .Net objects to remote peer (or even a broker). |
 
 ### ServiceBus Examples
+A valid credential (e.g. SAS policy configured on the entity or namespace) is required for the client to connect. The entity that the samples run against must also
+exist under the specified Service Bus namespace. You can create the entity using the Service Bus .Net SDK or through the Azure portal.
 | Project | Description |
 |---------|:-----------|
 | ServiceBus.EventHub | Sending to Event Hub with and without partition key, partition and publisher; receiving from partitions. Mapping of AMQP message to EventData. |

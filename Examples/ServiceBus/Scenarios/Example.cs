@@ -21,7 +21,10 @@ namespace ServiceBus.Scenarios
 
     abstract class Example
     {
-        // update the following with valid Service Bus namespace and SAS key info
+        // Update the following with valid Service Bus namespace and SAS key info.
+        // Entity should exist already under the specified Service Bus namespace.
+        // The SAS policy should allow Send or Listen action for the given entity
+        // or namespace as required by the sample.
         public string Namespace = "contoso.servicebus.windows.net";
         public string KeyName = "key1";
         public string KeyValue = "5znwNTZDYC39dqhFOTDtnaikd1hiuRa4XaAj3Y9kJhQ=";
