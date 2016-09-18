@@ -1,11 +1,15 @@
 - name: Getting Started
   items:
+  - name: Hello AMQP!
+    href: hello_amqp.md
   - name: Building Application
     href: building_application.md
   - name: Working with Code
     href: working_with_code.md
-- name: Library
+- name: Using the Library
   items:
+  - name: Versioning
+    href: versioning.md
   - name: Serialization
     href: serialization.md
   - name: Listener
@@ -24,5 +28,3 @@
     href: device_to_iothub.md
   - name: IoT Hub Service Endpoints
     href: service_to_iothub.md
-- name: Frequently Asked Questions
-  href: faqs.md

@@ -14,7 +14,7 @@ documentType: index
     AMQP 1.0 library for .Net
     </div>
     <div class="buttons-unit">
-      <a href="articles/building_application.md" class="button">Getting Started</a>
+      <a href="articles/hello_amqp.md" class="button">Getting Started</a>
       <a href="api/Amqp.yml" class="button">API Documentation</a>
     </div>
   </div>

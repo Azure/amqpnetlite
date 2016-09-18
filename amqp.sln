@@ -95,21 +95,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{57BFDB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docfx", "docfx", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
 	ProjectSection(SolutionItems) = preProject
-		docfx.json = docfx.json
-		index.md = index.md
-		toc.yml = toc.yml
+		docs\docfx.json = docs\docfx.json
+		docs\index.md = docs\index.md
+		docs\toc.yml = docs\toc.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{5637969B-A822-425A-A831-F70AA2275777}"
 	ProjectSection(SolutionItems) = preProject
-		articles\azure_sb_eventhubs.md = articles\azure_sb_eventhubs.md
-		articles\contributing.md = articles\contributing.md
-		articles\faqs.md = articles\faqs.md
-		articles\getting_started.md = articles\getting_started.md
-		articles\listener.md = articles\listener.md
-		articles\test_amqp_broker.md = articles\test_amqp_broker.md
-		articles\toc.yml = articles\toc.yml
-		articles\tracing.md = articles\tracing.md
+		docs\articles\azure_eventhubs.md = docs\articles\azure_eventhubs.md
+		docs\articles\buffer_management.md = docs\articles\buffer_management.md
+		docs\articles\building_application.md = docs\articles\building_application.md
+		docs\articles\contributing.md = docs\articles\contributing.md
+		docs\articles\device_to_iothub.md = docs\articles\device_to_iothub.md
+		docs\articles\hello_amqp.md = docs\articles\hello_amqp.md
+		docs\articles\listener.md = docs\articles\listener.md
+		docs\articles\serialization.md = docs\articles\serialization.md
+		docs\articles\service_to_iothub.md = docs\articles\service_to_iothub.md
+		docs\articles\test_amqp_broker.md = docs\articles\test_amqp_broker.md
+		docs\articles\toc.yml = docs\articles\toc.yml
+		docs\articles\tracing.md = docs\articles\tracing.md
+		docs\articles\versioning.md = docs\articles\versioning.md
+		docs\articles\working_with_code.md = docs\articles\working_with_code.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.Topic", "Examples\ServiceBus\ServiceBus.Topic\ServiceBus.Topic.csproj", "{D454DB5E-820F-4A92-B31E-A41A9D20B086}"
