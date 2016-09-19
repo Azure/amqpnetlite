@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>AMQPNetLite</id>
-    <title>AMQP.Net Lite: AMQP 1.0 library for .Net platforms</title>
+    <title>AMQP.Net Lite</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>
     <owners>Microsoft</owners>
@@ -13,8 +13,10 @@
     <description>
       This is a lightweight AMQP 1.0 library for .Net platforms, including .Net Framework,
       .Net Micro Framework, .Net Core, Universal Windows Platform, Windows Phone, Windows Store, Mono,
-      and Mono Xamarin. The library includes both a client and listener to enable peer to peer and
+      and Mono/Xamarin. The library includes both a client and listener to enable peer to peer and
       broker based messaging. A more compact version for NETMF is available in the AmqpNetMicro package.
+      For .Net Core (netstandard1.3), there are three packages, AMQPNetLite.Core, AMQPNetLite.Serialization,
+      AMQPNetLite.WebSockets, that contain different components of the library.
     </description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
@@ -54,6 +56,9 @@
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\netcore451" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\wpa81" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\wpa81" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\wpa81" />
     <file src="bin\Release\Amqp.Store\Amqp.Net.dll" target="lib\win8" />
     <file src="bin\Release\Amqp.Store\Amqp.Net.pdb" target="lib\win8" />
     <file src="bin\Release\Amqp.Store\Amqp.Net.xml" target="lib\win8" />
