@@ -201,27 +201,27 @@ IF "%NuGetPath%" == "" (
 ) ELSE (
   IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
   ECHO Building NuGet package with version %build-version%
-  "%NuGetPath%" pack .\nuspec\Amqp.Net.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   IF %ERRORLEVEL% NEQ 0 (
     SET return-code=%ERRORLEVEL%
     GOTO :exit
   )
-  "%NuGetPath%" pack .\nuspec\Amqp.Micro.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\AMQPNetMicro.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   IF %ERRORLEVEL% NEQ 0 (
     SET return-code=%ERRORLEVEL%
     GOTO :exit
   )
-  "%NuGetPath%" pack .\nuspec\Amqp.NetStandard.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\AMQPNetLite.Core.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   IF %ERRORLEVEL% NEQ 0 (
     SET return-code=%ERRORLEVEL%
     GOTO :exit
   )
-  "%NuGetPath%" pack .\nuspec\Amqp.Serialization.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\AMQPNetLite.Serialization.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   IF %ERRORLEVEL% NEQ 0 (
     SET return-code=%ERRORLEVEL%
     GOTO :exit
   )
-  "%NuGetPath%" pack .\nuspec\Amqp.WebSockets.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  "%NuGetPath%" pack .\nuspec\AMQPNetLite.WebSockets.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
   IF %ERRORLEVEL% NEQ 0 (
     SET return-code=%ERRORLEVEL%
     GOTO :exit

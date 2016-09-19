@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>AMQPNetLite.NetStandard</id>
+    <id>AMQPNetLite.Core</id>
     <title>AMQP.Net Lite on .Net Core</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>

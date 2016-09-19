@@ -10,12 +10,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net", "test\Test.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
 	ProjectSection(SolutionItems) = preProject
-		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
-		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
-		nuspec\Amqp.NetStandard.nuspec = nuspec\Amqp.NetStandard.nuspec
-		nuspec\Amqp.Serialization.nuspec = nuspec\Amqp.Serialization.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\Amqp.WebSockets.nuspec = nuspec\Amqp.WebSockets.nuspec
+		nuspec\AMQPNetLite.Core.nuspec = nuspec\AMQPNetLite.Core.nuspec
+		nuspec\AMQPNetLite.nuspec = nuspec\AMQPNetLite.nuspec
+		nuspec\AMQPNetLite.Serialization.nuspec = nuspec\AMQPNetLite.Serialization.nuspec
+		nuspec\AMQPNetLite.WebSockets.nuspec = nuspec\AMQPNetLite.WebSockets.nuspec
+		nuspec\AMQPNetMicro.nuspec = nuspec\AMQPNetMicro.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject

@@ -12,12 +12,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net", "test\Test.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
 	ProjectSection(SolutionItems) = preProject
-		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
-		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
-		nuspec\Amqp.NetStandard.nuspec = nuspec\Amqp.NetStandard.nuspec
-		nuspec\Amqp.Serialization.nuspec = nuspec\Amqp.Serialization.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\Amqp.WebSockets.nuspec = nuspec\Amqp.WebSockets.nuspec
+		nuspec\AMQPNetLite.Core.nuspec = nuspec\AMQPNetLite.Core.nuspec
+		nuspec\AMQPNetLite.nuspec = nuspec\AMQPNetLite.nuspec
+		nuspec\AMQPNetLite.Serialization.nuspec = nuspec\AMQPNetLite.Serialization.nuspec
+		nuspec\AMQPNetLite.WebSockets.nuspec = nuspec\AMQPNetLite.WebSockets.nuspec
+		nuspec\AMQPNetMicro.nuspec = nuspec\AMQPNetMicro.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject
@@ -155,6 +155,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{D9
 		docs\articles\tracing.md = docs\articles\tracing.md
 		docs\articles\versioning.md = docs\articles\versioning.md
 		docs\articles\working_with_code.md = docs\articles\working_with_code.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.Serialization", "Amqp.Serialization", "{93F1788D-0A04-4C88-8408-4538A1E616C6}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\Amqp.Serialization\project.json = dotnet\Amqp.Serialization\project.json
 	EndProjectSection
 EndProject
 Global
@@ -669,5 +674,6 @@ Global
 		{4573C570-520F-4F49-90B4-03D4532C2BA2} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{AE0D7067-E707-4620-ADC4-1F2055AF2BBF} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{D98D7724-3D03-4647-AA74-5FCB5E0702AD} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
+		{93F1788D-0A04-4C88-8408-4538A1E616C6} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal
