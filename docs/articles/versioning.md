@@ -1,9 +1,6 @@
 The library uses the following versioning scheme for the assemblies and the NuGet packages.  
 `<major>.<minor>.<patch>`
 
-So for example, the version at the time this was written was:  
-`1.2.0`
-
 ## Assembly Version
 
 ```
@@ -15,7 +12,7 @@ patch  - typically do not change.
 Assemblies in the package are signed with a published key, so they are strongly named.
 `major` and `minor` version numbers are increased as shown above. When a new release does not have
 any breaking changes, assembly version remains the same. This enables the application to do
-an in-place upgrade without recompiling or updating the app.
+an in-place upgrade without recompiling or updating the application code.
 
 ## Assembly File Version
 

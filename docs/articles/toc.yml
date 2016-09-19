@@ -8,6 +8,8 @@
     href: working_with_code.md
 - name: Using the Library
   items:
+  - name: NuGet Packages
+    href: installation.md
   - name: Versioning
     href: versioning.md
   - name: Serialization
