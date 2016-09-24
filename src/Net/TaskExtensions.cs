@@ -266,13 +266,24 @@ namespace Amqp
         internal static async Task<IAsyncTransport> OpenAsync(this SaslProfile saslProfile, string hostname,
             IBufferManager bufferManager, IAsyncTransport transport)
         {
-            ProtocolHeader header = saslProfile.Start(hostname, transport);
+            // if transport is closed, pump reader should throw exception
+            TransportWriter writer = new TransportWriter(transport, e => { });
+
+            ProtocolHeader myHeader = saslProfile.Start(hostname, writer);
 
             AsyncPump pump = new AsyncPump(bufferManager, transport);
 
             await pump.PumpAsync(
-                h => { saslProfile.OnHeader(header, h); return true; },
-                b => { SaslCode code; return saslProfile.OnFrame(transport, b, out code); });
+                header =>
+                {
+                    saslProfile.OnHeader(myHeader, header);
+                    return true;
+                },
+                buffer =>
+                {
+                    SaslCode code;
+                    return saslProfile.OnFrame(writer, buffer, out code);
+                });
 
             return (IAsyncTransport)saslProfile.UpgradeTransportInternal(transport);
         }

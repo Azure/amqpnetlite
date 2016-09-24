@@ -109,12 +109,12 @@ namespace Amqp
 
         void ITransport.Send(ByteBuffer buffer)
         {
-            ((IAsyncTransport)this).SendAsync(new ByteBuffer[] { buffer }, buffer.Length).GetAwaiter().GetResult();
+            ((IAsyncTransport)this).SendAsync(new ByteBuffer[] { buffer }, buffer.Length).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
         {
-            return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
+            return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         static int GetDefaultPort(string scheme, int port)
