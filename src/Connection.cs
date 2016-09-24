@@ -352,7 +352,7 @@ namespace Amqp
             if (WebSocketTransport.MatchScheme(address.Scheme))
             {
                 WebSocketTransport wsTransport = new WebSocketTransport();
-                wsTransport.ConnectAsync(address, null).GetAwaiter().GetResult();
+                wsTransport.ConnectAsync(address, null).ConfigureAwait(false).GetAwaiter().GetResult();
                 transport = wsTransport;
             }
             else

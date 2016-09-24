@@ -83,12 +83,12 @@ namespace Amqp
 
         public void Send(ByteBuffer buffer)
         {
-            this.SendAsync(new ByteBuffer[] { buffer }, buffer.Length).GetAwaiter().GetResult();
+            this.SendAsync(new ByteBuffer[] { buffer }, buffer.Length).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         public int Receive(byte[] buffer, int offset, int count)
         {
-            return this.ReceiveAsync(buffer, offset, count).GetAwaiter().GetResult();
+            return this.ReceiveAsync(buffer, offset, count).ConfigureAwait(false).GetAwaiter().GetResult();
         }
     }
 }
