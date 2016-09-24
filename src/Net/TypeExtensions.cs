@@ -23,7 +23,7 @@ namespace Amqp
 
     static partial class TypeExtensions
     {
-#if NETFX || NETFX40 || NETFX35 || __IOS__ || ANDROID
+#if NETFX || NETFX40 || NETFX35
         internal static Assembly Assembly(this Type type)
         {
             return type.Assembly;

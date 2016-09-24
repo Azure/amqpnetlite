@@ -19,7 +19,7 @@ namespace Amqp
 {
     using System;
 
-#if NETFX || NETFX40 || DOTNET || __IOS__ || ANDROID
+#if NETFX || NETFX40 || DOTNET
     /// <summary>
     /// The interface defines the methods to manage buffers.
     /// </summary>
