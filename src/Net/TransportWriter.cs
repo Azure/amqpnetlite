@@ -19,6 +19,7 @@ namespace Amqp
 {
     using System;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
 
     class TransportWriter : ITransport
     {
@@ -40,8 +41,9 @@ namespace Amqp
             get { return this.bufferQueue; }
         }
 
-        void ITransport.Send(ByteBuffer buffer)
+        public Task FlushAsync()
         {
+            var buffer = new FlushByteBuffer();
             lock (this.SyncRoot)
             {
                 if (this.closed)
@@ -53,13 +55,36 @@ namespace Amqp
                 if (this.writing)
                 {
                     this.bufferQueue.Enqueue(buffer);
+                }
+                else
+                {
+                    buffer.ReleaseReference();
+                }
+            }
+
+            return buffer.Task;
+        }
+
+        void ITransport.Send(ByteBuffer buffer)
+        {
+            lock (this.SyncRoot)
+            {
+                if (this.closed)
+                {
+                    buffer.ReleaseReference();
+                    throw new ObjectDisposedException(this.GetType().Name);
+                }
+
+                this.bufferQueue.Enqueue(buffer);
+                if (this.writing)
+                {
                     return;
                 }
 
                 this.writing = true;
             }
 
-            this.WriteAsync(buffer);
+            this.WriteAsync();
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
@@ -74,7 +99,11 @@ namespace Amqp
                 if (!this.closed)
                 {
                     this.closed = true;
-                    if (!this.writing)
+                    if (this.writing)
+                    {
+                        this.bufferQueue.Enqueue(new CloseByteBuffer(this));
+                    }
+                    else
                     {
                         this.transport.Close();
                     }
@@ -82,32 +111,59 @@ namespace Amqp
             }
         }
 
-        async void WriteAsync(ByteBuffer buffer)
+        async void WriteAsync()
         {
             const int maxBatchSize = 128 * 1024;
 
-            List<ByteBuffer> buffers = new List<ByteBuffer>() { buffer };
-            int size = buffer.Length;
-
-            do
+            List<ByteBuffer> buffers = new List<ByteBuffer>();
+            while (true)
             {
+                ByteBuffer buffer = null;
+                int size = 0;
+
+                lock (this.SyncRoot)
+                {
+                    while (size < maxBatchSize && this.bufferQueue.Count > 0)
+                    {
+                        ByteBuffer item = this.bufferQueue.Dequeue();
+                        if (item.Length == 0)   // special buffer
+                        {
+                            buffer = item;
+                            break;
+                        }
+                        else
+                        {
+                            buffers.Add(item);
+                            size += item.Length;
+                        }
+                    }
+
+                    if (size == 0)
+                    {
+                        this.writing = false;
+                        if (buffer == null)
+                        {
+                            break;
+                        }
+                    }
+                }
+
                 try
                 {
-                    await this.transport.SendAsync(buffers, size);
+                    if (size > 0)
+                    {
+                        await this.transport.SendAsync(buffers, size);
+                    }
                 }
                 catch (Exception exception)
                 {
                     lock (this.SyncRoot)
                     {
                         this.closed = true;
-
-                        foreach (var f in this.bufferQueue)
-                        {
-                            f.ReleaseReference();
-                        }
-
-                        this.bufferQueue.Clear();
+                        this.writing = false;
                         this.transport.Close();
+                        buffers.AddRange(this.bufferQueue);
+                        this.bufferQueue.Clear();
                     }
 
                     this.onException(exception);
@@ -122,31 +178,49 @@ namespace Amqp
                     }
 
                     buffers.Clear();
-                    size = 0;
-                }
-
-                lock (this.SyncRoot)
-                {
-                    while (size < maxBatchSize && this.bufferQueue.Count > 0)
+                    if (buffer != null)
                     {
-                        ByteBuffer item = this.bufferQueue.Dequeue();
-                        size += item.Length;
-                        buffers.Add(item);
-                    }
-
-                    if (size == 0)
-                    {
-                        this.writing = false;
-                        if (this.closed)
-                        {
-                            this.transport.Close();
-                        }
-
-                        break;
+                        buffer.ReleaseReference();
                     }
                 }
             }
-            while (true);
+        }
+
+        class FlushByteBuffer : ByteBuffer
+        {
+            readonly TaskCompletionSource<object> tcs;
+
+            public FlushByteBuffer()
+                : base(null, 0, 0, 0)
+            {
+                this.tcs = new TaskCompletionSource<object>();
+            }
+
+            public Task Task
+            {
+                get { return this.tcs.Task; }
+            }
+
+            internal override void ReleaseReference()
+            {
+                this.tcs.TrySetResult(null);
+            }
+        }
+
+        class CloseByteBuffer : ByteBuffer
+        {
+            readonly TransportWriter writer;
+
+            public CloseByteBuffer(TransportWriter writer)
+                : base(null, 0, 0, 0)
+            {
+                this.writer = writer;
+            }
+
+            internal override void ReleaseReference()
+            {
+                this.writer.transport.Close();
+            }
         }
     }
 }

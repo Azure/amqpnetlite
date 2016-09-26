@@ -285,6 +285,8 @@ namespace Amqp
                     return saslProfile.OnFrame(writer, buffer, out code);
                 });
 
+            await writer.FlushAsync();
+
             return (IAsyncTransport)saslProfile.UpgradeTransportInternal(transport);
         }
     }
