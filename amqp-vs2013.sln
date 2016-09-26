@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF42", "src\Amqp.NetMF42.csproj", "{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}"
 EndProject
@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2
 		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
 		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec = nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec
+		nuspec\Amqp.WebSockets.nuspec = nuspec\Amqp.WebSockets.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject
