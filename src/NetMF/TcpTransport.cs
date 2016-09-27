@@ -119,12 +119,9 @@ namespace Amqp
 
         class SslSocket : SslStream, ITransport
         {
-            Socket socket;
-
             public SslSocket(Socket socket)
                 : base(socket)
             {
-                this.socket = socket;
             }
 
             void ITransport.Send(ByteBuffer buffer)
@@ -134,8 +131,6 @@ namespace Amqp
 
             int ITransport.Receive(byte[] buffer, int offset, int count)
             {
-                //if (this.socket.Available <= 0) System.Threading.Thread.Sleep(20);
-                //Trace.WriteLine(TraceLevel.Information, "Data Available: {0}", this.DataAvailable);
                 return base.Read(buffer, offset, count);
             }
 
