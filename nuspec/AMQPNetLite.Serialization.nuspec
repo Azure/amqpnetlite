@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AMQPNetLite.Serialization</id>
+    <title>AMQP.Net Lite AMQP Serializer on .Net Core</title>
+    <version>0.0.0</version>
+    <authors>xinchen</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This package provides the AMQP Serializer of AMQP.Net Lite on .Net Core (netstandard1.3).</description>
+    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>AMQP coreclr .NetCore netstandard serialization</tags>
+    <dependencies>
+      <group targetFramework="netstandard1.3">
+        <dependency id="System.Collections" version="4.0.11" />
+        <dependency id="System.Collections.Concurrent" version="4.0.12" />
+        <dependency id="System.Reflection" version="4.1.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.0.1" />
+        <dependency id="System.Reflection.Extensions" version="4.0.1" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+        <dependency id="System.Runtime.Serialization.Primitives" version="4.1.0" />
+        <dependency id="AMQPNetLite.Core" version="2.0.0" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.dll" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.pdb" target="lib\netstandard1.3" />
+    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.xml" target="lib\netstandard1.3" />
+  </files>
+</package>

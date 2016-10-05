@@ -6,8 +6,8 @@
   </PropertyGroup>
   <Import Project="$(VSToolsPath)\DotNet\Microsoft.DotNet.Props" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>4d5d71cb-c691-45b3-968d-d2b758a2d544</ProjectGuid>
-    <RootNamespace>Amqp</RootNamespace>
+    <ProjectGuid>AB399EDD-64FB-4599-8FBB-8F32A75405CE</ProjectGuid>
+    <RootNamespace>Amqp.Serialization</RootNamespace>
     <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)'=='' ">..\..\obj</BaseIntermediateOutputPath>
     <OutputPath Condition="'$(OutputPath)'=='' ">..\..\bin\</OutputPath>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>

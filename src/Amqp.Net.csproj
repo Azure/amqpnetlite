@@ -159,6 +159,8 @@
     <Compile Include="Serialization\AmqpSerializer.cs" />
     <Compile Include="Serialization\AmqpMemberAttribute.cs" />
     <Compile Include="Serialization\AmqpProvidesAttribute.cs" />
+    <Compile Include="Serialization\AmqpValue.cs" />
+    <Compile Include="Serialization\Extensions.cs" />
     <Compile Include="Serialization\IAmqpSerializable.cs" />
     <Compile Include="Serialization\EncodingType.cs" />
     <Compile Include="Serialization\MemberAccessor.cs" />

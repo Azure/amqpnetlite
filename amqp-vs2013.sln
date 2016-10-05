@@ -12,10 +12,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net", "test\Test.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
 	ProjectSection(SolutionItems) = preProject
-		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
-		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec = nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec
+		nuspec\AMQPNetLite.Core.nuspec = nuspec\AMQPNetLite.Core.nuspec
+		nuspec\AMQPNetLite.nuspec = nuspec\AMQPNetLite.nuspec
+		nuspec\AMQPNetLite.Serialization.nuspec = nuspec\AMQPNetLite.Serialization.nuspec
+		nuspec\AMQPNetLite.WebSockets.nuspec = nuspec\AMQPNetLite.WebSockets.nuspec
+		nuspec\AMQPNetMicro.nuspec = nuspec\AMQPNetMicro.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject
@@ -102,23 +104,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp", "Amqp", "{C40B5C1E-3
 		dotnet\Amqp\project.json = dotnet\Amqp\project.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docfx", "docfx", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
 	ProjectSection(SolutionItems) = preProject
-		docfx.json = docfx.json
-		index.md = index.md
-		toc.yml = toc.yml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{5637969B-A822-425A-A831-F70AA2275777}"
-	ProjectSection(SolutionItems) = preProject
-		articles\azure_sb_eventhubs.md = articles\azure_sb_eventhubs.md
-		articles\contributing.md = articles\contributing.md
-		articles\faqs.md = articles\faqs.md
-		articles\getting_started.md = articles\getting_started.md
-		articles\listener.md = articles\listener.md
-		articles\test_amqp_broker.md = articles\test_amqp_broker.md
-		articles\toc.yml = articles\toc.yml
-		articles\tracing.md = articles\tracing.md
+		docs\docfx.json = docs\docfx.json
+		docs\index.md = docs\index.md
+		docs\toc.yml = docs\toc.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.Topic", "Examples\ServiceBus\ServiceBus.Topic\ServiceBus.Topic.csproj", "{D454DB5E-820F-4A92-B31E-A41A9D20B086}"
@@ -138,6 +128,36 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.WebSockets.Client", "A
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomTransport", "Examples\PeerToPeer\PeerToPeer.CustomTransport\PeerToPeer.CustomTransport.csproj", "{4573C570-520F-4F49-90B4-03D4532C2BA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HelloAmqp", "HelloAmqp", "{AE0D7067-E707-4620-ADC4-1F2055AF2BBF}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\HelloAmqp\Program.cs = dotnet\HelloAmqp\Program.cs
+		dotnet\HelloAmqp\project.json = dotnet\HelloAmqp\project.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{D98D7724-3D03-4647-AA74-5FCB5E0702AD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\articles\azure_eventhubs.md = docs\articles\azure_eventhubs.md
+		docs\articles\buffer_management.md = docs\articles\buffer_management.md
+		docs\articles\building_application.md = docs\articles\building_application.md
+		docs\articles\contributing.md = docs\articles\contributing.md
+		docs\articles\device_to_iothub.md = docs\articles\device_to_iothub.md
+		docs\articles\hello_amqp.md = docs\articles\hello_amqp.md
+		docs\articles\installation.md = docs\articles\installation.md
+		docs\articles\listener.md = docs\articles\listener.md
+		docs\articles\serialization.md = docs\articles\serialization.md
+		docs\articles\service_to_iothub.md = docs\articles\service_to_iothub.md
+		docs\articles\test_amqp_broker.md = docs\articles\test_amqp_broker.md
+		docs\articles\toc.yml = docs\articles\toc.yml
+		docs\articles\tracing.md = docs\articles\tracing.md
+		docs\articles\versioning.md = docs\articles\versioning.md
+		docs\articles\working_with_code.md = docs\articles\working_with_code.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.Serialization", "Amqp.Serialization", "{93F1788D-0A04-4C88-8408-4538A1E616C6}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\Amqp.Serialization\project.json = dotnet\Amqp.Serialization\project.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -625,10 +645,12 @@ Global
 		{E5D42E35-B5C4-426D-B568-96926EBA588E} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{69E4A20C-EF50-49C6-8DAC-F76B9D565767} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{C40B5C1E-3ECB-409D-9ED2-D36D4879A485} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
-		{5637969B-A822-425A-A831-F70AA2275777} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{9B1E629B-4179-4531-BE56-9B9AE7735EBC} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{487977C7-C125-4F23-956D-D3DB7B78E843} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{4573C570-520F-4F49-90B4-03D4532C2BA2} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
+		{AE0D7067-E707-4620-ADC4-1F2055AF2BBF} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
+		{D98D7724-3D03-4647-AA74-5FCB5E0702AD} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
+		{93F1788D-0A04-4C88-8408-4538A1E616C6} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal

@@ -15,32 +15,32 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp
+namespace Amqp.Framing
 {
-    using System;
+    using Amqp.Serialization;
 
-#if NETFX || NETFX40 || DOTNET
     /// <summary>
-    /// The interface defines the methods to manage buffers.
+    /// An AMQP Value section contains a single strongly typed value.
     /// </summary>
-    public
-#endif
-    interface IBufferManager
+    public sealed class AmqpValue<T> : AmqpValue
     {
         /// <summary>
-        /// Takes a buffer from the buffer manager.
+        /// Initializes an AmqpValue object.
         /// </summary>
-        /// <param name="bufferSize">the buffer size.</param>
-        /// <returns>
-        /// A segment of a byte array. The count should be the same, or larger
-        /// than the requested bufferSize.
-        /// </returns>
-        ArraySegment<byte> TakeBuffer(int bufferSize);
+        public AmqpValue(T value)
+            : base()
+        {
+            this.Value = value;
+        }
 
         /// <summary>
-        /// Returns a buffer to the buffer manager.
+        /// Writes the value into the buffer using AmqpSerializer.
         /// </summary>
-        /// <param name="buffer">The buffer to return.</param>
-        void ReturnBuffer(ArraySegment<byte> buffer);
+        /// <param name="buffer">The buffer to write the encoded object.</param>
+        /// <param name="value">The object to be written.</param>
+        protected override void WriteValue(ByteBuffer buffer, object value)
+        {
+            AmqpSerializer.Serialize(buffer, this.Value);
+        }
     }
 }

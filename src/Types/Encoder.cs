@@ -28,9 +28,21 @@ namespace Amqp.Types
     /// <returns></returns>
     public delegate Described CreateDescribed();
 
-    delegate void Encode(ByteBuffer buffer, object value, bool smallEncoding);
+    /// <summary>
+    /// The delegate to encode an object into a buffer.
+    /// </summary>
+    /// <param name="buffer">The buffer to write the encoded object.</param>
+    /// <param name="value">The object to be written.</param>
+    /// <param name="smallEncoding">If true, use compact encoding when possible.</param>
+    public delegate void Encode(ByteBuffer buffer, object value, bool smallEncoding);
 
-    delegate object Decode(ByteBuffer buffer, byte formatCode);
+    /// <summary>
+    /// The delegate to decode an object from a buffer.
+    /// </summary>
+    /// <param name="buffer">The buffer to read the object.</param>
+    /// <param name="formatCode">The format code of the expected object type.</param>
+    /// <returns>An object decoded from the buffer.</returns>
+    public delegate object Decode(ByteBuffer buffer, byte formatCode);
 
     /// <summary>
     /// Encodes or decodes AMQP types.
@@ -287,7 +299,14 @@ namespace Amqp.Types
             };
         }
 
-        internal static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
+        /// <summary>
+        /// Gets the encode and decode delegates for a given type.
+        /// </summary>
+        /// <param name="type">The type used to look for the encode and decode delegates.</param>
+        /// <param name="encoder">The encode delegate for the given type.</param>
+        /// <param name="decoder">The decode delegate for the given type.</param>
+        /// <returns>A boolean value indicating if the delegates are found.</returns>
+        public static bool TryGetCodec(Type type, out Encode encoder, out Decode decoder)
         {
             Serializer codec = (Serializer)codecByType[type];
             if (codec == null)
@@ -346,7 +365,12 @@ namespace Amqp.Types
             return new DateTime(epochTicks + timestamp * ticksPerMillisecond, DateTimeKind.Utc);
         }
 
-        internal static byte ReadFormatCode(ByteBuffer buffer)
+        /// <summary>
+        /// Reads the format code from the buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <returns>A byte value for the format code.</returns>
+        public static byte ReadFormatCode(ByteBuffer buffer)
         {
             return AmqpBitConverter.ReadUByte(buffer);
         }
@@ -1424,7 +1448,7 @@ namespace Amqp.Types
         }
 #endif
 
-#if NETFX || NETFX40 || DOTNET || NETFX35 || __IOS__ || ANDROID
+#if NETFX || NETFX40 || DOTNET || NETFX35
 
         internal static void WriteBinaryBuffer(ByteBuffer buffer, ByteBuffer value)
         {
