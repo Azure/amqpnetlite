@@ -35,7 +35,7 @@ namespace Amqp
         }
 #endif
 
-#if NETFX || DOTNET || __IOS__ || ANDROID
+#if NETFX || DOTNET
         internal static Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
         {
             return System.Net.Dns.GetHostAddressesAsync(host);

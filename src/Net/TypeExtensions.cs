@@ -20,11 +20,10 @@ namespace Amqp
     using System;
     using System.Collections.Generic;
     using System.Reflection;
-    using System.Runtime.Serialization;
 
     static partial class TypeExtensions
     {
-#if NETFX || NETFX40 || NETFX35 || __IOS__ || ANDROID
+#if NETFX || NETFX40 || NETFX35
         internal static Assembly Assembly(this Type type)
         {
             return type.Assembly;
@@ -54,7 +53,7 @@ namespace Amqp
         {
             return hasDefaultCtor ?
                 Activator.CreateInstance(type) :
-                FormatterServices.GetUninitializedObject(type);
+                System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
         }
 #endif
 #if NETFX35 || NETFX40
@@ -74,46 +73,6 @@ namespace Amqp
         internal static Assembly Assembly(this Type type)
         {
             return type.GetTypeInfo().Assembly;
-        }
-
-        internal static Type BaseType(this Type type)
-        {
-            return type.GetTypeInfo().BaseType;
-        }
-
-        internal static bool IsValueType(this Type type)
-        {
-            return type.GetTypeInfo().IsValueType;
-        }
-
-        internal static bool IsEnum(this Type type)
-        {
-            return type.GetTypeInfo().IsEnum;
-        }
-
-        internal static bool IsGenericType(this Type type)
-        {
-            return type.GetTypeInfo().IsGenericType;
-        }
-
-        internal static bool IsAssignableFrom(this Type type, Type from)
-        {
-            return type.GetTypeInfo().IsAssignableFrom(from.GetTypeInfo());
-        }
-
-        internal static T GetCustomAttribute<T>(this Type type, bool inherit) where T : Attribute
-        {
-            return type.GetTypeInfo().GetCustomAttribute<T>(inherit);
-        }
-
-        internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit) where T : Attribute
-        {
-            return type.GetTypeInfo().GetCustomAttributes<T>(inherit);
-        }
-
-        internal static object CreateInstance(this Type type, bool hasDefaultCtor)
-        {
-            return Activator.CreateInstance(type);
         }
 #endif
     }

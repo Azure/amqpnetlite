@@ -22,7 +22,7 @@ namespace Amqp {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class SRAmqp {
+    public class SRAmqp {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -59,182 +59,182 @@ namespace Amqp {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The session channel &apos;{0}&apos; cannot be found..
         /// </summary>
-        internal static string AmqpChannelNotFound {
+        public static string AmqpChannelNotFound {
             get {
                 return ResourceManager.GetString("AmqpChannelNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Cannot allocate more handles. The maximum number of handles is {0}..
         /// </summary>
-        internal static string AmqpHandleExceeded {
+        public static string AmqpHandleExceeded {
             get {
                 return ResourceManager.GetString("AmqpHandleExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The handle &apos;{0}&apos; is already allocated for &apos;{1}&apos;..
         /// </summary>
-        internal static string AmqpHandleInUse {
+        public static string AmqpHandleInUse {
             get {
                 return ResourceManager.GetString("AmqpHandleInUse", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The link handle &apos;{0}&apos; cannot be found in session &apos;{1}&apos;..
         /// </summary>
-        internal static string AmqpHandleNotFound {
+        public static string AmqpHandleNotFound {
             get {
                 return ResourceManager.GetString("AmqpHandleNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Operation &apos;{0}&apos; is not valid under state: {1}..
         /// </summary>
-        internal static string AmqpIllegalOperationState {
+        public static string AmqpIllegalOperationState {
             get {
                 return ResourceManager.GetString("AmqpIllegalOperationState", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The format code &apos;{0}&apos; at frame buffer offset &apos;{1}&apos; is invalid..
         /// </summary>
-        internal static string AmqpInvalidFormatCode {
+        public static string AmqpInvalidFormatCode {
             get {
                 return ResourceManager.GetString("AmqpInvalidFormatCode", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to {0} is not supported over AMQP..
         /// </summary>
-        internal static string AmqpOperationNotSupported {
+        public static string AmqpOperationNotSupported {
             get {
                 return ResourceManager.GetString("AmqpOperationNotSupported", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The operation {0} did not complete within the allocated time {1} for object {2}..
         /// </summary>
-        internal static string AmqpTimeout {
+        public static string AmqpTimeout {
             get {
                 return ResourceManager.GetString("AmqpTimeout", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The descriptor {0} is unknown..
         /// </summary>
-        internal static string AmqpUnknownDescriptor {
+        public static string AmqpUnknownDescriptor {
             get {
                 return ResourceManager.GetString("AmqpUnknownDescriptor", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to There is no credit to accept a new delivery (id={0}) on the link..
         /// </summary>
-        internal static string DeliveryLimitExceeded {
+        public static string DeliveryLimitExceeded {
             get {
                 return ResourceManager.GetString("DeliveryLimitExceeded", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The type &apos;{0}&apos; is not a valid AMQP type and cannot be encoded..
         /// </summary>
-        internal static string EncodingTypeNotSupported {
+        public static string EncodingTypeNotSupported {
             get {
                 return ResourceManager.GetString("EncodingTypeNotSupported", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The address is not correctly formatted..
         /// </summary>
-        internal static string InvalidAddressFormat {
+        public static string InvalidAddressFormat {
             get {
                 return ResourceManager.GetString("InvalidAddressFormat", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to transfer.delivery-id {0} is invalid (expect: {1}).
         /// </summary>
-        internal static string InvalidDeliveryIdOnTransfer {
+        public static string InvalidDeliveryIdOnTransfer {
             get {
                 return ResourceManager.GetString("InvalidDeliveryIdOnTransfer", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Invalid frame size:{0}, maximum frame size:{1}..
         /// </summary>
-        internal static string InvalidFrameSize {
+        public static string InvalidFrameSize {
             get {
                 return ResourceManager.GetString("InvalidFrameSize", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The map count {0} is invalid. It must be an even number..
         /// </summary>
-        internal static string InvalidMapCount {
+        public static string InvalidMapCount {
             get {
                 return ResourceManager.GetString("InvalidMapCount", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The key type {0} is invalid. The map key is restricted to {1}..
         /// </summary>
-        internal static string InvalidMapKeyType {
+        public static string InvalidMapKeyType {
             get {
                 return ResourceManager.GetString("InvalidMapKeyType", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Comparison of {0} and {1} is invalid because the result is undefined..
         /// </summary>
-        internal static string InvalidSequenceNumberComparison {
+        public static string InvalidSequenceNumberComparison {
             get {
                 return ResourceManager.GetString("InvalidSequenceNumberComparison", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to The link name {0} in the received attach cannot be found..
         /// </summary>
-        internal static string LinkNotFound {
+        public static string LinkNotFound {
             get {
                 return ResourceManager.GetString("LinkNotFound", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to Sasl negotiation failed with code {0}..
         /// </summary>
-        internal static string SaslNegoFailed {
+        public static string SaslNegoFailed {
             get {
                 return ResourceManager.GetString("SaslNegoFailed", resourceCulture);
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized string similar to There is no window to accept an incoming transfer (incoming-id={0})..
         /// </summary>
-        internal static string WindowViolation {
+        public static string WindowViolation {
             get {
                 return ResourceManager.GetString("WindowViolation", resourceCulture);
             }

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF42", "src\Amqp.NetMF42.csproj", "{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}"
 EndProject
@@ -12,10 +12,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net", "test\Test.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
 	ProjectSection(SolutionItems) = preProject
-		nuspec\Amqp.Micro.nuspec = nuspec\Amqp.Micro.nuspec
-		nuspec\Amqp.Net.nuspec = nuspec\Amqp.Net.nuspec
 		src\amqp.snk = src\amqp.snk
-		nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec = nuspec\amqpnetlite.Amqp.WebSockets.Client.nuspec
+		nuspec\AMQPNetLite.Core.nuspec = nuspec\AMQPNetLite.Core.nuspec
+		nuspec\AMQPNetLite.nuspec = nuspec\AMQPNetLite.nuspec
+		nuspec\AMQPNetLite.Serialization.nuspec = nuspec\AMQPNetLite.Serialization.nuspec
+		nuspec\AMQPNetLite.WebSockets.nuspec = nuspec\AMQPNetLite.WebSockets.nuspec
+		nuspec\AMQPNetMicro.nuspec = nuspec\AMQPNetMicro.nuspec
 		build.cmd = build.cmd
 	EndProjectSection
 EndProject
@@ -102,23 +104,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp", "Amqp", "{C40B5C1E-3
 		dotnet\Amqp\project.json = dotnet\Amqp\project.json
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docfx", "docfx", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}"
 	ProjectSection(SolutionItems) = preProject
-		docfx.json = docfx.json
-		index.md = index.md
-		toc.yml = toc.yml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{5637969B-A822-425A-A831-F70AA2275777}"
-	ProjectSection(SolutionItems) = preProject
-		articles\azure_sb_eventhubs.md = articles\azure_sb_eventhubs.md
-		articles\contributing.md = articles\contributing.md
-		articles\faqs.md = articles\faqs.md
-		articles\getting_started.md = articles\getting_started.md
-		articles\listener.md = articles\listener.md
-		articles\test_amqp_broker.md = articles\test_amqp_broker.md
-		articles\toc.yml = articles\toc.yml
-		articles\tracing.md = articles\tracing.md
+		docs\docfx.json = docs\docfx.json
+		docs\index.md = docs\index.md
+		docs\toc.yml = docs\toc.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.Topic", "Examples\ServiceBus\ServiceBus.Topic\ServiceBus.Topic.csproj", "{D454DB5E-820F-4A92-B31E-A41A9D20B086}"
@@ -138,6 +128,38 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.WebSockets.Client", "A
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeerToPeer.CustomTransport", "Examples\PeerToPeer\PeerToPeer.CustomTransport\PeerToPeer.CustomTransport.csproj", "{4573C570-520F-4F49-90B4-03D4532C2BA2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HelloAmqp", "HelloAmqp", "{AE0D7067-E707-4620-ADC4-1F2055AF2BBF}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\HelloAmqp\Program.cs = dotnet\HelloAmqp\Program.cs
+		dotnet\HelloAmqp\project.json = dotnet\HelloAmqp\project.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{D98D7724-3D03-4647-AA74-5FCB5E0702AD}"
+	ProjectSection(SolutionItems) = preProject
+		docs\articles\azure_eventhubs.md = docs\articles\azure_eventhubs.md
+		docs\articles\buffer_management.md = docs\articles\buffer_management.md
+		docs\articles\building_application.md = docs\articles\building_application.md
+		docs\articles\contributing.md = docs\articles\contributing.md
+		docs\articles\device_to_iothub.md = docs\articles\device_to_iothub.md
+		docs\articles\hello_amqp.md = docs\articles\hello_amqp.md
+		docs\articles\installation.md = docs\articles\installation.md
+		docs\articles\listener.md = docs\articles\listener.md
+		docs\articles\serialization.md = docs\articles\serialization.md
+		docs\articles\service_to_iothub.md = docs\articles\service_to_iothub.md
+		docs\articles\test_amqp_broker.md = docs\articles\test_amqp_broker.md
+		docs\articles\toc.yml = docs\articles\toc.yml
+		docs\articles\tracing.md = docs\articles\tracing.md
+		docs\articles\versioning.md = docs\articles\versioning.md
+		docs\articles\working_with_code.md = docs\articles\working_with_code.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amqp.Serialization", "Amqp.Serialization", "{93F1788D-0A04-4C88-8408-4538A1E616C6}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet\Amqp.Serialization\project.json = dotnet\Amqp.Serialization\project.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -600,6 +622,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{06CAA70A-20A7-4334-AF03-D6228039C178} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
+		{187E608C-FBF4-4517-B61F-A85AFF5BCA75} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
+		{2C4CBC7A-16BD-4F27-86BA-3CF38BE0F426} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
 		{612E8E0A-6CB6-45C9-9A05-CFC7F26A5C05} = {8F701234-EC60-485C-BCDB-8EE233246832}
 		{D6201667-DFEC-4BEF-8F4F-BE5EE5F07FE7} = {612E8E0A-6CB6-45C9-9A05-CFC7F26A5C05}
 		{68470436-2F0D-4A76-B1E6-9C8517844C3E} = {612E8E0A-6CB6-45C9-9A05-CFC7F26A5C05}
@@ -614,21 +639,27 @@ Global
 		{43570F0D-DE6C-423E-A275-AC619A813B79} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{23F5A590-C6D6-4FF7-A787-5AEE6A9522A7} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{36F33391-4918-4C6D-9CAE-1ECD32262257} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
+		{B23AC1B1-1551-41F3-8763-E68A53B172BB} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
 		{D6E83FC7-0D39-48AB-8DFA-FE89011CDD3C} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{E55CB1DD-2F8E-4052-A119-6F3FD9ED10BE} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{D1E69C74-4A33-4079-9665-8818A8479FFB} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{89F13102-4826-4406-844B-7B21C47885E7} = {8F701234-EC60-485C-BCDB-8EE233246832}
 		{E8D670D3-B1B4-45CA-9440-9630529599B2} = {89F13102-4826-4406-844B-7B21C47885E7}
 		{4B7BFDB9-406A-4EBE-93C3-5D40D6A986F4} = {89F13102-4826-4406-844B-7B21C47885E7}
+		{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
 		{30536F8F-E4DA-46B3-B0D0-082632AD74B4} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
 		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{E5D42E35-B5C4-426D-B568-96926EBA588E} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
+		{6BCA313F-794F-4C54-9F96-C500290E147C} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
 		{69E4A20C-EF50-49C6-8DAC-F76B9D565767} = {BF554E12-7096-465F-B1D0-9ACFF00877F2}
 		{C40B5C1E-3ECB-409D-9ED2-D36D4879A485} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
-		{5637969B-A822-425A-A831-F70AA2275777} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 		{9B1E629B-4179-4531-BE56-9B9AE7735EBC} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
+		{7852029D-235C-40B7-8957-8E78414C3F97} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
 		{487977C7-C125-4F23-956D-D3DB7B78E843} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{4573C570-520F-4F49-90B4-03D4532C2BA2} = {7FF80B2D-4158-41D3-BC87-60C018028F53}
+		{AE0D7067-E707-4620-ADC4-1F2055AF2BBF} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
+		{D98D7724-3D03-4647-AA74-5FCB5E0702AD} = {EB7EBF85-48AB-4EA0-9F00-825364BFA6FD}
+		{93F1788D-0A04-4C88-8408-4538A1E616C6} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 	EndGlobalSection
 EndGlobal

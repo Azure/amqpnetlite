@@ -77,7 +77,11 @@ namespace Amqp
         /// <param name="body">the object stored in the AmqpValue section.</param>
         public Message(object body)
         {
+#if (NETFX || NETFX40 || NETFX35)
+            this.BodySection = new AmqpValue<object>(body);
+#else
             this.BodySection = new AmqpValue() { Value = body };
+#endif
         }
 
         /// <summary>
@@ -110,38 +114,6 @@ namespace Amqp
                 }
             }
         }
-
-#if (NETFX || DOTNET || NETFX35 || NETFX40)
-        /// <summary>
-        /// Gets an object of type T from the message body.
-        /// </summary>
-        /// <typeparam name="T">The object type.</typeparam>
-        /// <returns></returns>
-        public T GetBody<T>()
-        {
-            if (this.BodySection != null)
-            {
-                if (this.BodySection.Descriptor.Code == Codec.AmqpValue.Code)
-                {
-                    return ((AmqpValue)this.BodySection).GetValue<T>();
-                }
-                else if (this.BodySection.Descriptor.Code == Codec.Data.Code)
-                {
-                    Data data = (Data)this.BodySection;
-                    if (typeof(T) == typeof(byte[]))
-                    {
-                        return (T)(object)data.Binary;
-                    }
-                    else if (typeof(T) == typeof(ByteBuffer))
-                    {
-                        return (T)(object)data.Buffer;
-                    }
-                }
-            }
-
-            return (T)this.Body;
-        }
-#endif
 
         /// <summary>
         /// Gets the delivery tag associated with the message.
@@ -248,7 +220,7 @@ namespace Amqp
             EncodeIfNotNull(this.Footer, buffer);
         }
 
-#if NETFX || NETFX40 || DOTNET || __IOS__ || ANDROID
+#if NETFX || NETFX40 || DOTNET
         /// <summary>
         /// Disposes the current message to release resources.
         /// </summary>
