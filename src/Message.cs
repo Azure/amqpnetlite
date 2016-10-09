@@ -25,7 +25,7 @@ namespace Amqp
     /// The Message class represents an AMQP message.
     /// </summary>
     public class Message
-#if NETFX || NETFX40 || DOTNET || __IOS__ || ANDROID
+#if NETFX || NETFX40 || DOTNET
     : IDisposable
 #endif
     {

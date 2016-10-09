@@ -35,7 +35,6 @@
       <group targetFramework="netcore451" />
       <group targetFramework="netstandard1.3">
         <dependency id="AMQPNetLite.Core" version="2.0.0" />
-        <dependency id="AMQPNetLite.Serialization" version="2.0.0" />
       </group>
     </dependencies>
   </metadata>
@@ -55,12 +54,15 @@
 
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\netcore451" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\wpa81" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\wpa81" />
+    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\wpa81" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\wpa81" />
     <file src="bin\Release\Amqp.Store\Amqp.Net.dll" target="lib\win8" />
     <file src="bin\Release\Amqp.Store\Amqp.Net.pdb" target="lib\win8" />
+    <file src="bin\Release\Amqp.Store\Amqp.Net.pri" target="lib\win8" />
     <file src="bin\Release\Amqp.Store\Amqp.Net.xml" target="lib\win8" />
     <file src="bin\Release\Amqp.WP\Amqp.Net.dll" target="lib\wp8" />
     <file src="bin\Release\Amqp.WP\Amqp.Net.pdb" target="lib\wp8" />
