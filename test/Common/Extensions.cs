@@ -15,7 +15,7 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace PerfTest
+namespace Test.Common
 {
     using System;
     using System.Collections.Generic;
@@ -27,9 +27,15 @@ namespace PerfTest
 
     static class Extensions
     {
-        public static TraceLevel TotraceLevel(this string level)
+        public static TraceLevel ToTraceLevel(this string level)
         {
-            return GetTraceMapping()[level];
+            TraceLevel value;
+            if (!GetTraceMapping().TryGetValue(level, out value))
+            {
+                throw new ArgumentException("Incorrect trace level " + level);
+            }
+
+            return value;
         }
 
         public static SenderSettleMode ToSenderSettleMode(this string mode)
@@ -89,58 +95,70 @@ namespace PerfTest
         public static void PrintArguments(this Type type)
         {
             StringBuilder sb = new StringBuilder();
-            var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            foreach (var prop in properties)
+            Stack<Type> stack = new Stack<Type>();
+            while (type != null)
             {
-                var attribute = (ArgumentAttribute)prop.GetCustomAttribute(typeof(ArgumentAttribute));
-                if (attribute != null)
+                stack.Push(type);
+                type = type.BaseType;
+            }
+
+            while (stack.Count > 0)
+            {
+                type = stack.Pop();
+
+                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                foreach (var prop in properties)
                 {
-                    int width = 0;
-                    if (attribute.Name != null)
+                    var attribute = (ArgumentAttribute)prop.GetCustomAttribute(typeof(ArgumentAttribute));
+                    if (attribute != null)
                     {
-                        sb.Append('-');
-                        sb.Append('-');
-                        sb.Append(attribute.Name);
-                        width += attribute.Name.Length + 2;
-                    }
+                        int width = 0;
+                        if (attribute.Name != null)
+                        {
+                            sb.Append('-');
+                            sb.Append('-');
+                            sb.Append(attribute.Name);
+                            width += attribute.Name.Length + 2;
+                        }
 
-                    if (attribute.Shortcut != null)
-                    {
-                        sb.Append(' ');
-                        sb.Append('(');
-                        sb.Append('-');
-                        sb.Append(attribute.Shortcut);
-                        sb.Append(')');
-                        width += attribute.Shortcut.Length + 4;
-                    }
+                        if (attribute.Shortcut != null)
+                        {
+                            sb.Append(' ');
+                            sb.Append('(');
+                            sb.Append('-');
+                            sb.Append(attribute.Shortcut);
+                            sb.Append(')');
+                            width += attribute.Shortcut.Length + 4;
+                        }
 
-                    if (width < 20)
-                    {
-                        sb.Append(' ', 20 - width);
-                        width = 20;
-                    }
-                    else
-                    {
-                        sb.Append(' ');
-                        width++;
-                    }
+                        if (width < 20)
+                        {
+                            sb.Append(' ', 20 - width);
+                            width = 20;
+                        }
+                        else
+                        {
+                            sb.Append(' ');
+                            width++;
+                        }
 
-                    if (attribute.Description != null)
-                    {
-                        sb.Append(attribute.Description);
-                    }
+                        if (attribute.Description != null)
+                        {
+                            sb.Append(attribute.Description);
+                        }
 
-                    if (attribute.Default != null)
-                    {
+                        if (attribute.Default != null)
+                        {
+                            sb.Append('\r');
+                            sb.Append('\n');
+                            sb.Append(' ', width);
+                            sb.Append("default: ");
+                            sb.Append(attribute.Default);
+                        }
+
                         sb.Append('\r');
                         sb.Append('\n');
-                        sb.Append(' ', width);
-                        sb.Append("default: ");
-                        sb.Append(attribute.Default);
                     }
-
-                    sb.Append('\r');
-                    sb.Append('\n');
                 }
             }
 

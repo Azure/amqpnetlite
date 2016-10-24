@@ -15,7 +15,7 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace PerfTest
+namespace Test.Common
 {
     using System;
 

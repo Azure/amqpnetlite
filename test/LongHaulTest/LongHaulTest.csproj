@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B23AC1B1-1551-41F3-8763-E68A53B172BB}</ProjectGuid>
+    <ProjectGuid>{F052E9A9-15BD-4DB4-8539-8961B7BA7DC0}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PerfTest</RootNamespace>
-    <AssemblyName>PerfTest</AssemblyName>
+    <RootNamespace>LongHaulTest</RootNamespace>
+    <AssemblyName>LongHaulTest</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <IntermediateOutputPath>..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
@@ -42,6 +42,10 @@
     <Compile Include="..\Common\Extensions.cs">
       <Link>Extensions.cs</Link>
     </Compile>
+    <Compile Include="Consumer.cs" />
+    <Compile Include="CommonArguments.cs" />
+    <Compile Include="Role.cs" />
+    <Compile Include="Publisher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
