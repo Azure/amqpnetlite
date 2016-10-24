@@ -40,15 +40,15 @@ namespace Amqp
             Start,
             HeaderSent,
             OpenPipe,
-            OpenClosePipe,
             HeaderReceived,
             HeaderExchanged,
             OpenSent,
             OpenReceived,
             Opened,
             CloseReceived,
-            ClosePipe,
             CloseSent,
+            OpenClosePipe,
+            ClosePipe,
             End
         }
 
@@ -241,11 +241,13 @@ namespace Amqp
 
         internal void SendCommand(ushort channel, DescribedList command)
         {
-            this.ThrowIfClosed("Send");
-            ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
-            Frame.Encode(buffer, FrameType.Amqp, channel, command);
-            this.writer.Send(buffer);
-            Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
+            if (command.Descriptor.Code == Codec.Close.Code || this.state < State.CloseSent)
+            {
+                ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
+                Frame.Encode(buffer, FrameType.Amqp, channel, command);
+                this.writer.Send(buffer);
+                Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
+            }
         }
 
         internal int SendCommand(ushort channel, Transfer transfer, bool first, ByteBuffer payload, int reservedBytes)
@@ -385,7 +387,7 @@ namespace Amqp
 
         void ThrowIfClosed(string operation)
         {
-            if (this.state >= State.ClosePipe)
+            if (this.state >= State.CloseSent)
             {
                 throw new AmqpException(this.Error ??
                     new Error()
@@ -692,11 +694,11 @@ namespace Amqp
                 var session = this.localSessions[i];
                 if (session != null)
                 {
-                    session.Abort(error);
+                    session.Abort(this.Error);
                 }
             }
-            
-            this.NotifyClosed(error);
+
+            this.NotifyClosed(this.Error);
         }
 
         // Writer and Pump are for synchronous transport created from the constructors

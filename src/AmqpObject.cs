@@ -37,6 +37,7 @@ namespace Amqp
     {
         internal const int DefaultCloseTimeout = 60000;
         bool closedCalled;
+        Error error;
         ManualResetEvent endEvent;
 
         /// <summary>
@@ -49,8 +50,18 @@ namespace Amqp
         /// </summary>
         public Error Error
         {
-            get;
-            internal set;
+            get
+            {
+                return this.error;
+            }
+            internal set
+            {
+                // try to keep the current error
+                if (value != null)
+                {
+                    this.error = value;
+                }
+            }
         }
 
         internal void NotifyClosed(Error error)
@@ -80,8 +91,17 @@ namespace Amqp
         /// <param name="error">The AMQP <see cref="Error"/> to send to the peer, indicating why the object is being closed.</param>
         public void Close(int waitUntilEnded = DefaultCloseTimeout, Error error = null)
         {
+            if (this.closedCalled)
+            {
+                return;
+            }
+
             // initialize event first to avoid the race with NotifyClosed
-            this.endEvent = new ManualResetEvent(false);
+            if (waitUntilEnded > 0)
+            {
+                this.endEvent = new ManualResetEvent(false);
+            }
+
             this.Error = error;
             if (!this.OnClose(error))
             {
@@ -92,8 +112,12 @@ namespace Amqp
             }
             else
             {
-                this.endEvent.Set();
-                this.NotifyClosed(null);
+                if (waitUntilEnded > 0)
+                {
+                    this.endEvent.Set();
+                }
+
+                this.NotifyClosed(this.Error);
             }
         }
 

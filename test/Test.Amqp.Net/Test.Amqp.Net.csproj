@@ -55,17 +55,23 @@
     <Compile Include="..\Common\AmqpSerializerTests.cs">
       <Link>AmqpSerializerTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Assert.cs">
+      <Link>Common\Assert.cs</Link>
+    </Compile>
     <Compile Include="..\Common\ContainerHostTests.cs">
       <Link>ContainerHostTests.cs</Link>
     </Compile>
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TestListener.cs">
+      <Link>Common\TestListener.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestTarget.cs">
-      <Link>TestTarget.cs</Link>
+      <Link>Common\TestTarget.cs</Link>
     </Compile>
     <Compile Include="..\Common\NamedPipeTransport.cs">
-      <Link>NamedPipeTransport.cs</Link>
+      <Link>Common\NamedPipeTransport.cs</Link>
     </Compile>
     <Compile Include="..\Common\Types\EmployeeId.cs">
       <Link>Types\EmployeeId.cs</Link>
@@ -101,7 +107,7 @@
       <Link>WebSocketTests.cs</Link>
     </Compile>
     <Compile Include="AmqpCodecTests.cs" />
-    <Compile Include="Assert.cs" />
+    <Compile Include="ProtocolTests.cs" />
     <Compile Include="TransactionTests.cs" />
     <Compile Include="PerfTests.cs" />
     <Compile Include="TaskTests.cs" />

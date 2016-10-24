@@ -39,9 +39,9 @@ namespace Amqp
             BeginSent,
             BeginReceived,
             Opened,
-            EndPipe,
-            EndSent,
             EndReceived,
+            EndSent,
+            EndPipe,
             End
         }
 
@@ -256,7 +256,10 @@ namespace Amqp
 
         internal void SendCommand(DescribedList command)
         {
-            this.connection.SendCommand(this.channel, command);
+            if (command.Descriptor.Code == Codec.End.Code || this.state < State.EndSent)
+            {
+                this.connection.SendCommand(this.channel, command);
+            }
         }
 
         internal void OnBegin(ushort remoteChannel, Begin begin)
@@ -321,7 +324,8 @@ namespace Amqp
 
         internal void OnCommand(DescribedList command, ByteBuffer buffer)
         {
-            Fx.Assert(this.state < State.EndReceived, "Session is ending or ended and cannot receive commands.");
+            Fx.Assert(this.state != State.EndReceived && this.state != State.End,
+                "Session is ending or ended and cannot receive commands.");
             if (command.Descriptor.Code == Codec.Attach.Code)
             {
                 this.OnAttach((Attach)command);
@@ -607,7 +611,7 @@ namespace Amqp
 
         void ThrowIfEnded(string operation)
         {
-            if (this.state >= State.EndPipe)
+            if (this.state >= State.EndSent)
             {
                 throw new AmqpException(this.Error ??
                     new Error()
