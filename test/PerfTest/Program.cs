@@ -25,6 +25,8 @@ namespace PerfTest
     using Amqp.Framing;
     using Amqp.Listener;
     using Amqp.Types;
+    using Test.Common;
+    using TestExtensions = Test.Common.Extensions;
 
     class Program
     {
@@ -330,7 +332,7 @@ namespace PerfTest
             public override void Run()
             {
                 Uri addressUri = new Uri(this.Args.Address);
-                X509Certificate2 certificate = Extensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
+                X509Certificate2 certificate = TestExtensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
                 ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
                 foreach (var listener in host.Listeners)
                 {
@@ -471,7 +473,7 @@ namespace PerfTest
 
             public TraceLevel TraceLevel
             {
-                get { return this.Trace.TotraceLevel(); }
+                get { return this.Trace.ToTraceLevel(); }
             }
         }
     }
