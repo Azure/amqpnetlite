@@ -55,6 +55,9 @@
     <Compile Include="..\Common\AmqpSerializerTests.cs">
       <Link>AmqpSerializerTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Assert.cs">
+      <Link>Assert.cs</Link>
+    </Compile>
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
@@ -90,9 +93,6 @@
     </Compile>
     <Compile Include="..\Test.Amqp.Net\AmqpCodecTests.cs">
       <Link>AmqpCodecTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.Net\Assert.cs">
-      <Link>Assert.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
