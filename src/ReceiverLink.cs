@@ -297,11 +297,6 @@ namespace Amqp
 
         internal Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
         {
-            if (this.totalCredit < 0)
-            {
-                this.SetCredit(DefaultCredit, true);
-            }
-
             Waiter waiter = null;
             lock (this.ThisLock)
             {
@@ -314,20 +309,24 @@ namespace Amqp
                     return first.Message;
                 }
 
-                if (timeout == 0)
+                if (timeout > 0)
                 {
-                    return null;
-                }
-
 #if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
-                waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
+                    waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
 #else
-                waiter = new SyncWaiter();
+                    waiter = new SyncWaiter();
 #endif
-                this.waiterList.Add(waiter);
+                    this.waiterList.Add(waiter);
+                }
             }
 
-            return waiter.Wait(timeout);
+            // send credit after waiter creation to avoid race condition
+            if (this.totalCredit < 0)
+            {
+                this.SetCredit(DefaultCredit, true);
+            }
+
+            return timeout > 0 ? waiter.Wait(timeout) : null;
         }
         
         void DisposeMessage(Message message, Outcome outcome)
