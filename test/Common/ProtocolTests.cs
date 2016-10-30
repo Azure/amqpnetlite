@@ -35,12 +35,12 @@ namespace Test.Amqp
 
         static ProtocolTests()
         {
-            Trace.TraceLevel = TraceLevel.Frame;
-            Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceLevel = TraceLevel.Frame;
+            //Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
         [TestInitialize]
-        public void Initialize()
+        public void TestInitialize()
         {
             this.testListener = new TestListener(new IPEndPoint(IPAddress.Any, port));
             this.testListener.Open();
@@ -48,7 +48,7 @@ namespace Test.Amqp
         }
 
         [TestCleanup]
-        public void Cleanup()
+        public void TestCleanup()
         {
             this.testListener.Close();
         }

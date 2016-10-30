@@ -99,6 +99,8 @@ IF /I "%build-target%" == "test" GOTO :build-done
 CALL :handle-error 1
 GOTO :exit
 
+TASKKILL /F /IM TestAmqpBroker.exe >nul 2>&1
+
 :build-clean
 "%MSBuildPath%" amqp.sln /t:Clean /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
 SET return-code=%ERRORLEVEL%

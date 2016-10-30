@@ -64,6 +64,9 @@
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\ProtocolTests.cs">
+      <Link>ProtocolTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestListener.cs">
       <Link>Common\TestListener.cs</Link>
     </Compile>
@@ -104,7 +107,6 @@
       <Link>WebSocketTests.cs</Link>
     </Compile>
     <Compile Include="AmqpCodecTests.cs" />
-    <Compile Include="ProtocolTests.cs" />
     <Compile Include="TransactionTests.cs" />
     <Compile Include="PerfTests.cs" />
     <Compile Include="TaskTests.cs" />

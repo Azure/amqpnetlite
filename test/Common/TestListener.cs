@@ -56,6 +56,7 @@ namespace Test.Amqp
         readonly IPEndPoint ip;
         readonly Dictionary<TestPoint, TestFunc> testPoints;
         Socket socket;
+        SocketAsyncEventArgs args;
 
         public TestListener(IPEndPoint ip)
         {
@@ -79,10 +80,13 @@ namespace Test.Amqp
 
         public void Open()
         {
+            this.args = new SocketAsyncEventArgs();
+            this.args.Completed += this.OnAccept;
+
             this.socket = new Socket(this.ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
             this.socket.Bind(this.ip);
             this.socket.Listen(20);
-            this.socket.BeginAccept(OnAccept, this);
+            this.Accept();
         }
 
         public void Close()
@@ -90,6 +94,7 @@ namespace Test.Amqp
             Socket s = this.socket;
             this.socket = null;
             if (s != null) s.Dispose();
+            if (this.args != null) this.args.Dispose();
         }
 
         public void RegisterTarget(TestPoint point, TestFunc func)
@@ -117,27 +122,43 @@ namespace Test.Amqp
             }
         }
 
-        static void OnAccept(IAsyncResult result)
+        void Accept()
         {
-            TestListener thisPtr = (TestListener)result.AsyncState;
-            if (thisPtr.socket == null) return;
+            Socket s = this.socket;
+            while (s != null)
+            {
+                try
+                {
+                    if (this.socket.AcceptAsync(this.args))
+                    {
+                        break;
+                    }
 
-            try
-            {
-                Socket socket = thisPtr.socket.EndAccept(result);
-                socket.NoDelay = true;
-                Fx.StartThread(() => thisPtr.Pump(new NetworkStream(socket, true)));
+                    this.args.UserToken = "sync";
+                    this.OnAccept(s, this.args);
+                }
+                catch { }
+
+                s = this.socket;
             }
-            catch (Exception exception)
+        }
+
+        void OnAccept(object sender, SocketAsyncEventArgs args)
+        {
+            if (args.SocketError == SocketError.Success)
             {
-                Trace.WriteLine(TraceLevel.Error, exception.ToString());
+                Socket s = args.AcceptSocket;
+                s.NoDelay = true;
+                Fx.StartThread(() => this.Pump(new NetworkStream(s, true)));
             }
 
-            try
+            bool sync = args.UserToken != null;
+            args.UserToken = null;
+            args.AcceptSocket = null;
+            if (!sync)
             {
-                thisPtr.socket.BeginAccept(OnAccept, thisPtr);
+                this.Accept();
             }
-            catch { }
         }
 
         TestOutcome HandleTestPoint(TestPoint point, Stream stream, ushort channel, List fields)
