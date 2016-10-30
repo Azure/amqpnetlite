@@ -101,6 +101,8 @@ IF /I "%build-target%" == "build" GOTO :build-target
 IF /I "%build-target%" == "test" GOTO :build-done
 GOTO :args-error
 
+TASKKILL /F /IM TestAmqpBroker.exe >nul 2>&1
+
 :build-clean
 CALL :run-build Clean
 SET return-code=%ERRORLEVEL%
