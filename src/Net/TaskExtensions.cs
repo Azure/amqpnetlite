@@ -162,6 +162,12 @@ namespace Amqp
         public static Task CloseAsync(this AmqpObject amqpObject, int timeout = 60000)
         {
             TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+            if (amqpObject.CloseCalled)
+            {
+                tcs.SetResult(null);
+                return tcs.Task;
+            }
+
             try
             {
                 amqpObject.Closed += (o, e) =>

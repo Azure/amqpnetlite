@@ -642,26 +642,20 @@ namespace Amqp
                 amqpException.Error :
                 new Error() { Condition = ErrorCode.InternalError, Description = exception.Message };
 
-            if (this.state < State.ClosePipe)
+            if (this.state < State.CloseSent)
             {
+                // send close and shutdown the transport.
                 try
                 {
                     this.Close(0, error);
                 }
                 catch
                 {
-                    this.state = State.End;
                 }
             }
-            else
-            {
-                this.state = State.End;
-            }
 
-            if (this.state == State.End)
-            {
-                this.OnEnded(error);
-            }
+            this.state = State.End;
+            this.OnEnded(error);
         }
 
         internal void OnIoException(Exception exception)
@@ -670,7 +664,8 @@ namespace Amqp
             if (this.state != State.End)
             {
                 this.state = State.End;
-                Error error = new Error() { Condition = ErrorCode.ConnectionForced };
+                this.CloseCalled = true;
+                Error error = new Error() { Condition = ErrorCode.ConnectionForced, Description = exception.Message };
                 this.OnEnded(error);
             }
         }
