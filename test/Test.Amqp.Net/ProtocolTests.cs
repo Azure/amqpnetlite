@@ -31,6 +31,7 @@ namespace Test.Amqp
     {
         const int port = 5674;
         TestListener testListener;
+        Address address;
 
         static ProtocolTests()
         {
@@ -43,6 +44,7 @@ namespace Test.Amqp
         {
             this.testListener = new TestListener(new IPEndPoint(IPAddress.Any, port));
             this.testListener.Open();
+            this.address = new Address("amqp://127.0.0.1:" + port);
         }
 
         [TestCleanup]
@@ -55,18 +57,17 @@ namespace Test.Amqp
         public void CloseConnectionWithDetachTest()
         {
             this.testListener.RegisterTarget(TestPoint.Close, (stream, channel, fields) =>
-                {
-                    // send a detach
-                    TestListener.FRM(stream, 0x16UL, 0, channel, 0u, true);
-                    return TestOutcome.Continue;
-                });
+            {
+                // send a detach
+                TestListener.FRM(stream, 0x16UL, 0, channel, 0u, true);
+                return TestOutcome.Continue;
+            });
 
             string testName = "CloseConnectionWithDetachTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
@@ -77,7 +78,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
@@ -98,11 +99,10 @@ namespace Test.Amqp
             });
 
             string testName = "CloseConnectionWithEndTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
@@ -113,7 +113,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
@@ -134,11 +134,10 @@ namespace Test.Amqp
             });
 
             string testName = "CloseSessionWithDetachTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
@@ -150,7 +149,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
@@ -171,11 +170,10 @@ namespace Test.Amqp
             });
 
             string testName = "SendWithConnectionResetTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 try
@@ -194,7 +192,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 try
@@ -220,12 +218,10 @@ namespace Test.Amqp
                 return TestOutcome.Continue;
             });
 
-            Address address = new Address("amqp://localhost:" + port);
-
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
                 ManualResetEvent closed = new ManualResetEvent(false);
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 connection.Closed += (o, e) => closed.Set();
                 Session session = new Session(connection);
                 Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
@@ -236,7 +232,7 @@ namespace Test.Amqp
             Task.Run(async () =>
             {
                 TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 connection.Closed += (s, a) => tcs.SetResult(null);
                 Session session = new Session(connection);
                 Task completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
@@ -256,11 +252,10 @@ namespace Test.Amqp
             });
 
             string testName = "SendWithProtocolErrorTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 try
@@ -279,7 +274,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 try
@@ -306,17 +301,16 @@ namespace Test.Amqp
             });
 
             string testName = "ReceiveWithConnectionResetTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
                 DateTime start = DateTime.UtcNow;
                 Message message = receiver.Receive();
                 Assert.IsTrue(message == null);
-                Assert.IsTrue(DateTime.UtcNow.Subtract(start).TotalMilliseconds < 1000, "Receive call is not cancelled.");
+                Assert.IsTrue(DateTime.UtcNow.Subtract(start).TotalMilliseconds < 5000, "Receive call is not cancelled.");
                 connection.Close();
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
             }
@@ -324,7 +318,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
                 DateTime start = DateTime.UtcNow;
@@ -348,12 +342,11 @@ namespace Test.Amqp
             });
 
             string testName = "ReceiveWithNoCreditTest";
-            Address address = new Address("amqp://localhost:" + port);
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
                 ManualResetEvent closed = new ManualResetEvent(false);
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 connection.Closed += (s, a) => closed.Set();
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
@@ -364,7 +357,7 @@ namespace Test.Amqp
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Run(async () =>
             {
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
                 connection.Closed += (s, a) => tcs.SetResult(null);
                 Session session = new Session(connection);
@@ -394,13 +387,11 @@ namespace Test.Amqp
                 return TestOutcome.Continue;
             });
 
-            Address address = new Address("amqp://localhost:" + port);
-
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
                 closeReceived = new ManualResetEvent(false);
                 closedNotified = new ManualResetEvent(false);
-                Connection connection = new Connection(address);
+                Connection connection = new Connection(this.address);
                 connection.Closed += (o, e) => closedNotified.Set();
                 Session session = new Session(connection);
                 Assert.IsTrue(closeReceived.WaitOne(5000), "Close not received");
@@ -413,7 +404,7 @@ namespace Test.Amqp
             {
                 closeReceived = new ManualResetEvent(false);
                 closedNotified = new ManualResetEvent(false);
-                Connection connection = await Connection.Factory.CreateAsync(address);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
                 connection.Closed += (o, e) => closedNotified.Set();
                 Session session = new Session(connection);
                 Assert.IsTrue(closeReceived.WaitOne(5000), "Close not received");
