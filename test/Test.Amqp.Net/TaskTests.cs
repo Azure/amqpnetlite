@@ -37,6 +37,7 @@ namespace Test.Amqp
         {
         }
 
+#if !NETFX40
         [TestMethod]
         public async Task BasicSendReceiveAsync()
         {
@@ -69,8 +70,51 @@ namespace Test.Amqp
             await session.CloseAsync();
             await connection.CloseAsync();
         }
+#endif
 
-#if NETFX
+#if NETFX40
+        // 40 cannot handle TestMethod with Task return type
+        // MsTest fails with "Index was outside the bounds of the array."
+        [TestMethod]
+        public void BasicSendReceiveAsync()
+        {
+            this.BasicSendReceiveAsyncTest().GetAwaiter().GetResult();
+        }
+
+        async Task BasicSendReceiveAsyncTest()
+        {
+            string testName = "BasicSendReceiveAsync";
+            int nMsgs = 100;
+
+            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                await sender.SendAsync(message);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = await receiver.ReceiveAsync();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            await sender.CloseAsync();
+            await receiver.CloseAsync();
+            await session.CloseAsync();
+            await connection.CloseAsync();
+        }
+#endif
+
+#if NETFX && !NETFX40
         [TestMethod]
         public async Task CustomMessgeBody()
         {

@@ -17,20 +17,15 @@
 
 using Amqp;
 using Amqp.Framing;
-using Amqp.Sasl;
 using Amqp.Types;
 using System;
 using System.Text;
 using System.Threading;
-#if NETFX
-using System.Threading.Tasks;
-#endif
 #if NETFX || NETFX35 || DOTNET
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 #if NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
-using System.Threading.Tasks;
 #endif
 
 namespace Test.Amqp
@@ -425,33 +420,23 @@ namespace Test.Amqp
             Session session = new Session(connection);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
-#if NETFX || NETFX_CORE
-            Task t = Task.Run(() =>
+            ManualResetEvent gotMessage = new ManualResetEvent(false);
+            Fx.StartThread(() =>
             {
                 Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
-                receiver.Accept(message);
+                if (message != null)
+                {
+                    Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
+                    receiver.Accept(message);
+                    gotMessage.Set();
+                }
             });
-#else
-            Thread t = new Thread(() =>
-            {
-                Message message = receiver.Receive();
-                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
-                receiver.Accept(message);
-            });
-
-            t.Start();
-#endif
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             Message msg = new Message() { Properties = new Properties() { MessageId = "123456" } };
             sender.Send(msg, null, null);
 
-#if NETFX || NETFX_CORE
-            t.Wait(10000);
-#else
-            t.Join(10000);
-#endif
+            Assert.IsTrue(gotMessage.WaitOne(5000), "No message was received");
 
             sender.Close();
             receiver.Close();

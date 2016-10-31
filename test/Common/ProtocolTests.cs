@@ -76,7 +76,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
@@ -85,7 +85,7 @@ namespace Test.Amqp
                 await connection.CloseAsync();
                 Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
 
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -111,7 +111,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
@@ -120,7 +120,7 @@ namespace Test.Amqp
                 await connection.CloseAsync();
                 Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
 
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -147,7 +147,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
@@ -157,7 +157,7 @@ namespace Test.Amqp
                 await connection.CloseAsync();
                 Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
 
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -190,7 +190,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
@@ -206,7 +206,7 @@ namespace Test.Amqp
                 }
                 await connection.CloseAsync();
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -229,16 +229,15 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
-                TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+                ManualResetEvent closed = new ManualResetEvent(false);
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
-                connection.Closed += (s, a) => tcs.SetResult(null);
+                connection.Closed += (o, e) => closed.Set();
                 Session session = new Session(connection);
-                Task completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
-                Assert.IsTrue(completed == tcs.Task, "closed event not fired");
+                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
         
         [TestMethod]
@@ -272,7 +271,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
@@ -288,7 +287,7 @@ namespace Test.Amqp
                 }
                 await connection.CloseAsync();
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -316,7 +315,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
@@ -327,7 +326,7 @@ namespace Test.Amqp
                 Assert.IsTrue(DateTime.UtcNow.Subtract(start).TotalMilliseconds < 1000, "Receive call is not cancelled.");
                 await connection.CloseAsync();
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
-            }).Wait(); 
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -355,17 +354,16 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
+                ManualResetEvent closed = new ManualResetEvent(false);
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
-                TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-                connection.Closed += (s, a) => tcs.SetResult(null);
+                connection.Closed += (s, a) => closed.Set();
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
-                Task completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
-                Assert.IsTrue(completed == tcs.Task, "Connection not closed");
+                Assert.IsTrue(closed.WaitOne(5000), "Connection not closed");
                 Assert.AreEqual(ErrorCode.TransferLimitExceeded, (string)connection.Error.Condition);
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -400,7 +398,7 @@ namespace Test.Amqp
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
-            Task.Run(async () =>
+            Task.Factory.StartNew(async () =>
             {
                 closeReceived = new ManualResetEvent(false);
                 closedNotified = new ManualResetEvent(false);
@@ -410,7 +408,7 @@ namespace Test.Amqp
                 Assert.IsTrue(closeReceived.WaitOne(5000), "Close not received");
                 Assert.IsTrue(closedNotified.WaitOne(5000), "Closed event not fired");
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
-            }).Wait();
+            }).Unwrap().GetAwaiter().GetResult();
         }
     }
 }

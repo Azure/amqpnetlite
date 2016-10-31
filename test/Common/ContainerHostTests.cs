@@ -855,7 +855,7 @@ namespace Test.Amqp
             }
         }
 
-#if !DOTNET
+#if !(DOTNET || NETFX40)
         [TestMethod]
         public void ContainerHostWebSocketWildCardAddressTest()
         {
@@ -990,7 +990,9 @@ namespace Test.Amqp
                     context = new ReceiveContext(link, this.messages.Dequeue());
                 }
 
-                return Task.FromResult(context);
+                var tcs = new TaskCompletionSource<ReceiveContext>();
+                tcs.SetResult(context);
+                return tcs.Task;
             }
         }
 

@@ -44,8 +44,7 @@ namespace Test.Amqp
 
         void ITransport.Send(ByteBuffer buffer)
         {
-            // make it non-blocking
-            this.pipeStream.WriteAsync(buffer.Buffer, buffer.Offset, buffer.Length);
+            this.pipeStream.Write(buffer.Buffer, buffer.Offset, buffer.Length);
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
@@ -66,13 +65,27 @@ namespace Test.Amqp
         {
             foreach (var buffer in bufferList)
             {
+#if DOTNET
                 await this.pipeStream.WriteAsync(buffer.Buffer, buffer.Offset, buffer.Length);
+#else
+                await Task.Factory.FromAsync(
+                    (c, s) => this.pipeStream.BeginWrite(buffer.Buffer, buffer.Offset, buffer.Length, c, s),
+                    (r) => this.pipeStream.EndWrite(r),
+                    null);
+#endif
             }
         }
 
         Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
+#if DOTNET
             return this.pipeStream.ReadAsync(buffer, offset, count);
+#else
+            return Task.Factory.FromAsync(
+                (c, s) => this.pipeStream.BeginRead(buffer, offset, count, c, s),
+                (r) => this.pipeStream.EndRead(r),
+                null);
+#endif
         }
 
         class NamedPipeTransportFactory : TransportProvider

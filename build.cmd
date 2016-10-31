@@ -161,13 +161,22 @@ IF %ERRORLEVEL% NEQ 0 (
 )
 
 ECHO.
+ECHO Running NET40 tests...
+"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net40\Test.Amqp.Net40.dll
+IF %ERRORLEVEL% NEQ 0 (
+  SET return-code=%ERRORLEVEL%
+  ECHO Test failed!
+  TASKKILL /F /IM TestAmqpBroker.exe
+  GOTO :exit
+)
+
+ECHO.
 ECHO Running NET35 tests...
 "%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net35\Test.Amqp.Net35.dll
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   ECHO Test failed!
   TASKKILL /F /IM TestAmqpBroker.exe
-  IF /I "%is-elevated%" == "false" ECHO WebSocket tests may be failing because the broker was started without Administrator permission
   GOTO :exit
 )
 
