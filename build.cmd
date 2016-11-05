@@ -6,7 +6,7 @@ ECHO.
 
 SET return-code=0
 
-CALL :file-exists MSBuild exe
+CALL :findfile MSBuild exe
 IF "%MSBuildPath%" == "" (
   ECHO MSBuild.exe does not exist or is not under PATH.
   ECHO This can be resolved by building from a VS developer command prompt.
@@ -89,7 +89,7 @@ IF /I "%build-platform%" EQU "" GOTO :args-error
 IF /I "%build-verbosity%" EQU "" GOTO :args-error
 
 IF /I "%build-dotnet%" EQU "false" GOTO :build-start
-CALL :file-exists dotnet exe
+CALL :findfile dotnet exe
 IF "%dotnetPath%" == "" (
   ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
   GOTO :exit
@@ -129,7 +129,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 IF /I "%build-test%" EQU "false" GOTO :nuget-package
 
-CALL :file-exists MSTest exe
+CALL :findfile MSTest exe
 IF "%MSTestPath%" == "" (
   ECHO MSTest.exe does not exist or is not under PATH. Will not run tests.
   GOTO :exit
@@ -203,7 +203,7 @@ IF /I "%build-config%" NEQ "Release" (
 
 rem Build NuGet package
 ECHO.
-CALL :file-exists NuGet exe
+CALL :findfile NuGet exe
 IF "%NuGetPath%" == "" (
   ECHO NuGet.exe does not exist or is not under PATH.
   ECHO If you want to build NuGet package, install NuGet.CommandLine
@@ -284,7 +284,7 @@ EXIT /b %return-code%
 
   EXIT /b 0
 
-:file-exists
+:findfile
   IF EXIST ".\Build\tools\%1.%2" (
     SET %1Path=.\Build\tools\%1.%2
   ) ELSE (
