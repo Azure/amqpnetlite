@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <NUGET_PACKAGES Condition=" '$(NUGET_PACKAGES)' == '' ">$(SolutionDir)packages</NUGET_PACKAGES>
     <ProjectGuid>{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>

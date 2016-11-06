@@ -119,6 +119,13 @@ IF "%build-version%" == "" (
 )
 
 echo Build version %build-version%
+CALL :findfile NuGet exe
+IF "%NuGetPath%" == "" (
+  ECHO NuGet.exe does not exist or is not under PATH.
+) ELSE (
+  "%NuGetPath%" restore amqp-vs2013.sln
+)
+
 CALL :run-build Rebuild
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
@@ -203,7 +210,6 @@ IF /I "%build-config%" NEQ "Release" (
 
 rem Build NuGet package
 ECHO.
-CALL :findfile NuGet exe
 IF "%NuGetPath%" == "" (
   ECHO NuGet.exe does not exist or is not under PATH.
   ECHO If you want to build NuGet package, install NuGet.CommandLine

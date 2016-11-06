@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <NUGET_PACKAGES Condition=" '$(NUGET_PACKAGES)' == '' ">..\packages</NUGET_PACKAGES>
+    <NUGET_PACKAGES Condition=" '$(NUGET_PACKAGES)' == '' ">$(SolutionDir)packages</NUGET_PACKAGES>
     <ProjectGuid>{4A250B81-35E9-4D2F-8030-62909F6C8C63}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
