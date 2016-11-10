@@ -855,6 +855,30 @@ namespace Test.Amqp
             }
         }
 
+        [TestMethod]
+        public void ContainerHostMessageProcessorUnregisterTest()
+        {
+            string name = "ContainerHostMessageProcessorUnregisterTest";
+            var processor = new TestMessageProcessor();
+            this.host.RegisterMessageProcessor(name, processor);
+
+            int count = 5;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+
+            for (int i = 0; i < count; i++)
+            {
+                var message = new Message("msg" + i);
+                message.Properties = new Properties() { MessageId = name + i };
+                sender.Send(message, SendTimeout);
+            }
+
+            this.host.UnregisterMessageProcessor(name);
+
+            connection.Close();
+        }
+
 #if !DOTNET
         [TestMethod]
         public void ContainerHostWebSocketWildCardAddressTest()

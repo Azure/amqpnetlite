@@ -438,9 +438,11 @@ namespace Amqp.Listener
 
             void IDisposable.Dispose()
             {
+                List<ListenerLink> links = new List<ListenerLink>();
                 lock (this.collection)
                 {
-                    foreach (var link in this.collection.Keys)
+                    links.AddRange(this.collection.Keys);
+                    foreach (var link in links)
                     {
                         link.Close(0, new Error()
                         {
