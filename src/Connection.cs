@@ -365,13 +365,21 @@ namespace Amqp
                 transport = tcpTransport;
             }
 
-            if (saslProfile != null)
+            try
             {
-                transport = saslProfile.Open(this.address.Host, transport);
+                if (saslProfile != null)
+                {
+                    transport = saslProfile.Open(this.address.Host, transport);
+                }
+                else if (this.address.User != null)
+                {
+                    transport = new SaslPlainProfile(this.address.User, this.address.Password).Open(this.address.Host, transport);
+                }
             }
-            else if (this.address.User != null)
+            catch
             {
-                transport = new SaslPlainProfile(this.address.User, this.address.Password).Open(this.address.Host, transport);
+                transport.Close();
+                throw;
             }
 
             this.writer = new Writer(transport);

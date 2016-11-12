@@ -16,6 +16,7 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -240,7 +241,58 @@ namespace Test.Amqp
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
             }).Wait();
         }
-        
+
+        [TestMethod]
+        public void InvalidSaslProtocolHeaderTest()
+        {
+            Stream transport = null;
+
+            this.testListener.RegisterTarget(TestPoint.Header, (stream, channel, fields) =>
+            {
+                transport = stream;
+                stream.WriteByte(3);    // inject an extra byte
+                return TestOutcome.Continue;
+            });
+
+            Address myAddress = new Address("amqp://guest:@" + this.address.Host + ":" + this.address.Port);
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                try
+                {
+                    Connection connection = new Connection(myAddress);
+                    Assert.IsTrue(false, "no exception was thrown 1");
+                }
+                catch (AmqpException) { }
+                Assert.IsTrue(transport != null, "transport is null");
+                try
+                {
+                    transport.WriteByte(1);
+                    Assert.IsTrue(false, "transport not disposed 1.");
+                }
+                catch (ObjectDisposedException) { }
+                catch (IOException) { }
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            transport = null;
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    Connection connection = await Connection.Factory.CreateAsync(myAddress);
+                }
+                catch (AmqpException) { }
+                Assert.IsTrue(transport != null, "transport is null 2");
+                try
+                {
+                    transport.WriteByte(2);
+                    Assert.IsTrue(false, "transport not disposed 2.");
+                }
+                catch (ObjectDisposedException) { }
+                catch (IOException) { }
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
         [TestMethod]
         public void SendWithInvalidRemoteChannelTest()
         {

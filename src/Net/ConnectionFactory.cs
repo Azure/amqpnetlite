@@ -138,14 +138,23 @@ namespace Amqp
                 throw new NotSupportedException(address.Scheme);
             }
 
-            if (address.User != null)
+            try
+
             {
-                SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                transport = await profile.OpenAsync(address.Host, this.BufferManager, transport);
+                if (address.User != null)
+                {
+                    SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
+                    transport = await profile.OpenAsync(address.Host, this.BufferManager, transport);
+                }
+                else if (this.saslSettings != null && this.saslSettings.Profile != null)
+                {
+                    transport = await this.saslSettings.Profile.OpenAsync(address.Host, this.BufferManager, transport);
+                }
             }
-            else if (this.saslSettings != null && this.saslSettings.Profile != null)
+            catch
             {
-                transport = await this.saslSettings.Profile.OpenAsync(address.Host, this.BufferManager, transport);
+                transport.Close();
+                throw;
             }
 
             AsyncPump pump = new AsyncPump(this.BufferManager, transport);
