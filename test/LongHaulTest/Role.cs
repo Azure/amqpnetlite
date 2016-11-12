@@ -167,7 +167,7 @@ namespace LongHaulTest
 
             protected void EnsureConnection()
             {
-                if (this.connection == null || this.connection.Error != null)
+                if (this.connection == null || this.connection.IsClosed)
                 {
                     Address address = this.role.Address;
                     Connection.DisableServerCertValidation = true;
@@ -185,7 +185,7 @@ namespace LongHaulTest
 
             protected async Task EnsureConnectionAsync()
             {
-                if (this.connection == null || this.connection.Error != null)
+                if (this.connection == null || this.connection.IsClosed)
                 {
                     Address address = this.role.Address;
                     ConnectionFactory factory = new ConnectionFactory();
@@ -198,7 +198,7 @@ namespace LongHaulTest
 
             protected void EnsureLink()
             {
-                if (this.link == null || this.link.Error != null)
+                if (this.link == null || this.link.IsClosed)
                 {
                     if (this.session != null)
                     {
