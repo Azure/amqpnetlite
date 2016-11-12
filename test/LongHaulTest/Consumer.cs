@@ -142,7 +142,7 @@ namespace LongHaulTest
 
             protected override int Execute(ReceiverLink link)
             {
-                if (this.link.Error != null || this.session.Error != null || this.connection.Error != null)
+                if (this.link.IsClosed || this.session.IsClosed || this.connection.IsClosed)
                 {
                     throw new ObjectDisposedException("At least one amqp object is closed");
                 }

@@ -65,6 +65,14 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets a boolean value indicating if the object has been closed.
+        /// </summary>
+        public bool IsClosed
+        {
+            get { return this.closedCalled || this.closedNotified; }
+        }
+
         internal bool CloseCalled
         {
             get { return this.closedCalled; }
