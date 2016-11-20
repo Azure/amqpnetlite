@@ -1,9 +1,15 @@
 # AMQP.Net Lite
-[Download from NuGet](https://www.nuget.org/packages/AMQPNetLite) | [Documentation](http://azure.github.io/amqpnetlite/)
 
-AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, .Net Core, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.
+AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, .Net Core, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.  
+[Documentation](http://azure.github.io/amqpnetlite/)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/dph11pp7doubyw7t/branch/master?svg=true)](https://ci.appveyor.com/project/xinchen10/amqpnetlite/branch/master)
+
+|NuGet Package|Status|
+|------|-------------|
+|AMQPNetLite (main package)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite)](https://www.nuget.org/packages/AMQPNetLite/)|
+|AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
+|AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior.
@@ -14,23 +20,25 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 * Listener APIs to enable wide range of listener applications, including brokers, routers, proxies, and more.
 * A lightweight messaging library that runs on all popular .NET and Windows Runtime platforms.
 
-## Supported Platforms
-|            | net45 | net40 | net35 | netmf | netcf | win8/wp8 | netcore451/uap | netstandard1.3 |
-|------------|:-----:|:-----:|:-----:|:-----:|:-----:|:--------:|:----------:|:----------:|
-| TLS        |  +    |   +   |   +   |   +<sup>1</sup>  |   +   |    +     |     +      |     +      |
-| SASL<sup>2</sup>      |  +    |   +   |   +   |   +   |   +   |    +     |     +      |     +      |
-| AMQP Core  |  +    |   +   |   +   |   +   |   +   |    +     |     +      |     +      |
-| Txn        |  +    |   +   |       |       |       |          |            |            |
-| Async API  |  +    |   +<sup>3</sup>   |       |       |       |    +     |     +      |     +      |
-| Listener   |  +    |   +   |       |       |       |          |            |     +      |
-| Serializer |  +    |   +   |   +   |       |       |          |            |     +      |
-| WebSockets |  +    |       |       |       |       |          |            |     +<sup>4</sup>      |
-| Buffer Pooling |  +    |   +   |       |       |       |          |            |     +      |
+|        | TLS | SASL<sup>2</sup> | Txn | Task | Serializer | Listener | WebSockets | BufferPooling |
+|:-------|:---:|:----------------:|:---:|:----:|:----------:|:--------:|:----------:|:-------------:|
+|net45   |+    |+                 |+    |+     |+           |+         |+           |+              |
+|net40   |+    |+                 |+    |+<sup>3</sup>|+    |+         |            |+              |
+|net35   |+    |+                 |     |      |+           |          |            |               |
+|netmf   |+<sup>1</sup>|+         |     |      |            |          |            |               |
+|netcf   |+    |+                 |     |      |            |          |            |               |
+|win8/wp8|+    |+                 |     |+     |            |          |            |               |
+|netcore451<sup>4</sup>|+  |+     |     |+     |            |          |            |               |
+|wpa81   |+    |+                 |     |+     |            |          |            |               |
+|netstandard1.3|+    |+           |     |+     |+           |+         |+<sup>5</sup>|+             |
+|mono/Xamarin<sup>6</sup>    |+    |+     |     |+     |+           |+         |+           |+             |
 
 1. requires a TLS-capable device.
 2. only SASL PLAIN, EXTERNAL, and ANONYMOUS are currently supported.
 3. requires Microsoft.Bcl.Async.
-4. supports WebSocket client but not listener.
+4. compatible with win81 and uap10.
+5. supports WebSocket client but not listener through AMQPNetLite.WebSockets package.
+6. projects targeting Mono/Xamarin should be able to consume the netstandard1.3 library.
 
 ## Tested Platforms
 * .Net Framework 3.5, 4.0 and 4.5+.
