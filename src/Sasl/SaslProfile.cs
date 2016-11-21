@@ -128,7 +128,15 @@ namespace Amqp.Sasl
                 if (response != null)
                 {
                     this.SendCommand(transport, response);
-                    shouldContinue = response.Descriptor.Code != Codec.SaslOutcome.Code;
+                    if (response.Descriptor.Code == Codec.SaslOutcome.Code)
+                    {
+                        code = ((SaslOutcome)response).Code;
+                        shouldContinue = false;
+                    }
+                    else
+                    {
+                        shouldContinue = true;
+                    }
                 }
             }
 
