@@ -27,6 +27,8 @@ using Amqp.Listener;
 using Amqp.Sasl;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Net.Sockets;
+using System.Text;
 
 namespace Test.Amqp
 {
@@ -733,6 +735,66 @@ namespace Test.Amqp
             var listenerConnection = (ListenerConnection)link.Session.Connection;
             Assert.IsTrue(listenerConnection.Principal != null, "principal is null");
             Assert.IsTrue(listenerConnection.Principal.Identity.AuthenticationType == "PLAIN", "wrong auth type");
+        }
+
+        [TestMethod]
+        public void ContainerHostSaslPlainNegativeTest()
+        {
+            string address = new UriBuilder(this.Uri) { Password = "invalid" }.Uri.AbsoluteUri;
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                try
+                {
+                    var connection = new Connection(new Address(address));
+                    Assert.IsTrue(false, "Exception not thrown");
+                }
+                catch (AmqpException ae)
+                {
+                    Assert.AreEqual(ErrorCode.UnauthorizedAccess, ae.Error.Condition.ToString());
+                }
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    Connection connection = await Connection.Factory.CreateAsync(new Address(address));
+                    Assert.IsTrue(false, "Exception not thrown");
+                }
+                catch (AmqpException ae)
+                {
+                    Assert.AreEqual(ErrorCode.UnauthorizedAccess, ae.Error.Condition.ToString());
+                }
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void ContainerHostListenerSaslPlainNegativeTest()
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(this.Uri.Host, this.Uri.Port);
+            var stream = new NetworkStream(socket);
+
+            stream.Write(new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 3, 1, 0, 0 }, 0, 8);
+            TestListener.FRM(stream, 0x41, 3, 0, new Symbol("PLAIN"), Encoding.ASCII.GetBytes("guest\0invalid"));
+
+            byte[] buffer = new byte[1024];
+            int total = 0;
+            int readSize = 0;
+            for (int i = 0; i < 1000; i++)
+            {
+                readSize = socket.Receive(buffer, 0, buffer.Length, SocketFlags.None);
+                if (readSize == 0)
+                {
+                    break;
+                }
+
+                total += readSize;
+            }
+
+            Assert.IsTrue(total > 0, "No response received from listener");
+            Assert.AreEqual(0, readSize, "last read should be 0 as socket should be closed");
         }
 
         [TestMethod]

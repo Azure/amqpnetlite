@@ -278,6 +278,7 @@ namespace Amqp
             ProtocolHeader myHeader = saslProfile.Start(hostname, writer);
 
             AsyncPump pump = new AsyncPump(bufferManager, transport);
+            SaslCode code = SaslCode.Auth;
 
             await pump.PumpAsync(
                 header =>
@@ -287,11 +288,16 @@ namespace Amqp
                 },
                 buffer =>
                 {
-                    SaslCode code;
                     return saslProfile.OnFrame(writer, buffer, out code);
                 });
 
             await writer.FlushAsync();
+
+            if (code != SaslCode.Ok)
+            {
+                throw new AmqpException(ErrorCode.UnauthorizedAccess,
+                    Fx.Format(SRAmqp.SaslNegoFailed, code));
+            }
 
             return (IAsyncTransport)saslProfile.UpgradeTransportInternal(transport);
         }
