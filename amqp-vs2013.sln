@@ -142,6 +142,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{D9
 		docs\articles\building_application.md = docs\articles\building_application.md
 		docs\articles\contributing.md = docs\articles\contributing.md
 		docs\articles\device_to_iothub.md = docs\articles\device_to_iothub.md
+		docs\articles\fault_tolerance.md = docs\articles\fault_tolerance.md
 		docs\articles\hello_amqp.md = docs\articles\hello_amqp.md
 		docs\articles\installation.md = docs\articles\installation.md
 		docs\articles\listener.md = docs\articles\listener.md

@@ -253,3 +253,4 @@ Thread.Sleep is a hypothetical example of having blocking calls in the MessageCa
 * [Listener](listener.md)
 * [Serialization](serialization.md)
 * [Buffer Management](buffer_management.md)
+* [Fault Tolerance](fault_tolerance.md)
