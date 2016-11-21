@@ -243,7 +243,7 @@ namespace Test.Amqp
         }
 
         [TestMethod]
-        public void InvalidSaslProtocolHeaderTest()
+        public void SaslInvalidProtocolHeaderTest()
         {
             Stream transport = null;
 
@@ -290,6 +290,37 @@ namespace Test.Amqp
                 }
                 catch (ObjectDisposedException) { }
                 catch (IOException) { }
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void SaslCloseTransportTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.SaslInit, (stream, channel, fields) =>
+            {
+                stream.Dispose();
+                return TestOutcome.Stop;
+            });
+
+            Address myAddress = new Address("amqp://guest:@" + this.address.Host + ":" + this.address.Port);
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                try
+                {
+                    Connection connection = new Connection(myAddress);
+                    Assert.IsTrue(false, "no exception was thrown 1");
+                }
+                catch (ObjectDisposedException) { }
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                try
+                {
+                    Connection connection = await Connection.Factory.CreateAsync(myAddress);
+                }
+                catch (ObjectDisposedException) { }
             }).Unwrap().GetAwaiter().GetResult();
         }
 
