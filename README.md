@@ -22,16 +22,16 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 
 |        | TLS | SASL<sup>2</sup> | Txn | Task | Serializer | Listener | WebSockets | BufferPooling |
 |:-------|:---:|:----------------:|:---:|:----:|:----------:|:--------:|:----------:|:-------------:|
-|net45   |+    |+                 |+    |+     |+           |+         |+           |+              |
-|net40   |+    |+                 |+    |+<sup>3</sup>|+    |+         |            |+              |
-|net35   |+    |+                 |     |      |+           |          |            |               |
-|netmf   |+<sup>1</sup>|+         |     |      |            |          |            |               |
-|netcf   |+    |+                 |     |      |            |          |            |               |
-|win8/wp8|+    |+                 |     |+     |            |          |            |               |
-|netcore451<sup>4</sup>|+  |+     |     |+     |            |          |            |               |
-|wpa81   |+    |+                 |     |+     |            |          |            |               |
-|netstandard1.3|+    |+           |     |+     |+           |+         |+<sup>5</sup>|+             |
-|mono/Xamarin<sup>6</sup>    |+    |+     |     |+     |+           |+         |+           |+             |
+|net45   |+|+|+|+|+|+|+|+|
+|net40   |+|+|+|+<sup>3</sup>|+|+| |+|
+|net35   |+|+| | |+| | | |
+|netmf   |+<sup>1</sup>|+| | | | | | |
+|netcf   |+|+| | | | | | |
+|win8/wp8|+|+| |+| | | | |
+|netcore451<sup>4</sup>|+|+| |+| | | | |
+|wpa81   |+|+| |+| | | | |
+|netstandard1.3|+|+| |+|+|+|+<sup>5</sup>|+|
+|mono/Xamarin<sup>6</sup>|+|+| |+|+|+|+|+|
 
 1. requires a TLS-capable device.
 2. only SASL PLAIN, EXTERNAL, and ANONYMOUS are currently supported.
