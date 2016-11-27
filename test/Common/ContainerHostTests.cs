@@ -972,7 +972,7 @@ namespace Test.Amqp
         }
 #endif
 
-        static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
+        public static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
         {
             X509Store store = new X509Store(storeName, storeLocation);
             store.Open(OpenFlags.OpenExistingOnly);

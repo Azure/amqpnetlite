@@ -16,11 +16,20 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
+using Amqp.Listener;
+using Amqp.Sasl;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Trace = Amqp.Trace;
+using TraceLevel = Amqp.TraceLevel;
 
 namespace Test.Amqp
 {
@@ -68,6 +77,81 @@ namespace Test.Amqp
             }
 
             Assert.AreEqual(total, passed, string.Format("Not all tests passed {0}/{1}", passed, total));
+        }
+
+        [TestMethod]
+        public async Task WebSocketSslMutalAuthTest()
+        {
+            string testName = "WebSocketSslMutalAuthTest";
+            string listenAddress = "wss://localhost:18081/" + testName + "/";
+            Uri uri = new Uri(listenAddress);
+
+            X509Certificate2 cert = ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+
+            string output;
+            int code = Exec("netsh.exe", string.Format("http show sslcert hostnameport={0}:{1}", uri.Host, uri.Port), out output);
+            if (code != 0)
+            {
+                string args = string.Format("http add sslcert hostnameport={0}:{1} certhash={2} certstorename=MY appid={{{3}}} clientcertnegotiation=enable",
+                    uri.Host, uri.Port, cert.Thumbprint, Guid.NewGuid());
+                code = Exec("netsh.exe", args, out output);
+                Assert.AreEqual(0, code, "failed to add ssl cert: " + output);
+            }
+
+            X509Certificate serviceCert = null;
+            X509Certificate clientCert = null;
+            ListenerLink listenerLink = null;
+
+            var linkProcessor = new TestLinkProcessor() { OnLinkAttached = c => listenerLink = c };
+            var host = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            host.Listeners[0].SASL.EnableExternalMechanism = true;
+            host.Listeners[0].SSL.ClientCertificateRequired = true;
+            host.Listeners[0].SSL.CheckCertificateRevocation = true;
+            host.Listeners[0].SSL.RemoteCertificateValidationCallback = (a, b, c, d) => { clientCert = b; return true; };
+            host.RegisterLinkProcessor(linkProcessor);
+            host.Open();
+
+            try
+            {
+                ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => { serviceCert = b; return true; };
+                var wssFactory = new WebSocketTransportFactory();
+                wssFactory.Options = o =>
+                {
+                    o.ClientCertificates.Add(ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, uri.Host));
+                };
+
+                ConnectionFactory connectionFactory = new ConnectionFactory(new TransportProvider[] { wssFactory });
+                connectionFactory.SASL.Profile = SaslProfile.External;
+                Connection connection = await connectionFactory.CreateAsync(new Address(listenAddress));
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });                
+                await connection.CloseAsync();
+
+                Assert.IsTrue(serviceCert != null, "service cert not received");
+                Assert.IsTrue(clientCert != null, "client cert not received");
+                Assert.IsTrue(listenerLink != null, "link not attached");
+
+                IPrincipal principal = ((ListenerConnection)listenerLink.Session.Connection).Principal;
+                Assert.IsTrue(principal != null, "connection pricipal is null");
+                Assert.IsTrue(principal.Identity is X509Identity, "identify should be established by client cert");
+            }
+            finally
+            {
+                host.Close();
+            }
+        }
+
+        static int Exec(string cmd, string args, out string output)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo(cmd, args);
+            psi.RedirectStandardOutput = true;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+            psi.UseShellExecute = false;
+            Process process = Process.Start(psi);
+            process.WaitForExit();
+            output = process.StandardOutput.ReadToEnd();
+            return process.ExitCode;
         }
 #endif
 
