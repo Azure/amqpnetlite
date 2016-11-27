@@ -145,11 +145,11 @@ namespace Amqp.Listener
 #if NETFX
             else if (this.address.Scheme.Equals(WebSocketTransport.WebSockets, StringComparison.OrdinalIgnoreCase))
             {
-                this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, null);
+                this.listener = new WebSocketTransportListener(this, "HTTP", this.address.Host, address.Port, address.Path);
             }
             else if (this.address.Scheme.Equals(WebSocketTransport.SecureWebSockets, StringComparison.OrdinalIgnoreCase))
             {
-                this.listener = new WebSocketTransportListener(this, this.address.Host, address.Port, address.Path, this.GetServiceCertificate());
+                this.listener = new WebSocketTransportListener(this, "HTTPS", this.address.Host, address.Port, address.Path);
             }
 #endif
             else
@@ -711,12 +711,12 @@ namespace Amqp.Listener
             readonly ConnectionListener listener;
             HttpListener httpListener;
 
-            public WebSocketTransportListener(ConnectionListener listener, string host, int port, string path, X509Certificate2 certificate)
+            public WebSocketTransportListener(ConnectionListener listener, string scheme, string host, int port, string path)
             {
                 this.listener = listener;
 
                 // if certificate is set, it must be bound to host:port by netsh http command
-                string address = string.Format("{0}://{1}:{2}{3}", certificate == null ? "http" : "https", host, port, path);
+                string address = string.Format("{0}://{1}:{2}{3}", scheme, host, port, path);
                 this.httpListener = new HttpListener();
                 this.httpListener.Prefixes.Add(address);
             }
@@ -736,21 +736,72 @@ namespace Amqp.Listener
 
             async Task HandleListenerContextAsync(HttpListenerContext context)
             {
-                WebSocket webSocket = null;
                 try
                 {
-                    var wsContext = await context.AcceptWebSocketAsync(WebSocketTransport.WebSocketSubProtocol);
-                    var wsTransport = new ListenerWebSocketTransport(wsContext);
-                    await this.listener.HandleTransportAsync(wsTransport);
-                }
-                catch(Exception exception)
-                {
-                    Trace.WriteLine(TraceLevel.Error, exception.ToString());
-                    if (webSocket != null)
+                    int status = await this.CreateTransportAsync(context);
+                    if (status != 0)
                     {
-                        webSocket.Abort();
+                        context.Response.StatusCode = status;
+                        context.Response.OutputStream.Dispose();
                     }
                 }
+                catch (Exception exception)
+                {
+                    Trace.WriteLine(TraceLevel.Error, exception.ToString());
+
+                    context.Response.StatusCode = 500;
+                    context.Response.OutputStream.Dispose();
+                }
+            }
+
+            async Task<int> CreateTransportAsync(HttpListenerContext context)
+            {
+                X509Certificate2 clientCertificate = null;
+
+                if (this.listener.sslSettings != null && this.listener.sslSettings.ClientCertificateRequired)
+                {
+                    clientCertificate = await context.Request.GetClientCertificateAsync(); ;
+                    if (clientCertificate == null)
+                    {
+                        return 403;
+                    }
+
+                    if (this.listener.sslSettings.RemoteCertificateValidationCallback != null)
+                    {
+                        SslPolicyErrors sslError = SslPolicyErrors.None;
+                        X509Chain chain = new X509Chain();
+                        chain.ChainPolicy.RevocationMode = this.listener.sslSettings.CheckCertificateRevocation ?
+                            X509RevocationMode.Online : X509RevocationMode.NoCheck;
+                        chain.Build(clientCertificate);
+                        if (chain.ChainStatus.Length > 0)
+                        {
+                            sslError = SslPolicyErrors.RemoteCertificateChainErrors;
+                        }
+
+                        bool success = this.listener.sslSettings.RemoteCertificateValidationCallback(
+                            this, clientCertificate, chain, sslError);
+                        if (!success)
+                        {
+                            return 403;
+                        }
+                    }
+                    else if (context.Request.ClientCertificateError != 0)
+                    {
+                        return 403;
+                    }
+                }
+
+                IPrincipal principal = context.User;
+                if (principal == null && clientCertificate != null)
+                {
+                    principal = new GenericPrincipal(new X509Identity(clientCertificate), new string[0]);
+                }
+
+                var wsContext = await context.AcceptWebSocketAsync(WebSocketTransport.WebSocketSubProtocol);
+                var wsTransport = new ListenerWebSocketTransport(wsContext.WebSocket, principal);
+                await this.listener.HandleTransportAsync(wsTransport);
+
+                return 0;
             }
 
             async Task AcceptListenerContextLoop()
@@ -773,10 +824,10 @@ namespace Amqp.Listener
 
         class ListenerWebSocketTransport : WebSocketTransport, IAuthenticated
         {
-            public ListenerWebSocketTransport(HttpListenerWebSocketContext context)
-                : base(context.WebSocket)
+            public ListenerWebSocketTransport(WebSocket webSocket, IPrincipal principal)
+                : base(webSocket)
             {
-                this.Principal = context.User;
+                this.Principal = principal;
             }
 
             public IPrincipal Principal
