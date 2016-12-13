@@ -18,7 +18,34 @@ namespace Test.Amqp
 
         public static void AreEqual(object expected, object actual, string message = null)
         {
-            if (!((expected == null && actual == null) || expected.Equals(actual)))
+            bool areEqual = false;
+            if (expected == null || actual == null)
+            {
+                areEqual = expected == actual;
+            }
+            else if (expected is byte[] && actual is byte[])
+            {
+                byte[] a = (byte[])expected;
+                byte[] b = (byte[])actual;
+                if (a.Length == b.Length)
+                {
+                    areEqual = true;
+                    for (int i = 0; i < a.Length; i++)
+                    {
+                        if (a[i] != b[i])
+                        {
+                            areEqual = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                areEqual = expected.Equals(actual);
+            }
+
+            if (!areEqual)
             {
                 throw new Exception(message ?? "Not equal. Expected: " + expected + ", Actual: " + (actual ?? "<NULL>"));
             }
