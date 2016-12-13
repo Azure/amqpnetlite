@@ -409,6 +409,59 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_MessageId()
+        {
+            string testName = "MessageId";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            object[] idList = new object[] { null, "string-id", 20000UL, Guid.NewGuid(), Encoding.UTF8.GetBytes("binary-id") };
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            for (int i = 0; i < idList.Length; ++i)
+            {
+                Message message = new Message() { Properties = new Properties() };
+                message.Properties.SetMessageId(idList[i]);
+                message.Properties.SetCorrelationId(idList[(i + 2) % idList.Length]);
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            for (int i = 0; i < idList.Length; ++i)
+            {
+                Message message = receiver.Receive();
+                receiver.Accept(message);
+                Assert.AreEqual(idList[i], message.Properties.GetMessageId());
+                Assert.AreEqual(idList[(i + 2) % idList.Length], message.Properties.GetCorrelationId());
+            }
+
+            connection.Close();
+
+            // invalid types
+            Properties prop = new Properties();
+            try
+            {
+                prop.SetMessageId(0);
+                Assert.IsTrue(false, "not a valid identifier type");
+            }
+            catch (AmqpException ae)
+            {
+                Assert.AreEqual(ErrorCode.NotAllowed, (string)ae.Error.Condition);
+            }
+
+            try
+            {
+                prop.SetCorrelationId(new Symbol("symbol"));
+                Assert.IsTrue(false, "not a valid identifier type");
+            }
+            catch (AmqpException ae)
+            {
+                Assert.AreEqual(ErrorCode.NotAllowed, (string)ae.Error.Condition);
+            }
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ReceiveWaiter()
         {
             string testName = "ReceiveWaiter";

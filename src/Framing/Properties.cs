@@ -36,6 +36,11 @@ namespace Amqp.Framing
         /// <summary>
         /// Gets or sets the message-id field.
         /// </summary>
+        /// <remarks>
+        /// The default message identifier type assumed by the library is string.
+        /// If the application needs to process other types (ulong, uuid, or binary),
+        /// it must use the Get/SetMessageId methods.
+        /// </remarks>
         public string MessageId
         {
             get { return (string)this.Fields[0]; }
@@ -81,6 +86,11 @@ namespace Amqp.Framing
         /// <summary>
         /// Gets or sets the correlation-id field.
         /// </summary>
+        /// <remarks>
+        /// The default correlation identifier type assumed by the library is string.
+        /// If the application needs to process other types (ulong, uuid, or binary),
+        /// it must use the Get/SetCorrelationId methods.
+        /// </remarks>
         public string CorrelationId
         {
             get { return (string)this.Fields[5]; }
@@ -150,6 +160,46 @@ namespace Amqp.Framing
             set { this.Fields[12] = value; }
         }
 
+        /// <summary>
+        /// Gets the message identifier.
+        /// </summary>
+        /// <returns>An object represending the message identifier. null if
+        /// it is not set.</returns>
+        public object GetMessageId()
+        {
+            return ValidateIdentifier(this.Fields[0]);
+        }
+
+        /// <summary>
+        /// Sets the message identifier. If not null, the object type must be
+        /// string, Guid, ulong or byte[].
+        /// </summary>
+        /// <param name="id">The identifier object to set.</param>
+        public void SetMessageId(object id)
+        {
+            this.Fields[0] = ValidateIdentifier(id);
+        }
+
+        /// <summary>
+        /// Gets the correlation identifier.
+        /// </summary>
+        /// <returns>An object represending the message identifier. null if
+        /// it is not set.</returns>
+        public object GetCorrelationId()
+        {
+            return ValidateIdentifier(this.Fields[5]);
+        }
+
+        /// <summary>
+        /// Sets the correlation identifier. If not null, the object type must be
+        /// string, Guid, ulong or byte[].
+        /// </summary>
+        /// <param name="id">The identifier object to set.</param>
+        public void SetCorrelationId(object id)
+        {
+            this.Fields[5] = ValidateIdentifier(id);
+        }
+
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current properties object.
@@ -163,5 +213,15 @@ namespace Amqp.Framing
                 this.Fields);
         }
 #endif
+
+        static object ValidateIdentifier(object id)
+        {
+            if (id != null && !(id is string || id is ulong || id is Guid || id is byte[]))
+            {
+                throw new AmqpException(ErrorCode.NotAllowed, id.GetType().FullName);
+            }
+
+            return id;
+        }
     }
 }
