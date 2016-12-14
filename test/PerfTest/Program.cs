@@ -56,6 +56,14 @@ namespace PerfTest
                 {
                     role = new Receiver(perfArgs);
                 }
+                else if (string.Equals("request", perfArgs.Operation, StringComparison.OrdinalIgnoreCase))
+                {
+                    role = new Requestor(perfArgs);
+                }
+                else if (string.Equals("reply", perfArgs.Operation, StringComparison.OrdinalIgnoreCase))
+                {
+                    role = new ReplyListener(perfArgs);
+                }
                 else if (string.Equals("listen", perfArgs.Operation, StringComparison.OrdinalIgnoreCase))
                 {
                     role = new Listener(perfArgs);
@@ -79,6 +87,8 @@ namespace PerfTest
             Console.WriteLine(System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe send|receive|listen [arguments]");
             Console.WriteLine("  send   \tsend messages to remote peer");
             Console.WriteLine("  receive\treceive messages from remote peer");
+            Console.WriteLine("  request\tsend requests to a remote peer");
+            Console.WriteLine("  reply  \tstart a request processor and send replies");
             Console.WriteLine("  listen \tstart a listener and accept messages from remote peer");
             Console.WriteLine("\r\narguments:");
             typeof(PerfArguments).PrintArguments();
@@ -88,10 +98,10 @@ namespace PerfTest
         {
             protected IBufferManager bufferManager;
             PerfArguments perfArgs;
-            int count;
-            int started;
-            int completed;
-            int progress;
+            long count;
+            long started;
+            long completed;
+            long progress;
             ManualResetEvent completedEvent;
             System.Diagnostics.Stopwatch stopwatch;
 
@@ -131,7 +141,7 @@ namespace PerfTest
 
             protected bool OnComplete()
             {
-                int done = Interlocked.Increment(ref this.completed);
+                long done = Interlocked.Increment(ref this.completed);
                 if (this.progress > 0 && done % this.progress == 0)
                 {
                     long throughput;
@@ -319,6 +329,131 @@ namespace PerfTest
             }
         }
 
+        class Requestor : Role
+        {
+            byte[] buffer;
+
+            public Requestor(PerfArguments args)
+                : base(args)
+            {
+                if (args.BufferPooling)
+                {
+                    this.buffer = new byte[args.BodySize];  // a simulation of buffer pooling
+                }
+            }
+
+            public override void Run()
+            {
+                Task[] tasks = new Task[this.Args.Connections];
+                for (int i = 0; i < this.Args.Connections; i++)
+                {
+                    tasks[i] = Task.Run(() => this.RunOnce(i));
+                }
+
+                Task.WhenAll(tasks).Wait();
+            }
+
+            void SendRequest(SenderLink sender, string replyTo)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { ReplyTo = replyTo };
+                message.Properties.SetCorrelationId(Guid.NewGuid());
+                message.BodySection = new Data() { Binary = this.GetBuffer() };
+                sender.Send(message, null, null);
+            }
+
+            byte[] GetBuffer()
+            {
+                return this.Args.BufferPooling ? this.buffer : new byte[this.Args.BodySize];
+            }
+
+            void RunOnce(int id)
+            {
+                Connection connection = this.CreateConnection(new Address(this.Args.Address));
+                connection.Closed += (o, e) => this.SetComplete();
+                Session session = new Session(connection);
+                string clientId = "request-" + Guid.NewGuid().ToString().Substring(0, 6);
+                Attach sendAttach = new Attach()
+                {
+                    Source = new Source(),
+                    Target = new Target() { Address = this.Args.Node },
+                    SndSettleMode = SenderSettleMode.Settled
+                };
+                Attach recvAttach = new Attach()
+                {
+                    Source = new Source() { Address = this.Args.Node },
+                    Target = new Target() { Address = clientId },
+                    SndSettleMode = SenderSettleMode.Settled
+                };
+                SenderLink sender = new SenderLink(session, "s-" + clientId, sendAttach, null);
+                ReceiverLink receiver = new ReceiverLink(session, "r-" + clientId, recvAttach, null);
+                receiver.Start(
+                    50000,
+                    (r, m) =>
+                    {
+                        r.Accept(m);
+                        m.Dispose();
+                        if (this.OnComplete())
+                        {
+                            this.SendRequest(sender, clientId);
+                        }
+                    });
+
+                for (int i = 1; i <= this.Args.Queue; i++)
+                {
+                    if (this.OnStart())
+                    {
+                        this.SendRequest(sender, clientId);
+                    }
+                }
+
+                this.Wait();
+
+                connection.Close();
+            }
+        }
+
+        class ReplyListener : Role, IRequestProcessor
+        {
+            public ReplyListener(PerfArguments args)
+                : base(args)
+            {
+            }
+
+            public override void Run()
+            {
+                Uri addressUri = new Uri(this.Args.Address);
+                X509Certificate2 certificate = TestExtensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
+                ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
+                foreach (var listener in host.Listeners)
+                {
+                    listener.BufferManager = this.bufferManager;
+                    listener.AMQP.MaxFrameSize = this.Args.MaxFrameSize;
+                }
+
+                host.Open();
+                Console.WriteLine("Container host is listening on {0}:{1}", addressUri.Host, addressUri.Port);
+
+                host.RegisterRequestProcessor(this.Args.Node, this);
+                Console.WriteLine("Message processor is registered on {0}", this.Args.Node);
+
+                this.Wait();
+
+                host.Close();
+            }
+
+            int IRequestProcessor.Credit { get { return this.Args.Queue; } }
+
+            void IRequestProcessor.Process(RequestContext requestContext)
+            {
+                Message response = new Message("request processed");
+                response.ApplicationProperties = new ApplicationProperties();
+                response.ApplicationProperties["status-code"] = 200;
+                requestContext.Complete(response);
+                this.OnComplete();
+            }
+        }
+
         class Listener : Role, IMessageProcessor
         {
             int credit;
@@ -399,7 +534,7 @@ namespace PerfTest
             }
 
             [Argument(Name = "count", Shortcut = "c", Description = "total number of messages to send or receive (0: infinite)", Default = 100000)]
-            public int Count
+            public long Count
             {
                 get;
                 protected set;
@@ -433,7 +568,7 @@ namespace PerfTest
                 protected set;
             }
 
-            [Argument(Name = "progess", Shortcut = "p", Description = "report progess for every this number of messages", Default = 1000)]
+            [Argument(Name = "progress", Shortcut = "p", Description = "report progress for every this number of messages", Default = 1000)]
             public int Progress
             {
                 get;

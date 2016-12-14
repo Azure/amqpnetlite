@@ -84,6 +84,10 @@ namespace Test.Common
             {
                 obj = int.Parse(value);
             }
+            else if (type == typeof(long))
+            {
+                obj = long.Parse(value);
+            }
             else if (type == typeof(bool))
             {
                 return true;

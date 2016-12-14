@@ -23,6 +23,11 @@ namespace Amqp.Listener
     public interface IRequestProcessor
     {
         /// <summary>
+        /// Gets the link credit to issue to the sender client.
+        /// </summary>
+        int Credit { get; }
+
+        /// <summary>
         /// Processes a received request.
         /// </summary>
         /// <param name="requestContext">Context of the received request.</param>

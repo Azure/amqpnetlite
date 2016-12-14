@@ -1038,6 +1038,11 @@ namespace Test.Amqp
         {
         }
 
+        public int Credit
+        {
+            get { return 100; }
+        }
+
         public int TotalCount
         {
             get { return this.totalCount; }

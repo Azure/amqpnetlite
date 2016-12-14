@@ -528,7 +528,7 @@ namespace Amqp.Listener
                 }
                 else
                 {
-                    link.InitializeReceiver(300, dispatchRequest, this);
+                    link.InitializeReceiver((uint)this.processor.Credit, dispatchRequest, this);
                     link.SafeAddClosed((s, e) => OnLinkClosed(s, e));
                     lock (this.requestLinks)
                     {

@@ -56,6 +56,11 @@ namespace PeerToPeer.Server
         {
             int offset;
 
+            int IRequestProcessor.Credit
+            {
+                get { return 100; }
+            }
+
             void IRequestProcessor.Process(RequestContext requestContext)
             {
                 Console.WriteLine("Received a request " + requestContext.Message.Body);

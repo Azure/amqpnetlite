@@ -53,6 +53,7 @@ namespace Amqp.Listener
 
             response.Properties.CorrelationId = this.Message.Properties.MessageId;
             this.responseLink.SendMessage(response);
+            this.Message.Dispose();
             this.State = ContextState.Completed;
         }
 
