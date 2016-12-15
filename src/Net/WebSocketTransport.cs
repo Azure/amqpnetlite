@@ -30,7 +30,7 @@ namespace Amqp
     /// </summary>
     public class WebSocketTransport : IAsyncTransport
     {
-        internal const string WebSocketSubProtocol = "AMQPWSB10";
+        internal const string WebSocketSubProtocol = "amqp";
         internal const string WebSockets = "WS";
         internal const string SecureWebSockets = "WSS";
         internal const int WebSocketsPort = 80;

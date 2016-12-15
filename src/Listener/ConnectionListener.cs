@@ -741,7 +741,8 @@ namespace Amqp.Listener
                     int status = await this.CreateTransportAsync(context);
                     if (status != 0)
                     {
-                        context.Response.StatusCode = status;
+                        Trace.WriteLine(TraceLevel.Error, "Failed to create ws transport ", status);
+                        context.Response.StatusCode = status / 100;
                         context.Response.OutputStream.Dispose();
                     }
                 }
@@ -763,7 +764,7 @@ namespace Amqp.Listener
                     clientCertificate = await context.Request.GetClientCertificateAsync(); ;
                     if (clientCertificate == null)
                     {
-                        return 403;
+                        return 40300;
                     }
 
                     if (this.listener.sslSettings.RemoteCertificateValidationCallback != null)
@@ -782,12 +783,12 @@ namespace Amqp.Listener
                             this, clientCertificate, chain, sslError);
                         if (!success)
                         {
-                            return 403;
+                            return 40301;
                         }
                     }
                     else if (context.Request.ClientCertificateError != 0)
                     {
-                        return 403;
+                        return 40302;
                     }
                 }
 
@@ -797,7 +798,25 @@ namespace Amqp.Listener
                     principal = new GenericPrincipal(new X509Identity(clientCertificate), new string[0]);
                 }
 
-                var wsContext = await context.AcceptWebSocketAsync(WebSocketTransport.WebSocketSubProtocol);
+                string subProtocol = null;
+                string[] subProtocols = context.Request.Headers.GetValues("Sec-WebSocket-Protocol");
+                for (int i = 0; i < subProtocols.Length; i++)
+                {
+                    if (subProtocols[i].Equals(WebSocketTransport.WebSocketSubProtocol) ||
+                        subProtocols[i].Equals("AMQPWSB10")     // defined by the previous draft
+                       )
+                    {
+                        subProtocol = subProtocols[i];
+                        break;
+                    }
+                }
+
+                if (subProtocol == null)
+                {
+                    return 40003;
+                }
+
+                var wsContext = await context.AcceptWebSocketAsync(subProtocol);
                 var wsTransport = new ListenerWebSocketTransport(wsContext.WebSocket, principal);
                 await this.listener.HandleTransportAsync(wsTransport);
 
