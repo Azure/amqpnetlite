@@ -178,16 +178,16 @@ namespace Amqp.Listener
         {
             if (error != null)
             {
-                this.SendAttach(!attach.Role, attach.InitialDeliveryCount, new Attach() { Target = null, Source = null });
+                this.SendAttach(this.role, attach.InitialDeliveryCount, new Attach() { Target = null, Source = null });
             }
             else
             {
-                if (!role)
+                if (!this.role)
                 {
                     this.deliveryCount = attach.InitialDeliveryCount;
                 }
 
-                this.SendAttach(!attach.Role, attach.InitialDeliveryCount, new Attach() { Target = attach.Target, Source = attach.Source });
+                this.SendAttach(this.role, attach.InitialDeliveryCount, attach);
             }
 
             base.OnAttach(attach.Handle, attach);
