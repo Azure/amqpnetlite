@@ -86,11 +86,11 @@
     <Compile Include="LinkedList.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="NetCF39\Fx.cs" />
-    <Compile Include="NetCF39\List.cs" />
-    <Compile Include="NetCF39\Map.cs" />
     <Compile Include="NetCF39\SRAmqp.Designer.cs" />
     <Compile Include="NetCF39\SslSocket.cs" />
     <Compile Include="NetCF39\TcpTransport.cs" />
+    <Compile Include="NetMF\List.cs" />
+    <Compile Include="NetMF\Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Version.cs" />
     <Compile Include="ReceiverLink.cs" />

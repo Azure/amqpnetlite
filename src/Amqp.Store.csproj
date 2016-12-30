@@ -172,6 +172,8 @@
     <Compile Include="Net\AsyncPump.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
     <Compile Include="Net\IBufferManager.cs" />
+    <Compile Include="Net\List.cs" />
+    <Compile Include="Net\Map.cs" />
     <Compile Include="Net\TaskExtensions.cs" />
     <Compile Include="Net\TransportWriter.cs" />
     <Compile Include="Net\WrappedByteBuffer.cs" />
@@ -208,8 +210,6 @@
     <Compile Include="WinRT\ConnectionFactory.cs" />
     <Compile Include="WinRT\Timer.cs" />
     <Compile Include="WinRT\Fx.cs" />
-    <Compile Include="WinRT\List.cs" />
-    <Compile Include="WinRT\Map.cs" />
     <Compile Include="WinRT\SRAmqp.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

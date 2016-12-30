@@ -17,12 +17,12 @@
 
 namespace Amqp.Types
 {
-    using System.Collections;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A List class is an AMQP list.
     /// </summary>
-    public class List : ArrayList
+    public class List : List<object>
     {
     }
 }

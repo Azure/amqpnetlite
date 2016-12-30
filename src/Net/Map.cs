@@ -17,16 +17,18 @@
 
 namespace Amqp.Types
 {
-    using System.Collections;
+    using System.Collections.Generic;
 
     /// <summary>
     /// A Map class is an AMQP map.
     /// </summary>
-    public partial class Map : Hashtable
+    public partial class Map : Dictionary<object, object>
     {
         object GetValue(object key)
         {
-            return base[key];
+            object value;
+            this.TryGetValue(key, out value);
+            return value;
         }
     }
 }
