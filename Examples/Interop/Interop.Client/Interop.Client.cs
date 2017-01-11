@@ -104,15 +104,15 @@ namespace Examples.Interop
                             }
                             else
                             {
-                                Console.WriteLine("Receiver timeout receiving response {0}", i);
-                                break;
+                                throw new ApplicationException(
+                                    String.Format("Receiver timeout receiving response {0}", i));
                             }
                         }
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Receiver attach timeout");
+                    throw new ApplicationException("Receiver attach timeout");
                 }
                 receiver.Close();
                 sender.Close();
@@ -122,7 +122,7 @@ namespace Examples.Interop
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception {0}.", e);
+                Console.Error.WriteLine("Exception {0}.", e);
                 if (null != connection)
                 {
                     connection.Close();
