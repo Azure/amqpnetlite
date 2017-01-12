@@ -83,7 +83,7 @@ namespace Interop.Server
                         }
                         catch (Exception exception)
                         {
-                            Console.WriteLine("Error waiting for response to be sent: {0} exception {1}",
+                            Console.Error.WriteLine("Error waiting for response to be sent: {0} exception {1}",
                                 GetContent(response), exception.Message);
                             break;
                         }
@@ -100,7 +100,7 @@ namespace Interop.Server
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception {0}.", e);
+                Console.Error.WriteLine("Exception {0}.", e);
                 if (null != connection)
                 {
                     connection.Close();

@@ -73,7 +73,7 @@ namespace Examples.Interop {
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception {0}.", e);
+                Console.Error.WriteLine("Exception {0}.", e);
                 if (null != connection)
                     connection.Close();
                 exitCode = ERROR_OTHER;
