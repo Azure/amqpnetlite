@@ -326,7 +326,17 @@ namespace Amqp
                 this.SetCredit(DefaultCredit, true);
             }
 
-            return timeout > 0 ? waiter.Wait(timeout) : null;
+            Message message = null;
+            if (timeout > 0)
+            {
+                message = waiter.Wait(timeout);
+                if (this.Error != null)
+                {
+                    throw new AmqpException(this.Error);
+                }
+            }
+
+            return message;
         }
         
         void DisposeMessage(Message message, Outcome outcome)

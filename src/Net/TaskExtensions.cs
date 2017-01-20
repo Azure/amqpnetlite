@@ -251,19 +251,23 @@ namespace Amqp
         public static Task<Message> ReceiveAsync(this ReceiverLink receiver, int timeout = 60000)
         {
             TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();
-            try
-            {
-                var message = receiver.ReceiveInternal(
-                    (l, m) => tcs.SetResult(m),
-                    timeout);
-                if (message != null)
+            var message = receiver.ReceiveInternal(
+                (l, m) =>
                 {
-                    tcs.SetResult(message);
-                }
-            }
-            catch (Exception exception)
+                    if (l.Error != null)
+                    {
+                        tcs.TrySetException(new AmqpException(l.Error));
+                    }
+                    else
+                    {
+                        tcs.TrySetResult(m);
+                    }
+                },
+                timeout);
+
+            if (message != null)
             {
-                tcs.SetException(exception);
+                tcs.TrySetResult(message);
             }
 
             return tcs.Task;

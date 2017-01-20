@@ -214,7 +214,7 @@ namespace Listener.IContainer
             {
                 if (!this.queues.TryGetValue(address, out queue))
                 {
-                    if (dynamic || this.implicitQueue)
+                    if (dynamic || (this.implicitQueue && !link.Name.StartsWith("$explicit:")))
                     {
                         queue = new TestQueue(this);
                         this.queues.Add(address, queue);

@@ -15,10 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
+using Amqp.Types;
 #if NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 #else
@@ -68,6 +70,48 @@ namespace Test.Amqp
             await sender.CloseAsync();
             await receiver.CloseAsync();
             await session.CloseAsync();
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task SendToNonExistingAsync()
+        {
+            string testName = "SendToNonExistingAsync";
+
+            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "$explicit:sender-" + testName, Guid.NewGuid().ToString());
+            try
+            {
+                await sender.SendAsync(new Message("test"));
+                Assert.IsTrue(false, "Send should fail with not-found error");
+            }
+            catch (AmqpException exception)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.NotFound, exception.Error.Condition);
+            }
+
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task ReceiveFromNonExistingAsync()
+        {
+            string testName = "ReceiveFromNonExistingAsync";
+
+            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "$explicit:receiver-" + testName, Guid.NewGuid().ToString());
+            try
+            {
+                await receiver.ReceiveAsync();
+                Assert.IsTrue(false, "Receive should fail with not-found error");
+            }
+            catch (AmqpException exception)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.NotFound, exception.Error.Condition);
+            }
+
             await connection.CloseAsync();
         }
 #endif

@@ -785,6 +785,58 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_SendToNonExistingNode()
+        {
+            string testName = "SendToNonExistingNode";
+
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "$explicit:sender-" + testName, Guid.NewGuid().ToString());
+
+            try
+            {
+                sender.Send(new Message("test"));
+                Assert.IsTrue(false, "Send does not fail");
+            }
+            catch (AmqpException exception)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.NotFound, exception.Error.Condition);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
+        public void TestMethod_ReceiveFromNonExistingNode()
+        {
+            string testName = "ReceiveFromNonExistingNode";
+
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "$explicit:receiver-" + testName, Guid.NewGuid().ToString());
+
+            try
+            {
+                receiver.Receive();
+                Assert.IsTrue(false, "receive does not fail");
+            }
+            catch (AmqpException exception)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.NotFound, exception.Error.Condition);
+            }
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ConnectionCreateClose()
         {
             Connection connection = new Connection(testTarget.Address);
