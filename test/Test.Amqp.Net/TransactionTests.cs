@@ -122,7 +122,7 @@ namespace Test.Amqp
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", messages[i].Properties.MessageId);
             }
 
-            // commit harf
+            // commit half
             using (var ts = new TransactionScope())
             {
                 for (int i = 0; i < nMsgs / 2; i++)

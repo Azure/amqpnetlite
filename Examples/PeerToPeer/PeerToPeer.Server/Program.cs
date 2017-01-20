@@ -46,7 +46,7 @@ namespace PeerToPeer.Server
             host.RegisterRequestProcessor(requestProcessor, new RequestProcessor());
             Console.WriteLine("Request processor is registered on {0}", requestProcessor);
 
-            Console.WriteLine("Press enter key to exist...");
+            Console.WriteLine("Press enter key to exit...");
             Console.ReadLine();
 
             host.Close();

@@ -51,7 +51,7 @@ namespace PeerToPeer.Server
             var client = new Client(address);
             var task = Task.Run(() => client.Run());
 
-            Console.WriteLine("Press enter key to exist...");
+            Console.WriteLine("Press enter key to exit...");
             Console.ReadLine();
 
             client.Close();
