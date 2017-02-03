@@ -314,6 +314,7 @@ namespace Amqp.Listener
             }
             catch (Exception exception)
             {
+                Trace.WriteLine(TraceLevel.Error, "Exception occurred attaching link: {0}", exception);
                 error = new Error() { Condition = ErrorCode.InternalError, Description = exception.Message };
             }
 
