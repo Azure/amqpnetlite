@@ -3,6 +3,7 @@ This guide shows you how to exchange messages between two programs through a bro
 ## Prerequisites
 First you need an AMQP 1.0 compliant broker. You can use any of the following:
 * [Apache ActiveMQ](http://activemq.apache.org/)
+* [Apache ActiveMQ Artemis](http://activemq.apache.org/artemis)
 * [Microsoft Azure Service Bus](https://azure.microsoft.com/en-us/services/service-bus/)
 * [Apache Qpid Java Broker](http://qpid.apache.org/components/java-broker/)
 
