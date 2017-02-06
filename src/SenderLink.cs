@@ -260,7 +260,7 @@ namespace Amqp
             {
                 lock (this.ThisLock)
                 {
-                    if (this.writing)
+                    if (this.writing && !this.Session.IsClosed)
                     {
                         // wait until write finishes (either all deliveries are handed over to session or no credit is available)
                     }

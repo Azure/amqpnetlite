@@ -120,6 +120,7 @@ namespace Amqp
 
         internal void Abort(Error error)
         {
+            this.CloseCalled = true;
             this.Error = error;
 
             for (int i = 0; i < this.localLinks.Length; i++)
