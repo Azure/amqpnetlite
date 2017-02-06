@@ -108,6 +108,7 @@ namespace Amqp
 
         internal void Abort(Error error)
         {
+            this.CloseCalled = true;
             this.Error = error;
 
             this.OnAbort(error);
