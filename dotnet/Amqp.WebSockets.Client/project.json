@@ -17,7 +17,7 @@
     },
 
     "dependencies": {
-        "Amqp": "1.2.2"
+        "Amqp": "1.2.3"
     },
 
     "configurations": {
