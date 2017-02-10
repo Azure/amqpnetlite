@@ -77,7 +77,7 @@ namespace Test.Amqp
         {
             string testName = "SendToNonExistingAsync";
 
-            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
+            Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "$explicit:sender-" + testName, Guid.NewGuid().ToString());
             try
@@ -98,7 +98,7 @@ namespace Test.Amqp
         {
             string testName = "ReceiveFromNonExistingAsync";
 
-            Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
+            Connection connection = await Connection.Factory.CreateAsync(this.address);
             Session session = new Session(connection);
             ReceiverLink receiver = new ReceiverLink(session, "$explicit:receiver-" + testName, Guid.NewGuid().ToString());
             try
@@ -113,7 +113,6 @@ namespace Test.Amqp
 
             await connection.CloseAsync();
         }
-#endif
 
 #if NETFX40
         // 40 cannot handle TestMethod with Task return type
@@ -155,6 +154,7 @@ namespace Test.Amqp
             await session.CloseAsync();
             await connection.CloseAsync();
         }
+#endif
 
 #if NETFX
         [TestMethod]

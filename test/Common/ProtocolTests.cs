@@ -460,7 +460,7 @@ namespace Test.Amqp
                 Assert.IsTrue(completed == tcs.Task, "Connection not closed");
                 Assert.AreEqual(ErrorCode.TransferLimitExceeded, (string)connection.Error.Condition);
                 Assert.IsTrue(receiver.IsClosed);
-            }).Unwrap().GetAwaiter().GetResult();
+            }).Wait();
         }
 
         [TestMethod]
@@ -509,7 +509,7 @@ namespace Test.Amqp
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
                 Assert.IsTrue(session.IsClosed);
                 Assert.IsTrue(connection.IsClosed);
-            }).Unwrap().GetAwaiter().GetResult();
+            }).Wait();
         }
     }
 }

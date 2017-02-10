@@ -412,11 +412,11 @@ namespace Test.Amqp
         public void TestMethod_MessageId()
         {
             string testName = "MessageId";
-            Connection connection = new Connection(testTarget.Address);
+            Connection connection = new Connection(address);
             Session session = new Session(connection);
             object[] idList = new object[] { null, "string-id", 20000UL, Guid.NewGuid(), Encoding.UTF8.GetBytes("binary-id") };
 
-            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
             for (int i = 0; i < idList.Length; ++i)
             {
                 Message message = new Message() { Properties = new Properties() };
@@ -425,7 +425,7 @@ namespace Test.Amqp
                 sender.Send(message, null, null);
             }
 
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "q1");
             for (int i = 0; i < idList.Length; ++i)
             {
                 Message message = receiver.Receive();
@@ -795,7 +795,7 @@ namespace Test.Amqp
         {
             string testName = "SendToNonExistingNode";
 
-            Connection connection = new Connection(testTarget.Address);
+            Connection connection = new Connection(address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "$explicit:sender-" + testName, Guid.NewGuid().ToString());
 
@@ -821,7 +821,7 @@ namespace Test.Amqp
         {
             string testName = "ReceiveFromNonExistingNode";
 
-            Connection connection = new Connection(testTarget.Address);
+            Connection connection = new Connection(address);
             Session session = new Session(connection);
             ReceiverLink receiver = new ReceiverLink(session, "$explicit:receiver-" + testName, Guid.NewGuid().ToString());
 
