@@ -390,10 +390,15 @@ namespace Test.Amqp
                 Connection connection = new Connection(this.address);
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
-                DateTime start = DateTime.UtcNow;
-                Message message = receiver.Receive();
-                Assert.IsTrue(message == null);
-                Assert.IsTrue(DateTime.UtcNow.Subtract(start).TotalMilliseconds < 5000, "Receive call is not cancelled.");
+                try
+                {
+                    receiver.Receive();
+                    Assert.IsTrue(false, "Receive should fail with error");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual((Symbol)ErrorCode.ConnectionForced, exception.Error.Condition);
+                }
                 connection.Close();
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
             }
@@ -404,10 +409,15 @@ namespace Test.Amqp
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
-                DateTime start = DateTime.UtcNow;
-                Message message = await receiver.ReceiveAsync();
-                Assert.IsTrue(message == null);
-                Assert.IsTrue(DateTime.UtcNow.Subtract(start).TotalMilliseconds < 1000, "Receive call is not cancelled.");
+                try
+                {
+                    await receiver.ReceiveAsync();
+                    Assert.IsTrue(false, "Receive should fail with error");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual((Symbol)ErrorCode.ConnectionForced, exception.Error.Condition);
+                }
                 await connection.CloseAsync();
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
             }).Wait(); 
@@ -435,6 +445,7 @@ namespace Test.Amqp
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
                 Assert.IsTrue(closed.WaitOne(5000), "Connection not closed");
                 Assert.AreEqual(ErrorCode.TransferLimitExceeded, (string)connection.Error.Condition);
+                Assert.IsTrue(receiver.IsClosed);
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
@@ -448,7 +459,8 @@ namespace Test.Amqp
                 Task completed = await Task.WhenAny(tcs.Task, Task.Delay(5000));
                 Assert.IsTrue(completed == tcs.Task, "Connection not closed");
                 Assert.AreEqual(ErrorCode.TransferLimitExceeded, (string)connection.Error.Condition);
-            }).Wait();
+                Assert.IsTrue(receiver.IsClosed);
+            }).Unwrap().GetAwaiter().GetResult();
         }
 
         [TestMethod]
@@ -480,6 +492,8 @@ namespace Test.Amqp
                 Assert.IsTrue(closeReceived.WaitOne(5000), "Close not received");
                 Assert.IsTrue(closedNotified.WaitOne(5000), "Closed event not fired");
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
+                Assert.IsTrue(session.IsClosed);
+                Assert.IsTrue(connection.IsClosed);
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
@@ -493,7 +507,9 @@ namespace Test.Amqp
                 Assert.IsTrue(closeReceived.WaitOne(5000), "Close not received");
                 Assert.IsTrue(closedNotified.WaitOne(5000), "Closed event not fired");
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
-            }).Wait();
+                Assert.IsTrue(session.IsClosed);
+                Assert.IsTrue(connection.IsClosed);
+            }).Unwrap().GetAwaiter().GetResult();
         }
     }
 }
