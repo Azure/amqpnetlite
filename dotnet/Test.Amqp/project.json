@@ -30,8 +30,8 @@
             "version": "1.0.0"
         },
         "System.IO.Pipes": "4.0.0",
-        "Amqp": "1.2.2",
-        "Amqp.WebSockets.Client": "1.2.2"
+        "Amqp": "1.2.3",
+        "Amqp.WebSockets.Client": "1.2.3"
     },
 
     "frameworks": {
