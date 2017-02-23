@@ -50,7 +50,7 @@ namespace Amqp
         {
             SocketProtectionLevel spl = !address.UseSsl ?
                 SocketProtectionLevel.PlainSocket :
-#if NETFX_CORE || WINDOWS_STORE
+#if NETFX_CORE
                 SocketProtectionLevel.Tls12;
 #else
                 SocketProtectionLevel.Ssl;
