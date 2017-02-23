@@ -197,7 +197,7 @@ namespace Amqp.Serialization
                 descriptorName = type.FullName;
             }
 
-            List<SerialiableMember> memberList = new List<SerialiableMember>();
+            List<SerializableMember> memberList = new List<SerializableMember>();
             if (baseType != null)
             {
                 memberList.AddRange(baseType.Members);
@@ -221,7 +221,7 @@ namespace Amqp.Serialization
                         continue;
                     }
 
-                    SerialiableMember member = new SerialiableMember();
+                    SerializableMember member = new SerializableMember();
                     member.Name = attribute.Name ?? memberInfo.Name;
                     member.Order = attribute.InternalOrder ?? lastOrder++;
                     member.Accessor = MemberAccessor.Create(memberInfo, true);
@@ -259,7 +259,7 @@ namespace Amqp.Serialization
             {
                 memberList.Sort(MemberOrderComparer.Instance);
                 int order = -1;
-                foreach (SerialiableMember member in memberList)
+                foreach (SerializableMember member in memberList)
                 {
                     if (order > 0 && member.Order == order)
                     {
@@ -270,7 +270,7 @@ namespace Amqp.Serialization
                 }
             }
 
-            SerialiableMember[] members = memberList.ToArray();
+            SerializableMember[] members = memberList.ToArray();
 
             if (contractAttribute.Encoding == EncodingType.SimpleMap &&
                 type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
@@ -436,11 +436,11 @@ namespace Amqp.Serialization
             return null;
         }
 
-        sealed class MemberOrderComparer : IComparer<SerialiableMember>
+        sealed class MemberOrderComparer : IComparer<SerializableMember>
         {
             public static readonly MemberOrderComparer Instance = new MemberOrderComparer();
 
-            public int Compare(SerialiableMember m1, SerialiableMember m2)
+            public int Compare(SerializableMember m1, SerializableMember m2)
             {
                 return m1.Order == m2.Order ? 0 : (m1.Order > m2.Order ? 1 : -1);
             }

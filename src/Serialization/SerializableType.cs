@@ -55,7 +55,7 @@ namespace Amqp.Serialization
             }
         }
 
-        public virtual SerialiableMember[] Members
+        public virtual SerializableMember[] Members
         {
             get
             {
@@ -108,7 +108,7 @@ namespace Amqp.Serialization
             SerializableType baseType,
             string descriptorName,
             ulong? descriptorCode,
-            SerialiableMember[] members,
+            SerializableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
             MethodAccessor[] serializationCallbacks)
         {
@@ -122,7 +122,7 @@ namespace Amqp.Serialization
             SerializableType baseType,
             string descriptorName,
             ulong? descriptorCode,
-            SerialiableMember[] members,
+            SerializableMember[] members,
             Dictionary<Type, SerializableType> knownTypes,
             MethodAccessor[] serializationCallbacks)
         {
@@ -134,7 +134,7 @@ namespace Amqp.Serialization
             AmqpSerializer serializer,
             Type type,
             SerializableType baseType,
-            SerialiableMember[] members,
+            SerializableMember[] members,
             MethodAccessor[] serializationCallbacks)
         {
             return new DescribedSimpleMapType(serializer, type, baseType, members, serializationCallbacks);
@@ -144,7 +144,7 @@ namespace Amqp.Serialization
             AmqpSerializer serializer,
             Type type,
             SerializableType baseType,
-            SerialiableMember[] members,
+            SerializableMember[] members,
             MethodAccessor[] serializationCallbacks)
         {
             return new DescribedSimpleListType(serializer, type, baseType, members, serializationCallbacks);
@@ -500,7 +500,7 @@ namespace Amqp.Serialization
             readonly DescribedCompoundType baseType;
             readonly Symbol descriptorName;
             readonly ulong? descriptorCode;
-            readonly SerialiableMember[] members;
+            readonly SerializableMember[] members;
             readonly MethodAccessor[] serializationCallbacks;
             readonly KeyValuePair<Type, SerializableType>[] knownTypes;
 
@@ -510,7 +510,7 @@ namespace Amqp.Serialization
                 SerializableType baseType,
                 string descriptorName,
                 ulong? descriptorCode,
-                SerialiableMember[] members,
+                SerializableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type)
@@ -523,7 +523,7 @@ namespace Amqp.Serialization
                 this.knownTypes = GetKnownTypes(knownTypes);
             }
 
-            public override SerialiableMember[] Members
+            public override SerializableMember[] Members
             {
                 get { return this.members; }
             }
@@ -543,7 +543,7 @@ namespace Amqp.Serialization
                 this.InvokeSerializationCallback(SerializationCallback.OnSerializing, container);
 
                 int count = 0;
-                foreach (SerialiableMember member in this.members)
+                foreach (SerializableMember member in this.members)
                 {
                     object memberValue = member.Accessor.Get(container);
                     SerializableType effectiveType = member.Type;
@@ -574,7 +574,7 @@ namespace Amqp.Serialization
 
             protected abstract int WriteMemberValue(ByteBuffer buffer, string memberName, object memberValue, SerializableType effectiveType);
 
-            protected abstract int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container);
+            protected abstract int ReadMemberValue(ByteBuffer buffer, SerializableMember serialiableMember, object container);
 
             protected override bool WriteFormatCode(ByteBuffer buffer)
             {
@@ -705,7 +705,7 @@ namespace Amqp.Serialization
                 SerializableType baseType,
                 string descriptorName,
                 ulong? descriptorCode,
-                SerialiableMember[] members,
+                SerializableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
@@ -739,7 +739,7 @@ namespace Amqp.Serialization
                 return 1;
             }
 
-            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
+            protected override int ReadMemberValue(ByteBuffer buffer, SerializableMember serialiableMember, object container)
             {
                 object value = serialiableMember.Type.ReadObject(buffer);
                 serialiableMember.Accessor.Set(container, value);
@@ -749,7 +749,7 @@ namespace Amqp.Serialization
 
         sealed class DescribedMapType : DescribedCompoundType
         {
-            readonly Dictionary<string, SerialiableMember> membersMap;
+            readonly Dictionary<string, SerializableMember> membersMap;
 
             public DescribedMapType(
                 AmqpSerializer serializer,
@@ -757,13 +757,13 @@ namespace Amqp.Serialization
                 SerializableType baseType,
                 string descriptorName,
                 ulong? descriptorCode,
-                SerialiableMember[] members,
+                SerializableMember[] members,
                 Dictionary<Type, SerializableType> knownTypes,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
-                this.membersMap = new Dictionary<string, SerialiableMember>();
-                foreach (SerialiableMember member in members)
+                this.membersMap = new Dictionary<string, SerializableMember>();
+                foreach (SerializableMember member in members)
                 {
                     this.membersMap.Add(member.Name, member);
                 }
@@ -794,10 +794,10 @@ namespace Amqp.Serialization
                 return 0;
             }
 
-            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
+            protected override int ReadMemberValue(ByteBuffer buffer, SerializableMember serialiableMember, object container)
             {
                 string key = this.ReadKey(buffer);
-                SerialiableMember member = null;
+                SerializableMember member = null;
                 if (!this.membersMap.TryGetValue(key, out member))
                 {
                     throw new SerializationException("Unknown key name " + key);
@@ -829,18 +829,18 @@ namespace Amqp.Serialization
 
         sealed class DescribedSimpleMapType : DescribedCompoundType
         {
-            readonly Dictionary<string, SerialiableMember> membersMap;
+            readonly Dictionary<string, SerializableMember> membersMap;
 
             public DescribedSimpleMapType(
                 AmqpSerializer serializer,
                 Type type,
                 SerializableType baseType,
-                SerialiableMember[] members,
+                SerializableMember[] members,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type, baseType, null, null, members, null, serializationCallbacks)
             {
-                this.membersMap = new Dictionary<string, SerialiableMember>();
-                foreach (SerialiableMember member in members)
+                this.membersMap = new Dictionary<string, SerializableMember>();
+                foreach (SerializableMember member in members)
                 {
                     this.membersMap.Add(member.Name, member);
                 }
@@ -883,10 +883,10 @@ namespace Amqp.Serialization
                 return 0;
             }
 
-            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
+            protected override int ReadMemberValue(ByteBuffer buffer, SerializableMember serialiableMember, object container)
             {
                 string key = Encoder.ReadString(buffer, Encoder.ReadFormatCode(buffer));
-                SerialiableMember member = null;
+                SerializableMember member = null;
                 if (!this.membersMap.TryGetValue(key, out member))
                 {
                     throw new SerializationException("Unknown key name " + key);
@@ -904,7 +904,7 @@ namespace Amqp.Serialization
                 AmqpSerializer serializer,
                 Type type,
                 SerializableType baseType,
-                SerialiableMember[] members,
+                SerializableMember[] members,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type, baseType, null, null, members, null, serializationCallbacks)
             {
@@ -949,7 +949,7 @@ namespace Amqp.Serialization
                 return 1;
             }
 
-            protected override int ReadMemberValue(ByteBuffer buffer, SerialiableMember serialiableMember, object container)
+            protected override int ReadMemberValue(ByteBuffer buffer, SerializableMember serialiableMember, object container)
             {
                 object value = serialiableMember.Type.ReadObject(buffer);
                 serialiableMember.Accessor.Set(container, value);

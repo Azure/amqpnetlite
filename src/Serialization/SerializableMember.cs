@@ -17,7 +17,7 @@
 
 namespace Amqp.Serialization
 {
-    sealed class SerialiableMember
+    sealed class SerializableMember
     {
         public string Name
         {
