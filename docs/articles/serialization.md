@@ -19,7 +19,7 @@ The mapping between .NET and AMQP primitive types is defined in the following ta
 | .NET | AMQP |
 | ---- | ---- |
 | null | null |
-| bool | booean |
+| bool | boolean |
 | byte | ubyte |
 | sbyte | byte |
 | ushort | ushort |
@@ -165,7 +165,7 @@ This attribute can also be used just as a type resolver without class inheritanc
 the generic argument type is only a registry for knowns types. Since the generic argument type is not
 the base class of its known types, the serializer will fail to cast the decoded object to the generic
 argument type. This issue can be resolved by calling the `AmqpSerializer.Deserialize<T, TAs>(ByteBuffer)`
-method, where T is the registry type and TAs is the base type of all decoded objects. Let’s assume we
+method, where T is the registry type and TAs is the base type of all decoded objects. Letâ€™s assume we
 have another class Address which is not related to Person and its derived classes.
 
 ```
