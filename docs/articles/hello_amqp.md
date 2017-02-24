@@ -86,7 +86,7 @@ namespace Receiver
 }
 ```
 
-Buid both projects.
+Build both projects.
 
 ## Run
 
