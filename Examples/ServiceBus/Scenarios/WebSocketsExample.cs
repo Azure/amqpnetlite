@@ -23,10 +23,9 @@ namespace ServiceBus.Scenarios
     using Amqp.Framing;
 
     /// <summary>
-    /// This example assumes a topic and a subscirption named "sub1" is precreated.
-    /// Example.Entity should be set to the topic name.
+    /// This example assumes a queue is precreated. Example.Entity should be set to the queue name.
     /// </summary>
-    class TopicExample : Example
+    class WebSocketsExample : Example
     {
         public override void Run()
         {
@@ -35,29 +34,35 @@ namespace ServiceBus.Scenarios
 
         async Task SendReceiveAsync(int count)
         {
+            // it is also possible to create the Address object form a Uri string as follows,
+            //   wss://[sas-policy]:[sas-key]@[ns].servicebus.windows.net/$servicebus/websocket
+            // note that [sas-policy] and [sas-key] should be URL encoded
+            Address wsAddress = new Address(this.Namespace, 443, this.KeyName, this.KeyValue, "/$servicebus/websocket", "wss");
+            WebSocketTransportFactory wsFactory = new WebSocketTransportFactory("AMQPWSB10");
+
             Trace.WriteLine(TraceLevel.Information, "Establishing a connection...");
-            Connection connection = await Connection.Factory.CreateAsync(this.GetAddress());
+            ConnectionFactory connectionFactory = new ConnectionFactory(new TransportProvider[] { wsFactory });
+            Connection connection = await connectionFactory.CreateAsync(wsAddress);
 
             Trace.WriteLine(TraceLevel.Information, "Creating a session...");
             Session session = new Session(connection);
 
             Trace.WriteLine(TraceLevel.Information, "Creating a sender link...");
-            SenderLink sender = new SenderLink(session, "topic-sender-link", this.Entity);
+            SenderLink sender = new SenderLink(session, "websocket-sender-link", this.Entity);
 
             Trace.WriteLine(TraceLevel.Information, "Sending {0} messages...", count);
             for (int i = 0; i < count; i++)
             {
-                Message message = new Message();
-                message.Properties = new Properties() { MessageId = "topic-test-" + i };
-                message.BodySection = new Data() { Binary = Encoding.UTF8.GetBytes("message #" + i) };
+                Message message = new Message("testing");
+                message.Properties = new Properties() { MessageId = "websocket-test-" + i };
                 await sender.SendAsync(message);
             }
 
             Trace.WriteLine(TraceLevel.Information, "Closing sender...");
             await sender.CloseAsync();
 
-            Trace.WriteLine(TraceLevel.Information, "Receiving messages from subscription...");
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-link", this.Entity + "/Subscriptions/sub1");
+            Trace.WriteLine(TraceLevel.Information, "Receiving messages...");
+            ReceiverLink receiver = new ReceiverLink(session, "websocket-receiver-link", this.Entity);
             for (int i = 0; i < count; i++)
             {
                 Message message = await receiver.ReceiveAsync(30000);

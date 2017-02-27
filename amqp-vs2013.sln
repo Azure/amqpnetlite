@@ -166,6 +166,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LongHaulTest", "test\LongHa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.Net40", "test\Test.Amqp.Net40\Test.Amqp.Net40.csproj", "{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.WebSockets", "Examples\ServiceBus\ServiceBus.WebSockets\ServiceBus.WebSockets.csproj", "{F0A0D04C-6665-43C2-A3A3-870248A331B9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -642,6 +644,16 @@ Global
 		{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}.Release|ARM.ActiveCfg = Release|Any CPU
 		{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}.Release|x64.ActiveCfg = Release|Any CPU
 		{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}.Release|x86.ActiveCfg = Release|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Release|ARM.ActiveCfg = Release|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Release|x64.ActiveCfg = Release|Any CPU
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -688,5 +700,6 @@ Global
 		{93F1788D-0A04-4C88-8408-4538A1E616C6} = {57BFDBF2-F67F-4D14-953F-5DA8FB06B52C}
 		{F052E9A9-15BD-4DB4-8539-8961B7BA7DC0} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
 		{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C} = {37825535-FB23-4B0F-BF6A-FB7BCD0B0E67}
+		{F0A0D04C-6665-43C2-A3A3-870248A331B9} = {4A93A5B6-B935-4F86-B3DE-95B0F6EBEA56}
 	EndGlobalSection
 EndGlobal

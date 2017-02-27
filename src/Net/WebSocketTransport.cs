@@ -53,7 +53,12 @@ namespace Amqp
                 string.Equals(scheme, SecureWebSockets, StringComparison.OrdinalIgnoreCase);
         }
 
-        internal async Task<IAsyncTransport> ConnectAsync(Address address, Action<ClientWebSocketOptions> options)
+        internal Task<IAsyncTransport> ConnectAsync(Address address, Action<ClientWebSocketOptions> options)
+        {
+            return this.ConnectAsync(address, WebSocketSubProtocol, options);
+        }
+
+        internal async Task<IAsyncTransport> ConnectAsync(Address address, string subprotocol, Action<ClientWebSocketOptions> options)
         {
             Uri uri = new UriBuilder()
             {
@@ -64,24 +69,13 @@ namespace Amqp
             }.Uri;
 
             ClientWebSocket cws = new ClientWebSocket();
-            cws.Options.AddSubProtocol(WebSocketSubProtocol);
+            cws.Options.AddSubProtocol(subprotocol);
             if (options != null)
             {
                 options(cws.Options);
             }
 
             await cws.ConnectAsync(uri, CancellationToken.None);
-            if (cws.SubProtocol != WebSocketSubProtocol)
-            {
-                cws.Abort();
-
-                throw new NotSupportedException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "WebSocket SubProtocol used by the host is not the same that was requested: {0}",
-                        cws.SubProtocol ?? "<null>"));
-            }
-
             this.webSocket = cws;
 
             return this;
