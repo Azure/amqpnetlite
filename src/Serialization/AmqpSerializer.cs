@@ -407,6 +407,12 @@ namespace Amqp.Serialization
             MethodAccessor addAccess = null;
             Type itemType = null;
 
+            if (type.IsArray)
+            {
+                // array of custom types. encode it as list
+                return SerializableType.CreateArrayType(this, type, type.GetElementType());
+            }
+
             foreach (Type it in type.GetInterfaces())
             {
                 if (it.IsGenericType())
