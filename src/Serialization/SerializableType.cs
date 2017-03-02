@@ -83,6 +83,11 @@ namespace Amqp.Serialization
             return new AmqpSerializableType(serializer, type);
         }
 
+        public static SerializableType CreateArrayType(AmqpSerializer serializer, Type type, Type itemType)
+        {
+            return new ArrayType(serializer, type, itemType);
+        }
+
         public static SerializableType CreateGenericListType(
             AmqpSerializer serializer,
             Type type,
@@ -363,6 +368,38 @@ namespace Amqp.Serialization
                 {
                     throw new AmqpException(ErrorCode.InvalidField, Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, buffer.Offset));
                 }
+            }
+        }
+
+        sealed class ArrayType : SerializableType
+        {
+            readonly Type itemType;
+            readonly SerializableType listType;
+
+            public ArrayType(AmqpSerializer serializer, Type type, Type itemType)
+                : base(serializer, type)
+            {
+                this.itemType = itemType;
+                this.listType = serializer.GetType(typeof(List<>).MakeGenericType(itemType));
+            }
+
+            public override void WriteObject(ByteBuffer buffer, object graph)
+            {
+                this.listType.WriteObject(buffer, graph);
+            }
+
+            public override object ReadObject(ByteBuffer buffer)
+            {
+                object value = this.listType.ReadObject(buffer);
+                if (value != null)
+                {
+                    ICollection list = (ICollection)value;
+                    Array array = Array.CreateInstance(this.itemType, list.Count);
+                    list.CopyTo(array, 0);
+                    value = array;
+                }
+
+                return value;
             }
         }
 

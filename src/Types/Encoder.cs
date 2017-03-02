@@ -311,7 +311,7 @@ namespace Amqp.Types
             Serializer codec = (Serializer)codecByType[type];
             if (codec == null)
             {
-                if (type.IsArray)
+                if (type.IsArray && codecByType[type.GetElementType()] != null)
                 {
                     codec = serializers[20];
                 }

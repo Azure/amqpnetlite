@@ -537,6 +537,36 @@ namespace Test.Amqp
                 (x, y) => CollectionAssert.AreEqual(x, y));
         }
 
+        [TestMethod]
+        public void AmqpSerializerCustomTypeArrayTest()
+        {
+            Person[] value = new Person[]
+            {
+                new Student("Tom") { Age = 13 },
+                new Teacher("Bob") { Sallary = 1234 },
+                null,
+                new Student("Al") { Age = 12 },
+            };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, value);
+            Person[] o = AmqpSerializer.Deserialize<Person[]>(b);
+            Assert.AreEqual(value.Length, o.Length);
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (value[i] == null)
+                {
+                    Assert.IsTrue(o[i] == null);
+                }
+                else
+                {
+                    Assert.AreEqual(value[i].GetType(), o[i].GetType());
+                    Assert.AreEqual(value[i].Name, o[i].Name);
+                    Assert.AreEqual(value[i].Age + 1, o[i].Age);
+                }
+            }
+        }
+
 #if !DOTNET
         [TestMethod]
         public void MessageSerializationTest()
