@@ -27,11 +27,23 @@ namespace Amqp
     /// </summary>
     public class WebSocketTransportFactory : TransportProvider
     {
+        readonly string subprotocol;
+
         /// <summary>
-        /// Initializes a new WebSocketTransportFactory object.
+        /// Initializes a WebSocketTransportFactory object with the default subprotocol 'amqp'.
         /// </summary>
         public WebSocketTransportFactory()
+            : this(WebSocketTransport.WebSocketSubProtocol)
         {
+        }
+
+        /// <summary>
+        /// Initializes a WebSocketTransportFactory object with the specified subprotocol.
+        /// </summary>
+        /// <param name="subprotocol">The subprotocol used for WebSocket upgrade.</param>
+        public WebSocketTransportFactory(string subprotocol)
+        {
+            this.subprotocol = subprotocol;
             this.AddressSchemes = new string[] { WebSocketTransport.WebSockets, WebSocketTransport.SecureWebSockets };
         }
 
@@ -52,7 +64,7 @@ namespace Amqp
         public override async Task<IAsyncTransport> CreateAsync(Address address)
         {
             var wsTransport = new WebSocketTransport();
-            await wsTransport.ConnectAsync(address, this.Options);
+            await wsTransport.ConnectAsync(address, this.subprotocol, this.Options);
             return wsTransport;
         }
     }
