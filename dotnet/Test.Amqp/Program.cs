@@ -58,7 +58,7 @@ namespace Test.Amqp
             }
         }
 
-        static void WriteTrace(string format, params object[] args)
+        static void WriteTrace(TraceLevel level, string format, params object[] args)
         {
             string message = args == null ? format : string.Format(format, args);
             Console.WriteLine(message);

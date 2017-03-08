@@ -34,7 +34,7 @@ namespace PeerToPeer.Client
 
             // uncomment the following to write frame traces
             //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceListener = (l, f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
             Console.WriteLine("Running request client...");
             new Client(address).Run();

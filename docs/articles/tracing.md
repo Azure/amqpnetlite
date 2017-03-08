@@ -11,7 +11,7 @@ To enable tracing, set the trace level and a listener. For example, the followin
 
 ```
 Trace.TraceLevel = TraceLevel.Frame;
-Trace.TraceListener = (f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 ```
 
 By implementing the trace listener delegate, you can write the traces to your application's tracing module.

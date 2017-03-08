@@ -112,7 +112,7 @@ namespace LongHaulTest
             if (Trace.TraceListener == null)
             {
                 Trace.TraceLevel = args.Trace.ToTraceLevel();
-                Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+                Trace.TraceListener = (l, f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
             }
         }
 

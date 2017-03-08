@@ -59,9 +59,10 @@ namespace Amqp
     /// <summary>
     /// The callback to invoke to write traces.
     /// </summary>
-    /// <param name="format"></param>
-    /// <param name="args"></param>
-    public delegate void WriteTrace(string format, params object[] args);
+    /// <param name="level">The trace level at which the trace event is raised.</param>
+    /// <param name="format">The format string for the arguments.</param>
+    /// <param name="args">The arguments attached to the trace event.</param>
+    public delegate void WriteTrace(TraceLevel level, string format, params object[] args);
 
     /// <summary>
     /// The Trace class for writing traces.
@@ -88,7 +89,7 @@ namespace Amqp
         {
             if (TraceListener != null)
             {
-                TraceListener(format, args);
+                TraceListener(TraceLevel.Verbose, format, args);
             }
         }
 
@@ -102,7 +103,7 @@ namespace Amqp
         {
             if (TraceListener != null && (level & TraceLevel) == level)
             {
-                TraceListener(format);
+                TraceListener(level, format);
             }
         }
 
@@ -117,7 +118,7 @@ namespace Amqp
         {
             if (TraceListener != null && (level & TraceLevel) == level)
             {
-                TraceListener(format, arg1);
+                TraceListener(level, format, arg1);
             }
         }
 
@@ -133,7 +134,7 @@ namespace Amqp
         {
             if (TraceListener != null && (level & TraceLevel) == level)
             {
-                TraceListener(format, arg1, arg2);
+                TraceListener(level, format, arg1, arg2);
             }
         }
 
@@ -150,7 +151,7 @@ namespace Amqp
         {
             if (TraceListener != null && (level & TraceLevel) == level)
             {
-                TraceListener(format, arg1, arg2, arg3);
+                TraceListener(level, format, arg1, arg2, arg3);
             }
         }
 

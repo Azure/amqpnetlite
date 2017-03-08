@@ -123,7 +123,7 @@ namespace TestAmqpBroker
                 }
 
                 Trace.TraceLevel = level;
-                Trace.TraceListener = (f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+                Trace.TraceListener = (l, f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
             }
 
             var broker = new TestAmqpBroker(endpoints, creds, sslValue, queues);

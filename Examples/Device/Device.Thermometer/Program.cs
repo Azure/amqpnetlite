@@ -86,7 +86,7 @@ namespace Device.Thermometer
 
         private void OnAction(int button)
         {
-            WriteTrace("receive action: {0}", button);
+            WriteTrace(TraceLevel.Information, "receive action: {0}", button);
             if (button == 38)
             {
                 this.temperature++;
@@ -109,7 +109,7 @@ namespace Device.Thermometer
                 this);
         }
 
-        static void WriteTrace(string format, params object[] args)
+        static void WriteTrace(TraceLevel level, string format, params object[] args)
         {
             Debug.Print(Fx.Format(format, args));
         }

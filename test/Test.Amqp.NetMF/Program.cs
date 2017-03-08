@@ -36,7 +36,7 @@ namespace Test.Amqp
             return TestRunner.RunTests();
         }
 
-        static void WriteTrace(string format, params object[] args)
+        static void WriteTrace(TraceLevel level, string format, params object[] args)
         {
             string message = args == null ? format : Fx.Format(format, args);
 #if NETMF
