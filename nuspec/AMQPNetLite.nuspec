@@ -20,7 +20,7 @@
     </description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>AMQP net netmf netcf coreclr UWP mono</tags>
+    <tags>AMQP net netmf netstandard UWP mono</tags>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf42, netmf43, netmf44" />
       <frameworkAssembly assemblyName="Microsoft.SPOT.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
@@ -28,11 +28,14 @@
       <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
     </frameworkAssemblies>
     <dependencies>
+      <group targetFramework="netmf" />
+      <group targetFramework="net35" />
       <group targetFramework="net40">
         <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
       </group>
       <group targetFramework="net45" />
       <group targetFramework="netcore451" />
+      <group targetFramework="uap10.0" />
       <group targetFramework="netstandard1.3">
         <dependency id="AMQPNetLite.Core" version="2.0.0-pre" />
       </group>
@@ -56,21 +59,11 @@
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\wpa81" />
-    <file src="bin\Release\Amqp.Store\Amqp.Net.dll" target="lib\win8" />
-    <file src="bin\Release\Amqp.Store\Amqp.Net.pdb" target="lib\win8" />
-    <file src="bin\Release\Amqp.Store\Amqp.Net.pri" target="lib\win8" />
-    <file src="bin\Release\Amqp.Store\Amqp.Net.xml" target="lib\win8" />
-    <file src="bin\Release\Amqp.WP\Amqp.Net.dll" target="lib\wp8" />
-    <file src="bin\Release\Amqp.WP\Amqp.Net.pdb" target="lib\wp8" />
-    <file src="bin\Release\Amqp.WP\Amqp.Net.xml" target="lib\wp8" />
 
-    <file src="bin\Release\Amqp.NetCF39\Amqp.NetCF39.dll" target="lib\net-cf" />
-    <file src="bin\Release\Amqp.NetCF39\Amqp.NetCF39.pdb" target="lib\net-cf" />
-    <file src="bin\Release\Amqp.NetCF39\Amqp.NetCF39.xml" target="lib\net-cf" />
+    <file src="bin\Release\Amqp.Uwp\Amqp.Net.dll" target="lib\uap10.0" />
+    <file src="bin\Release\Amqp.Uwp\Amqp.Net.pdb" target="lib\uap10.0" />
+    <file src="bin\Release\Amqp.Uwp\Amqp.Net.pri" target="lib\uap10.0" />
+    <file src="bin\Release\Amqp.Uwp\Amqp.Net.xml" target="lib\uap10.0" />
 
     <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.dll" target="lib\netmf42" />
     <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.pdb" target="lib\netmf42" />

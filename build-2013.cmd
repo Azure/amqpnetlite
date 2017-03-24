@@ -18,6 +18,7 @@ SET build-target=build
 SET build-config=Debug
 SET build-platform=Any CPU
 SET build-verbosity=minimal
+SET build-dotnet=true
 SET build-test=true
 SET build-nuget=false
 SET build-version=
@@ -25,6 +26,7 @@ SET build-version=
 IF /I "%1" EQU "release" (
   set build-target=build
   set build-config=Release
+  set build-dotnet=true
   set build-nuget=true
   GOTO :args-done
 )
@@ -42,6 +44,7 @@ IF /I "%1" EQU "test" (
 :args-start
 IF /I "%1" EQU "" GOTO args-done
 
+IF /I "%1" EQU "--dotnet" SET build-dotnet=true&&GOTO args-loop
 IF /I "%1" EQU "--skiptest" SET build-test=false&&GOTO args-loop
 IF /I "%1" EQU "--nuget" SET build-nuget=true&&GOTO args-loop
 IF /I "%1" EQU "--config" GOTO :args-config
@@ -76,6 +79,7 @@ GOTO :exit
 ECHO Build target: %build-target%
 ECHO Build configuration: %build-config%
 ECHO Build platform: %build-platform%
+ECHO Build dotnet: %build-dotnet%
 ECHO Build run tests: %build-test%
 ECHO Build NuGet package: %build-nuget%
 ECHO.
@@ -84,6 +88,7 @@ IF /I "%build-config%" EQU "" GOTO :args-error
 IF /I "%build-platform%" EQU "" GOTO :args-error
 IF /I "%build-verbosity%" EQU "" GOTO :args-error
 
+IF /I "%build-dotnet%" EQU "false" GOTO :build-start
 CALL :findfile dotnet exe
 IF "%dotnetPath%" == "" (
   ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
@@ -184,6 +189,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 ECHO.
 ECHO Running DOTNET (.Net Core 1.0) tests...
+IF /I "%build-dotnet%" EQU "false" GOTO done-test
 "%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp -- no-broker
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
@@ -265,7 +271,7 @@ EXIT /b %return-code%
 
 :run-build
   ECHO Build solution amqp-vs2013.sln
-  "%MSBuildPath%" amqp.sln /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
+  "%MSBuildPath%" amqp-vs2013.sln /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
   IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
 
   ECHO Build other versions of the micro NETMF projects
@@ -273,6 +279,14 @@ EXIT /b %return-code%
     "%MSBuildPath%" .\src\Amqp.Micro.NetMF.csproj /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
     IF !ERRORLEVEL! NEQ 0 EXIT /b !ERRORLEVEL!
   )
+
+  IF /I "%build-dotnet%" EQU "false" EXIT /b 0
+  IF /I "%1" EQU "Clean" EXIT /b 0
+  ECHO Build dotnet projects
+  CALL "%dotnetPath%" restore dotnet
+  IF !ERRORLEVEL! NEQ 0 EXIT /b !ERRORLEVEL!
+  CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.Serialization dotnet/Amqp.WebSockets.Client dotnet\HelloAmqp dotnet/Test.Amqp --configuration %build-config% --no-incremental
+  IF !ERRORLEVEL! NEQ 0 EXIT /b !ERRORLEVEL!
 
   EXIT /b 0
 
