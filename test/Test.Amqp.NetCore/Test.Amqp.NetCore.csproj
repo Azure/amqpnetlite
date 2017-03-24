@@ -114,6 +114,9 @@
     <SDKReference Include="TestPlatform, Version=11.0" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Common\Assert.cs">
+      <Link>Assert.cs</Link>
+    </Compile>
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
