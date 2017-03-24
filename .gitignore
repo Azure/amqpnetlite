@@ -61,4 +61,4 @@ OnBoardFlash.dat.smd
 DOTNETMF_FS_EMULATION*/
 
 # dnx
-project.lock.json
+*project.lock.json

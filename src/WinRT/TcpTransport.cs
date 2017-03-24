@@ -55,10 +55,19 @@ namespace Amqp
 #else
                 SocketProtectionLevel.Ssl;
 #endif
-            StreamSocket ss = new StreamSocket();
-            await ss.ConnectAsync(new HostName(address.Host), address.Port.ToString(), spl);
+            StreamSocket streamSocket = new StreamSocket();
+            streamSocket.Control.NoDelay = true;
 
-            this.socket = ss;
+#if UWP
+            if (factory.sslSettings != null)
+            {
+                spl = factory.sslSettings.ProtectionLevel;
+                streamSocket.Control.ClientCertificate = factory.sslSettings.ClientCertificate;
+            }
+#endif
+
+            await streamSocket.ConnectAsync(new HostName(address.Host), address.Port.ToString(), spl);
+            this.socket = streamSocket;
         }
 
         public async Task<int> ReceiveAsync(byte[] buffer, int offset, int count)

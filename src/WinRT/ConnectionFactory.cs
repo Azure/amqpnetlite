@@ -21,6 +21,10 @@ namespace Amqp
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
+#if UWP
+    using Windows.Networking.Sockets;
+    using Windows.Security.Cryptography.Certificates;
+#endif
 
     /// <summary>
     /// The factory to create connections asynchronously.
@@ -120,6 +124,38 @@ namespace Amqp
 
             return connection;
         }
+
+#if UWP
+        internal SslSettings sslSettings;
+
+        /// <summary>
+        /// Gets the TLS/SSL settings on the connection factory.
+        /// </summary>
+        public SslSettings SSL
+        {
+            get
+            {
+                return this.sslSettings ?? (this.sslSettings = new SslSettings());
+            }
+        }
+
+        /// <summary>
+        /// Contains the TLS/SSL settings for a connection.
+        /// </summary>
+        public class SslSettings
+        {
+            /// <summary>
+            /// Gets or sets the client SSL/TLS certificate that will be sent to the server.
+            /// </summary>
+            public Certificate ClientCertificate { get; set; }
+
+            /// <summary>
+            /// Gets or sets the protection level that represents the integrity and encryption
+            /// for the underlying stream socket.
+            /// </summary>
+            public SocketProtectionLevel ProtectionLevel { get; set; }
+        }
+#endif
 
         /// <summary>
         /// Contains the SASL settings for a connection.
