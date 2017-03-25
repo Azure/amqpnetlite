@@ -51,7 +51,7 @@ namespace Test.Amqp
 
         public Dictionary<string, string> Properties;
 
-        [System.Runtime.Serialization.OnSerializing]
+        [OnSerializing]
         void OnSerializing()
         {
             if (this.Properties == null)
@@ -62,13 +62,13 @@ namespace Test.Amqp
             this.Properties["OnSerializing"] = "true";
         }
 
-        [System.Runtime.Serialization.OnSerialized]
+        [OnSerialized]
         void OnSerialized()
         {
             this.Properties["OnSerialized"] = "true";
         }
 
-        [System.Runtime.Serialization.OnDeserializing]
+        [OnDeserializing]
         void OnDeserializing()
         {
             if (this.Properties == null)
@@ -79,7 +79,7 @@ namespace Test.Amqp
             this.Properties["OnDeserializing"] = "true";
         }
 
-        [System.Runtime.Serialization.OnDeserialized]
+        [OnDeserialized]
         void OnDeserialized()
         {
             this.Properties["OnDeserialized"] = "true";

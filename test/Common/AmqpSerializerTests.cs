@@ -19,7 +19,6 @@ namespace Test.Amqp
 {
     using System;
     using System.Collections.Generic;
-    using System.Runtime.Serialization;
     using global::Amqp;
     using global::Amqp.Framing;
     using global::Amqp.Serialization;
@@ -661,7 +660,7 @@ namespace Test.Amqp
                 AmqpSerializer.Serialize(buffer, value);
                 Assert.IsTrue(false, "SerializationException not thrown");
             }
-            catch (SerializationException e)
+            catch (AmqpException e)
             {
                 Assert.IsTrue(e.Message.Contains(error));
             }

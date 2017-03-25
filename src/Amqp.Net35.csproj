@@ -125,6 +125,10 @@
     <Compile Include="Serialization\EncodingType.cs" />
     <Compile Include="Serialization\MemberAccessor.cs" />
     <Compile Include="Serialization\MethodAccessor.cs" />
+    <Compile Include="Serialization\OnDeserializedAttribute.cs" />
+    <Compile Include="Serialization\OnDeserializingAttribute.cs" />
+    <Compile Include="Serialization\OnSerializedAttribute.cs" />
+    <Compile Include="Serialization\OnSerializingAttribute.cs" />
     <Compile Include="Serialization\SerializableMember.cs" />
     <Compile Include="Serialization\SerializableType.cs" />
     <Compile Include="Session.cs" />

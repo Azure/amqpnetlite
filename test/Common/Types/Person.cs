@@ -74,7 +74,7 @@ namespace Test.Amqp
         [AmqpMember(Order = 8)]
         Dictionary<string, object> properties;
 
-        [System.Runtime.Serialization.OnDeserialized]
+        [OnDeserialized]
         void OnDesrialized()
         {
             this.Age = this.Age + 1;

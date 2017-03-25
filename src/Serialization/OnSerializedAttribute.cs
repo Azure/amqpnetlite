@@ -15,43 +15,16 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Test.Amqp
+namespace Amqp.Serialization
 {
-    using System.Collections.Generic;
-    using global::Amqp.Serialization;
+    using System;
 
-    [AmqpContract(Name = "test.amqp:teacher", Code = 0x0000123400000002)]
-    class Teacher : Person
+    /// <summary>
+    /// When applied to a method, specifies that the method is called after serialization
+    /// of an object.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
+    public sealed class OnSerializedAttribute : Attribute
     {
-        public Teacher() { }
-
-        public Teacher(string name)
-            : base(name)
-        {
-            this.Id = EmployeeId.New();
-        }
-
-        [AmqpMember(Name = "sallary", Order = 4)]
-        public int Sallary;
-
-        [AmqpMember(Order = 10)]
-        public EmployeeId Id
-        {
-            get;
-            private set;
-        }
-
-        [AmqpMember(Order = 11)]
-        public Dictionary<int, string> Classes
-        {
-            get;
-            set;
-        }
-
-        [OnDeserialized]
-        void OnDesrialized()
-        {
-            this.Sallary *= 2;
-        }
     }
 }

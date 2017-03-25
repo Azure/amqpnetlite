@@ -36,25 +36,25 @@ namespace Test.Amqp
         [AmqpMember(Name = "grades", Order = 10)]
         public List<int> Grades { get; set; }
 
-        [System.Runtime.Serialization.OnSerializing]
+        [OnSerializing]
         void OnSerializing()
         {
             this.Version++;
         }
 
-        [System.Runtime.Serialization.OnSerialized]
+        [OnSerialized]
         void OnSerialized()
         {
             this.Version++;
         }
 
-        [System.Runtime.Serialization.OnDeserializing]
+        [OnDeserializing]
         void OnDeserializing()
         {
             this.Version++;
         }
 
-        [System.Runtime.Serialization.OnDeserialized]
+        [OnDeserialized]
         void OnDeserialized()
         {
             this.Version++;

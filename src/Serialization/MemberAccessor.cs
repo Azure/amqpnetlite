@@ -20,7 +20,6 @@ namespace Amqp.Serialization
     using System;
     using System.Reflection;
     using System.Reflection.Emit;
-    using System.Runtime.Serialization;
 
     abstract class MemberAccessor
     {
@@ -163,7 +162,8 @@ namespace Amqp.Serialization
                 {
                     if (requiresSetter)
                     {
-                        throw new SerializationException("Property annotated with AmqpMemberAttribute must have a setter.");
+                        throw new AmqpException(ErrorCode.NotAllowed,
+                            Fx.Format("Property {0} annotated with AmqpMemberAttribute must have a setter.", propertyInfo.Name));
                     }
                     else
                     {

@@ -21,7 +21,6 @@ namespace Amqp.Serialization
     using System.Collections;
     using System.Collections.Generic;
     using System.Reflection;
-    using System.Runtime.Serialization;
     using Amqp.Types;
 
     static class SerializationCallback
@@ -680,7 +679,8 @@ namespace Amqp.Serialization
 
                 if (effectiveType == null)
                 {
-                    throw new SerializationException(Fx.Format(SRAmqp.AmqpUnknownDescriptor, code != null ? code.ToString() : symbol.ToString(), this.type.Name));
+                    throw new AmqpException(ErrorCode.DecodeError,
+                        Fx.Format(SRAmqp.AmqpUnknownDescriptor, code != null ? code.ToString() : symbol.ToString(), this.type.Name));
                 }
 
                 formatCode = Encoder.ReadFormatCode(buffer);
@@ -697,7 +697,7 @@ namespace Amqp.Serialization
                 var callback = this.serializationCallbacks[callbackIndex];
                 if (callback != null)
                 {
-                    callback.Invoke(container, new object[] { default(StreamingContext) });
+                    callback.Invoke(container, new object[0] );
                 }
             }
 
@@ -837,7 +837,7 @@ namespace Amqp.Serialization
                 SerializableMember member = null;
                 if (!this.membersMap.TryGetValue(key, out member))
                 {
-                    throw new SerializationException("Unknown key name " + key);
+                    throw new AmqpException(ErrorCode.DecodeError, "Unknown key name " + key);
                 }
 
                 object value = member.Type.ReadObject(buffer);
@@ -859,7 +859,7 @@ namespace Amqp.Serialization
                         return Encoder.ReadSymbol(buffer, formatCode);
 
                     default:
-                        throw new SerializationException("Format code " + formatCode + " not supported for map key");
+                        throw new AmqpException(ErrorCode.DecodeError, "Format code " + formatCode + " not supported for map key");
                 }
             }
         }
@@ -926,7 +926,7 @@ namespace Amqp.Serialization
                 SerializableMember member = null;
                 if (!this.membersMap.TryGetValue(key, out member))
                 {
-                    throw new SerializationException("Unknown key name " + key);
+                    throw new AmqpException(ErrorCode.DecodeError, "Unknown key name " + key);
                 }
 
                 object value = member.Type.ReadObject(buffer);

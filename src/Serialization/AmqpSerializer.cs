@@ -18,14 +18,11 @@
 namespace Amqp.Serialization
 {
     using System;
-    using System.Collections;
 #if !NETFX35
     using System.Collections.Concurrent;
 #endif
     using System.Collections.Generic;
-    using System.IO;
     using System.Reflection;
-    using System.Runtime.Serialization;
     using Amqp.Types;
 
     /// <summary>
@@ -181,7 +178,7 @@ namespace Amqp.Serialization
                 {
                     if (baseType.Encoding != contractAttribute.Encoding)
                     {
-                        throw new SerializationException(
+                        throw new AmqpException(ErrorCode.NotAllowed,
                             Fx.Format("{0}.Encoding ({1}) is different from {2}.Encoding ({3})",
                                 type.Name, contractAttribute.Encoding, type.BaseType().Name, baseType.Encoding));
                     }
@@ -263,7 +260,7 @@ namespace Amqp.Serialization
                 {
                     if (order > 0 && member.Order == order)
                     {
-                        throw new SerializationException(Fx.Format("Duplicate Order {0} detected in {1}", order, type.Name));
+                        throw new AmqpException(ErrorCode.NotAllowed, Fx.Format("Duplicate Order {0} detected in {1}", order, type.Name));
                     }
 
                     order = member.Order;
@@ -275,14 +272,14 @@ namespace Amqp.Serialization
             if (contractAttribute.Encoding == EncodingType.SimpleMap &&
                 type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
             {
-                throw new SerializationException(
+                throw new AmqpException(ErrorCode.NotAllowed,
                     Fx.Format("{0}: SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
             }
 
             if (contractAttribute.Encoding == EncodingType.SimpleList &&
                 type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
             {
-                throw new SerializationException(
+                throw new AmqpException(ErrorCode.NotAllowed,
                     Fx.Format("{0}: SimpleList encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
             }
 
