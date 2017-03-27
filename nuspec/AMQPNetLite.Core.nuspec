@@ -37,8 +37,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.Net.dll" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.Net.pdb" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp\bin\Release\netstandard1.3\Amqp.Net.xml" target="lib\netstandard1.3" />
+    <file src="bin\Amqp\bin\Release\netstandard1.3\Amqp.Net.dll" target="lib\netstandard1.3" />
+    <file src="bin\Amqp\bin\Release\netstandard1.3\Amqp.Net.pdb" target="lib\netstandard1.3" />
+    <file src="bin\Amqp\bin\Release\netstandard1.3\Amqp.Net.xml" target="lib\netstandard1.3" />
   </files>
 </package>

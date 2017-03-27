@@ -27,8 +27,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.dll" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.pdb" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.xml" target="lib\netstandard1.3" />
+    <file src="bin\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.dll" target="lib\netstandard1.3" />
+    <file src="bin\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.pdb" target="lib\netstandard1.3" />
+    <file src="bin\Amqp.Serialization\bin\Release\netstandard1.3\Amqp.Serialization.xml" target="lib\netstandard1.3" />
   </files>
 </package>

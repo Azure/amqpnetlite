@@ -21,8 +21,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="dotnet\Amqp.WebSockets.Client\bin\Release\netstandard1.3\Amqp.WebSockets.Client.dll" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp.WebSockets.Client\bin\Release\netstandard1.3\Amqp.WebSockets.Client.pdb" target="lib\netstandard1.3" />
-    <file src="dotnet\Amqp.WebSockets.Client\bin\Release\netstandard1.3\Amqp.WebSockets.Client.xml" target="lib\netstandard1.3" />
+    <file src="bin\Amqp.WebSockets.Client\bin\Release\netstandard1.3\Amqp.WebSockets.Client.dll" target="lib\netstandard1.3" />
+    <file src="bin\Amqp.WebSockets.Client\bin\Release\netstandard1.3\Amqp.WebSockets.Client.pdb" target="lib\netstandard1.3" />
+    <file src="bin\Amqp.WebSockets.Client\bin\Release\netstandard1.3\Amqp.WebSockets.Client.xml" target="lib\netstandard1.3" />
   </files>
 </package>
