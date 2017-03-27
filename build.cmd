@@ -118,7 +118,7 @@ CALL :findfile NuGet exe
 IF "%NuGetPath%" == "" (
   ECHO NuGet.exe does not exist or is not under PATH.
 ) ELSE (
-  "%NuGetPath%" restore amqp-vs2013.sln
+  "%NuGetPath%" restore amqp.sln
 )
 
 CALL :run-build Rebuild
@@ -184,7 +184,7 @@ IF %ERRORLEVEL% NEQ 0 (
 
 ECHO.
 ECHO Running DOTNET (.Net Core 1.0) tests...
-"%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp -- no-broker
+"%dotnetPath%" bin\Test.Amqp\bin\%build-config%\netcoreapp1.0\Test.Amqp.dll -- no-broker
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   ECHO .Net Core Test failed!
@@ -247,12 +247,11 @@ EXIT /b %return-code%
 :usage
   ECHO build.cmd [clean^|release^|test] [options]
   ECHO   clean: clean intermediate files
-  ECHO   release: a shortcut for "--config Release --nuget --dotnet"
+  ECHO   release: a shortcut for "--config Release --nuget"
   ECHO   test: run tests only from existing build
   ECHO options:
   ECHO  --config ^<value^>      [Debug]   build configuration (e.g. Debug, Release)
   ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
-  ECHO  --dotnet              [true]    build dotnet
   ECHO  --verbosity ^<value^>   [minimal] build verbosity (q[uiet], m[inimal], n[ormal], d[etailed] and diag[nostic])
   ECHO  --skiptest            [false]   skip test
   ECHO  --nuget               [false]   create NuGet packet (for Release only)
@@ -264,7 +263,7 @@ EXIT /b %return-code%
   GOTO :eof
 
 :run-build
-  ECHO Build solution amqp-vs2013.sln
+  ECHO Build solution amqp.sln
   "%MSBuildPath%" amqp.sln /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
   IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
 
