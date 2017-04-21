@@ -219,6 +219,10 @@ namespace Amqp
                     {
                         t.SetException(new AmqpException(((Rejected)o).Error));
                     }
+                    else if (o.Descriptor.Code == Codec.Released.Code)
+                    {
+                        t.SetException(new AmqpException(ErrorCode.MessageReleased, null));
+                    }
                     else
                     {
                         t.SetException(new AmqpException(ErrorCode.InternalError, o.Descriptor.Name));

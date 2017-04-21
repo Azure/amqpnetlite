@@ -122,22 +122,26 @@ namespace Amqp
         {
             this.CloseCalled = true;
             this.Error = error;
-
-            for (int i = 0; i < this.localLinks.Length; i++)
-            {
-                if (this.localLinks[i] != null)
-                {
-                    this.localLinks[i].Abort(error);
-                }
-            }
-
-            this.CancelPendingDeliveries(error);
+            this.AbortLinks(error);
 
             if (this.state != State.End)
             {
                 this.state = State.End;
                 this.NotifyClosed(error);
             }
+        }
+
+        void AbortLinks(Error error)
+        {
+            for (int i = 0; i < this.localLinks.Length; i++)
+            {
+                if (this.localLinks[i] != null)
+                {
+                    this.localLinks[i].Abort(error, "session ended");
+                }
+            }
+
+            this.CancelPendingDeliveries(error);
         }
 
         internal uint AddLink(Link link)
@@ -317,8 +321,9 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnEnd", this.state));
                 }
 
-                this.OnClose(end.Error);
+                this.AbortLinks(end.Error);
                 this.NotifyClosed(end.Error);
+
                 return true;
             }
         }

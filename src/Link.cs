@@ -106,17 +106,17 @@ namespace Amqp
             get { return this.state; }
         }
 
-        internal void Abort(Error error)
+        internal void Abort(Error error, string reason)
         {
             this.CloseCalled = true;
-            this.Error = error;
+            this.Error = error ?? new Error() { Condition = ErrorCode.DetachForced, Description = reason };
 
             this.OnAbort(error);
 
             if (this.state != LinkState.End)
             {
                 this.state = LinkState.End;
-                this.NotifyClosed(error);
+                this.NotifyClosed(this.Error);
             }
         }
 

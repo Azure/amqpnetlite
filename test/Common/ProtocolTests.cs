@@ -211,6 +211,112 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void SendWithSessionEndTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                // end the session
+                TestListener.FRM(stream, 0x17UL, 0, channel);
+                return TestOutcome.Stop;
+            });
+            this.testListener.RegisterTarget(TestPoint.End, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "SendWithSessionEndTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                try
+                {
+                    sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                    Assert.IsTrue(false, "Send should throw exception");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual(ErrorCode.MessageReleased, (string)exception.Error.Condition);
+                }
+                connection.Close();
+                Assert.AreEqual(ErrorCode.DetachForced, (string)sender.Error.Condition);
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                try
+                {
+                    await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                    Assert.IsTrue(false, "Send should throw exception");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual(ErrorCode.MessageReleased, (string)exception.Error.Condition);
+                }
+                await connection.CloseAsync();
+                Assert.AreEqual(ErrorCode.DetachForced, (string)sender.Error.Condition);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void SendWithLinkDetachTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                // detach the link
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true);
+                return TestOutcome.Stop;
+            });
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "SendWithLinkDetachTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                try
+                {
+                    sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                    Assert.IsTrue(false, "Send should throw exception");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual(ErrorCode.MessageReleased, (string)exception.Error.Condition);
+                }
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                try
+                {
+                    await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                    Assert.IsTrue(false, "Send should throw exception");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual(ErrorCode.MessageReleased, (string)exception.Error.Condition);
+                }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
         public void ClosedEventOnTransportResetTest()
         {
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
@@ -419,6 +525,156 @@ namespace Test.Amqp
                 }
                 await connection.CloseAsync();
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void ReceiveWithSessionEndTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                // end the session
+                TestListener.FRM(stream, 0x17UL, 0, channel);
+                return TestOutcome.Stop;
+            });
+            this.testListener.RegisterTarget(TestPoint.End, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiveWithSessionCloseTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                try
+                {
+                    receiver.Receive();
+                    Assert.IsTrue(false, "Receive should fail with error");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual((Symbol)ErrorCode.DetachForced, exception.Error.Condition);
+                }
+                connection.Close();
+                Assert.AreEqual((Symbol)ErrorCode.DetachForced, receiver.Error.Condition);
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                try
+                {
+                    await receiver.ReceiveAsync();
+                    Assert.IsTrue(false, "Receive should fail with error");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual((Symbol)ErrorCode.DetachForced, exception.Error.Condition);
+                }
+                await connection.CloseAsync();
+                Assert.AreEqual((Symbol)ErrorCode.DetachForced, receiver.Error.Condition);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void ReceiveWithLinkDetachErrorTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                // detach link with error. receive calls should throw
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true, new Error() { Condition = ErrorCode.InternalError });
+                return TestOutcome.Stop;
+            });
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiveWithLinkDetachErrorTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                try
+                {
+                    receiver.Receive();
+                    Assert.IsTrue(false, "Receive should fail with error");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual((Symbol)ErrorCode.InternalError, exception.Error.Condition);
+                }
+                connection.Close();
+                Assert.AreEqual((Symbol)ErrorCode.InternalError, receiver.Error.Condition);
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                try
+                {
+                    await receiver.ReceiveAsync();
+                    Assert.IsTrue(false, "Receive should fail with error");
+                }
+                catch (AmqpException exception)
+                {
+                    Assert.AreEqual((Symbol)ErrorCode.InternalError, exception.Error.Condition);
+                }
+                await connection.CloseAsync();
+                Assert.AreEqual((Symbol)ErrorCode.InternalError, receiver.Error.Condition);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void ReceiveWithLinkDetachTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                // detach link without error. receivers should return null (eof)
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true);
+                return TestOutcome.Stop;
+            });
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiveWithLinkDetachTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                DateTime dt = DateTime.UtcNow;
+                var message = receiver.Receive(30000);
+                Assert.IsTrue(message == null);
+                connection.Close();
+                Assert.IsTrue(DateTime.UtcNow.Subtract(dt).TotalMilliseconds < 10000, "receive should return right away");
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                DateTime dt = DateTime.UtcNow;
+                var message = await receiver.ReceiveAsync(30000);
+                Assert.IsTrue(message == null);
+                await connection.CloseAsync();
+                Assert.IsTrue(DateTime.UtcNow.Subtract(dt).TotalMilliseconds < 10000, "receive should return right away");
             }).Unwrap().GetAwaiter().GetResult();
         }
 
