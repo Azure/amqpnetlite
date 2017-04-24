@@ -9,9 +9,9 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 |------|-------------|
 |AMQPNetLite (main package)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite)](https://www.nuget.org/packages/AMQPNetLite/)|
 |AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
-|AMQPNetLite.Core (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Core)](https://www.nuget.org/packages/AMQPNetLite.Core/)|
-|AMQPNetLite.Serialization (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Serialization)](https://www.nuget.org/packages/AMQPNetLite.Serialization/)|
-|AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
+|AMQPNetLite.Core (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Core?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Core/)|
+|AMQPNetLite.Serialization (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Serialization?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Serialization/)|
+|AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior.
