@@ -24,10 +24,7 @@ namespace Amqp
     /// <summary>
     /// The Message class represents an AMQP message.
     /// </summary>
-    public class Message
-#if NETFX || NETFX40 || DOTNET
-    : IDisposable
-#endif
+    public class Message : IDisposable
     {
         /// <summary>
         /// The header section.
@@ -193,6 +190,20 @@ namespace Amqp
             return message;
         }
 
+        /// <summary>
+        /// Disposes the current message to release resources.
+        /// </summary>
+        public void Dispose()
+        {
+#if NETFX || NETFX40 || DOTNET
+            if (this.Delivery != null &&
+                this.Delivery.Buffer != null)
+            {
+                this.Delivery.Buffer.ReleaseReference();
+            }
+#endif
+        }
+
         internal ByteBuffer Encode(int reservedBytes)
         {
             ByteBuffer buffer = new ByteBuffer(reservedBytes + 128, true);
@@ -221,18 +232,6 @@ namespace Amqp
         }
 
 #if NETFX || NETFX40 || DOTNET
-        /// <summary>
-        /// Disposes the current message to release resources.
-        /// </summary>
-        public void Dispose()
-        {
-            if (this.Delivery != null &&
-                this.Delivery.Buffer != null)
-            {
-                this.Delivery.Buffer.ReleaseReference();
-            }
-        }
-
         internal ByteBuffer Encode(IBufferManager bufferManager, int reservedBytes)
         {
             // get some extra space to store the frame header
