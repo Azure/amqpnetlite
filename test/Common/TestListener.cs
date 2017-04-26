@@ -149,7 +149,7 @@ namespace Test.Amqp
             {
                 Socket s = args.AcceptSocket;
                 s.NoDelay = true;
-                Fx.StartThread(() => this.Pump(new NetworkStream(s, true)));
+                System.Threading.Tasks.Task.Factory.StartNew(() => this.Pump(new NetworkStream(s, true)));
             }
 
             bool sync = args.UserToken != null;

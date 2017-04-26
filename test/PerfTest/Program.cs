@@ -35,7 +35,7 @@ namespace PerfTest
             try
             {
                 PerfArguments perfArgs = new PerfArguments(args);
-                if (args.Length == 0 || Arguments.IsHelp(perfArgs.Operation))
+                if (args.Length == 0 || perfArgs.HasHelp)
                 {
                     Usage();
                     return;
@@ -91,7 +91,7 @@ namespace PerfTest
             Console.WriteLine("  reply  \tstart a request processor and send replies");
             Console.WriteLine("  listen \tstart a listener and accept messages from remote peer");
             Console.WriteLine("\r\narguments:");
-            typeof(PerfArguments).PrintArguments();
+            Arguments.PrintArguments(typeof(PerfArguments));
         }
 
         abstract class Role

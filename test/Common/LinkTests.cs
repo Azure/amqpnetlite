@@ -474,12 +474,11 @@ namespace Test.Amqp
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             ManualResetEvent gotMessage = new ManualResetEvent(false);
-            Fx.StartThread(() =>
+            StartThread(() =>
             {
                 Message message = receiver.Receive();
                 if (message != null)
                 {
-                    Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
                     receiver.Accept(message);
                     gotMessage.Set();
                 }
@@ -901,5 +900,24 @@ namespace Test.Amqp
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
+
+#if NETFX_CORE
+        static void StartThread(Action action)
+        {
+            System.Threading.Tasks.Task.Factory.StartNew(action);
+        }
+#elif NETMF
+        static void StartThread(ThreadStart threadStart)
+        {
+            new Thread(threadStart).Start();
+        }
+#else
+        static void StartThread(ThreadStart threadStart)
+        {
+            ThreadPool.QueueUserWorkItem(
+                o => { ((ThreadStart)o)(); },
+                threadStart);
+        }
+#endif
     }
 }

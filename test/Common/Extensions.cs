@@ -19,9 +19,7 @@ namespace Test.Common
 {
     using System;
     using System.Collections.Generic;
-    using System.Reflection;
     using System.Security.Cryptography.X509Certificates;
-    using System.Text;
     using Amqp;
     using Amqp.Framing;
 
@@ -90,79 +88,6 @@ namespace Test.Common
             }
 
             throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
-        }
-
-        public static void PrintArguments(this Type type)
-        {
-            StringBuilder sb = new StringBuilder();
-            Stack<Type> stack = new Stack<Type>();
-            while (type != null)
-            {
-                stack.Push(type);
-                type = type.BaseType;
-            }
-
-            while (stack.Count > 0)
-            {
-                type = stack.Pop();
-
-                var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-                foreach (var prop in properties)
-                {
-                    var attribute = (ArgumentAttribute)prop.GetCustomAttribute(typeof(ArgumentAttribute));
-                    if (attribute != null)
-                    {
-                        int width = 0;
-                        if (attribute.Name != null)
-                        {
-                            sb.Append('-');
-                            sb.Append('-');
-                            sb.Append(attribute.Name);
-                            width += attribute.Name.Length + 2;
-                        }
-
-                        if (attribute.Shortcut != null)
-                        {
-                            sb.Append(' ');
-                            sb.Append('(');
-                            sb.Append('-');
-                            sb.Append(attribute.Shortcut);
-                            sb.Append(')');
-                            width += attribute.Shortcut.Length + 4;
-                        }
-
-                        if (width < 20)
-                        {
-                            sb.Append(' ', 20 - width);
-                            width = 20;
-                        }
-                        else
-                        {
-                            sb.Append(' ');
-                            width++;
-                        }
-
-                        if (attribute.Description != null)
-                        {
-                            sb.Append(attribute.Description);
-                        }
-
-                        if (attribute.Default != null)
-                        {
-                            sb.Append('\r');
-                            sb.Append('\n');
-                            sb.Append(' ', width);
-                            sb.Append("default: ");
-                            sb.Append(attribute.Default);
-                        }
-
-                        sb.Append('\r');
-                        sb.Append('\n');
-                    }
-                }
-            }
-
-            Console.WriteLine(sb.ToString());
         }
 
         static Dictionary<string, TraceLevel> GetTraceMapping()
