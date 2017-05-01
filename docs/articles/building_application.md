@@ -86,7 +86,7 @@ var connection = await Connection.Factory.CreateAsync(address);
 
 Optionally you can give the Open and OnOpened callback in the same way as in using constructors.
 ```
-var conneciton = await Connection.Factory.CreateAsync(
+var connection = await Connection.Factory.CreateAsync(
     new Address("amqps://localhost:5671"),
     new Open() { ContainerId = "client.1.2", HostName = "localhost", MaxFrameSize = 8 * 1024 },
     (c, o) => { /*do someting with o*/ });
@@ -104,7 +104,7 @@ factory.SASL.Profile = SaslProfile.External;
 factory.AMQP.MaxFrameSize = 64 * 1024;
 factory.AMQP.HostName = "contoso.com";
 factory.AMQP.ContainerId = "container:" + testName;
-var conneciton = await factory.CreateAsync(new Address("amqps://localhost:5671"));
+var connection = await factory.CreateAsync(new Address("amqps://localhost:5671"));
 ```
 
 ### TLS/SSL
