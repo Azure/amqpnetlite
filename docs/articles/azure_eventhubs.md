@@ -23,4 +23,4 @@ value: a described string: descriptor=symbol(“apache.org:selector-filter:strin
 * Start from message at offset 100 inclusively  
 `”amqp.annotation.x-opt-offset >= '100'”`
 * Start from message received after a timestamp. The number is an AMQP timestamp.  
-`”amqp.annotation.x-opt-enqueuedtimeutc > 1234567”`
+`”amqp.annotation.x-opt-enqueued-time > 1234567”`
