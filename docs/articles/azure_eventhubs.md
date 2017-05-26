@@ -24,3 +24,7 @@ value: a described string: descriptor=symbol(“apache.org:selector-filter:strin
 `”amqp.annotation.x-opt-offset >= '100'”`
 * Start from message received after a timestamp. The number is an AMQP timestamp.  
 `”amqp.annotation.x-opt-enqueued-time > 1234567”`
+
+The offset filter is perferred as it is more performant than the enqueued-time filter. The enqueued-time filter is for rare cases when you lose the checkpoint data and have to go back a certain period of time in history. The following special offsets are defined.
+'-1': beginning of the event stream.
+'@latest': end of the even stream, in other words, all new events after the link is attached.
