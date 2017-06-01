@@ -335,6 +335,33 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostMultipleClientsTest()
+        {
+            string name = "ContainerHostMultipleClientsTest";
+            var processor = new TestMessageProcessor();
+            this.host.RegisterMessageProcessor(name, processor);
+
+            var connection = new Connection(Address);
+
+            // client 1
+            {
+                var session = new Session(connection);
+                var sender = new SenderLink(session, "send-link-1", name);
+                sender.Send(new Message("msg1"), SendTimeout);
+            }
+
+            // client 2
+            {
+                var session = new Session(connection);
+                var sender = new SenderLink(session, "send-link-2", name);
+                sender.Send(new Message("msg2"), SendTimeout);
+            }
+
+            connection.Close();
+        }
+
+
+        [TestMethod]
         public void ContainerHostProcessorOrderTest()
         {
             string name = "ContainerHostProcessorOrderTest";
