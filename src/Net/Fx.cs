@@ -47,11 +47,7 @@ namespace Amqp
             return string.Format(format, args);
         }
 
-        /// <summary>
-        /// Starts a new thread.
-        /// </summary>
-        /// <param name="threadStart">The thread start callback.</param>
-        public static void StartThread(ThreadStart threadStart)
+        internal static void StartThread(ThreadStart threadStart)
         {
             ThreadPool.QueueUserWorkItem(
                 o => { ((ThreadStart)o)(); },

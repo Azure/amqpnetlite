@@ -48,27 +48,16 @@ namespace Amqp
         }
 
 #if WINDOWS_PHONE
-        /// <summary>
-        /// Starts a new thread.
-        /// </summary>
-        /// <param name="threadStart">The thread start callback.</param>
-        public static void StartThread(ThreadStart threadStart)
+        internal static void StartThread(ThreadStart threadStart)
         {
             ThreadPool.QueueUserWorkItem(
                 o => { ((ThreadStart)o)(); },
                 threadStart);
         }
 #else
-        /// <summary>
-        /// Represents the method that executes on a System.Threading.Thread.
-        /// </summary>
-        public delegate void ThreadStart();
+        internal delegate void ThreadStart();
 
-        /// <summary>
-        /// Starts a new thread.
-        /// </summary>
-        /// <param name="threadStart">The thread start callback.</param>
-        public static void StartThread(ThreadStart threadStart)
+        internal static void StartThread(ThreadStart threadStart)
         {
             System.Threading.Tasks.Task.Factory.StartNew(o => ((ThreadStart)o)(), threadStart);
         }

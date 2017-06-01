@@ -920,4 +920,14 @@ namespace Test.Amqp
         }
 #endif
     }
+#if NETMF
+
+    static class Extensions
+    {
+        internal static bool WaitOne(this ManualResetEvent mre, int milliseconds)
+        {
+            return mre.WaitOne(milliseconds, false);
+        }
+    }
+#endif
 }

@@ -77,23 +77,12 @@ namespace Amqp
             return sb.ToString();
         }
 
-        /// <summary>
-        /// Starts a new thread.
-        /// </summary>
-        /// <param name="threadStart">The thread start callback.</param>
-        public static void StartThread(ThreadStart threadStart)
+        internal static void StartThread(ThreadStart threadStart)
         {
             new Thread(threadStart).Start();
         }
 
-        /// <summary>
-        /// Blocks the current thread until the current System.Threading.WaitHandle receives
-        /// a signal, using a 32-bit signed integer to specify the time interval.
-        /// </summary>
-        /// <param name="mre">The ManualResetEvent object to wait on.</param>
-        /// <param name="milliseconds">The number of milliseconds to wait (-1 for infinite)</param>
-        /// <returns></returns>
-        public static bool WaitOne(this ManualResetEvent mre, int milliseconds)
+        internal static bool WaitOne(this ManualResetEvent mre, int milliseconds)
         {
             return mre.WaitOne(milliseconds, false);
         }
