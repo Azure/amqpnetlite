@@ -31,7 +31,7 @@ namespace Amqp
     /// <summary>
     /// The Session class represents an AMQP session.
     /// </summary>
-    public class Session : AmqpObject
+    public class Session : AmqpObject, ISession
     {
         enum State
         {
@@ -46,7 +46,7 @@ namespace Amqp
         }
 
         internal const uint defaultWindowSize = 2048;
-        readonly Connection connection;
+        readonly IConnection connection;
         readonly OnBegin onBegin;
         readonly ushort channel;
         uint handleMax;
@@ -70,7 +70,7 @@ namespace Amqp
         /// Initializes a session object.
         /// </summary>
         /// <param name="connection">The connection within which to create the session.</param>
-        public Session(Connection connection)
+        public Session(IConnection connection)
             : this(connection, Default(connection), null)
         {
         }
@@ -81,7 +81,7 @@ namespace Amqp
         /// <param name="connection">The connection in which the session will be created.</param>
         /// <param name="begin">The Begin performative to be sent to the remote peer.</param>
         /// <param name="onBegin">The callback to invoke when a begin is received from peer.</param>
-        public Session(Connection connection, Begin begin, OnBegin onBegin)
+        public Session(IConnection connection, Begin begin, OnBegin onBegin)
         {
             this.connection = connection;
             this.onBegin = onBegin;
@@ -94,7 +94,11 @@ namespace Amqp
             this.remoteLinks = new Link[1];
             this.incomingList = new LinkedList();
             this.outgoingList = new LinkedList();
-            this.channel = connection.AddSession(this);
+            var amqpConnection = connection as Connection;
+            if (amqpConnection != null)
+            {
+                channel = amqpConnection.AddSession(this);
+            }
 
             this.state = State.BeginSent;
             this.SendBegin(begin);
@@ -103,7 +107,7 @@ namespace Amqp
         /// <summary>
         /// Gets the connection where the session was created.
         /// </summary>
-        public Connection Connection
+        public IConnection Connection
         {
             get { return this.connection; }
         }
@@ -263,7 +267,11 @@ namespace Amqp
         {
             if (command.Descriptor.Code == Codec.End.Code || this.state < State.EndSent)
             {
-                this.connection.SendCommand(this.channel, command);
+                var amqpConnection = Connection as Connection;
+                if (amqpConnection != null)
+                {
+                    amqpConnection.SendCommand(this.channel, command);
+                }
             }
         }
 
@@ -453,13 +461,14 @@ namespace Amqp
             }
         }
 
-        static Begin Default(Connection connection)
+        static Begin Default(IConnection connection)
         {
+            var amqpConnection = connection as Connection;
             return new Begin()
             {
                 IncomingWindow = defaultWindowSize,
                 OutgoingWindow = defaultWindowSize,
-                HandleMax = (uint)(connection.MaxLinksPerSession - 1),
+                HandleMax = (uint)(amqpConnection != null ? amqpConnection.MaxLinksPerSession - 1 : Amqp.Connection.DefaultMaxLinksPerSession),
                 NextOutgoingId = uint.MaxValue - 2u
             };
         }
@@ -650,12 +659,20 @@ namespace Amqp
 
         void SendBegin(Begin begin)
         {
-            this.connection.SendCommand(this.channel, begin);
+            var amqpConnection = Connection as Connection;
+            if (amqpConnection != null)
+            {
+                amqpConnection.SendCommand(this.channel, begin);
+            }
         }
 
         void SendEnd()
         {
-            this.connection.SendCommand(this.channel, new End());
+            var amqpConnection = Connection as Connection;
+            if (amqpConnection != null)
+            {
+                amqpConnection.SendCommand(this.channel, new End());
+            }
         }
 
         void WriteDelivery(Delivery delivery)
@@ -665,7 +682,7 @@ namespace Amqp
             {
                 this.outgoingWindow--;
                 this.nextOutgoingId++;
-                Transfer transfer = new Transfer() { Handle = delivery.Handle };
+                Transfer transfer = new Transfer() {Handle = delivery.Handle};
 
                 bool first = delivery.BytesTransfered == 0;
                 if (first)
@@ -680,20 +697,24 @@ namespace Amqp
                     transfer.Batchable = true;
                 }
 
-                int len = this.connection.SendCommand(this.channel, transfer, first,
-                    delivery.Buffer, delivery.ReservedBufferSize);
-                delivery.BytesTransfered += len;
-
-                if (delivery.Buffer.Length == 0)
+            var amqpConnection = Connection as Connection;
+                if (amqpConnection != null)
                 {
-                    delivery.Buffer.ReleaseReference();
-                    Delivery next = (Delivery)delivery.Next;
-                    if (delivery.Settled)
-                    {
-                        this.outgoingList.Remove(delivery);
-                    }
+                    int len = amqpConnection.SendCommand(this.channel, transfer, first,
+                        delivery.Buffer, delivery.ReservedBufferSize);
+                    delivery.BytesTransfered += len;
 
-                    delivery = next;
+                    if (delivery.Buffer.Length == 0)
+                    {
+                        delivery.Buffer.ReleaseReference();
+                        Delivery next = (Delivery) delivery.Next;
+                        if (delivery.Settled)
+                        {
+                            this.outgoingList.Remove(delivery);
+                        }
+
+                        delivery = next;
+                    }
                 }
             }
         }

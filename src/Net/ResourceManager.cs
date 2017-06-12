@@ -85,15 +85,19 @@ namespace Amqp.Transactions
 
         Controller GetOrCreateController(Link link)
         {
-            Controller controller;
+            Controller controller = null;
             lock (this.SyncRoot)
             {
-                if (!this.controllers.TryGetValue(link.Session.Connection, out controller))
+                var connection = link.Session.Connection as Connection;
+                if (connection != null)
                 {
-                    Session session = new Session(link.Session.Connection);
-                    controller = new Controller(session);
-                    controller.Closed += this.OnControllerClosed;
-                    this.controllers.Add(link.Session.Connection, controller);
+                    if (!this.controllers.TryGetValue(connection, out controller))
+                    {
+                        Session session = new Session(link.Session.Connection);
+                        controller = new Controller(session);
+                        controller.Closed += this.OnControllerClosed;
+                        this.controllers.Add(connection, controller);
+                    }
                 }
             }
 
@@ -103,10 +107,14 @@ namespace Amqp.Transactions
         void OnControllerClosed(AmqpObject obj, Error error)
         {
             var controller = (Controller)obj;
-            bool removed;
+            bool removed = false;
             lock (this.SyncRoot)
             {
-                removed = this.controllers.Remove(controller.Session.Connection);
+                var connection = controller.Session.Connection as Connection;
+                if (connection != null)
+                {
+                    removed = this.controllers.Remove(connection);
+                }
             }
 
             if (removed)

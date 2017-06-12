@@ -44,9 +44,9 @@ namespace Amqp
     /// <summary>
     /// The Link class represents an AMQP link.
     /// </summary>
-    public abstract class Link : AmqpObject
+    public abstract class Link : AmqpObject, ILink
     {
-        readonly Session session;
+        readonly ISession session;
         readonly string name;
         readonly uint handle;
         readonly OnAttached onAttached;
@@ -58,12 +58,16 @@ namespace Amqp
         /// <param name="session">The session.</param>
         /// <param name="name">The link name.</param>
         /// <param name="onAttached">The callback to handle received attach.</param>
-        protected Link(Session session, string name, OnAttached onAttached)
+        protected Link(ISession session, string name, OnAttached onAttached)
         {
             this.session = session;
             this.name = name;
             this.onAttached = onAttached;
-            this.handle = session.AddLink(this);
+            Session amqpSession = session as Session;
+            if (amqpSession != null)
+            {
+                this.handle = amqpSession.AddLink(this);
+            }
             this.state = LinkState.Start;
         }
 
@@ -86,7 +90,7 @@ namespace Amqp
         /// <summary>
         /// Gets the session where the link was created.
         /// </summary>
-        public Session Session
+        public ISession Session
         {
             get { return this.session; }
         }
@@ -169,7 +173,11 @@ namespace Amqp
                 this.OnClose(detach.Error);
             }
 
-            this.session.RemoveLink(this, detach.Handle);
+            Session amqpSession = session as Session;
+            if (amqpSession != null)
+            {
+                amqpSession.RemoveLink(this, detach.Handle);
+            }
             this.NotifyClosed(detach.Error);
 
             return true;
@@ -229,8 +237,12 @@ namespace Amqp
             {
                 if (!this.IsDetaching)
                 {
-                    Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
-                    this.session.SendFlow(flow);
+                    Session amqpSession = session as Session;
+                    if (amqpSession != null)
+                    {
+                        Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
+                        amqpSession.SendFlow(flow);
+                    }
                 }
             }
         }
@@ -247,7 +259,11 @@ namespace Amqp
                 attach.InitialDeliveryCount = initialDeliveryCount;
             }
 
-            this.session.SendCommand(attach);
+            Session amqpSession = session as Session;
+            if (amqpSession != null)
+            {
+                amqpSession.SendCommand(attach);
+            }
         }
 
         internal void ThrowIfDetaching(string operation)
@@ -265,8 +281,12 @@ namespace Amqp
 
         void SendDetach(Error error)
         {
-            Detach detach = new Detach() { Handle = this.handle, Error = error, Closed = true };
-            this.session.SendCommand(detach);
+            Session amqpSession = session as Session;
+            if (amqpSession != null)
+            {
+                Detach detach = new Detach() {Handle = this.handle, Error = error, Closed = true};
+                amqpSession.SendCommand(detach);
+            }
         }
     }
 }

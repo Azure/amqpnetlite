@@ -109,7 +109,11 @@ namespace Amqp
 
                 if (message.Delivery.BytesTransfered > 0)
                 {
-                    this.Session.DisposeDelivery(false, message.Delivery, new Released(), true);
+                    var session = Session as Session;
+                    if (session != null)
+                    {
+                        session.DisposeDelivery(false, message.Delivery, new Released(), true);
+                    }
                 }
 
                 throw new TimeoutException();
@@ -149,11 +153,16 @@ namespace Amqp
         {
             const int reservedBytes = 40;
 #if NETFX || NETFX40 || DOTNET
-            var buffer = message.Encode(this.Session.Connection.BufferManager, reservedBytes);
+            var connection = Session.Connection as Connection;
+            ByteBuffer buffer = null;
+            if (connection != null)
+            {
+                buffer = message.Encode(connection.BufferManager, reservedBytes);
+            }
 #else
             var buffer = message.Encode(reservedBytes);
 #endif
-            if (buffer.Length < 1)
+            if (buffer != null && buffer.Length < 1)
             {
                 throw new ArgumentException("Cannot send an empty message.");
             }
@@ -221,7 +230,11 @@ namespace Amqp
             // some broker may not settle the message when sending dispositions
             if (!delivery.Settled)
             {
-                this.Session.DisposeDelivery(false, delivery, delivery.State, true);
+                var session = Session as Session;
+                if (session != null)
+                {
+                    session.DisposeDelivery(false, delivery, delivery.State, true);
+                }
             }
 
             if (delivery.OnOutcome != null)
@@ -273,7 +286,11 @@ namespace Amqp
             }
 
             Delivery.ReleaseAll(toRelease, error);
-            Delivery.ReleaseAll(this.Session.RemoveDeliveries(this), error);
+            var session = Session as Session;
+            if (session != null)
+            {
+                Delivery.ReleaseAll(session.RemoveDeliveries(this), error);
+            }
         }
 
         void WriteDelivery(Delivery delivery)
@@ -285,7 +302,11 @@ namespace Amqp
                 try
                 {
                     bool settled = delivery.Settled;
-                    this.Session.SendDelivery(delivery);
+                    var session = Session as Session;
+                    if (session != null)
+                    {
+                        session.SendDelivery(delivery);
+                    }
                     if (settled && delivery.OnOutcome != null)
                     {
                         delivery.OnOutcome(delivery.Message, new Accepted(), delivery.UserToken);
