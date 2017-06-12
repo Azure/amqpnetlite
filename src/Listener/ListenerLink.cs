@@ -52,7 +52,7 @@ namespace Amqp.Listener
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="attach">The received attach frame.</param>
-        public ListenerLink(ListenerSession session, Attach attach)
+        public ListenerLink(ISession session, Attach attach)
             : base(session, attach.LinkName, null)
         {
             this.role = !attach.Role;
@@ -165,7 +165,11 @@ namespace Amqp.Listener
                 return;
             }
 
-            this.Session.DisposeDelivery(this.role, delivery, deliveryState, settled);
+            var session = Session as Session;
+            if (session != null)
+            {
+                session.DisposeDelivery(this.role, delivery, deliveryState, settled);
+            }
         }
 
         /// <summary>
@@ -273,7 +277,11 @@ namespace Amqp.Listener
                     UserToken = userToken
                 };
 
-                this.Session.SendDelivery(delivery);
+                var session = Session as Session;
+                if (session != null)
+                {
+                    session.SendDelivery(delivery);
+                }
 
                 return remainingCredit;
             }
@@ -441,8 +449,12 @@ namespace Amqp.Listener
         {
             // notify upper layers first so they can handle released deliveries correctly
             this.NotifyClosed(error);
-
-            Delivery pending = this.Session.RemoveDeliveries(this);
+            var session = Session as Session;
+            Delivery pending = null;
+            if (session != null)
+            {
+                pending = session.RemoveDeliveries(this);
+            }
             while (pending != null)
             {
                 pending.State = new Released();

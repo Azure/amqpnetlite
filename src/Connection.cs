@@ -33,7 +33,7 @@ namespace Amqp
     /// <summary>
     /// The Connection class represents an AMQP connection.
     /// </summary>
-    public class Connection : AmqpObject
+    public class Connection : AmqpObject, IConnection
     {
         enum State
         {

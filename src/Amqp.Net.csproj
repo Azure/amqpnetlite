@@ -49,6 +49,9 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="IConnection.cs" />
+    <Compile Include="ILink.cs" />
+    <Compile Include="ISession.cs" />
     <Compile Include="Listener\ContainerHost.cs" />
     <Compile Include="Listener\AttachContext.cs" />
     <Compile Include="Listener\ContextState.cs" />

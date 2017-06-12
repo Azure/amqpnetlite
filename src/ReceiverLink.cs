@@ -29,9 +29,57 @@ namespace Amqp
     public delegate void MessageCallback(ReceiverLink receiver, Message message);
 
     /// <summary>
+    /// Abstraction for a ReceiverLink implementation
+    /// </summary>
+    public interface IReceiverLink : ILink
+    {
+        /// <summary>
+        /// Starts the message pump.
+        /// </summary>
+        /// <param name="credit">The link credit to issue.</param>
+        /// <param name="onMessage">If specified, the callback to invoke when messages are received.
+        /// If not specified, call Receive method to get the messages.</param>
+        void Start(int credit, MessageCallback onMessage = null);
+
+        /// <summary>
+        /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted
+        /// or rejected by the caller. If false, caller is responsible for manage link credits.</param>
+        void SetCredit(int credit, bool autoRestore = true);
+
+        /// <summary>
+        /// Receives a message. The call is blocked until the timeout duration expires or a message is available.
+        /// </summary>
+        /// <param name="timeout">Number of milliseconds to wait for a message.</param>
+        /// <returns>A Message object if available; otherwise a null value.</returns>
+        Message Receive(int timeout = 60000);
+
+        /// <summary>
+        /// Accepts a message. It sends an accepted outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to accept.</param>
+        void Accept(Message message);
+
+        /// <summary>
+        /// Releases a message. It sends a released outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to release.</param>
+        void Release(Message message);
+
+        /// <summary>
+        /// Rejects a message. It sends a rejected outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to reject.</param>
+        /// <param name="error">The error, if any, for the rejection.</param>
+        void Reject(Message message, Error error = null);
+    }
+
+    /// <summary>
     /// The ReceiverLink class represents a link that accepts incoming messages.
     /// </summary>
-    public class ReceiverLink : Link
+    public class ReceiverLink : Link, IReceiverLink
     {
 #if NETFX || NETFX40 || DOTNET
         const int DefaultCredit = 200;
@@ -82,7 +130,7 @@ namespace Amqp
         /// <param name="name">The link name.</param>
         /// <param name="attach">The attach frame to send for this link.</param>
         /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
-        public ReceiverLink(Session session, string name, Attach attach, OnAttached onAttached)
+        public ReceiverLink(ISession session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
             this.totalCredit = -1;
@@ -358,7 +406,11 @@ namespace Amqp
                 settled = false;
             }
 #endif
-            this.Session.DisposeDelivery(true, delivery, state, settled);
+            Session amqpSession = Session as Session;
+            if (amqpSession != null)
+            {
+                amqpSession.DisposeDelivery(true, delivery, state, settled);
+            }
         }
 
         void OnDelivery(SequenceNumber deliveryId)

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>HelloAmqp</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>HelloAmqp</PackageId>
+    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Amqp\Amqp.csproj" />
+    <ProjectReference Include="..\Amqp.Serialization\Amqp.Serialization.csproj" />
+  </ItemGroup>
+
+</Project>
