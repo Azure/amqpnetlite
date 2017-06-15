@@ -194,7 +194,7 @@ namespace Amqp.Listener
 
             if (error != null)
             {
-                this.Close(0, error);
+                this.CloseInternal(0, error);
             }
             else
             {

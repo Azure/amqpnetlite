@@ -43,9 +43,9 @@ namespace Examples.Interop {
                 connection = new Connection(address);
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-drain", options.Address);
-                int timeout = int.MaxValue;
+                TimeSpan timeout = TimeSpan.MaxValue;
                 if (!options.Forever)
-                    timeout = 1000 * options.Timeout;
+                    timeout = TimeSpan.FromSeconds(options.Timeout);
                 Message message = new Message();
                 int nReceived = 0;
                 receiver.SetCredit(options.InitialCredit);

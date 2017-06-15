@@ -481,7 +481,7 @@ namespace Listener.IContainer
                     link.InitializeReceiver(200, onMessage, this);
                 }
 
-                void OnLinkClosed(AmqpObject sender, Error error)
+                void OnLinkClosed(IAmqpObject sender, Error error)
                 {
                     lock (this.queue.publishers)
                     {
@@ -564,7 +564,7 @@ namespace Listener.IContainer
                     return new ArraySegment<byte>(BitConverter.GetBytes(Interlocked.Increment(ref this.tag)));
                 }
 
-                void OnLinkClosed(AmqpObject sender, Error error)
+                void OnLinkClosed(IAmqpObject sender, Error error)
                 {
                     this.Credit = 0;
                     this.queue.OnConsumerClosed(this.id, this);

@@ -202,7 +202,7 @@ namespace LongHaulTest
                 {
                     if (this.session != null)
                     {
-                        this.session.Close(0);
+                        this.session.Close(TimeSpan.Zero);
                     }
 
                     this.session = new Session(connection);

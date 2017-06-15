@@ -22,16 +22,9 @@ namespace Amqp
     using Amqp.Types;
 
     /// <summary>
-    /// The callback that is invoked when a begin performative is received from peer.
-    /// </summary>
-    /// <param name="session">The session.</param>
-    /// <param name="begin">The received begin performative.</param>
-    public delegate void OnBegin(Session session, Begin begin);
-
-    /// <summary>
     /// The Session class represents an AMQP session.
     /// </summary>
-    public class Session : AmqpObject
+    public partial class Session : AmqpObject
     {
         enum State
         {

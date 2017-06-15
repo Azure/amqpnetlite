@@ -142,7 +142,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                session.Close(0);
+                session.Close(TimeSpan.Zero);
                 connection.Close();
                 Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
             }
@@ -154,7 +154,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                session.Close(0);
+                session.Close(TimeSpan.Zero);
                 await connection.CloseAsync();
                 Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
 
@@ -658,7 +658,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
                 DateTime dt = DateTime.UtcNow;
-                var message = receiver.Receive(30000);
+                var message = receiver.Receive();
                 Assert.IsTrue(message == null);
                 connection.Close();
                 Assert.IsTrue(DateTime.UtcNow.Subtract(dt).TotalMilliseconds < 10000, "receive should return right away");
@@ -671,7 +671,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
                 DateTime dt = DateTime.UtcNow;
-                var message = await receiver.ReceiveAsync(30000);
+                var message = await receiver.ReceiveAsync();
                 Assert.IsTrue(message == null);
                 await connection.CloseAsync();
                 Assert.IsTrue(DateTime.UtcNow.Subtract(dt).TotalMilliseconds < 10000, "receive should return right away");

@@ -74,6 +74,40 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public async Task InterfaceSendReceiveAsync()
+        {
+            string testName = "BasicSendReceiveAsync";
+            int nMsgs = 100;
+
+            IConnectionFactory factory = new ConnectionFactory();
+            IConnection connection = await factory.CreateAsync(this.testTarget.Address);
+            ISession session = connection.CreateSession();
+            ISenderLink sender = session.CreateSender("sender-" + testName, testTarget.Path);
+
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg" + i, GroupId = testName };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                await sender.SendAsync(message);
+            }
+
+            IReceiverLink receiver = session.CreateReceiver("receiver-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = await receiver.ReceiveAsync();
+                Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            await sender.CloseAsync();
+            await receiver.CloseAsync();
+            await session.CloseAsync();
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
         public async Task SendToNonExistingAsync()
         {
             string testName = "SendToNonExistingAsync";

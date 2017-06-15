@@ -77,7 +77,7 @@ namespace Device.Thermometer
             }
         }
 
-        private void OnMessage(ReceiverLink receiver, Message message)
+        private void OnMessage(IReceiverLink receiver, Message message)
         {
             AmqpTrace.WriteLine(TraceLevel.Information, "received command from controller");
             int button = (int)message.ApplicationProperties["button"];

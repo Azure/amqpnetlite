@@ -46,6 +46,7 @@
     <Compile Include="Address.cs" />
     <Compile Include="AmqpBitConverter.cs" />
     <Compile Include="AmqpException.cs" />
+    <Compile Include="IAmqpObject.cs" />
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Listener\IMessageProcessor.cs" />
     <Compile Include="Listener\Context.cs" />
     <Compile Include="Listener\ListenerLink.cs" />
+    <Compile Include="Net\IConnectionFactory.cs" />
     <Compile Include="Net\TransportProvider.cs" />
     <Compile Include="Net\SocketExtensions.cs" />
     <Compile Include="Net\ResourceManager.cs" />

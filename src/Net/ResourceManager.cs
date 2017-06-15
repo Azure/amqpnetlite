@@ -100,7 +100,7 @@ namespace Amqp.Transactions
             return controller;
         }
 
-        void OnControllerClosed(AmqpObject obj, Error error)
+        void OnControllerClosed(IAmqpObject obj, Error error)
         {
             var controller = (Controller)obj;
             bool removed;
@@ -111,7 +111,7 @@ namespace Amqp.Transactions
 
             if (removed)
             {
-                controller.Session.Close(0);
+                controller.Session.CloseInternal(0);
             }
         }
 

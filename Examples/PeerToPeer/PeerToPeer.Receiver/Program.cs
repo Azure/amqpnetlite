@@ -132,7 +132,7 @@ namespace PeerToPeer.Server
                 }
             }
 
-            void OnLinkClosed(AmqpObject sender, Error error)
+            void OnLinkClosed(IAmqpObject sender, Error error)
             {
                 Console.WriteLine("A client has disconnected.");
                 this.timer.Dispose();

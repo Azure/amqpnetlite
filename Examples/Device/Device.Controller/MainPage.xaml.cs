@@ -69,7 +69,7 @@ namespace Device.Controller
                 this.sender.Send(message, null, null);
             }
 
-            void OnMessage(ReceiverLink receiver, Message message)
+            void OnMessage(IReceiverLink receiver, Message message)
             {
                 int temperature = (int)message.ApplicationProperties["temperature"];
                 this.parent.Dispatcher.BeginInvoke(() => this.parent.btnData.Content = temperature.ToString());

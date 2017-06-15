@@ -72,7 +72,7 @@ namespace Amqp
             {
                 if (delivery.OnOutcome != null)
                 {
-                    delivery.OnOutcome(delivery.Message, outcome, delivery.UserToken);
+                    delivery.OnOutcome(delivery.Link, delivery.Message, outcome, delivery.UserToken);
                 }
 
                 delivery.Buffer.ReleaseReference();
