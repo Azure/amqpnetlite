@@ -188,7 +188,7 @@ namespace Amqp.Listener
 
             foreach (var connection in snapshot)
             {
-                connection.Close(AmqpObject.DefaultCloseTimeout, new Error() { Condition = ErrorCode.ConnectionForced });
+                connection.CloseInternal(0, new Error() { Condition = ErrorCode.ConnectionForced });
             }
         }
 
@@ -265,7 +265,7 @@ namespace Amqp.Listener
             }
         }
 
-        void OnConnectionClosed(AmqpObject sender, Error error)
+        void OnConnectionClosed(IAmqpObject sender, Error error)
         {
             lock (this.connections)
             {

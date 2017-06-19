@@ -81,7 +81,7 @@ namespace Test.Amqp
             }
         }
 
-        static void OnSendComplete(Message m, Outcome o, object state)
+        static void OnSendComplete(ILink link, Message m, Outcome o, object state)
         {
             PerfTests thisPtr = (PerfTests)state;
             int sentCount = Interlocked.Increment(ref thisPtr.completedCount);

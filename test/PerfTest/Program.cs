@@ -204,7 +204,7 @@ namespace PerfTest
                 Task.WhenAll(tasks).Wait();
             }
 
-            static void OnSendComplete(Message message, Outcome outcome, object state)
+            static void OnSendComplete(ILink link, Message message, Outcome outcome, object state)
             {
                 var tuple = (Tuple<Sender, SenderLink>)state;
                 Sender thisPtr = tuple.Item1;

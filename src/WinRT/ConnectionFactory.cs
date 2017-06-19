@@ -29,7 +29,7 @@ namespace Amqp
     /// <summary>
     /// The factory to create connections asynchronously.
     /// </summary>
-    public class ConnectionFactory
+    public partial class ConnectionFactory
     {
         internal SaslSettings saslSettings;
         internal AmqpSettings amqpSettings;

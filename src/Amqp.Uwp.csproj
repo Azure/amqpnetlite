@@ -94,6 +94,7 @@
     <Compile Include="Framing\Source.cs" />
     <Compile Include="Framing\Target.cs" />
     <Compile Include="Framing\Transfer.cs" />
+    <Compile Include="IAmqpObject.cs" />
     <Compile Include="ITransport.cs" />
     <Compile Include="Link.cs" />
     <Compile Include="LinkedList.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Net\AsyncPump.cs" />
     <Compile Include="Net\IAsyncTransport.cs" />
     <Compile Include="Net\IBufferManager.cs" />
+    <Compile Include="Net\IConnectionFactory.cs" />
     <Compile Include="Net\List.cs" />
     <Compile Include="Net\Map.cs" />
     <Compile Include="Net\RefCountedByteBuffer.cs" />

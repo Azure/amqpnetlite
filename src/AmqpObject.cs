@@ -17,15 +17,9 @@
 
 namespace Amqp
 {
+    using System;
     using System.Threading;
     using Amqp.Framing;
-
-    /// <summary>
-    /// The callback that is invoked when the AMQP object is closed.
-    /// </summary>
-    /// <param name="sender">The AMQP object.</param>
-    /// <param name="error">The AMQP <see cref="Error"/>, if any.</param>
-    public delegate void ClosedCallback(AmqpObject sender, Error error);
 
     /// <summary>
     /// The base class of all AMQP objects.
@@ -33,9 +27,9 @@ namespace Amqp
     /// <seealso cref="SenderLink"/>
     /// <seealso cref="ReceiverLink"/>
     /// </summary>
-    public abstract class AmqpObject
+    public abstract partial class AmqpObject
     {
-        internal const int DefaultCloseTimeout = 60000;
+        internal const int DefaultTimeout = 60000;
         bool closedCalled;
         bool closedNotified;
         Error error;
@@ -99,12 +93,27 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Closes the AMQP object, optionally with an error.
+        /// Closes the AMQP object. It waits until a response is received from the peer,
+        /// or throws TimeoutException after a default timeout.
         /// </summary>
-        /// <param name="waitUntilEnded">The number of milliseconds to block until a closing frame is
-        /// received from the peer. If it is 0, the call is non-blocking.</param>
-        /// <param name="error">The AMQP <see cref="Error"/> to send to the peer, indicating why the object is being closed.</param>
-        public void Close(int waitUntilEnded = DefaultCloseTimeout, Error error = null)
+        public void Close()
+        {
+            this.CloseInternal(DefaultTimeout, null);
+        }
+
+        /// <summary>
+        /// Closes the AMQP object with the specified error.
+        /// </summary>
+        /// <param name="timeout">The duration to block until a closing frame is
+        /// received from the peer. If it is TimeSpan.Zero, the call is non-blocking.</param>
+        /// <param name="error">The AMQP <see cref="Error"/> to send to the peer,
+        /// indicating why the object is being closed.</param>
+        public void Close(TimeSpan timeout, Error error = null)
+        {
+            this.CloseInternal((int)(timeout.Ticks / 10000), error);
+        }
+
+        internal void CloseInternal(int waitMilliseconds, Error error = null)
         {
             if (this.closedCalled)
             {
@@ -113,7 +122,7 @@ namespace Amqp
 
             this.closedCalled = true;
             // initialize event first to avoid the race with NotifyClosed
-            if (waitUntilEnded > 0)
+            if (waitMilliseconds > 0)
             {
                 this.endEvent = new ManualResetEvent(false);
             }
@@ -121,14 +130,14 @@ namespace Amqp
             this.Error = error;
             if (!this.OnClose(error))
             {
-                if (waitUntilEnded > 0)
+                if (waitMilliseconds > 0)
                 {
-                    this.endEvent.WaitOne(waitUntilEnded);
+                    this.endEvent.WaitOne(waitMilliseconds);
                 }
             }
             else
             {
-                if (waitUntilEnded > 0)
+                if (waitMilliseconds > 0)
                 {
                     this.endEvent.Set();
                 }

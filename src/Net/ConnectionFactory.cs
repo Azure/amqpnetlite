@@ -29,7 +29,7 @@ namespace Amqp
     /// <summary>
     /// The factory to create connections asynchronously.
     /// </summary>
-    public class ConnectionFactory : ConnectionFactoryBase
+    public partial class ConnectionFactory : ConnectionFactoryBase
     {
         Dictionary<string, TransportProvider> transportFactories;
         SslSettings sslSettings;
@@ -95,23 +95,13 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Creates a new connection asynchronously.
-        /// </summary>
-        /// <param name="address">The address of remote endpoint to connect to.</param>
-        /// <returns>A task for the connection creation operation. On success, the result is an AMQP <see cref="Connection"/></returns>
-        public Task<Connection> CreateAsync(Address address)
-        {
-            return this.CreateAsync(address, null, null);
-        }
-
-        /// <summary>
         /// Creates a new connection with a custom open frame and a callback to handle remote open frame.
         /// </summary>
         /// <param name="address">The address of remote endpoint to connect to.</param>
         /// <param name="open">If specified, it is sent to open the connection, otherwise an open frame created from the AMQP settings property is sent.</param>
         /// <param name="onOpened">If specified, it is invoked when an open frame is received from the remote peer.</param>
         /// <returns>A task for the connection creation operation. On success, the result is an AMQP <see cref="Connection"/></returns>
-        public async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened)
+        public async Task<Connection> CreateAsync(Address address, Open open = null, OnOpened onOpened = null)
         {
             IAsyncTransport transport;
             TransportProvider provider;

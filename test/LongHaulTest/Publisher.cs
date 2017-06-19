@@ -89,7 +89,7 @@ namespace LongHaulTest
                 {
                     link.Send(
                         messages[i],
-                        (m, o, s) =>
+                        (l, m, o, s) =>
                         {
                             MySyncTest thisPtr = (MySyncTest)s;
                             if (o is Accepted)

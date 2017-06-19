@@ -46,6 +46,7 @@
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="AmqpObject.cs" />
+    <Compile Include="IAmqpObject.cs" />
     <Compile Include="LinkedList.cs" />
     <Compile Include="Framing\AmqpSequence.cs" />
     <Compile Include="Framing\AmqpValue.cs" />

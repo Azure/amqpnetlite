@@ -403,7 +403,7 @@ namespace Amqp.Listener
             throw new AmqpException(ErrorCode.NotFound, "No processor was found at " + address);
         }
 
-        void OnLinkClosed(AmqpObject sender, Error error)
+        void OnLinkClosed(IAmqpObject sender, Error error)
         {
             ListenerLink link = (ListenerLink)sender;
             this.linkCollection.Remove(link);
@@ -427,7 +427,7 @@ namespace Amqp.Listener
                 }
             }
 
-            void OnLinkClosed(AmqpObject sender, Error error)
+            void OnLinkClosed(IAmqpObject sender, Error error)
             {
                 ListenerLink link = (ListenerLink)sender;
                 lock (this.collection)
@@ -444,7 +444,7 @@ namespace Amqp.Listener
                     links.AddRange(this.collection.Keys);
                     foreach (var link in links)
                     {
-                        link.Close(0, new Error()
+                        link.CloseInternal(0, new Error()
                         {
                             Condition = ErrorCode.DetachForced,
                             Description = "Source was unregistered."
@@ -537,7 +537,7 @@ namespace Amqp.Listener
                 }
             }
 
-            static void OnLinkClosed(AmqpObject sender, Error error)
+            static void OnLinkClosed(IAmqpObject sender, Error error)
             {
                 ListenerLink link = (ListenerLink)sender;
                 if (!link.Role)
@@ -595,7 +595,7 @@ namespace Amqp.Listener
                 {
                     for (int i = 0; i < this.requestLinks.Count; i++)
                     {
-                        this.requestLinks[i].Close(0, error);
+                        this.requestLinks[i].CloseInternal(0, error);
                     }
 
                     this.requestLinks.Clear();
@@ -605,7 +605,7 @@ namespace Amqp.Listener
                 {
                     foreach (var link in this.responseLinks.Values)
                     {
-                        link.Close(0, error);
+                        link.CloseInternal(0, error);
                     }
 
                     this.responseLinks.Clear();

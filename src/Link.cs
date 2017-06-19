@@ -17,17 +17,7 @@
 
 namespace Amqp
 {
-    using System;
-    using System.Threading;
     using Amqp.Framing;
-    using Amqp.Types;
-
-    /// <summary>
-    /// The callback that is invoked when an attach frame is received from the peer.
-    /// </summary>
-    /// <param name="link">The link object.</param>
-    /// <param name="attach">The received attach frame.</param>
-    public delegate void OnAttached(Link link, Attach attach);
 
     enum LinkState
     {
@@ -44,7 +34,7 @@ namespace Amqp
     /// <summary>
     /// The Link class represents an AMQP link.
     /// </summary>
-    public abstract class Link : AmqpObject
+    public abstract partial class Link : AmqpObject
     {
         readonly Session session;
         readonly string name;

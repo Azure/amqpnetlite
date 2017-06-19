@@ -81,7 +81,7 @@ namespace Amqp.Listener
             base.OnBegin(remoteChannel, begin);
         }
 
-        static void OnOpen(Connection connection, Open open)
+        static void OnOpen(IConnection connection, Open open)
         {
             var thisPtr = (ListenerConnection)connection;
             thisPtr.RemoteContainerId = open.ContainerId;

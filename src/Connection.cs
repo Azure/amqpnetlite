@@ -24,16 +24,9 @@ namespace Amqp
     using Amqp.Types;
 
     /// <summary>
-    /// The callback that is invoked when an open frame is received from peer.
-    /// </summary>
-    /// <param name="connection">The connection.</param>
-    /// <param name="open">The received open frame.</param>
-    public delegate void OnOpened(Connection connection, Open open);
-
-    /// <summary>
     /// The Connection class represents an AMQP connection.
     /// </summary>
-    public class Connection : AmqpObject
+    public partial class Connection : AmqpObject
     {
         enum State
         {
@@ -655,7 +648,7 @@ namespace Amqp
                 // send close and shutdown the transport.
                 try
                 {
-                    this.Close(0, error);
+                    this.CloseInternal(0, error);
                 }
                 catch
                 {

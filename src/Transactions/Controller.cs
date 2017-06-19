@@ -24,6 +24,7 @@ namespace Amqp.Transactions
 
     sealed class Controller : SenderLink
     {
+        static readonly OutcomeCallback onOutcome = OnOutcome;
         public Controller(Session session)
             : base(session, GetName(), new Attach() { Target = new Coordinator(), Source = new Source() }, null)
         {
@@ -33,7 +34,7 @@ namespace Amqp.Transactions
         {
             Message message = new Message(new Declare());
             TaskCompletionSource<byte[]> tcs = new TaskCompletionSource<byte[]>();
-            this.Send(message, null, OnOutcome, tcs);
+            this.Send(message, null, onOutcome, tcs);
             return tcs.Task;
         }
 
@@ -41,7 +42,7 @@ namespace Amqp.Transactions
         {
             Message message = new Message(new Discharge() { TxnId = txnId, Fail = fail });
             TaskCompletionSource<byte[]> tcs = new TaskCompletionSource<byte[]>();
-            this.Send(message, null, OnOutcome, tcs);
+            this.Send(message, null, onOutcome, tcs);
             return tcs.Task;
         }
 
@@ -50,7 +51,7 @@ namespace Amqp.Transactions
             return "controller-link-" + Guid.NewGuid().ToString("N").Substring(0, 5);
         }
 
-        static void OnOutcome(Message message, Outcome outcome, object state)
+        static void OnOutcome(ILink link, Message message, Outcome outcome, object state)
         {
             var tcs = (TaskCompletionSource<byte[]>)state;
             if (outcome.Descriptor.Code == Codec.Declared.Code)

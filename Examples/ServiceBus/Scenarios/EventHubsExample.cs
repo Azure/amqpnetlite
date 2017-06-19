@@ -206,7 +206,7 @@ namespace ServiceBus.Scenarios
             Message[] messages = new Message[count];
             for (int i = 0; i < count; i++)
             {
-                Message message = receiver.Receive(30000);
+                Message message = receiver.Receive();
                 if (message == null)
                 {
                     break;

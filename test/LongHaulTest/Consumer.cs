@@ -124,7 +124,7 @@ namespace LongHaulTest
                 this.reset = new AutoResetEvent(false);
             }
 
-            void OnChannelClosed(AmqpObject sender, Error error)
+            void OnChannelClosed(IAmqpObject sender, Error error)
             {
                 this.reset.Set();
             }
@@ -156,7 +156,7 @@ namespace LongHaulTest
                 return 0;
             }
 
-            void OnMessage(ReceiverLink link, Message message)
+            void OnMessage(IReceiverLink link, Message message)
             {
                 link.Accept(message);
                 this.Success(1);

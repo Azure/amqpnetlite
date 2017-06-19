@@ -82,6 +82,37 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_InterfaceSendReceive()
+        {
+            string testName = "InterfaceSendReceive";
+            const int nMsgs = 200;
+            IConnection connection = new Connection(testTarget.Address);
+            ISession session = connection.CreateSession();
+            ISenderLink sender = session.CreateSender("sender-" + testName, testTarget.Path);
+
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            IReceiverLink receiver = session.CreateReceiver("receiver-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ConnectionFrameSize()
         {
             string testName = "ConnectionFrameSize";
@@ -296,7 +327,7 @@ namespace Test.Amqp
                 nMsgs,
                 (r, m) =>
                 {
-                    if (m.Properties.MessageId == "msg0") r.Close(0);
+                    if (m.Properties.MessageId == "msg0") r.Close(TimeSpan.Zero, null);
                 });
             Assert.IsTrue(closed.WaitOne(10000));
 
@@ -376,7 +407,7 @@ namespace Test.Amqp
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             ManualResetEvent done = new ManualResetEvent(false);
-            OutcomeCallback callback = (m, o, s) =>
+            OutcomeCallback callback = (l, m, o, s) =>
             {
                 Trace.WriteLine(TraceLevel.Verbose, "send complete: sn {0} outcome {1}", m.ApplicationProperties["sn"], o.Descriptor.Name);
                 if ((int)m.ApplicationProperties["sn"] == (nMsgs - 1))
@@ -539,8 +570,8 @@ namespace Test.Amqp
 
             bool cancelled = false;
             Message message = new Message("released");
-            sender.Send(message, (m, o, s) => cancelled = true, null);
-            sender.Close(0);
+            sender.Send(message, (l, m, o, s) => cancelled = true, null);
+            sender.Close(TimeSpan.Zero, null);
 
             // assume that Close is called before connection/link is open so message is still queued in link
             // but this is not very reliable, so just do a best effort check
@@ -556,7 +587,7 @@ namespace Test.Amqp
             try
             {
                 message = new Message("failed");
-                sender.Send(message, (m, o, s) => cancelled = true, null);
+                sender.Send(message, (l, m, o, s) => cancelled = true, null);
                 Assert.IsTrue(false, "Send should fail after link is closed");
             }
             catch (AmqpException exception)
@@ -578,7 +609,7 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
             Message message = new Message("hello");
-            sender.Send(message, 60000);
+            sender.Send(message);
 
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             message = receiver.Receive();
@@ -608,7 +639,7 @@ namespace Test.Amqp
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, new Target() { Dynamic = true }, onAttached);
             Message message = new Message("hello");
-            sender.Send(message, 60000);
+            sender.Send(message);
 
             Assert.IsTrue(targetAddress != null, "dynamic target not attached");
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, targetAddress);
@@ -642,7 +673,7 @@ namespace Test.Amqp
 
             SenderLink sender = new SenderLink(session, "sender-" + testName, remoteSource);
             Message message = new Message("hello");
-            sender.Send(message, 60000);
+            sender.Send(message);
 
             message = receiver.Receive();
             Assert.IsTrue(message != null, "no message was received.");
@@ -673,7 +704,7 @@ namespace Test.Amqp
                     SenderLink sender = new SenderLink(session, "srv.replier-" + testName, m.Properties.ReplyTo);
                     Message reply = new Message("received");
                     reply.Properties = new Properties() { CorrelationId = m.Properties.MessageId };
-                    sender.Send(reply, (a, b, c) => ((Link)c).Close(0), sender);
+                    sender.Send(reply, (a, b, c, d) => ((Link)a).Close(TimeSpan.Zero), sender);
                 });
 
             // client: setup a temp queue and waits for responses
@@ -683,7 +714,7 @@ namespace Test.Amqp
                     SenderLink sender = new SenderLink(session, "cli.requester-" + testName, testTarget.Path);
                     Message request = new Message("hello");
                     request.Properties = new Properties() { MessageId = "request1", ReplyTo = ((Source)at.Source).Address };
-                    sender.Send(request, (a, b, c) => ((Link)c).Close(0), sender);
+                    sender.Send(request, (a, b, c, d) => ((Link)a).Close(TimeSpan.Zero), sender);
                 };
             ReceiverLink responseLink = new ReceiverLink(session, "cli.responder-" + testName, new Source() { Dynamic = true }, onAttached);
             Message response = responseLink.Receive();
@@ -850,7 +881,7 @@ namespace Test.Amqp
         {
             Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
-            session.Close(0);
+            session.Close(TimeSpan.Zero);
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
@@ -864,9 +895,9 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender", testTarget.Path);
             ReceiverLink receiver = new ReceiverLink(session, "receiver", testTarget.Path);
-            sender.Close(0);
-            receiver.Close(0);
-            session.Close(0);
+            sender.Close(TimeSpan.Zero);
+            receiver.Close(TimeSpan.Zero);
+            session.Close(TimeSpan.Zero);
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }
@@ -896,7 +927,7 @@ namespace Test.Amqp
                 receiver.Accept(m);
             }
 
-            session.Close(0);
+            session.Close(TimeSpan.Zero);
             connection.Close();
             Assert.IsTrue(connection.Error == null, "connection has error!");
         }

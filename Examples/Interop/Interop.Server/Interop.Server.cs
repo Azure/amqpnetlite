@@ -79,7 +79,7 @@ namespace Interop.Server
 
                         try
                         {
-                            sender.Send(response, 10000);
+                            sender.Send(response);
                         }
                         catch (Exception exception)
                         {

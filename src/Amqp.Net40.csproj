@@ -50,6 +50,7 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="IAmqpObject.cs" />
     <Compile Include="Listener\ContainerHost.cs" />
     <Compile Include="Listener\AttachContext.cs" />
     <Compile Include="Listener\ContextState.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Listener\SourceLinkEndpoint.cs" />
     <Compile Include="Listener\TargetLinkEndpoint.cs" />
     <Compile Include="Listener\X509Identity.cs" />
+    <Compile Include="Net\IConnectionFactory.cs" />
     <Compile Include="Net\ResourceManager.cs" />
     <Compile Include="Net\BufferManager.cs" />
     <Compile Include="Net\SocketExtensions.cs" />

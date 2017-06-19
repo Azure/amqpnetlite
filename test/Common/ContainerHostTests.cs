@@ -35,7 +35,7 @@ namespace Test.Amqp
     [TestClass]
     public class ContainerHostTests
     {
-        const int SendTimeout = 5000;
+        TimeSpan Timeout = TimeSpan.FromMilliseconds(5000);
         ContainerHost host;
         ILinkProcessor linkProcessor;
 
@@ -113,7 +113,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = name };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             sender.Close();
@@ -250,7 +250,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = name };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             sender.Close();
@@ -276,7 +276,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = name };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             sender.Close();
@@ -347,14 +347,14 @@ namespace Test.Amqp
             {
                 var session = new Session(connection);
                 var sender = new SenderLink(session, "send-link-1", name);
-                sender.Send(new Message("msg1"), SendTimeout);
+                sender.Send(new Message("msg1"), Timeout);
             }
 
             // client 2
             {
                 var session = new Session(connection);
                 var sender = new SenderLink(session, "send-link-2", name);
-                sender.Send(new Message("msg2"), SendTimeout);
+                sender.Send(new Message("msg2"), Timeout);
             }
 
             connection.Close();
@@ -379,7 +379,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = name };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             sender.Close();
@@ -399,7 +399,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = name };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             sender.Close();
@@ -461,7 +461,7 @@ namespace Test.Amqp
             var receiver = new ReceiverLink(session, "recv-link", "message-processor");
             try
             {
-                var message = receiver.Receive(5000);
+                var message = receiver.Receive(Timeout);
                 Thread.Sleep(100);
                 error = receiver.Error;
             }
@@ -528,7 +528,7 @@ namespace Test.Amqp
                     {
                         link.Send(
                             new Message() { Properties = new Properties() { MessageId = string.Join("-", "msg", i, j, k) } },
-                            (m, o, s) => { if (Interlocked.Increment(ref completed) >= 10 * 20 * 30) doneEvent.Set(); },
+                            (l, m, o, s) => { if (Interlocked.Increment(ref completed) >= 10 * 20 * 30) doneEvent.Set(); },
                             null);
                     }
                 }
@@ -551,7 +551,7 @@ namespace Test.Amqp
             //Create a client to send data to the host message processor
             var closedEvent = new ManualResetEvent(false);
             var connection = new Connection(new Address(uri.AbsoluteUri));
-            connection.Closed += (AmqpObject obj, Error error) =>
+            connection.Closed += (IAmqpObject obj, Error error) =>
             {
                 closedEvent.Set();
             };
@@ -560,7 +560,7 @@ namespace Test.Amqp
             var sender = new SenderLink(session, "sender-link", name);
 
             //Send one message while the host is open
-            sender.Send(new Message("Hello"), SendTimeout);
+            sender.Send(new Message("Hello"), Timeout);
 
             //Close the host. this should close existing connections
             h.Close();
@@ -590,7 +590,7 @@ namespace Test.Amqp
             connection = new Connection(new Address(uri.AbsoluteUri));
             session = new Session(connection);
             sender = new SenderLink(session, "sender-link", name);
-            sender.Send(new Message("Hello"), SendTimeout);
+            sender.Send(new Message("Hello"), Timeout);
             connection.Close();
 
             h.Close();
@@ -611,7 +611,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { GroupId = name };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             sender.Close();
@@ -629,7 +629,7 @@ namespace Test.Amqp
             var connection = new Connection(Address);
             var session = new Session(connection);
             var sender1 = new SenderLink(session, linkName, name);
-            sender1.Send(new Message("msg1"), SendTimeout);
+            sender1.Send(new Message("msg1"), Timeout);
 
             try
             {
@@ -661,11 +661,11 @@ namespace Test.Amqp
             var session2 = new Session(connection);
             var sender2 = new SenderLink(session2, linkName, name);
 
-            sender1.Send(new Message("msg1"), SendTimeout);
+            sender1.Send(new Message("msg1"), Timeout);
 
             try
             {
-                sender2.Send(new Message("msg1"), SendTimeout);
+                sender2.Send(new Message("msg1"), Timeout);
                 Assert.IsTrue(false, "Excpected exception not thrown");
             }
             catch (AmqpException ae)
@@ -691,8 +691,8 @@ namespace Test.Amqp
             var session2 = new Session(connection2);
             var sender2 = new SenderLink(session2, linkName, name);
 
-            sender1.Send(new Message("msg1"), SendTimeout);
-            sender1.Send(new Message("msg1"), SendTimeout);
+            sender1.Send(new Message("msg1"), Timeout);
+            sender1.Send(new Message("msg1"), Timeout);
 
             connection1.Close();
             connection2.Close();
@@ -709,7 +709,7 @@ namespace Test.Amqp
             var connection = new Connection(Address);
             var session1 = new Session(connection);
             var sender = new SenderLink(session1, linkName, name);
-            sender.Send(new Message("msg1"), SendTimeout);
+            sender.Send(new Message("msg1"), Timeout);
 
             var session2 = new Session(connection);
             var receiver = new ReceiverLink(session2, linkName, name);
@@ -735,7 +735,7 @@ namespace Test.Amqp
             var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).Result;
             var session = new Session(connection);
             var sender = new SenderLink(session, name, name);
-            sender.Send(new Message("msg1"), SendTimeout);
+            sender.Send(new Message("msg1"), Timeout);
             connection.Close();
 
             Assert.IsTrue(link != null, "link is null");
@@ -755,7 +755,7 @@ namespace Test.Amqp
             var connection = new Connection(Address);
             var session = new Session(connection);
             var sender = new SenderLink(session, name, name);
-            sender.Send(new Message("msg1"), SendTimeout);
+            sender.Send(new Message("msg1"), Timeout);
             connection.Close();
 
             Assert.IsTrue(link != null, "link is null");
@@ -861,7 +861,7 @@ namespace Test.Amqp
                 var connection = factory.CreateAsync(new Address(address)).Result;
                 var session = new Session(connection);
                 var sender = new SenderLink(session, name, name);
-                sender.Send(new Message("msg1"), SendTimeout);
+                sender.Send(new Message("msg1"), Timeout);
                 connection.Close();
 
                 Assert.IsTrue(link != null, "link is null");
@@ -935,7 +935,7 @@ namespace Test.Amqp
                 var connection = factory.CreateAsync(new Address(address)).GetAwaiter().GetResult();
                 var session = new Session(connection);
                 var sender = new SenderLink(session, name, name);
-                sender.Send(new Message("msg1"), SendTimeout);
+                sender.Send(new Message("msg1"), Timeout);
                 connection.Close();
             }
             finally
@@ -960,7 +960,7 @@ namespace Test.Amqp
             {
                 var message = new Message("msg" + i);
                 message.Properties = new Properties() { MessageId = name + i };
-                sender.Send(message, SendTimeout);
+                sender.Send(message, Timeout);
             }
 
             this.host.UnregisterMessageProcessor(name);
@@ -982,7 +982,7 @@ namespace Test.Amqp
                 var connection = Connection.Factory.CreateAsync(new Address("ws://guest:guest@localhost:28080/test/")).Result;
                 var session = new Session(connection);
                 var sender = new SenderLink(session, "ContainerHostWebSocketWildCardAddressTest", "q1");
-                sender.Send(new Message("msg1"), SendTimeout);
+                sender.Send(new Message("msg1"), Timeout);
                 connection.Close();
             }
             catch

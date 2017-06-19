@@ -17,21 +17,15 @@
 
 namespace Amqp
 {
+    using System;
     using System.Threading;
     using Amqp.Framing;
     using Amqp.Types;
 
     /// <summary>
-    /// A callback that is invoked when a message is received.
-    /// </summary>
-    /// <param name="receiver">The receiver link.</param>
-    /// <param name="message">The received message.</param>
-    public delegate void MessageCallback(ReceiverLink receiver, Message message);
-
-    /// <summary>
     /// The ReceiverLink class represents a link that accepts incoming messages.
     /// </summary>
-    public class ReceiverLink : Link
+    public partial class ReceiverLink : Link
     {
 #if NETFX || NETFX40 || DOTNET
         const int DefaultCredit = 200;
@@ -129,13 +123,22 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Receives a message. The call is blocked until the timeout duration expires or a message is available.
+        /// Receives a message. The call is blocked until a message is available or after a default wait time.
         /// </summary>
-        /// <param name="timeout">Number of milliseconds to wait for a message.</param>
         /// <returns>A Message object if available; otherwise a null value.</returns>
-        public Message Receive(int timeout = 60000)
+        public Message Receive()
         {
-            return this.ReceiveInternal(null, timeout);
+            return this.ReceiveInternal(null, AmqpObject.DefaultTimeout);
+        }
+
+        /// <summary>
+        /// Receives a message. The call is blocked until a message is available or the timeout duration expires.
+        /// </summary>
+        /// <param name="timeout">The time to wait for a message.</param>
+        /// <returns>A Message object if available; otherwise a null value.</returns>
+        public Message Receive(TimeSpan timeout)
+        {
+            return this.ReceiveInternal(null, (int)(timeout.Ticks / 10000));
         }
 
         /// <summary>

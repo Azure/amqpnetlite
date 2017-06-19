@@ -20,20 +20,11 @@ namespace Amqp
     using System;
     using System.Threading;
     using Amqp.Framing;
-    using Amqp.Types;
-
-    /// <summary>
-    /// A callback that is invoked when an outcome is received from peer for an outgoing message.
-    /// </summary>
-    /// <param name="message">The outgoing message.</param>
-    /// <param name="outcome">The received message.</param>
-    /// <param name="state">The user object specified in the Send method.</param>
-    public delegate void OutcomeCallback(Message message, Outcome outcome, object state);
 
     /// <summary>
     /// The SenderLink represents a link that sends outgoing messages.
     /// </summary>
-    public class SenderLink : Link
+    public partial class SenderLink : Link
     {
         // flow control
         SequenceNumber deliveryCount;
@@ -81,17 +72,33 @@ namespace Amqp
             this.outgoingList = new LinkedList();
             this.SendAttach(false, this.deliveryCount, attach);
         }
-        
+
         /// <summary>
-        /// Sends a message and synchronously waits for an acknowledgement.
+        /// Sends a message and synchronously waits for an acknowledgement. Throws
+        /// TimeoutException if ack is not received in 60 seconds.
         /// </summary>
         /// <param name="message">The message to send.</param>
-        /// <param name="millisecondsTimeout">The time in milliseconds to wait for the acknowledgement.</param>
-        public void Send(Message message, int millisecondsTimeout = 60000)
+        public void Send(Message message)
+        {
+            this.SendInternal(message, AmqpObject.DefaultTimeout);
+        }
+
+        /// <summary>
+        /// Sends a message and synchronously waits for an acknowledgement. Throws
+        /// TimeoutException if ack is not received in the specified time.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="timeout">The time to wait for the acknowledgement.</param>
+        public void Send(Message message, TimeSpan timeout)
+        {
+            this.SendInternal(message, (int)(timeout.Ticks / 10000));
+        }
+
+        void SendInternal(Message message, int waitMilliseconds)
         {
             ManualResetEvent acked = new ManualResetEvent(false);
             Outcome outcome = null;
-            OutcomeCallback callback = (m, o, s) =>
+            OutcomeCallback callback = (l, m, o, s) =>
             {
                 outcome = o;
                 acked.Set();
@@ -99,7 +106,7 @@ namespace Amqp
 
             this.Send(message, callback, acked);
 
-            bool signaled = acked.WaitOne(millisecondsTimeout);
+            bool signaled = acked.WaitOne(waitMilliseconds);
             if (!signaled)
             {
                 lock (this.ThisLock)
@@ -131,7 +138,8 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Sends a message asynchronously. If callback is null, the message is sent without requesting for an acknowledgement (best effort).
+        /// Sends a message asynchronously. If callback is null, the message is sent without
+        /// requesting for an acknowledgement (best effort).
         /// </summary>
         /// <param name="message">The message to send.</param>
         /// <param name="callback">The callback to invoke when acknowledgement is received.</param>
@@ -233,7 +241,7 @@ namespace Amqp
                     outcome = ((Amqp.Transactions.TransactionalState)delivery.State).Outcome;
                 }
 #endif
-                delivery.OnOutcome(delivery.Message, outcome, delivery.UserToken);
+                delivery.OnOutcome(this, delivery.Message, outcome, delivery.UserToken);
             }
         }
 
@@ -288,7 +296,7 @@ namespace Amqp
                     this.Session.SendDelivery(delivery);
                     if (settled && delivery.OnOutcome != null)
                     {
-                        delivery.OnOutcome(delivery.Message, new Accepted(), delivery.UserToken);
+                        delivery.OnOutcome(this, delivery.Message, new Accepted(), delivery.UserToken);
                     }
                 }
                 catch

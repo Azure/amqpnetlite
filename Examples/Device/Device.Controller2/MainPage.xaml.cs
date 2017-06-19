@@ -141,7 +141,7 @@ namespace Device.Controller
                 }
             }
 
-            void OnMessage(ReceiverLink receiver, Message message)
+            void OnMessage(IReceiverLink receiver, Message message)
             {
                 int temperature = (int)message.ApplicationProperties["temperature"];
                 this.Message = temperature.ToString();

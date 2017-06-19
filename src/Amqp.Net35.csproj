@@ -50,6 +50,7 @@
     <Compile Include="AmqpObject.cs" />
     <Compile Include="ByteBuffer.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="IAmqpObject.cs" />
     <Compile Include="Net35\TcpTransport.cs">
       <SubType>Code</SubType>
     </Compile>

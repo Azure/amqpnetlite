@@ -95,7 +95,7 @@ namespace Examples.Interop
                             Message request = new Message(requests[i]);
                             request.Properties = new Properties() { MessageId = "request" + i, ReplyTo = replyTo };
                             sender.Send(request);
-                            Message response = receiver.Receive(10000);
+                            Message response = receiver.Receive();
                             if (null != response)
                             {
                                 receiver.Accept(response);

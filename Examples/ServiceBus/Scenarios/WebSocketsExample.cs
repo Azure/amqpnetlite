@@ -65,7 +65,7 @@ namespace ServiceBus.Scenarios
             ReceiverLink receiver = new ReceiverLink(session, "websocket-receiver-link", this.Entity);
             for (int i = 0; i < count; i++)
             {
-                Message message = await receiver.ReceiveAsync(30000);
+                Message message = await receiver.ReceiveAsync();
                 if (message == null)
                 {
                     break;
