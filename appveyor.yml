@@ -7,34 +7,55 @@ image: Visual Studio 2015
 build_script:
 - ps: >-
     Write-Output "Installing .NET MicroFramework 4.3 ..."
+
     $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
+
     (New-Object Net.WebClient).DownloadFile('http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=netmf&DownloadId=1423116&FileTime=130667921437670000&Build=21050', $msiPath)
-    "&" msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
+    
+	& msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
+
     Write-Output "NETMF43 Installed"
 
+
     Write-Output "Installing .NET MicroFramework 4.4 ..."
+
     $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
+
     (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
-    "&" msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+    
+	& msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+
     Write-Output "NETMF44 Installed"
 
+
     Write-Output "Copying NuGet.exe ..."
+
     New-Item c:\projects\amqpnetlite\build\tools -type directory
+
     copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
 
+
     Write-Output "Expanding PATH ..."
+
     $env:Path = "$($env:PATH);$($env:ProgramFiles)\dotnet;$($env:VS140COMNTOOLS)..\IDE"
+
     [Environment]::SetEnvironmentVariable("PATH", $env:Path, "User")
 
+
     Write-Output "Restoring dotnet projects ..."
+
     pushd dotnet
+
     dotnet restore
+
     popd
 
     Write-Output "Invoking build.cmd script ..."
-    "&" c:\projects\amqpnetlite\build.cmd | Write-Output
 
-    "&" c:\projects\amqpnetlite\build.cmd release | Write-Output
+    & c:\projects\amqpnetlite\build.cmd | Write-Output
+
+    & c:\projects\amqpnetlite\build.cmd release | Write-Output
+
 test: off
 deploy: off
 on_failure:
