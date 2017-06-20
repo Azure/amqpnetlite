@@ -21,9 +21,7 @@ namespace Amqp.Listener
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Security.Cryptography.X509Certificates;
-    using System.Threading.Tasks;
     using Amqp.Framing;
-    using Amqp.Types;
 
     /// <summary>
     /// The ContainerHost class hosts an AMQP container where connection
@@ -73,7 +71,7 @@ namespace Amqp.Listener
     /// LinkEndpoint, where subsequent send/receive requests will be routed.
     /// When none is found, the link is detached with error "amqp:not-found".
     /// </remarks>
-    public class ContainerHost : IContainer
+    public class ContainerHost : IContainerHost
     {
         readonly string containerId;
         readonly Dictionary<string, TransportProvider> customTransports;

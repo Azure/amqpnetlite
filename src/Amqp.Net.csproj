@@ -55,6 +55,7 @@
     <Compile Include="Listener\ContextState.cs" />
     <Compile Include="Listener\FlowContext.cs" />
     <Compile Include="Listener\IAuthenticated.cs" />
+    <Compile Include="Listener\IContainerHost.cs" />
     <Compile Include="Listener\IMessageSource.cs" />
     <Compile Include="Listener\TargetLinkEndpoint.cs" />
     <Compile Include="Listener\SourceLinkEndpoint.cs" />
