@@ -398,6 +398,63 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_ModifyMessage()
+        {
+            string testName = "ModifyMessage";
+            const int nMsgs = 20;
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message();
+                message.MessageAnnotations = new MessageAnnotations();
+                message.MessageAnnotations[(Symbol)"a1"] = 12345L;
+                message.Properties = new Properties() { MessageId = "msg" + i };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
+                if (i % 2 == 0)
+                {
+                    receiver.Accept(message);
+                }
+                else
+                {
+                    receiver.Modify(message, true, false, new Fields() { { (Symbol)"reason", "app offline" } });
+                }
+            }
+            receiver.Close();
+
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs / 2; ++i)
+            {
+                Message message = receiver2.Receive();
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.Properties.MessageId);
+                Assert.IsTrue(message.Header != null, "header is null");
+                Assert.IsTrue(message.Header.DeliveryCount > 0, "delivery-count is 0");
+                Assert.IsTrue(message.MessageAnnotations != null, "annotation is null");
+                Assert.IsTrue(message.MessageAnnotations[(Symbol)"a1"].Equals(12345L));
+                Assert.IsTrue(message.MessageAnnotations[(Symbol)"reason"].Equals("app offline"));
+                receiver2.Accept(message);
+            }
+
+            receiver2.Close();
+            sender.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_SendAck()
         {
             string testName = "SendAck";

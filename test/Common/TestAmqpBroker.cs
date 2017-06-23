@@ -243,6 +243,7 @@ namespace Listener.IContainer
         {
             ByteBuffer buffer;
             int messageOffset;
+            uint failedCount;
 
             public BrokerMessage(ByteBuffer buffer)
             {
@@ -255,6 +256,7 @@ namespace Listener.IContainer
                 get
                 {
                     this.buffer.Seek(this.messageOffset);
+                    this.CheckModified(this.buffer);
                     return this.buffer;
                 }
             }
@@ -267,13 +269,96 @@ namespace Listener.IContainer
             {
                 this.LockedBy = null;
             }
+
+            public void Modify(bool failed, Fields annotations)
+            {
+                if (failed)
+                {
+                    this.failedCount++;
+                }
+                if (annotations != null)
+                {
+                    if (this.MessageAnnotations == null) this.MessageAnnotations = new MessageAnnotations();
+                    this.Merge(annotations, this.MessageAnnotations.Map);
+                }
+                this.LockedBy = null;
+            }
+
+            void CheckModified(ByteBuffer oldBuf)
+            {
+                if (this.failedCount == 0 && this.MessageAnnotations == null)
+                {
+                    return;
+                }
+                ByteBuffer newBuf = new ByteBuffer(oldBuf.Size, true);
+                Header header = new Header();
+                MessageAnnotations annotations = this.MessageAnnotations;
+                int offset = oldBuf.Offset;
+                while (oldBuf.Length > 0)
+                {
+                    offset = oldBuf.Offset;
+                    var described = (RestrictedDescribed)Encoder.ReadDescribed(oldBuf, Encoder.ReadFormatCode(buffer));
+                    if (described.Descriptor.Code == 0x70UL)
+                    {
+                        header = (Header)described;
+                        this.WriteHeader(ref header, newBuf);
+                    }
+                    else if (described.Descriptor.Code == 0x71UL)
+                    {
+                        this.WriteHeader(ref header, newBuf);
+                        AmqpBitConverter.WriteBytes(newBuf, oldBuf.Buffer, offset, oldBuf.Offset - offset);
+                    }
+                    else if (described.Descriptor.Code == 0x72UL)
+                    {
+                        this.WriteHeader(ref header, newBuf);
+                        this.WriteMessageAnnotations(ref annotations, (MessageAnnotations)described, newBuf);
+                    }
+                    else
+                    {
+                        this.WriteHeader(ref header, newBuf);
+                        this.WriteMessageAnnotations(ref annotations, null, newBuf);
+                        AmqpBitConverter.WriteBytes(newBuf, oldBuf.Buffer, offset, oldBuf.WritePos - offset);
+                        break;
+                    }
+                }
+                this.buffer = newBuf;
+                this.messageOffset = 0;
+            }
+
+            void WriteHeader(ref Header header, ByteBuffer buffer)
+            {
+                if (header != null)
+                {
+                    header.DeliveryCount += header.DeliveryCount + this.failedCount;
+                    header.Encode(buffer);
+                    header = null;
+                }
+            }
+
+            void WriteMessageAnnotations(ref MessageAnnotations annotations, MessageAnnotations current, ByteBuffer buffer)
+            {
+                if (annotations != null && current != null)
+                {
+                    this.Merge(current.Map, annotations.Map);
+                    annotations.Encode(buffer);
+                    annotations = null;
+                }
+            }
+
+            void Merge(Map source, Map dest)
+            {
+                foreach (var kvp in source)
+                {
+                    dest[kvp.Key] = kvp.Value;
+                }
+            }
         }
 
         sealed class TestQueue
         {
             readonly TestAmqpBroker broker;
             readonly LinkedList<BrokerMessage> messages;
-            readonly Queue<Consumer> waiters;
+            readonly LinkedList<Consumer> waiters;
             readonly Dictionary<int, Publisher> publishers;
             readonly Dictionary<int, Consumer> consumers;
             readonly object syncRoot;
@@ -283,7 +368,7 @@ namespace Listener.IContainer
             {
                 this.broker = broker;
                 this.messages = new LinkedList<BrokerMessage>();
-                this.waiters = new Queue<Consumer>();
+                this.waiters = new LinkedList<Consumer>();
                 this.publishers = new Dictionary<int, Publisher>();
                 this.consumers = new Dictionary<int, Consumer>();
                 this.syncRoot = this.waiters;
@@ -309,27 +394,30 @@ namespace Listener.IContainer
                 }
             }
 
-            Consumer GetConsumerWithLock()
+            Consumer GetConsumerWithLock(Consumer exclude)
             {
                 Consumer consumer = null;
-                while (this.waiters.Count > 0)
+                var node = this.waiters.First;
+                while (node != null)
                 {
-                    consumer = this.waiters.Peek();
-                    if (consumer.Credit > 0)
+                    consumer = node.Value;
+                    if (consumer.Credit == 0)
+                    {
+                        this.waiters.RemoveFirst();
+                        consumer = null;
+                    }
+                    else if (consumer != exclude)
                     {
                         consumer.Credit--;
                         if (consumer.Credit == 0)
                         {
-                            this.waiters.Dequeue();
+                            this.waiters.RemoveFirst();
                         }
 
                         break;
                     }
-                    else
-                    {
-                        this.waiters.Dequeue();
-                        consumer = null;
-                    }
+
+                    node = node.Next;
                 }
 
                 return consumer;
@@ -342,7 +430,7 @@ namespace Listener.IContainer
                 Consumer consumer = null;
                 lock (this.syncRoot)
                 {
-                    consumer = this.GetConsumerWithLock();
+                    consumer = this.GetConsumerWithLock(null);
                     if (consumer == null)
                     {
                         clone.Node = this.messages.AddLast(clone);
@@ -401,7 +489,7 @@ namespace Listener.IContainer
 
                     if (consumer.Credit > 0)
                     {
-                        this.waiters.Enqueue(consumer);
+                        this.waiters.AddLast(consumer);
                     }
                 }
 
@@ -411,7 +499,7 @@ namespace Listener.IContainer
                 }
             }
 
-            public void Dequeue(BrokerMessage message)
+            void Dequeue(BrokerMessage message)
             {
                 lock (this.syncRoot)
                 {
@@ -419,13 +507,13 @@ namespace Listener.IContainer
                 }
             }
 
-            public void Unlock(BrokerMessage message)
+            void Unlock(BrokerMessage message, Consumer exclude)
             {
                 Consumer consumer = null;
                 lock (this.syncRoot)
                 {
                     message.Unlock();
-                    consumer = this.GetConsumerWithLock();
+                    consumer = this.GetConsumerWithLock(exclude);
                     if (consumer != null)
                     {
                         if (consumer.SettleOnSend)
@@ -457,7 +545,7 @@ namespace Listener.IContainer
                         node = node.Next;
                         if (temp.Value.LockedBy == consumer)
                         {
-                            this.Unlock(temp.Value);
+                            this.Unlock(temp.Value, consumer);
                         }
                     }
                 }
@@ -588,7 +676,13 @@ namespace Listener.IContainer
                     {
                         if (deliveryState is Released)
                         {
-                            thisPtr.queue.Unlock((BrokerMessage)message);
+                            thisPtr.queue.Unlock((BrokerMessage)message, null);
+                        }
+                        else if (deliveryState is Modified)
+                        {
+                            Modified modified = (Modified)deliveryState;
+                            ((BrokerMessage)message).Modify(modified.DeliveryFailed, modified.MessageAnnotations);
+                            thisPtr.queue.Unlock((BrokerMessage)message, modified.UndeliverableHere ? thisPtr : null);
                         }
                         else
                         {

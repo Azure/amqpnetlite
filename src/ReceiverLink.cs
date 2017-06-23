@@ -172,6 +172,24 @@ namespace Amqp
             this.DisposeMessage(message, new Rejected() { Error = error });
         }
 
+        /// <summary>
+        /// Modifies a message. It sends a modified outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to modify.</param>
+        /// <param name="deliveryFailed">If set, the message's delivery-count is incremented.</param>
+        /// <param name="undeliverableHere">Indicates if the message should not be redelivered to this endpoint.</param>
+        /// <param name="messageAnnotations">Annotations to be combined with the current message annotations.</param>
+        public void Modify(Message message, bool deliveryFailed, bool undeliverableHere = false, Fields messageAnnotations = null)
+        {
+            this.ThrowIfDetaching("Modify");
+            this.DisposeMessage(message, new Modified()
+                {
+                    DeliveryFailed = deliveryFailed,
+                    UndeliverableHere = undeliverableHere,
+                    MessageAnnotations = messageAnnotations
+                });
+        }
+
         internal override void OnFlow(Flow flow)
         {
         }

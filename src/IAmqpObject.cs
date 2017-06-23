@@ -19,6 +19,7 @@ namespace Amqp
 {
     using System;
     using Amqp.Framing;
+    using Amqp.Types;
 
     /// <summary>
     /// The callback that is invoked when an open performative is received from peer.
@@ -227,6 +228,15 @@ namespace Amqp
         /// <param name="message">The message to reject.</param>
         /// <param name="error">The error, if any, for the rejection.</param>
         void Reject(Message message, Error error = null);
+
+        /// <summary>
+        /// Modifies a message. It sends a modified outcome to the peer.
+        /// </summary>
+        /// <param name="message">The message to modify.</param>
+        /// <param name="deliveryFailed">If set, the message's delivery-count is incremented.</param>
+        /// <param name="undeliverableHere">Indicates if the message should not be redelivered to this endpoint.</param>
+        /// <param name="messageAnnotations">Annotations to be combined with the current message annotations.</param>
+        void Modify(Message message, bool deliveryFailed, bool undeliverableHere, Fields messageAnnotations);
     }
 
     public partial class AmqpObject : IAmqpObject
