@@ -190,12 +190,14 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO Running DOTNET (.Net Core 1.0) tests...
 IF /I "%build-dotnet%" EQU "false" GOTO done-test
-"%dotnetPath%" run --configuration %build-config% --project dotnet\Test.Amqp -- no-broker
+pushd dotnet\Test.Amqp
+"%dotnetPath%" run --configuration %build-config% -- no-broker
 IF %ERRORLEVEL% NEQ 0 (
   SET return-code=%ERRORLEVEL%
   ECHO .Net Core Test failed!
   GOTO :exit
 )
+popd
 
 :done-test
 TASKKILL /F /IM TestAmqpBroker.exe
@@ -283,10 +285,12 @@ EXIT /b %return-code%
   IF /I "%build-dotnet%" EQU "false" EXIT /b 0
   IF /I "%1" EQU "Clean" EXIT /b 0
   ECHO Build dotnet projects
-  CALL "%dotnetPath%" restore dotnet
+  pushd dotnet
+  "%dotnetPath%" restore
   IF !ERRORLEVEL! NEQ 0 EXIT /b !ERRORLEVEL!
-  CALL "%dotnetPath%" build dotnet/Amqp dotnet/Amqp.Serialization dotnet/Amqp.WebSockets.Client dotnet\HelloAmqp dotnet/Test.Amqp --configuration %build-config% --no-incremental
+  "%dotnetPath%" build Amqp Amqp.Serialization Amqp.WebSockets.Client HelloAmqp Test.Amqp
   IF !ERRORLEVEL! NEQ 0 EXIT /b !ERRORLEVEL!
+  popd
 
   EXIT /b 0
 
