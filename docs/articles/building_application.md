@@ -56,7 +56,7 @@ The application must ensure that the mandatory field, ContainerId, is set to avo
 
 The following example demonstrates the above usages.
 ```
-var conneciton = new connection(
+var connection = new connection(
     new Address("amqps://contoso.com:5671"),
 	SaslProfile.Anonymous,
     new Open() { ContainerId = "client.1.2", HostName = "contoso.com", MaxFrameSize = 8 * 1024 },
