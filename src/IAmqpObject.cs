@@ -144,6 +144,18 @@ namespace Amqp
         /// Gets the link name.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Detaches the link sending a detach performative and altering the link state.
+        /// </summary>
+        bool Detach();
+
+        /// <summary>
+        /// Detaches the link sending a detach performative and altering the link state.
+        /// </summary>
+        /// <param name="error">An error causing a detach.</param>
+        bool Detach(Error error);
+
     }
 
     /// <summary>
