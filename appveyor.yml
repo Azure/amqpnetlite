@@ -10,7 +10,7 @@ build_script:
 
     $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
 
-    (New-Object Net.WebClient).DownloadFile('http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=netmf&DownloadId=1423116&FileTime=130667921437670000&Build=21050', $msiPath)
+    (New-Object Net.WebClient).DownloadFile('http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=netmf&DownloadId=1423116&FileTime=130667921437670000&Build=21053', $msiPath)
 
     & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
 
