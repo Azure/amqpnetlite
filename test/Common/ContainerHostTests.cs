@@ -727,7 +727,7 @@ namespace Test.Amqp
             string name = "ContainerHostSaslAnonymousTest";
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
-            linkProcessor.OnLinkAttached += a => link = a;
+            linkProcessor.SetHandler(a => { link = a.Link; return false; });
             this.host.RegisterLinkProcessor(this.linkProcessor = linkProcessor);
 
             var factory = new ConnectionFactory();
@@ -749,7 +749,7 @@ namespace Test.Amqp
             string name = "ContainerHostPlainPrincipalTest";
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
-            linkProcessor.OnLinkAttached += a => link = a;
+            linkProcessor.SetHandler(a => { link = a.Link; return false; });
             this.host.RegisterLinkProcessor(this.linkProcessor = linkProcessor);
 
             var connection = new Connection(Address);
@@ -848,7 +848,7 @@ namespace Test.Amqp
             sslHost.Listeners[0].SASL.EnableExternalMechanism = true;
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
-            linkProcessor.OnLinkAttached += a => link = a;
+            linkProcessor.SetHandler(a => { link = a.Link; return false; });
             sslHost.RegisterLinkProcessor(linkProcessor);
             sslHost.Open();
 
@@ -967,6 +967,36 @@ namespace Test.Amqp
 
             connection.Close();
         }
+
+#if !NETFX40
+        [TestMethod]
+        public void LinkProcessorAsyncTest()
+        {
+            string name = "LinkProcessorAsyncTest";
+            var processor = new TestLinkProcessor();
+            processor.SetHandler(
+                a =>
+                {
+                    Task.Delay(100).ContinueWith(_ => a.Complete(new TestLinkEndpoint(), 0));
+                    return true;
+                }
+            );
+            this.host.RegisterLinkProcessor(processor);
+
+            int count = 5;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "recv-link", name);
+            for (int i = 0; i < count; i++)
+            {
+                var message = receiver.Receive(TimeSpan.FromSeconds(4));
+                Assert.IsTrue(message != null);
+                receiver.Accept(message);
+            }
+
+            connection.Close();
+        }
+#endif
 
 #if !(DOTNET || NETFX40)
         [TestMethod]
@@ -1134,7 +1164,7 @@ namespace Test.Amqp
 
     class TestLinkProcessor : ILinkProcessor
     {
-        public Action<ListenerLink> OnLinkAttached;
+        Func<AttachContext, bool> attachHandler;
         readonly Func<ListenerLink, LinkEndpoint> factory;
 
         public TestLinkProcessor()
@@ -1146,38 +1176,46 @@ namespace Test.Amqp
             this.factory = factory;
         }
 
+        public void SetHandler(Func<AttachContext, bool> attachHandler)
+        {
+            this.attachHandler = attachHandler;
+        }
+
         public void Process(AttachContext attachContext)
         {
-            if (this.OnLinkAttached != null)
+            if (this.attachHandler != null)
             {
-                this.OnLinkAttached(attachContext.Link);
+                if (this.attachHandler(attachContext))
+                {
+                    return;
+                }
             }
 
             attachContext.Complete(
                 this.factory != null ? this.factory(attachContext.Link) : new TestLinkEndpoint(),
                 attachContext.Attach.Role ? 0 : 30);
         }
+    }
 
-        class TestLinkEndpoint : LinkEndpoint
+    class TestLinkEndpoint : LinkEndpoint
+    {
+        public override void OnMessage(MessageContext messageContext)
         {
-            public override void OnMessage(MessageContext messageContext)
-            {
-                messageContext.Complete();
-            }
+            messageContext.Complete();
+        }
 
-            public override void OnFlow(FlowContext flowContext)
+        public override void OnFlow(FlowContext flowContext)
+        {
+            for (int i = 0; i < flowContext.Messages; i++)
             {
-                for (int i = 0; i < flowContext.Messages; i++)
-                {
-                    var message = new Message("test message");
-                    flowContext.Link.SendMessage(message, message.Encode());
-                }
+                var message = new Message("test message");
+                flowContext.Link.SendMessage(message, message.Encode());
             }
+        }
 
-            public override void OnDisposition(DispositionContext dispositionContext)
-            {
-                dispositionContext.Complete();
-            }
+        public override void OnDisposition(DispositionContext dispositionContext)
+        {
+            dispositionContext.Complete();
         }
     }
 }

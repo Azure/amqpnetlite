@@ -620,7 +620,7 @@ namespace Listener.IContainer
 
             sealed class Consumer
             {
-                static readonly Action<int, object> onCredit = OnCredit;
+                static readonly Action<int, Fields, object> onCredit = OnCredit;
                 static readonly Action<Message, DeliveryState, bool, object> onDispose = OnDispose;
                 static readonly Action<Message, bool, object> onDischarge = OnDischarge;
                 readonly TestQueue queue;
@@ -658,7 +658,7 @@ namespace Listener.IContainer
                     this.queue.OnConsumerClosed(this.id, this);
                 }
 
-                static void OnCredit(int credit, object state)
+                static void OnCredit(int credit, Fields properties, object state)
                 {
                     var thisPtr = (Consumer)state;
                     thisPtr.queue.Dequeue(thisPtr, credit);

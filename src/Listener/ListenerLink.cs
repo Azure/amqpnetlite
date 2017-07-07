@@ -19,6 +19,7 @@ namespace Amqp.Listener
 {
     using System;
     using Amqp.Framing;
+    using Amqp.Types;
 
     /// <summary>
     /// The listener link provides non-blocking methods that can be used by brokers/listener
@@ -38,7 +39,7 @@ namespace Amqp.Listener
         LinkEndpoint linkEndpoint;
 
         // send
-        Action<int, object> onCredit;
+        Action<int, Fields, object> onCredit;
         Action<Message, DeliveryState, bool, object> onDispose;
 
         // receive
@@ -110,7 +111,7 @@ namespace Amqp.Listener
         /// <param name="onCredit">The callback to be invoked when delivery limit changes (by received flow performatives).</param>
         /// <param name="onDispose">The callback to be invoked when disposition is received.</param>
         /// <param name="state">The user state attached to the link.</param>
-        public void InitializeSender(Action<int, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
+        public void InitializeSender(Action<int, Fields, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
         {
             ThrowIfNotNull(this.linkEndpoint, "endpoint");
             ThrowIfNotNull(this.onCredit, "sender");
@@ -198,9 +199,24 @@ namespace Amqp.Listener
             }
             else
             {
-                if (this.credit > 0)
+                if (this.role)
                 {
                     this.SendFlow(this.deliveryCount, this.credit, false);
+                }
+                else
+                {
+                    // flow could be processed while attach is in progress
+                    if (this.credit > 0)
+                    {
+                        if (this.linkEndpoint != null)
+                        {
+                            this.linkEndpoint.OnFlow(new FlowContext(this, (int)this.credit, null));
+                        }
+                        else if (this.onCredit != null)
+                        {
+                            this.onCredit((int)this.credit, null, this.state);
+                        }
+                    }
                 }
             }
         }
@@ -239,9 +255,12 @@ namespace Amqp.Listener
             ThrowIfNotNull(this.onMessage, "receiver");
             ThrowIfNotNull(this.onCredit, "sender");
             ThrowIfNotNull(this.onDispose, "sender");
-            this.credit = credit;
-            this.autoRestore = true;
             this.linkEndpoint = linkEndpoint;
+            if (this.role)
+            {
+                this.credit = credit;
+                this.autoRestore = true;
+            }
         }
 
         internal uint SendMessageInternal(Message message, ByteBuffer buffer, object userToken)
@@ -324,9 +343,9 @@ namespace Amqp.Listener
         internal override void OnFlow(Flow flow)
         {
             int delta = 0;
-            if (!role)
+            lock (this.ThisLock)
             {
-                lock (this.ThisLock)
+                if (!this.role)
                 {
                     var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
                     var myLimit = this.deliveryCount + (SequenceNumber)this.credit;
@@ -349,7 +368,7 @@ namespace Amqp.Listener
             }
             else if (delta != 0 && this.onCredit != null)
             {
-                this.onCredit(delta, this.state);
+                this.onCredit(delta, flow.Properties, this.state);
             }
         }
 

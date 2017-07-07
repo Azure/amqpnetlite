@@ -102,7 +102,8 @@ namespace Test.Amqp
             X509Certificate clientCert = null;
             ListenerLink listenerLink = null;
 
-            var linkProcessor = new TestLinkProcessor() { OnLinkAttached = c => listenerLink = c };
+            var linkProcessor = new TestLinkProcessor();
+            linkProcessor.SetHandler(a => { listenerLink = a.Link; return false; });
             var host = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
             host.Listeners[0].SASL.EnableExternalMechanism = true;
             host.Listeners[0].SSL.ClientCertificateRequired = true;

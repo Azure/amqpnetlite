@@ -521,7 +521,7 @@ namespace Amqp.Listener
                     string replyTo = ((Target)attach.Target).Address;
                     AddProcessor(this.responseLinks, replyTo, link);
                     link.SettleOnSend = true;
-                    link.InitializeSender((c, s) => { }, null, Tuple.Create(this, replyTo));
+                    link.InitializeSender((c, p, s) => { }, null, Tuple.Create(this, replyTo));
                     link.SafeAddClosed((s, e) => OnLinkClosed(s, e));
                 }
                 else
