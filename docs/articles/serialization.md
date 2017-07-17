@@ -7,12 +7,23 @@ clients that can read/write AMQP values.
 ## Serializable Types
 
 The following types are serializable.
-* Primitives
+* Primitives as listed in the below mapping table.
+* Collection (Array/List/Map) of serializable types.
+* Enum
 * Custom Types - User defined classes are encoded as AMQP described types when the class
 and its fields/properties are annotated with the AMQP serialization attributes.
 See [AmqpContract](#amqpcontract) for details.
 * [IAmqpSerializable](#iamqpserializable) - User defined classes that implement this
 interface can be serialized using the Encode and Decode implementation provided by the user.
+
+The serializer follows this order to resolve a type. If a type cannot be resolved, an
+exception is thrown.
+```
+[AmqpContract] -> AMQP primitive types -> IAmqpSerializable -> Enum -> Array/List/Map
+```
+A custom class should not have AmqpContractAttribute and implement IAmqpSerializable at
+the same time, because the serializer stops checking for IAmqpSerializable as soon as
+AmqpContract attribute is found.
 
 The mapping between .NET and AMQP primitive types is defined in the following table.
 
