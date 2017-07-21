@@ -62,6 +62,7 @@ namespace Amqp
         ushort channelMax;
         State state;
         uint maxFrameSize;
+        uint remoteMaxFrameSize;
         ITransport writer;
         Pump reader;
         Timer heartBeatTimer;
@@ -70,6 +71,7 @@ namespace Amqp
         {
             this.channelMax = channelMax;
             this.maxFrameSize = maxFrameSize;
+            this.remoteMaxFrameSize = uint.MaxValue;
             this.localSessions = new Session[1];
             this.remoteSessions = new Session[1];
         }
@@ -250,13 +252,13 @@ namespace Amqp
             Frame.Encode(buffer, FrameType.Amqp, channel, transfer);
             int payloadSize = payload.Length;
             int frameSize = buffer.Length + payloadSize;
-            bool more = frameSize > this.maxFrameSize;
+            bool more = frameSize > this.remoteMaxFrameSize;
             if (more)
             {
                 transfer.More = true;
                 buffer.Reset();
                 Frame.Encode(buffer, FrameType.Amqp, channel, transfer);
-                frameSize = (int)this.maxFrameSize;
+                frameSize = (int)this.remoteMaxFrameSize;
                 payloadSize = frameSize - buffer.Length;
             }
 
@@ -440,11 +442,7 @@ namespace Amqp
                 this.channelMax = open.ChannelMax;
             }
 
-            if (open.MaxFrameSize < this.maxFrameSize)
-            {
-                this.maxFrameSize = open.MaxFrameSize;
-            }
-
+            this.remoteMaxFrameSize = open.MaxFrameSize;
             uint idleTimeout = open.IdleTimeOut;
             if (idleTimeout > 0 && idleTimeout < uint.MaxValue)
             {

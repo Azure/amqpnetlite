@@ -55,6 +55,49 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ConnectionMaxFrameSizeTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x10UL, 0, 0, "TestListener", "localhost", 512u);
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, 100u, 100u, 8u, null, null, null,
+                    new Fields() { { new Symbol("big-string"), new string('a', 1024) } });
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ConnectionMaxFrameSizeTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 2048 };
+                Connection connection = new Connection(this.address, null, open, null);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                connection.Close();
+                Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.AMQP.MaxFrameSize = 2048;
+                Connection connection = await factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                await connection.CloseAsync();
+                Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
         public void CloseConnectionWithDetachTest()
         {
             this.testListener.RegisterTarget(TestPoint.Close, (stream, channel, fields) =>
