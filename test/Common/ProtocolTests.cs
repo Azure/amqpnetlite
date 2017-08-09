@@ -395,7 +395,7 @@ namespace Test.Amqp
         {
             Stream transport = null;
 
-            this.testListener.RegisterTarget(TestPoint.Header, (stream, channel, fields) =>
+            this.testListener.RegisterTarget(TestPoint.SaslHeader, (stream, channel, fields) =>
             {
                 transport = stream;
                 stream.WriteByte(3);    // inject an extra byte
@@ -444,7 +444,7 @@ namespace Test.Amqp
         [TestMethod]
         public void SaslCloseTransportTest()
         {
-            this.testListener.RegisterTarget(TestPoint.SaslInit, (stream, channel, fields) =>
+            this.testListener.RegisterTarget(TestPoint.SaslHeader, (stream, channel, fields) =>
             {
                 stream.Dispose();
                 return TestOutcome.Stop;

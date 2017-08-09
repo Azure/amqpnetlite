@@ -23,12 +23,11 @@ namespace Amqp.Sasl
 
     sealed class SaslNoActionProfile : SaslProfile
     {
-        readonly string name;
         readonly string identity;
 
         public SaslNoActionProfile(string name, string identity)
+            : base(name)
         {
-            this.name = name;
             this.identity = identity;
         }
 
@@ -41,7 +40,7 @@ namespace Amqp.Sasl
         {
             return new SaslInit()
             {
-                Mechanism = this.name,
+                Mechanism = this.Mechanism,
                 InitialResponse = Encoding.UTF8.GetBytes(this.identity)
             };
         }

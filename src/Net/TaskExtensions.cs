@@ -21,6 +21,7 @@ namespace Amqp
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
+    using Amqp.Types;
 
     // Task based APIs
 
@@ -370,12 +371,12 @@ namespace Amqp
 #endif
 
         internal static async Task<IAsyncTransport> OpenAsync(this SaslProfile saslProfile, string hostname,
-            IBufferManager bufferManager, IAsyncTransport transport)
+            IBufferManager bufferManager, IAsyncTransport transport, DescribedList command)
         {
             // if transport is closed, pump reader should throw exception
             TransportWriter writer = new TransportWriter(transport, e => { });
 
-            ProtocolHeader myHeader = saslProfile.Start(hostname, writer);
+            ProtocolHeader myHeader = saslProfile.Start(writer, command);
 
             AsyncPump pump = new AsyncPump(bufferManager, transport);
             SaslCode code = SaslCode.Auth;
@@ -388,7 +389,7 @@ namespace Amqp
                 },
                 buffer =>
                 {
-                    return saslProfile.OnFrame(writer, buffer, out code);
+                    return saslProfile.OnFrame(hostname, writer, buffer, out code);
                 });
 
             await writer.FlushAsync();

@@ -174,7 +174,7 @@ namespace Test.Amqp
 
         void OnHeader(Stream stream, byte[] buffer)
         {
-            if (buffer[5] == 3)
+            if (buffer[4] == 3)
             {
                 if (this.HandleTestPoint(TestPoint.SaslHeader, stream, 0, null) == TestOutcome.Continue)
                 {

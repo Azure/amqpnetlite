@@ -29,6 +29,16 @@ namespace Amqp.Sasl
     {
         internal const string ExternalName = "EXTERNAL";
         internal const string AnonymousName = "ANONYMOUS";
+        internal const string PlainName = "PLAIN";
+
+        /// <summary>
+        /// Initializes a SaslProfile object.
+        /// </summary>
+        /// <param name="mechanism">The SASL profile mechanism.</param>
+        protected SaslProfile(Symbol mechanism)
+        {
+            this.Mechanism = mechanism;
+        }
 
         /// <summary>
         /// Gets a SASL ANONYMOUS profile.
@@ -46,10 +56,19 @@ namespace Amqp.Sasl
             get { return new SaslNoActionProfile(ExternalName, string.Empty); }
         }
 
+        /// <summary>
+        /// Gets the mechanism of the SASL profile.
+        /// </summary>
+        public Symbol Mechanism
+        {
+            get;
+            private set;
+        }
+
+        // this is only used by sync client connection
         internal ITransport Open(string hostname, ITransport transport)
         {
-            ProtocolHeader myHeader = this.Start(hostname, transport);
-
+            ProtocolHeader myHeader = this.Start(transport, null);
             ProtocolHeader theirHeader = Reader.ReadHeader(transport);
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", theirHeader);
             this.OnHeader(myHeader, theirHeader);
@@ -57,13 +76,13 @@ namespace Amqp.Sasl
             SaslCode code = SaslCode.SysTemp;
             while (true)
             {
-                ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], uint.MaxValue);
+                ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], 512u);
                 if (buffer == null)
                 {
                     throw new ObjectDisposedException(transport.GetType().Name);
                 }
 
-                if (!this.OnFrame(transport, buffer, out code))
+                if (!this.OnFrame(hostname, transport, buffer, out code))
                 {
                     break;
                 }
@@ -78,7 +97,7 @@ namespace Amqp.Sasl
             return this.UpgradeTransport(transport);
         }
 
-        internal ProtocolHeader Start(string hostname, ITransport transport)
+        internal ProtocolHeader Start(ITransport transport, DescribedList command)
         {
             ProtocolHeader myHeader = new ProtocolHeader() { Id = 3, Major = 1, Minor = 0, Revision = 0 };
 
@@ -90,7 +109,6 @@ namespace Amqp.Sasl
             transport.Send(headerBuffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP {0}", myHeader);
 
-            DescribedList command = this.GetStartCommand(hostname);
             if (command != null)
             {
                 this.SendCommand(transport, command);
@@ -108,7 +126,7 @@ namespace Amqp.Sasl
             }
         }
 
-        internal bool OnFrame(ITransport transport, ByteBuffer buffer, out SaslCode code)
+        internal bool OnFrame(string hostname, ITransport transport, ByteBuffer buffer, out SaslCode code)
         {
             ushort channel;
             DescribedList command;
@@ -121,6 +139,31 @@ namespace Amqp.Sasl
                 code = ((SaslOutcome)command).Code;
                 shouldContinue = false;
             }
+            else if (command.Descriptor.Code == Codec.SaslMechanisms.Code)
+            {
+                code = SaslCode.Ok;
+                SaslMechanisms mechanisms = (SaslMechanisms)command;
+                Symbol matched = null;
+                foreach (var m in mechanisms.SaslServerMechanisms)
+                {
+                    if (m.Equals(this.Mechanism))
+                    {
+                        matched = m;
+                        break;
+                    }
+                }
+
+                if (matched == null)
+                {
+                    throw new AmqpException(ErrorCode.NotImplemented, mechanisms.ToString());
+                }
+
+                DescribedList init = this.GetStartCommand(hostname);
+                if (init != null)
+                {
+                    this.SendCommand(transport, init);
+                }
+            }
             else
             {
                 code = SaslCode.Ok;
@@ -132,10 +175,6 @@ namespace Amqp.Sasl
                     {
                         code = ((SaslOutcome)response).Code;
                         shouldContinue = false;
-                    }
-                    else
-                    {
-                        shouldContinue = true;
                     }
                 }
             }
@@ -159,22 +198,23 @@ namespace Amqp.Sasl
         /// same transport object.
         /// </summary>
         /// <param name="transport">The current transport.</param>
-        /// <returns></returns>
+        /// <returns>A transport upgraded from the current transport per the SASL mechanism.</returns>
         protected abstract ITransport UpgradeTransport(ITransport transport);
 
         /// <summary>
-        /// The start SASL command.
+        /// Gets a SASL command, which is typically a SaslInit command for the client,
+        /// or a SaslMechanisms command for the server, to start SASL negotiation.
         /// </summary>
         /// <param name="hostname">The hostname of the remote peer.</param>
-        /// <returns></returns>
+        /// <returns>A SASL command to send to the remote peer.</returns>
         protected abstract DescribedList GetStartCommand(string hostname);
 
         /// <summary>
         /// Processes the received command and returns a response. If returns
         /// null, the SASL handshake completes.
         /// </summary>
-        /// <param name="command"></param>
-        /// <returns></returns>
+        /// <param name="command">The SASL command received from the peer.</param>
+        /// <returns>A SASL command as a response to the incoming command.</returns>
         protected abstract DescribedList OnCommand(DescribedList command);
 
         void SendCommand(ITransport transport, DescribedList command)

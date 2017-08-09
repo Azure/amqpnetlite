@@ -111,11 +111,11 @@ namespace Amqp
             if (address.User != null)
             {
                 SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                transport = await profile.OpenAsync(address.Host, null, transport);
+                transport = await profile.OpenAsync(address.Host, null, transport, null);
             }
             else if (this.saslSettings != null && this.saslSettings.Profile != null)
             {
-                transport = await this.saslSettings.Profile.OpenAsync(address.Host, null, transport);
+                transport = await this.saslSettings.Profile.OpenAsync(address.Host, null, transport, null);
             }
 
             AsyncPump pump = new AsyncPump(null, transport);

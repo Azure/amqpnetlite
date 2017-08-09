@@ -134,11 +134,11 @@ namespace Amqp
                 if (address.User != null)
                 {
                     SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                    transport = await profile.OpenAsync(address.Host, this.BufferManager, transport);
+                    transport = await profile.OpenAsync(address.Host, this.BufferManager, transport, null);
                 }
                 else if (this.saslSettings != null && this.saslSettings.Profile != null)
                 {
-                    transport = await this.saslSettings.Profile.OpenAsync(address.Host, this.BufferManager, transport);
+                    transport = await this.saslSettings.Profile.OpenAsync(address.Host, this.BufferManager, transport, null);
                 }
             }
             catch

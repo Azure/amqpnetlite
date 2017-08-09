@@ -37,7 +37,7 @@ namespace Amqp.Listener
 
         public override string Name
         {
-            get { return Amqp.Sasl.SaslPlainProfile.Name; }
+            get { return Amqp.Sasl.SaslProfile.PlainName; }
         }
 
         public override SaslProfile CreateProfile()
@@ -50,6 +50,7 @@ namespace Amqp.Listener
             readonly SaslPlainMechanism mechanism;
 
             public SaslPlainProfile(SaslPlainMechanism mechanism)
+                : base(PlainName)
             {
                 this.mechanism = mechanism;
             }

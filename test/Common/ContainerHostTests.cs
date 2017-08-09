@@ -744,6 +744,34 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostSaslUnknownTest()
+        {
+            Address a = new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme);
+            SaslProfile u = new SaslUnknownProfile("UNKNOWN");
+            try
+            {
+                var c = new Connection(a, u, null, null);
+                Assert.IsTrue(false, "connection should fail");
+            }
+            catch(AmqpException exception)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.NotImplemented, exception.Error.Condition);
+            }
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = u;
+            try
+            {
+                var c = factory.CreateAsync(a).GetAwaiter().GetResult();
+                Assert.IsTrue(false, "connection should fail");
+            }
+            catch (AmqpException exception)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.NotImplemented, exception.Error.Condition);
+            }
+        }
+
+        [TestMethod]
         public void ContainerHostPlainPrincipalTest()
         {
             string name = "ContainerHostPlainPrincipalTest";
@@ -1216,6 +1244,29 @@ namespace Test.Amqp
         public override void OnDisposition(DispositionContext dispositionContext)
         {
             dispositionContext.Complete();
+        }
+    }
+
+    sealed class SaslUnknownProfile : SaslProfile
+    {
+        public SaslUnknownProfile(string name)
+            : base(name)
+        {
+        }
+
+        protected override ITransport UpgradeTransport(ITransport transport)
+        {
+            return transport;
+        }
+
+        protected override DescribedList GetStartCommand(string hostname)
+        {
+            return null;
+        }
+
+        protected override DescribedList OnCommand(DescribedList command)
+        {
+            return null;
         }
     }
 }

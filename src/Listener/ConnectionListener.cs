@@ -223,7 +223,7 @@ namespace Amqp.Listener
             if (this.saslSettings != null)
             {
                 ListenerSaslProfile profile = new ListenerSaslProfile(this);
-                transport = await profile.OpenAsync(null, this.BufferManager, transport);
+                transport = await profile.NegotiateAsync(transport);
                 principal = profile.GetPrincipal();
             }
 
@@ -402,7 +402,7 @@ namespace Amqp.Listener
             /// <param name="password"></param>
             public void EnablePlainMechanism(string userName, string password)
             {
-                this.mechanisms[SaslPlainProfile.Name] = new SaslPlainMechanism(userName, password);
+                this.mechanisms[SaslProfile.PlainName] = new SaslPlainMechanism(userName, password);
             }
 
             internal bool TryGetMechanism(Symbol name, out SaslMechanism mechanism)
@@ -417,6 +417,7 @@ namespace Amqp.Listener
             SaslProfile innerProfile;
 
             public ListenerSaslProfile(ConnectionListener listener)
+                : base(string.Empty)
             {
                 this.listener = listener;
             }
@@ -430,6 +431,11 @@ namespace Amqp.Listener
                 }
 
                 return null;
+            }
+
+            public Task<IAsyncTransport> NegotiateAsync(IAsyncTransport transport)
+            {
+                return this.OpenAsync(null, this.listener.BufferManager, transport, this.GetStartCommand(null));
             }
 
             protected override ITransport UpgradeTransport(ITransport transport)
