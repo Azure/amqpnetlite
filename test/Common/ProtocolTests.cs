@@ -360,6 +360,51 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void SendTimeoutTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "SendTimeoutTest";
+            TimeSpan timeout = TimeSpan.FromMilliseconds(600);
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                try
+                {
+                    sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } }, timeout);
+                    Assert.IsTrue(false, "Send should throw exception");
+                }
+                catch (TimeoutException)
+                {
+                }
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                try
+                {
+                    await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } }, timeout);
+                    Assert.IsTrue(false, "Send should throw exception");
+                }
+                catch (TimeoutException)
+                {
+                }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
         public void ClosedEventOnTransportResetTest()
         {
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>

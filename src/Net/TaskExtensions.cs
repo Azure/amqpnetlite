@@ -18,6 +18,7 @@
 namespace Amqp
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Sasl;
@@ -141,7 +142,7 @@ namespace Amqp
         /// <returns>A Task for the asynchronous send operation.</returns>
         public Task SendAsync(Message message)
         {
-            return this.SendInternalAsync(message, DefaultTimeout);
+            return this.SendAsync(message, TimeSpan.FromMilliseconds(DefaultTimeout));
         }
 
         /// <summary>
@@ -150,44 +151,22 @@ namespace Amqp
         /// <param name="message">The message to send.</param>
         /// <param name="timeout">The time to wait for the task to complete.</param>
         /// <returns>A Task for the asynchronous send operation.</returns>
-        public Task SendAsync(Message message, TimeSpan timeout)
-        {
-            return this.SendInternalAsync(message, (int)(timeout.Ticks / 10000));
-        }
-
-        internal async Task SendInternalAsync(Message message, int timeoutMilliseconds)
+        public async Task SendAsync(Message message, TimeSpan timeout)
         {
             DeliveryState txnState = null;
 #if NETFX || NETFX40
             txnState = await TaskExtensions.GetTransactionalStateAsync(this);
 #endif
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
-            this.Send(
-                message,
-                txnState,
-                (l, m, o, s) =>
-                {
-                    var t = (TaskCompletionSource<object>)s;
-                    if (o.Descriptor.Code == Codec.Accepted.Code)
-                    {
-                        t.SetResult(null);
-                    }
-                    else if (o.Descriptor.Code == Codec.Rejected.Code)
-                    {
-                        t.SetException(new AmqpException(((Rejected)o).Error));
-                    }
-                    else if (o.Descriptor.Code == Codec.Released.Code)
-                    {
-                        t.SetException(new AmqpException(ErrorCode.MessageReleased, null));
-                    }
-                    else
-                    {
-                        t.SetException(new AmqpException(ErrorCode.InternalError, o.Descriptor.Name));
-                    }
-                },
-                tcs);
 
-            await tcs.Task;
+            try
+            {
+                await new SendTask(this, message, txnState, timeout).Task;
+            }
+            catch (TimeoutException)
+            {
+                this.OnTimeout(message);
+                throw;
+            }
         }
     }
 
@@ -200,7 +179,7 @@ namespace Amqp
         /// if available within a default timeout; otherwise a null value.</returns>
         public Task<Message> ReceiveAsync()
         {
-            return this.ReceiveInternalAsync(DefaultTimeout);
+            return this.ReceiveAsync(TimeSpan.FromMilliseconds(DefaultTimeout));
         }
 
         /// <summary>
@@ -210,11 +189,6 @@ namespace Amqp
         /// <returns>A Task for the asynchronous receive operation. The result is a Message object
         /// if available within the specified timeout; otherwise a null value.</returns>
         public Task<Message> ReceiveAsync(TimeSpan timeout)
-        {
-            return this.ReceiveInternalAsync((int)(timeout.Ticks / 10000));
-        }
-
-        internal Task<Message> ReceiveInternalAsync(int timeout = 60000)
         {
             TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();
             var message = this.ReceiveInternal(
@@ -229,7 +203,7 @@ namespace Amqp
                         tcs.TrySetResult(m);
                     }
                 },
-                timeout);
+                (int)timeout.TotalMilliseconds);
 
             if (message != null)
             {
@@ -237,6 +211,48 @@ namespace Amqp
             }
 
             return tcs.Task;
+        }
+    }
+
+    class SendTask : TaskCompletionSource<bool>
+    {
+        readonly static OutcomeCallback onOutcome = OnOutcome;
+        readonly static TimerCallback onTimer = OnTimer;
+        readonly Timer timer;
+
+        public SendTask(SenderLink link, Message message, DeliveryState state, TimeSpan timeout)
+        {
+            this.timer = new Timer(onTimer, this, (int)timeout.TotalMilliseconds, -1);
+            link.Send(message, state, onOutcome, this);
+        }
+
+        static void OnOutcome(ILink link, Message message, Outcome outcome, object state)
+        {
+            SendTask thisPtr = (SendTask)state;
+            thisPtr.timer.Dispose();
+
+            if (outcome.Descriptor.Code == Codec.Accepted.Code)
+            {
+                thisPtr.TrySetResult(true);
+            }
+            else if (outcome.Descriptor.Code == Codec.Rejected.Code)
+            {
+                thisPtr.TrySetException(new AmqpException(((Rejected)outcome).Error));
+            }
+            else if (outcome.Descriptor.Code == Codec.Released.Code)
+            {
+                thisPtr.TrySetException(new AmqpException(ErrorCode.MessageReleased, null));
+            }
+            else
+            {
+                thisPtr.TrySetException(new AmqpException(ErrorCode.InternalError, outcome.ToString()));
+            }
+        }
+
+        static void OnTimer(object state)
+        {
+            var thisPtr = (SendTask)state;
+            thisPtr.TrySetException(new TimeoutException());
         }
     }
 

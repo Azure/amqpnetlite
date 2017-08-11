@@ -109,16 +109,7 @@ namespace Amqp
             bool signaled = acked.WaitOne(waitMilliseconds);
             if (!signaled)
             {
-                lock (this.ThisLock)
-                {
-                    this.outgoingList.Remove(message.Delivery);
-                }
-
-                if (message.Delivery.BytesTransfered > 0)
-                {
-                    this.Session.DisposeDelivery(false, message.Delivery, new Released(), true);
-                }
-
+                this.OnTimeout(message);
                 throw new TimeoutException();
             }
 
@@ -195,6 +186,19 @@ namespace Amqp
             }
 
             this.WriteDelivery(delivery);
+        }
+
+        void OnTimeout(Message message)
+        {
+            lock (this.ThisLock)
+            {
+                this.outgoingList.Remove(message.Delivery);
+            }
+
+            if (message.Delivery.BytesTransfered > 0)
+            {
+                this.Session.DisposeDelivery(false, message.Delivery, new Released(), true);
+            }
         }
 
         internal override void OnFlow(Flow flow)
