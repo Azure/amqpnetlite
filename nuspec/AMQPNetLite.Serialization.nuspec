@@ -21,7 +21,7 @@
         <dependency id="System.Reflection.Emit.Lightweight" version="4.0.1" />
         <dependency id="System.Reflection.Extensions" version="4.0.1" />
         <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
-        <dependency id="AMQPNetLite.Core" version="2.0.0-pre" />
+        <dependency id="AMQPNetLite.Core" version="2.0.0-rc" />
       </group>
     </dependencies>
   </metadata>
