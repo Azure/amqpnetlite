@@ -36,7 +36,7 @@ namespace Test.Amqp
 
         static ProtocolTests()
         {
-            //Trace.TraceLevel = TraceLevel.Frame;
+            //Trace.TraceLevel = TraceLevel.Frame | TraceLevel.Information;
             //Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
@@ -94,6 +94,59 @@ namespace Test.Amqp
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
                 await connection.CloseAsync();
                 Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void SaslMismatchTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Header, (stream, channel, fields) =>
+            {
+                stream.Write(new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 3, 1, 0, 0}, 0, 8);
+                stream.Write(new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 }, 0, 8);
+                TestListener.FRM(stream, 0x10UL, 0, 0, "TestListener", "localhost", 512u);
+                TestListener.FRM(stream, 0x18UL, 0, 0);
+                return TestOutcome.Stop;
+            });
+
+            string testName = "SaslMismatchTest";
+            bool failed;
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                failed = true;
+                try
+                {
+                    Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 2048 };
+                    Connection connection = new Connection(this.address, null, open, null);
+                    connection.Close(TimeSpan.FromSeconds(5));
+                    failed = connection.Error != null;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(TraceLevel.Information, "Exception {0}:{1}", e.GetType().Name, e.Message);
+                }
+                Assert.IsTrue(failed, "should fail");
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                failed = true;
+                try
+                {
+                    ConnectionFactory factory = new ConnectionFactory();
+                    factory.AMQP.MaxFrameSize = 2048;
+                    Connection connection = await factory.CreateAsync(this.address);
+                    await connection.CloseAsync(TimeSpan.FromSeconds(5));
+                    Trace.WriteLine(TraceLevel.Frame, "Error {0}", connection.Error);
+                    failed = connection.Error != null;
+                }
+                catch (Exception e)
+                {
+                    Trace.WriteLine(TraceLevel.Information, "Exception {0}:{1}", e.GetType().Name, e.Message);
+                }
+                Assert.IsTrue(failed, "should fail");
             }).Unwrap().GetAwaiter().GetResult();
         }
 

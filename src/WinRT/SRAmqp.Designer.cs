@@ -125,6 +125,15 @@ namespace Amqp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The protocol requested by peer &apos;{0}&apos; does not match expected &apos;{1}&apos;. Make sure both sides agree on protocol id and version..
+        /// </summary>
+        internal static string AmqpProtocolMismatch {
+            get {
+                return ResourceManager.GetString("AmqpProtocolMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The operation {0} did not complete within the allocated time {1} for object {2}..
         /// </summary>
         internal static string AmqpTimeout {

@@ -32,6 +32,7 @@ namespace Amqp
         [System.SerializableAttribute()]
         internal enum StringResources : short
         {
+            AmqpProtocolMismatch = -30934,
             AmqpHandleExceeded = -30720,
             InvalidMapKeyType = -27839,
             LinkNotFound = -26757,

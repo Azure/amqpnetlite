@@ -24,6 +24,11 @@ namespace Amqp
             get { return SRAmqp.GetString(StringResources.AmqpHandleExceeded); }
         }
 
+        public static string AmqpProtocolMismatch
+        {
+            get { return SRAmqp.GetString(StringResources.AmqpProtocolMismatch); }
+        }
+
         public static string InvalidMapKeyType
         {
             get { return SRAmqp.GetString(StringResources.InvalidMapKeyType); }

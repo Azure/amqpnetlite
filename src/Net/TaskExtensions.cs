@@ -398,6 +398,7 @@ namespace Amqp
             SaslCode code = SaslCode.Auth;
 
             await pump.PumpAsync(
+                SaslProfile.MaxFrameSize,
                 header =>
                 {
                     saslProfile.OnHeader(myHeader, header);

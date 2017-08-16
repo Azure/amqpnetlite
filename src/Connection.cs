@@ -179,6 +179,11 @@ namespace Amqp
             private set;
         }
 
+        internal uint MaxFrameSize
+        {
+            get { return this.maxFrameSize; }
+        }
+
         internal int MaxLinksPerSession;
 
         ByteBuffer AllocateBuffer(int size)
@@ -557,6 +562,12 @@ namespace Amqp
         internal bool OnHeader(ProtocolHeader header)
         {
             Trace.WriteLine(TraceLevel.Frame, "RECV AMQP {0}", header);
+            if (header.Id != 0 || header.Major != 1 || header.Minor != 0 || header.Revision != 0)
+            {
+                throw new AmqpException(ErrorCode.NotImplemented,
+                    Fx.Format(SRAmqp.AmqpProtocolMismatch, header, "0 1 0 0"));
+            }
+
             lock (this.ThisLock)
             {
                 if (this.state == State.OpenPipe)
@@ -571,11 +582,6 @@ namespace Amqp
                 {
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnHeader", this.state));
-                }
-
-                if (header.Major != 1 || header.Minor != 0 || header.Revision != 0)
-                {
-                    throw new AmqpException(ErrorCode.NotImplemented, header.ToString());
                 }
             }
 

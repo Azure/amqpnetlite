@@ -27,6 +27,7 @@ namespace Amqp.Sasl
     /// </summary>
     public abstract class SaslProfile
     {
+        internal const uint MaxFrameSize = 512;
         internal const string ExternalName = "EXTERNAL";
         internal const string AnonymousName = "ANONYMOUS";
         internal const string PlainName = "PLAIN";
@@ -76,7 +77,7 @@ namespace Amqp.Sasl
             SaslCode code = SaslCode.SysTemp;
             while (true)
             {
-                ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], 512u);
+                ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], MaxFrameSize);
                 if (buffer == null)
                 {
                     throw new ObjectDisposedException(transport.GetType().Name);
@@ -122,7 +123,8 @@ namespace Amqp.Sasl
             if (theirHeader.Id != myHeader.Id || theirHeader.Major != myHeader.Major ||
                 theirHeader.Minor != myHeader.Minor || theirHeader.Revision != myHeader.Revision)
             {
-                throw new AmqpException(ErrorCode.NotImplemented, theirHeader.ToString());
+                throw new AmqpException(ErrorCode.NotImplemented,
+                    Fx.Format(SRAmqp.AmqpProtocolMismatch, theirHeader, myHeader));
             }
         }
 

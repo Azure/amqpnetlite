@@ -38,7 +38,7 @@ namespace Amqp
             Task task = this.StartAsync(connection);
         }
 
-        public async Task PumpAsync(Func<ProtocolHeader, bool> onHeader, Func<ByteBuffer, bool> onBuffer)
+        public async Task PumpAsync(uint maxFrameSize, Func<ProtocolHeader, bool> onHeader, Func<ByteBuffer, bool> onBuffer)
         {
             byte[] header = new byte[FixedWidth.ULong];
 
@@ -57,6 +57,12 @@ namespace Amqp
             {
                 await this.ReceiveBufferAsync(header, 0, FixedWidth.UInt);
                 int frameSize = AmqpBitConverter.ReadInt(header, 0);
+                if ((uint)frameSize > maxFrameSize)
+                {
+                    throw new AmqpException(ErrorCode.InvalidField,
+                        Fx.Format(SRAmqp.InvalidFrameSize, frameSize, maxFrameSize));
+                }
+
                 ByteBuffer buffer = this.bufferManager.GetByteBuffer(frameSize);
 
                 try
@@ -81,7 +87,7 @@ namespace Amqp
         {
             try
             {
-                await this.PumpAsync(connection.OnHeader, connection.OnFrame);
+                await this.PumpAsync(connection.MaxFrameSize, connection.OnHeader, connection.OnFrame);
             }
             catch (Exception exception)
             {
