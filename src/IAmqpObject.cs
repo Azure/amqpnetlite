@@ -71,7 +71,9 @@ namespace Amqp
     public partial interface IAmqpObject
     {
         /// <summary>
-        /// Gets the event used to notify that the object is closed.
+        /// Gets the event used to notify that the object is closed. Callbacks
+        /// may not be invoked if they are registered after the object is closed.
+        /// It is recommend to call AddClosedCallback method.
         /// </summary>
         event ClosedCallback Closed;
 
@@ -84,6 +86,14 @@ namespace Amqp
         /// Gets a boolean value indicating if the object has been closed.
         /// </summary>
         bool IsClosed { get; }
+
+        /// <summary>
+        /// Adds a callback to be called when the object is called.
+        /// This method guarantees that the callback is invoked even if
+        /// it is called after the object is closed.
+        /// </summary>
+        /// <param name="callback">The callback to be invoked.</param>
+        void AddClosedCallback(ClosedCallback callback);
 
         /// <summary>
         /// Closes the AMQP object. It waits until a response is received from the peer,

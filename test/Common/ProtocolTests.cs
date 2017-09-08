@@ -489,6 +489,41 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ClosedCallbackGuaranteeTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
+            {
+                stream.Dispose();
+                return TestOutcome.Continue;
+            });
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                ManualResetEvent closed = new ManualResetEvent(false);
+                Connection connection = new Connection(this.address);
+                connection.AddClosedCallback((o, e) => closed.Set());
+                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
+                Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
+                closed.Reset();
+                connection.AddClosedCallback((o, e) => closed.Set());
+                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired again");
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                ManualResetEvent closed = new ManualResetEvent(false);
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                connection.AddClosedCallback((o, e) => closed.Set());
+                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
+                Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
+                closed.Reset();
+                connection.AddClosedCallback((o, e) => closed.Set());
+                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired again");
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
         public void SaslInvalidProtocolHeaderTest()
         {
             Stream transport = null;

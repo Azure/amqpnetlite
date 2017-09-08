@@ -36,7 +36,9 @@ namespace Amqp
         ManualResetEvent endEvent;
 
         /// <summary>
-        /// Gets the event used to notify that the object is closed.
+        /// Gets the event used to notify that the object is closed. Callbacks
+        /// may not be invoked if they are registered after the object is closed.
+        /// It is recommend to call AddClosedCallback method.
         /// </summary>
         public event ClosedCallback Closed;
 
@@ -81,15 +83,39 @@ namespace Amqp
                 temp.Set();
             }
 
-            if (!this.closedNotified)
+            ClosedCallback closed;
+            lock (this)
             {
+                closed = this.Closed;
+                bool notified = this.closedNotified;
                 this.closedNotified = true;
-                ClosedCallback closed = this.Closed;
-                if (closed != null)
+                if (notified || closed == null)
                 {
-                    closed(this, error);
+                    return;
                 }
             }
+
+            closed(this, error);
+        }
+
+        /// <summary>
+        /// Adds a callback to be called when the object is called.
+        /// This method guarantees that the callback is invoked even if
+        /// it is registered after the object is closed.
+        /// </summary>
+        /// <param name="callback">The callback to be invoked.</param>
+        public void AddClosedCallback(ClosedCallback callback)
+        {
+            lock (this)
+            {
+                if (!this.closedCalled)
+                {
+                    this.Closed += callback;
+                    return;
+                }
+            }
+
+            callback(this, this.error);
         }
 
         /// <summary>
@@ -115,12 +141,16 @@ namespace Amqp
 
         internal void CloseInternal(int waitMilliseconds, Error error = null)
         {
-            if (this.closedCalled)
+            lock (this)
             {
-                return;
+                if (this.closedCalled)
+                {
+                    return;
+                }
+
+                this.closedCalled = true;
             }
 
-            this.closedCalled = true;
             // initialize event first to avoid the race with NotifyClosed
             if (waitMilliseconds > 0)
             {
