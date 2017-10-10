@@ -147,7 +147,7 @@ namespace Amqp
                 }
                 else if (this.state == LinkState.Attached)
                 {
-                    this.SendDetach(null);
+                    this.SendDetach(null, detach.Closed);
                     this.state = LinkState.End;
                 }
                 else
@@ -184,6 +184,28 @@ namespace Amqp
         /// <returns></returns>
         protected override bool OnClose(Error error)
         {
+            return Detach(error, true);
+        }
+
+        /// <summary>
+        /// Detaches the link sending a detach performative and altering the link state.
+        /// </summary>
+        public bool Detach()
+        {
+            return Detach(null, false);
+        }
+
+        /// <summary>
+        /// Detaches the link sending a detach performative and altering the link state.
+        /// </summary>
+        /// <param name="error">An error causing a detach.</param>
+        public bool Detach(Error error)
+        {
+            return Detach(error, false);
+        }
+
+        private bool Detach(Error error, bool close)
+        {
             lock (this.ThisLock)
             {
                 if (this.state == LinkState.End)
@@ -205,10 +227,10 @@ namespace Amqp
                 else
                 {
                     throw new AmqpException(ErrorCode.IllegalState,
-                        Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
+                        Fx.Format(SRAmqp.AmqpIllegalOperationState, "Detach", this.state));
                 }
 
-                this.SendDetach(error);
+                this.SendDetach(error, close);
                 return this.state == LinkState.End;
             }
         }
@@ -253,10 +275,10 @@ namespace Amqp
             }
         }
 
-        void SendDetach(Error error)
+        void SendDetach(Error error, bool close)
         {
-            Detach detach = new Detach() { Handle = this.handle, Error = error, Closed = true };
-            this.session.SendCommand(detach);
+            Detach detach = new Detach { Handle = handle, Error = error, Closed = close };
+            session.SendCommand(detach);
         }
     }
 }
