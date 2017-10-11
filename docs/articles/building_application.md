@@ -43,7 +43,7 @@ There are two ways to create a connection:
 
 `public Connection(Address address)`  
 This is probably the easiest way to create a connection to the given address. The Address object
-fully determines how the connection is established as explained in [Specifying an Address](#specifying_an_address)
+fully determines how the connection is established as explained in [Specifying an Address](#specifying-an-address)
 section.
 
 `public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)`  
