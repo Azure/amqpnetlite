@@ -499,7 +499,11 @@ namespace Amqp.Listener
 
                 List<IPAddress> addresses = new List<IPAddress>();
                 IPAddress ipAddress;
-                if (host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+                if (IPAddress.TryParse(host, out ipAddress))
+                {
+                    addresses.Add(ipAddress);
+                }
+                else if (host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
                     host.Equals(Environment.GetEnvironmentVariable("COMPUTERNAME"), StringComparison.OrdinalIgnoreCase) ||
                     host.Equals(Amqp.TaskExtensions.GetHostEntryAsync(string.Empty).Result.HostName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -512,10 +516,6 @@ namespace Amqp.Listener
                     {
                         addresses.Add(IPAddress.IPv6Any);
                     }
-                }
-                else if (IPAddress.TryParse(host, out ipAddress))
-                {
-                    addresses.Add(ipAddress);
                 }
                 else
                 {
