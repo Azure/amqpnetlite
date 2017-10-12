@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Prerequisites </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Prerequisites ">
+    <meta name="generator" content="docfx 2.25.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p>This guide shows you how to exchange messages between two programs through a broker with Amqp.Net Lite.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>First you need an AMQP 1.0 compliant broker. You can use any of the following:</p>
+<ul>
+<li><a href="http://activemq.apache.org/">Apache ActiveMQ</a></li>
+<li><a href="http://activemq.apache.org/artemis">Apache ActiveMQ Artemis</a></li>
+<li><a href="https://azure.microsoft.com/en-us/services/service-bus/">Microsoft Azure Service Bus</a></li>
+<li><a href="http://qpid.apache.org/components/java-broker/">Apache Qpid Java Broker</a></li>
+</ul>
+<p>You will also need valid credentials and a pre-configured queue (or other types of entities)
+in the broker. If you do not have any broker to start with and just want to quickly try out
+AMQP on .Net, you can download the <a href="https://github.com/Azure/amqpnetlite/releases/download/test_broker.1609/TestAmqpBroker.zip">TestAmqpBroker</a>
+which is built on top of this library. After downloading the zip file, unzip it and execute
+the following command.<br><code>TestAmqpBroker.exe amqp://localhost:5672 /creds:guest:guest /queues:q1</code></p>
+<p>The test broker now listens on 0.0.0.0:5672 and accepts AMQP connections with &quot;guest:guest&quot; as
+user name and password. A queue named &quot;q1&quot; is also pre-created.</p>
+<h2 id="projects-and-references">Projects and References</h2>
+<p>Now open Visual Studio and create two Console Application projects: Sender and Receiver.</p>
+<p>Open NuGet Package Manager. Browse for &quot;AmqpNetLite&quot;. Install the latest version to both projects.
+If you prefer using the NPM console, you can do this by executing:</p>
+<pre><code>Install-Package AmqpNetLite -ProjectName Sender
+Install-Package AmqpNetLite -ProjectName Receiver
+</code></pre><h2 id="code-and-build">Code and Build</h2>
+<p>In Sender project, open Program.cs file and type in the following code.</p>
+<pre><code>using System;
+using Amqp;
+
+namespace Sender
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Address address = new Address(&quot;amqp://guest:guest@localhost:5672&quot;);
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+
+            Message message = new Message(&quot;Hello AMQP!&quot;);
+            SenderLink sender = new SenderLink(session, &quot;sender-link&quot;, &quot;q1&quot;);
+            sender.Send(message);
+            Console.WriteLine(&quot;Sent Hello AMQP!&quot;);
+
+            sender.Close();
+            session.Close();
+            connection.Close();
+        }
+    }
+}
+</code></pre><p>In Receiver project, open Program.cs file and type in the following code.</p>
+<pre><code>using System;
+using Amqp;
+
+namespace Receiver
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Address address = new Address(&quot;amqp://guest:guest@localhost:5672&quot;);
+            Connection connection = new Connection(address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, &quot;receiver-link&quot;, &quot;q1&quot;);
+
+            Console.WriteLine(&quot;Receiver connected to broker.&quot;);
+            Message message = receiver.Receive(-1);
+            Console.WriteLine(&quot;Received &quot; + message.GetBody&lt;string&gt;());
+            receiver.Accept(message);
+
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+    }
+}
+</code></pre><p>Build both projects.</p>
+<h2 id="run">Run</h2>
+<p>Open two console windows. Run Receiver.exe from one window. It should output the following.<br><code>Receiver connected to broker.</code></p>
+<p>Run Sender.exe from the other window. It should output the following.<br><code>Sent Hello AMQP!</code></p>
+<p>The Receiver window should output the following right after the Sender completes.<br><code>Received Hello AMQP!</code></p>
+<p>That&#39;s it! You just sent an AMQP message to the broker and received it back. Happy messaging!</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

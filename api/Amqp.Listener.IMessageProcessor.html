@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IMessageProcessor
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,80 +68,84 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_IMessageProcessor" data-uid="Amqp.Listener.IMessageProcessor">Interface IMessageProcessor
-              </h1>
-              <div class="markdown level0 summary"><p>Defines the property and methods of a message processor.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.IMessageProcessor">
+  
+  
+  <h1 id="Amqp_Listener_IMessageProcessor" data-uid="Amqp.Listener.IMessageProcessor" class="text-break">Interface IMessageProcessor
+  </h1>
+  <div class="markdown level0 summary"><p>Defines the property and methods of a message processor.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_IMessageProcessor_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public interface IMessageProcessor</code></pre>
-              </div>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Listener_IMessageProcessor_Credit" data-uid="Amqp.Listener.IMessageProcessor.Credit">Credit</h4>
-              <div class="markdown level1 summary"><p>Gets the link credit to issue to the client.</p>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_IMessageProcessor_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IMessageProcessor</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Listener_IMessageProcessor_Credit_" data-uid="Amqp.Listener.IMessageProcessor.Credit*"></a>
+  <h4 id="Amqp_Listener_IMessageProcessor_Credit" data-uid="Amqp.Listener.IMessageProcessor.Credit">Credit</h4>
+  <div class="markdown level1 summary"><p>Gets the link credit to issue to the client.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">int Credit { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Listener_IMessageProcessor_Process_Amqp_Listener_MessageContext_" data-uid="Amqp.Listener.IMessageProcessor.Process(Amqp.Listener.MessageContext)">Process(MessageContext)</h4>
-              <div class="markdown level1 summary"><p>Processes a received message.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int Credit { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_IMessageProcessor_Process_" data-uid="Amqp.Listener.IMessageProcessor.Process*"></a>
+  <h4 id="Amqp_Listener_IMessageProcessor_Process_Amqp_Listener_MessageContext_" data-uid="Amqp.Listener.IMessageProcessor.Process(Amqp.Listener.MessageContext)">Process(MessageContext)</h4>
+  <div class="markdown level1 summary"><p>Processes a received message.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">void Process(MessageContext messageContext)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.MessageContext.html#Amqp_Listener_MessageContext">MessageContext</a></td>
-                    <td><em>messageContext</em></td>
-                    <td><p>Context of the received message.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Process(MessageContext messageContext)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.MessageContext.html">MessageContext</a></td>
+        <td><span class="parametername">messageContext</span></td>
+        <td><p>Context of the received message.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -151,7 +158,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -160,6 +167,5 @@
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

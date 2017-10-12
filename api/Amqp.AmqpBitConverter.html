@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AmqpBitConverter
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,1059 +68,1087 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_AmqpBitConverter" data-uid="Amqp.AmqpBitConverter">Class AmqpBitConverter
-              </h1>
-              <div class="markdown level0 summary"><p>Reads primitive values from a buffer or writes primitive values to a buffer in networking order.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.AmqpBitConverter">
+  
+  
+  <h1 id="Amqp_AmqpBitConverter" data-uid="Amqp.AmqpBitConverter" class="text-break">Class AmqpBitConverter
+  </h1>
+  <div class="markdown level0 summary"><p>Reads primitive values from a buffer or writes primitive values to a buffer in networking order.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><span class="xref">AmqpBitConverter</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_AmqpBitConverter_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static class AmqpBitConverter</code></pre>
-              </div>
-              <h3 id="fields">Fields
-              </h3>
-              <h4 id="Amqp_AmqpBitConverter_IsLittleEndian" data-uid="Amqp.AmqpBitConverter.IsLittleEndian">IsLittleEndian</h4>
-              <div class="markdown level1 summary"><p>Indicates the byte order (&quot;endianness&quot;) in which data is stored in this computer architecture.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">AmqpBitConverter</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.html">Amqp</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_AmqpBitConverter_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class AmqpBitConverter</code></pre>
+  </div>
+  <h3 id="fields">Fields
+  </h3>
+  <h4 id="Amqp_AmqpBitConverter_IsLittleEndian" data-uid="Amqp.AmqpBitConverter.IsLittleEndian">IsLittleEndian</h4>
+  <div class="markdown level1 summary"><p>Indicates the byte order (&quot;endianness&quot;) in which data is stored in this computer architecture.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static readonly bool IsLittleEndian</code></pre>
-              </div>
-              <h5 class="fieldValue">Field Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_AmqpBitConverter_ReadByte_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadByte(Amqp.ByteBuffer)">ReadByte(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a signed byte and advance the buffer read cursor.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly bool IsLittleEndian</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_AmqpBitConverter_ReadByte_" data-uid="Amqp.AmqpBitConverter.ReadByte*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadByte_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadByte(Amqp.ByteBuffer)">ReadByte(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a signed byte and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static sbyte ReadByte(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static sbyte ReadByte(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.SByte</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadBytes_Amqp_ByteBuffer_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.AmqpBitConverter.ReadBytes(Amqp.ByteBuffer,System.Byte[],System.Int32,System.Int32)">ReadBytes(ByteBuffer, Byte[], Int32, Int32)</h4>
-              <div class="markdown level1 summary"><p>Reads bytes from one buffer into another.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.SByte</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadBytes_" data-uid="Amqp.AmqpBitConverter.ReadBytes*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadBytes_Amqp_ByteBuffer_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.AmqpBitConverter.ReadBytes(Amqp.ByteBuffer,System.Byte[],System.Int32,System.Int32)">ReadBytes(ByteBuffer, Byte[], Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Reads bytes from one buffer into another.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void ReadBytes(ByteBuffer buffer, byte[] data, int offset, int count)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>Source buffer.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void ReadBytes(ByteBuffer buffer, byte[] data, int offset, int count)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>Source buffer.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td><em>data</em></td>
-                    <td><p>Destination buffer</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>Destination buffer</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>The start position to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The start position to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>count</em></td>
-                    <td><p>The number of bytes to read.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">count</span></td>
+        <td><p>The number of bytes to read.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadDouble_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadDouble(Amqp.ByteBuffer)">ReadDouble(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 64-bit floating-point value from the buffer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadDouble_" data-uid="Amqp.AmqpBitConverter.ReadDouble*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadDouble_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadDouble(Amqp.ByteBuffer)">ReadDouble(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 64-bit floating-point value from the buffer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static double ReadDouble(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double ReadDouble(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Double</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadFloat_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadFloat(Amqp.ByteBuffer)">ReadFloat(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 32-bit floating-point value from the buffer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadFloat_" data-uid="Amqp.AmqpBitConverter.ReadFloat*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadFloat_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadFloat(Amqp.ByteBuffer)">ReadFloat(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 32-bit floating-point value from the buffer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static float ReadFloat(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static float ReadFloat(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Single</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadInt_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadInt(Amqp.ByteBuffer)">ReadInt(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 32-bit signed integer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadInt_" data-uid="Amqp.AmqpBitConverter.ReadInt*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadInt_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadInt(Amqp.ByteBuffer)">ReadInt(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 32-bit signed integer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static int ReadInt(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ReadInt(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadInt_System_Byte___System_Int32_" data-uid="Amqp.AmqpBitConverter.ReadInt(System.Byte[],System.Int32)">ReadInt(Byte[], Int32)</h4>
-              <div class="markdown level1 summary"><p>Reads a 32-bit signed integer from the buffer at the specified offset.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadInt_" data-uid="Amqp.AmqpBitConverter.ReadInt*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadInt_System_Byte___System_Int32_" data-uid="Amqp.AmqpBitConverter.ReadInt(System.Byte[],System.Int32)">ReadInt(Byte[], Int32)</h4>
+  <div class="markdown level1 summary"><p>Reads a 32-bit signed integer from the buffer at the specified offset.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static int ReadInt(byte[] buffer, int offset)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static int ReadInt(byte[] buffer, int offset)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>The offset in the buffer to start reading.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The offset in the buffer to start reading.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadLong_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadLong(Amqp.ByteBuffer)">ReadLong(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 64-bit signed integer from the buffer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadLong_" data-uid="Amqp.AmqpBitConverter.ReadLong*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadLong_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadLong(Amqp.ByteBuffer)">ReadLong(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 64-bit signed integer from the buffer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static long ReadLong(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static long ReadLong(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int64</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadShort_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadShort(Amqp.ByteBuffer)">ReadShort(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 16-bit signed integer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadShort_" data-uid="Amqp.AmqpBitConverter.ReadShort*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadShort_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadShort(Amqp.ByteBuffer)">ReadShort(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 16-bit signed integer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static short ReadShort(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static short ReadShort(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int16</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadUByte_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUByte(Amqp.ByteBuffer)">ReadUByte(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads an unsigned byte and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int16</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadUByte_" data-uid="Amqp.AmqpBitConverter.ReadUByte*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadUByte_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUByte(Amqp.ByteBuffer)">ReadUByte(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads an unsigned byte and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static byte ReadUByte(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static byte ReadUByte(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadUInt_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUInt(Amqp.ByteBuffer)">ReadUInt(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 32-bit unsigned integer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadUInt_" data-uid="Amqp.AmqpBitConverter.ReadUInt*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadUInt_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUInt(Amqp.ByteBuffer)">ReadUInt(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 32-bit unsigned integer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static uint ReadUInt(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static uint ReadUInt(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.UInt32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadULong_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadULong(Amqp.ByteBuffer)">ReadULong(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 64-bit unsigned integer from the buffer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadULong_" data-uid="Amqp.AmqpBitConverter.ReadULong*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadULong_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadULong(Amqp.ByteBuffer)">ReadULong(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 64-bit unsigned integer from the buffer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static ulong ReadULong(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ulong ReadULong(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.UInt64</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadUShort_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUShort(Amqp.ByteBuffer)">ReadUShort(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a 16-bit unsigned integer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadUShort_" data-uid="Amqp.AmqpBitConverter.ReadUShort*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadUShort_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUShort(Amqp.ByteBuffer)">ReadUShort(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a 16-bit unsigned integer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static ushort ReadUShort(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static ushort ReadUShort(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.UInt16</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_ReadUuid_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUuid(Amqp.ByteBuffer)">ReadUuid(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads a uuid (16-bytes) from the buffer and advance the buffer read cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt16</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_ReadUuid_" data-uid="Amqp.AmqpBitConverter.ReadUuid*"></a>
+  <h4 id="Amqp_AmqpBitConverter_ReadUuid_Amqp_ByteBuffer_" data-uid="Amqp.AmqpBitConverter.ReadUuid(Amqp.ByteBuffer)">ReadUuid(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads a uuid (16-bytes) from the buffer and advance the buffer read cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static Guid ReadUuid(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Guid ReadUuid(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Guid</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteByte_Amqp_ByteBuffer_System_SByte_" data-uid="Amqp.AmqpBitConverter.WriteByte(Amqp.ByteBuffer,System.SByte)">WriteByte(ByteBuffer, SByte)</h4>
-              <div class="markdown level1 summary"><p>Writes a signed byte into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Guid</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteByte_" data-uid="Amqp.AmqpBitConverter.WriteByte*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteByte_Amqp_ByteBuffer_System_SByte_" data-uid="Amqp.AmqpBitConverter.WriteByte(Amqp.ByteBuffer,System.SByte)">WriteByte(ByteBuffer, SByte)</h4>
+  <div class="markdown level1 summary"><p>Writes a signed byte into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteByte(ByteBuffer buffer, sbyte data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteByte(ByteBuffer buffer, sbyte data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.SByte</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.SByte</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteBytes_Amqp_ByteBuffer_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.AmqpBitConverter.WriteBytes(Amqp.ByteBuffer,System.Byte[],System.Int32,System.Int32)">WriteBytes(ByteBuffer, Byte[], Int32, Int32)</h4>
-              <div class="markdown level1 summary"><p>Writes bytes from one buffer into another.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteBytes_" data-uid="Amqp.AmqpBitConverter.WriteBytes*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteBytes_Amqp_ByteBuffer_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.AmqpBitConverter.WriteBytes(Amqp.ByteBuffer,System.Byte[],System.Int32,System.Int32)">WriteBytes(ByteBuffer, Byte[], Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Writes bytes from one buffer into another.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteBytes(ByteBuffer buffer, byte[] data, int offset, int count)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The destination buffer.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteBytes(ByteBuffer buffer, byte[] data, int offset, int count)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The destination buffer.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td><em>data</em></td>
-                    <td><p>The source buffer</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The source buffer</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>The position in source buffer to start.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The position in source buffer to start.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>count</em></td>
-                    <td><p>The number of bytes to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">count</span></td>
+        <td><p>The number of bytes to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteDouble_Amqp_ByteBuffer_System_Double_" data-uid="Amqp.AmqpBitConverter.WriteDouble(Amqp.ByteBuffer,System.Double)">WriteDouble(ByteBuffer, Double)</h4>
-              <div class="markdown level1 summary"><p>Writes a 64-bit floating-point value into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteDouble_" data-uid="Amqp.AmqpBitConverter.WriteDouble*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteDouble_Amqp_ByteBuffer_System_Double_" data-uid="Amqp.AmqpBitConverter.WriteDouble(Amqp.ByteBuffer,System.Double)">WriteDouble(ByteBuffer, Double)</h4>
+  <div class="markdown level1 summary"><p>Writes a 64-bit floating-point value into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteDouble(ByteBuffer buffer, double data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteDouble(ByteBuffer buffer, double data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Double</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteFloat_Amqp_ByteBuffer_System_Single_" data-uid="Amqp.AmqpBitConverter.WriteFloat(Amqp.ByteBuffer,System.Single)">WriteFloat(ByteBuffer, Single)</h4>
-              <div class="markdown level1 summary"><p>Writes a 32-bit floating-point value into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteFloat_" data-uid="Amqp.AmqpBitConverter.WriteFloat*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteFloat_Amqp_ByteBuffer_System_Single_" data-uid="Amqp.AmqpBitConverter.WriteFloat(Amqp.ByteBuffer,System.Single)">WriteFloat(ByteBuffer, Single)</h4>
+  <div class="markdown level1 summary"><p>Writes a 32-bit floating-point value into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteFloat(ByteBuffer buffer, float data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteFloat(ByteBuffer buffer, float data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Single</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteInt_Amqp_ByteBuffer_System_Int32_" data-uid="Amqp.AmqpBitConverter.WriteInt(Amqp.ByteBuffer,System.Int32)">WriteInt(ByteBuffer, Int32)</h4>
-              <div class="markdown level1 summary"><p>Writes a 32-bit signed integer into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteInt_" data-uid="Amqp.AmqpBitConverter.WriteInt*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteInt_Amqp_ByteBuffer_System_Int32_" data-uid="Amqp.AmqpBitConverter.WriteInt(Amqp.ByteBuffer,System.Int32)">WriteInt(ByteBuffer, Int32)</h4>
+  <div class="markdown level1 summary"><p>Writes a 32-bit signed integer into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteInt(ByteBuffer buffer, int data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteInt(ByteBuffer buffer, int data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteInt_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.AmqpBitConverter.WriteInt(System.Byte[],System.Int32,System.Int32)">WriteInt(Byte[], Int32, Int32)</h4>
-              <div class="markdown level1 summary"><p>Writes a 32-bit unsigned integer into the buffer at specified offset.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteInt_" data-uid="Amqp.AmqpBitConverter.WriteInt*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteInt_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.AmqpBitConverter.WriteInt(System.Byte[],System.Int32,System.Int32)">WriteInt(Byte[], Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Writes a 32-bit unsigned integer into the buffer at specified offset.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteInt(byte[] buffer, int offset, int data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteInt(byte[] buffer, int offset, int data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>The offset of the buffer.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The offset of the buffer.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteLong_Amqp_ByteBuffer_System_Int64_" data-uid="Amqp.AmqpBitConverter.WriteLong(Amqp.ByteBuffer,System.Int64)">WriteLong(ByteBuffer, Int64)</h4>
-              <div class="markdown level1 summary"><p>Writes a 64-bit signed integer into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteLong_" data-uid="Amqp.AmqpBitConverter.WriteLong*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteLong_Amqp_ByteBuffer_System_Int64_" data-uid="Amqp.AmqpBitConverter.WriteLong(Amqp.ByteBuffer,System.Int64)">WriteLong(ByteBuffer, Int64)</h4>
+  <div class="markdown level1 summary"><p>Writes a 64-bit signed integer into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteLong(ByteBuffer buffer, long data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteLong(ByteBuffer buffer, long data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int64</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteShort_Amqp_ByteBuffer_System_Int16_" data-uid="Amqp.AmqpBitConverter.WriteShort(Amqp.ByteBuffer,System.Int16)">WriteShort(ByteBuffer, Int16)</h4>
-              <div class="markdown level1 summary"><p>Writes a 16-bit signed integer into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteShort_" data-uid="Amqp.AmqpBitConverter.WriteShort*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteShort_Amqp_ByteBuffer_System_Int16_" data-uid="Amqp.AmqpBitConverter.WriteShort(Amqp.ByteBuffer,System.Int16)">WriteShort(ByteBuffer, Int16)</h4>
+  <div class="markdown level1 summary"><p>Writes a 16-bit signed integer into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteShort(ByteBuffer buffer, short data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteShort(ByteBuffer buffer, short data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int16</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int16</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteUByte_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.AmqpBitConverter.WriteUByte(Amqp.ByteBuffer,System.Byte)">WriteUByte(ByteBuffer, Byte)</h4>
-              <div class="markdown level1 summary"><p>Writes an unsigned byte into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteUByte_" data-uid="Amqp.AmqpBitConverter.WriteUByte*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteUByte_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.AmqpBitConverter.WriteUByte(Amqp.ByteBuffer,System.Byte)">WriteUByte(ByteBuffer, Byte)</h4>
+  <div class="markdown level1 summary"><p>Writes an unsigned byte into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteUByte(ByteBuffer buffer, byte data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUByte(ByteBuffer buffer, byte data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Byte</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteUInt_Amqp_ByteBuffer_System_UInt32_" data-uid="Amqp.AmqpBitConverter.WriteUInt(Amqp.ByteBuffer,System.UInt32)">WriteUInt(ByteBuffer, UInt32)</h4>
-              <div class="markdown level1 summary"><p>Writes a 32-bit unsigned integer into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteUInt_" data-uid="Amqp.AmqpBitConverter.WriteUInt*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteUInt_Amqp_ByteBuffer_System_UInt32_" data-uid="Amqp.AmqpBitConverter.WriteUInt(Amqp.ByteBuffer,System.UInt32)">WriteUInt(ByteBuffer, UInt32)</h4>
+  <div class="markdown level1 summary"><p>Writes a 32-bit unsigned integer into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteUInt(ByteBuffer buffer, uint data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUInt(ByteBuffer buffer, uint data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.UInt32</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.UInt32</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteULong_Amqp_ByteBuffer_System_UInt64_" data-uid="Amqp.AmqpBitConverter.WriteULong(Amqp.ByteBuffer,System.UInt64)">WriteULong(ByteBuffer, UInt64)</h4>
-              <div class="markdown level1 summary"><p>Writes a 64-bit unsigned integer into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteULong_" data-uid="Amqp.AmqpBitConverter.WriteULong*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteULong_Amqp_ByteBuffer_System_UInt64_" data-uid="Amqp.AmqpBitConverter.WriteULong(Amqp.ByteBuffer,System.UInt64)">WriteULong(ByteBuffer, UInt64)</h4>
+  <div class="markdown level1 summary"><p>Writes a 64-bit unsigned integer into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteULong(ByteBuffer buffer, ulong data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteULong(ByteBuffer buffer, ulong data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.UInt64</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.UInt64</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteUShort_Amqp_ByteBuffer_System_UInt16_" data-uid="Amqp.AmqpBitConverter.WriteUShort(Amqp.ByteBuffer,System.UInt16)">WriteUShort(ByteBuffer, UInt16)</h4>
-              <div class="markdown level1 summary"><p>Writes a 16-bit unsigned integer into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteUShort_" data-uid="Amqp.AmqpBitConverter.WriteUShort*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteUShort_Amqp_ByteBuffer_System_UInt16_" data-uid="Amqp.AmqpBitConverter.WriteUShort(Amqp.ByteBuffer,System.UInt16)">WriteUShort(ByteBuffer, UInt16)</h4>
+  <div class="markdown level1 summary"><p>Writes a 16-bit unsigned integer into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteUShort(ByteBuffer buffer, ushort data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUShort(ByteBuffer buffer, ushort data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.UInt16</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.UInt16</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_AmqpBitConverter_WriteUuid_Amqp_ByteBuffer_System_Guid_" data-uid="Amqp.AmqpBitConverter.WriteUuid(Amqp.ByteBuffer,System.Guid)">WriteUuid(ByteBuffer, Guid)</h4>
-              <div class="markdown level1 summary"><p>Writes a uuid (16-bytes) into the buffer and advance the buffer write cursor.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_AmqpBitConverter_WriteUuid_" data-uid="Amqp.AmqpBitConverter.WriteUuid*"></a>
+  <h4 id="Amqp_AmqpBitConverter_WriteUuid_Amqp_ByteBuffer_System_Guid_" data-uid="Amqp.AmqpBitConverter.WriteUuid(Amqp.ByteBuffer,System.Guid)">WriteUuid(ByteBuffer, Guid)</h4>
+  <div class="markdown level1 summary"><p>Writes a uuid (16-bytes) into the buffer and advance the buffer write cursor.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void WriteUuid(ByteBuffer buffer, Guid data)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteUuid(ByteBuffer buffer, Guid data)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Guid</span></td>
-                    <td><em>data</em></td>
-                    <td><p>The data to write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Guid</span></td>
+        <td><span class="parametername">data</span></td>
+        <td><p>The data to write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -1130,7 +1161,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -1139,6 +1170,5 @@
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

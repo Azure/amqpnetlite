@@ -1,1 +1,1854 @@
-{"homepages":[{"tocPath":"api/toc.html","homepage":"api/Amqp.html"},{"tocPath":"toc.html","homepage":"articles/building_application.html"},{"tocPath":"articles/toc.html","homepage":"articles/building_application.html"}],"xrefmap":"xrefmap.yml","files":[{"type":"ManagedReference","original":"docs/api/Amqp.yml","output":{".html":{"relative_path":"api/Amqp.html","hash":"J0mS3NULauT0xrOGLqlgcg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.WriteTrace.yml","output":{".html":{"relative_path":"api/Amqp.WriteTrace.html","hash":"tbD6e+yWHZQNn6AjESgXlQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ContainerHost.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ContainerHost.html","hash":"fD6+KwKvAioumSqcM8ULcQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.AmqpSequence.yml","output":{".html":{"relative_path":"api/Amqp.Framing.AmqpSequence.html","hash":"f66KweTqE0V4dLflhGu1FQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Accepted.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Accepted.html","hash":"To65UuBuEMX7YFk7AF8KaQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ErrorCode.yml","output":{".html":{"relative_path":"api/Amqp.ErrorCode.html","hash":"faosYG/FCm9EWIG7O9KjMg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ConnectionFactoryBase.yml","output":{".html":{"relative_path":"api/Amqp.ConnectionFactoryBase.html","hash":"HnZJpi687eBV4nevA8TPZg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ConnectionFactory.yml","output":{".html":{"relative_path":"api/Amqp.ConnectionFactory.html","hash":"IM/kYOSqLX28qKXw+NalpQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ConnectionFactory.SslSettings.yml","output":{".html":{"relative_path":"api/Amqp.ConnectionFactory.SslSettings.html","hash":"tBTwxFifSSM233vCw+AfaA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ConnectionFactory.SaslSettings.yml","output":{".html":{"relative_path":"api/Amqp.ConnectionFactory.SaslSettings.html","hash":"PqRj9R3TA1fEJ3leQTT1DA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Connection.yml","output":{".html":{"relative_path":"api/Amqp.Connection.html","hash":"isbhk6t03jFewaev2sOM3g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ClosedCallback.yml","output":{".html":{"relative_path":"api/Amqp.ClosedCallback.html","hash":"vb6gj6TE8MPCbp9Z7/XxTg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ByteBuffer.yml","output":{".html":{"relative_path":"api/Amqp.ByteBuffer.html","hash":"2XvKFrtZSCM90qb8gf3x0Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.BufferManager.yml","output":{".html":{"relative_path":"api/Amqp.BufferManager.html","hash":"CbiZ53yIQaT/B538Rf+KXA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.AmqpSettings.yml","output":{".html":{"relative_path":"api/Amqp.AmqpSettings.html","hash":"BlE691Rp46I16xH8UJ2FKQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.AmqpObject.yml","output":{".html":{"relative_path":"api/Amqp.AmqpObject.html","hash":"91GneE6SH98DqS1tnw89pg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.AmqpException.yml","output":{".html":{"relative_path":"api/Amqp.AmqpException.html","hash":"TZmH1lLDRu5kefffIQfH0Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.AmqpBitConverter.yml","output":{".html":{"relative_path":"api/Amqp.AmqpBitConverter.html","hash":"2Tv2q9sWmF+qThsKEVw05g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Address.yml","output":{".html":{"relative_path":"api/Amqp.Address.html","hash":"e8atAWJduDHl+4mno7JHbQ=="}}},{"type":"Toc","original":"docs/articles/toc.yml","output":{".html":{"relative_path":"articles/toc.html","hash":"EiIudkfCc9JrI+99X1y/3g=="}}},{"type":"Toc","original":"docs/toc.yml","output":{".html":{"relative_path":"toc.html","hash":"1HNKWWv7VKKOBG2jPOIJBw=="}}},{"type":"Toc","original":"docs/api/toc.yml","output":{".html":{"relative_path":"api/toc.html","hash":"awwbuPGveIZ/KtEfyfeqhQ=="}}},{"type":"Conceptual","original":"docs/articles/working_with_code.md","output":{".html":{"relative_path":"articles/working_with_code.html","hash":"9beMVDdaeMl56+ti/FPQ9A=="}}},{"type":"Conceptual","original":"docs/articles/tracing.md","output":{".html":{"relative_path":"articles/tracing.html","hash":"e1yLho8lpVM0baMcS5EJbg=="}}},{"type":"Conceptual","original":"docs/articles/test_amqp_broker.md","output":{".html":{"relative_path":"articles/test_amqp_broker.html","hash":"USmQajD9loUFlz/fooBxAg=="}}},{"type":"Conceptual","original":"docs/articles/service_to_iothub.md","output":{".html":{"relative_path":"articles/service_to_iothub.html","hash":"3QGKWegFoFYxfKJ4WVfGqw=="}}},{"type":"Conceptual","original":"docs/articles/serialization.md","output":{".html":{"relative_path":"articles/serialization.html","hash":"QYWT/VxZtyjVliJauy1Ezg=="}}},{"type":"Conceptual","original":"docs/articles/listener.md","output":{".html":{"relative_path":"articles/listener.html","hash":"Vx0Vpy6zijeWSRNXInApZA=="}}},{"type":"Conceptual","original":"docs/articles/faqs.md","output":{".html":{"relative_path":"articles/faqs.html","hash":"pWSqb7+5ractSLL7qI17fg=="}}},{"type":"Conceptual","original":"docs/articles/device_to_iothub.md","output":{".html":{"relative_path":"articles/device_to_iothub.html","hash":"855TxYq0qsj1itZRsK3ZYg=="}}},{"type":"Conceptual","original":"docs/articles/contributing.md","output":{".html":{"relative_path":"articles/contributing.html","hash":"BBS9F1gTmExHRBT5ecDFzw=="}}},{"type":"Conceptual","original":"docs/articles/building_application.md","output":{".html":{"relative_path":"articles/building_application.html","hash":"coU1y9QS6YFdM4XS6nQ4tw=="}}},{"type":"Conceptual","original":"docs/articles/buffer_management.md","output":{".html":{"relative_path":"articles/buffer_management.html","hash":"U1BHeKi6kQUZqKKsANm5MQ=="}}},{"type":"Conceptual","original":"docs/articles/azure_eventhubs.md","output":{".html":{"relative_path":"articles/azure_eventhubs.html","hash":"ySIBZ2KkLOKunVuUc9LSDg=="}}},{"type":"index","original":"docs/index.md","output":{".html":{"relative_path":"index.html","hash":"GYeO/ZsjrapE6GSmZV1haA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.WebSocketTransport.yml","output":{".html":{"relative_path":"api/Amqp.WebSocketTransport.html","hash":"UbfwhO7Qgf4sIhqBdnqrsg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.yml","output":{".html":{"relative_path":"api/Amqp.Types.html","hash":"8o6F8r/K3hGkC5kNL6zzbw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.Symbol.yml","output":{".html":{"relative_path":"api/Amqp.Types.Symbol.html","hash":"apgKOAyNjUzgDbXpwOFW8w=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.RestrictedDescribed.yml","output":{".html":{"relative_path":"api/Amqp.Types.RestrictedDescribed.html","hash":"NQkLOfQevkuLCwgdqSVZbw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.Map.yml","output":{".html":{"relative_path":"api/Amqp.Types.Map.html","hash":"YIsE2DxaQ9UmNch2h19U7w=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.List.yml","output":{".html":{"relative_path":"api/Amqp.Types.List.html","hash":"Mcmco0/qstcGZC5Zp/gosQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.Fields.yml","output":{".html":{"relative_path":"api/Amqp.Types.Fields.html","hash":"8rIQh9OheYycL6MyRJaMBA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.Encoder.yml","output":{".html":{"relative_path":"api/Amqp.Types.Encoder.html","hash":"jYb/vK1g0QSm4WdbLYv+9w=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.Descriptor.yml","output":{".html":{"relative_path":"api/Amqp.Types.Descriptor.html","hash":"+GydZDvDrSjMEjUy0WyZPA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.DescribedValue.yml","output":{".html":{"relative_path":"api/Amqp.Types.DescribedValue.html","hash":"QHeGekEdm3QGY0aQ5p66Hw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.DescribedMap.yml","output":{".html":{"relative_path":"api/Amqp.Types.DescribedMap.html","hash":"oVooCKrFQEd8IifxHyrznw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.DescribedList.yml","output":{".html":{"relative_path":"api/Amqp.Types.DescribedList.html","hash":"EGyoTVS46AcuGJGj06NJeA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.Described.yml","output":{".html":{"relative_path":"api/Amqp.Types.Described.html","hash":"dbgOg+p7NuIlkhNHcea6XQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Types.CreateDescribed.yml","output":{".html":{"relative_path":"api/Amqp.Types.CreateDescribed.html","hash":"XXYE4h9r1RMoEgNGNo9H2g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.TransportProvider.yml","output":{".html":{"relative_path":"api/Amqp.TransportProvider.html","hash":"FyMkFwayV0Anj5VUNIeSYQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Transactions.yml","output":{".html":{"relative_path":"api/Amqp.Transactions.html","hash":"vi/rDz1VySByQmSCt/TgiA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Transactions.TransactionalState.yml","output":{".html":{"relative_path":"api/Amqp.Transactions.TransactionalState.html","hash":"lHNNJGMaYGJ0TYtSqT/UVQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Transactions.Discharge.yml","output":{".html":{"relative_path":"api/Amqp.Transactions.Discharge.html","hash":"kzdZ8fkPWKO5n5KYxHxzLg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Transactions.Declared.yml","output":{".html":{"relative_path":"api/Amqp.Transactions.Declared.html","hash":"W0kWVCzm3p2dZBMI2baSjw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Transactions.Declare.yml","output":{".html":{"relative_path":"api/Amqp.Transactions.Declare.html","hash":"InWaHvmShk0YQGeY2bs7Vg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Transactions.Coordinator.yml","output":{".html":{"relative_path":"api/Amqp.Transactions.Coordinator.html","hash":"McK2T7yU/heXtTPY4O5Bwg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.TraceLevel.yml","output":{".html":{"relative_path":"api/Amqp.TraceLevel.html","hash":"c/zw5j1qEJ3koBgjmoPIcw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Trace.yml","output":{".html":{"relative_path":"api/Amqp.Trace.html","hash":"0xXFnjMR1OZmqxBOzzWuqw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.TcpSettings.yml","output":{".html":{"relative_path":"api/Amqp.TcpSettings.html","hash":"9Nykl1mLt9ifhQqaTG+4cg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.TaskExtensions.yml","output":{".html":{"relative_path":"api/Amqp.TaskExtensions.html","hash":"g3qGdr1md5uWTq4fY64lMA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Session.yml","output":{".html":{"relative_path":"api/Amqp.Session.html","hash":"VmGOjid1IDRX1lf1GNUnaA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.html","hash":"1dQBfMRsDVWJv+CgxuI/IA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.IAmqpSerializable.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.IAmqpSerializable.html","hash":"fk3rCmA7xvXxyWwp2HItxw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.EncodingType.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.EncodingType.html","hash":"d/khjCPIJ5/nSIh2Xh+FBw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.AmqpSerializer.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.AmqpSerializer.html","hash":"xXURNMi72DYSqccMSOyysA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.AmqpProvidesAttribute.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.AmqpProvidesAttribute.html","hash":"T6jHc0F01pbVFk4eIPAl9A=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ConnectionListener.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ConnectionListener.html","hash":"36vPkNM1PJgXLF3pE9EaZw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ConnectionListener.SslSettings.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ConnectionListener.SslSettings.html","hash":"tNLo2o5LMkcKZ0XBp6bEcA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ConnectionListener.SaslSettings.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ConnectionListener.SaslSettings.html","hash":"GNoZ/Pe86NOqmRvywu3qzw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.AttachContext.yml","output":{".html":{"relative_path":"api/Amqp.Listener.AttachContext.html","hash":"Wk0S+lqDAYeEawkuJEvKsw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Link.yml","output":{".html":{"relative_path":"api/Amqp.Link.html","hash":"AXjnCMdnsOBsgwpP/99wgQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ITransport.yml","output":{".html":{"relative_path":"api/Amqp.ITransport.html","hash":"TWUSGIE7YC9UL5xxWb6Lew=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.IBufferManager.yml","output":{".html":{"relative_path":"api/Amqp.IBufferManager.html","hash":"3x5L9E64S7bI1wWr1+0HFg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.IAsyncTransport.yml","output":{".html":{"relative_path":"api/Amqp.IAsyncTransport.html","hash":"76z7uv6jGqmtirWdOqOdMw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Fx.yml","output":{".html":{"relative_path":"api/Amqp.Fx.html","hash":"y+51GVetSjAgkiJ6neYK+g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.yml","output":{".html":{"relative_path":"api/Amqp.Framing.html","hash":"xTqrDX70k1PHjbstSq8yQw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Target.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Target.html","hash":"1ZCWJpaMihrMa6lPbxm6nQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Source.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Source.html","hash":"LesJORks//1DEVtwk0q55Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.SenderSettleMode.yml","output":{".html":{"relative_path":"api/Amqp.Framing.SenderSettleMode.html","hash":"p6Ig4HwN7/eecd8vRIbzdA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Released.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Released.html","hash":"LVzFw0dKr87P8y7iYxXqOQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Rejected.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Rejected.html","hash":"qRRhUIqqtHnEcPOiJBj7/Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.ReceiverSettleMode.yml","output":{".html":{"relative_path":"api/Amqp.Framing.ReceiverSettleMode.html","hash":"mzSt/Fwvetj5ZbyXusqJWg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Properties.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Properties.html","hash":"sQGPINEurjmMg2HXFpacmw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Outcome.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Outcome.html","hash":"QvaAcVYiJCDjAJMJ4ujD8w=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Open.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Open.html","hash":"AoFNQQ218Kvi/lv3YFeXAw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Modified.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Modified.html","hash":"fO0mhxeSoN82P2w9dWnkuw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.MessageAnnotations.yml","output":{".html":{"relative_path":"api/Amqp.Framing.MessageAnnotations.html","hash":"TNh9hp12l7p4LZ9v4g8aBA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Header.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Header.html","hash":"MTh5JiRUD7q6e9Cggf9WGw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Footer.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Footer.html","hash":"EKU9+B7JrBpiY2g9J2O/+g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Error.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Error.html","hash":"Qlv32vxAY1pjO2Vvc2Y5FA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.DeliveryState.yml","output":{".html":{"relative_path":"api/Amqp.Framing.DeliveryState.html","hash":"IYRRNaGTid++9A7LnVAoRw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.DeliveryAnnotations.yml","output":{".html":{"relative_path":"api/Amqp.Framing.DeliveryAnnotations.html","hash":"z+sCsba6OsVl8iJ/+ztiug=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Data.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Data.html","hash":"TctgpbuLXg0Mlv4Ytc3fUg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Begin.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Begin.html","hash":"AUGiSzhYuwJ1b29Prfun+g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.Attach.yml","output":{".html":{"relative_path":"api/Amqp.Framing.Attach.html","hash":"IAsaCZoHifDW7saLLLU93A=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.ApplicationProperties.yml","output":{".html":{"relative_path":"api/Amqp.Framing.ApplicationProperties.html","hash":"2D2Yk065kgtYQbE/pO9v3g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Framing.AmqpValue.yml","output":{".html":{"relative_path":"api/Amqp.Framing.AmqpValue.html","hash":"IJOZX1k/xKRWPa1ekuJ2CQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.WebSocketTransportFactory.yml","output":{".html":{"relative_path":"api/Amqp.WebSocketTransportFactory.html","hash":"lfaCRQG8lbiFgWIZRcIJYA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.AmqpMemberAttribute.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.AmqpMemberAttribute.html","hash":"9o/scq/qoLeub7eshIGXfg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Serialization.AmqpContractAttribute.yml","output":{".html":{"relative_path":"api/Amqp.Serialization.AmqpContractAttribute.html","hash":"Y28nWPcs/UPf9XL6Nk5UNg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.SenderLink.yml","output":{".html":{"relative_path":"api/Amqp.SenderLink.html","hash":"V/O3tp9vQ751tpjLN9s92Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Sasl.yml","output":{".html":{"relative_path":"api/Amqp.Sasl.html","hash":"pcMMh+2iYTNemyZ7BxWzhg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Sasl.SaslProfile.yml","output":{".html":{"relative_path":"api/Amqp.Sasl.SaslProfile.html","hash":"8n6KMih+gXvWmQ2nTDrzmw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.ReceiverLink.yml","output":{".html":{"relative_path":"api/Amqp.ReceiverLink.html","hash":"yuTGCb8HD0lVr+pjcyfGtA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.OutcomeCallback.yml","output":{".html":{"relative_path":"api/Amqp.OutcomeCallback.html","hash":"0TW+oSikVrpOj9+UFY8bNQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.OnOpened.yml","output":{".html":{"relative_path":"api/Amqp.OnOpened.html","hash":"bZ7acYfkna/XYqyWtcAMAA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.OnBegin.yml","output":{".html":{"relative_path":"api/Amqp.OnBegin.html","hash":"nRjG9mwjmq7vQDDl0I2Mpw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.OnAttached.yml","output":{".html":{"relative_path":"api/Amqp.OnAttached.html","hash":"iXWyNdVFn/0muYkZ9lSo+Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.MessageCallback.yml","output":{".html":{"relative_path":"api/Amqp.MessageCallback.html","hash":"WaoZFB8HErQCr7XTJxMPEA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Message.yml","output":{".html":{"relative_path":"api/Amqp.Message.html","hash":"Qv4Y7q+l+WOy0k7QJJOaSQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.yml","output":{".html":{"relative_path":"api/Amqp.Listener.html","hash":"Z+PDb0MFF77bxuFxHjJpHA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.X509Identity.yml","output":{".html":{"relative_path":"api/Amqp.Listener.X509Identity.html","hash":"WTeVvH1X8h7jDUdp8TOt4g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.TargetLinkEndpoint.yml","output":{".html":{"relative_path":"api/Amqp.Listener.TargetLinkEndpoint.html","hash":"C+yZew+AjQ/WP7/MmOmZIw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.SourceLinkEndpoint.yml","output":{".html":{"relative_path":"api/Amqp.Listener.SourceLinkEndpoint.html","hash":"bWaV0/2BOzljUR7VRXDlzg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.RequestContext.yml","output":{".html":{"relative_path":"api/Amqp.Listener.RequestContext.html","hash":"zL0CsUE0GdOa3EwrVXEvYw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ReceiveContext.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ReceiveContext.html","hash":"mQj71yKNx9QOg+v9MaRWug=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.MessageContext.yml","output":{".html":{"relative_path":"api/Amqp.Listener.MessageContext.html","hash":"EiViuEyn+uS7bc2BOf0n9w=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ListenerSession.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ListenerSession.html","hash":"Utz5rhQD2awL7T4ib6Rqmg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ListenerLink.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ListenerLink.html","hash":"tFoTP3i/0MzpFOBfFFmpHA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ListenerConnection.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ListenerConnection.html","hash":"bfEBwHD4cZwOzYyqDdcDhQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.LinkEndpoint.yml","output":{".html":{"relative_path":"api/Amqp.Listener.LinkEndpoint.html","hash":"4l9WsOnrMrtVUeOuAyzfcQ=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.IRequestProcessor.yml","output":{".html":{"relative_path":"api/Amqp.Listener.IRequestProcessor.html","hash":"mfhfdyOkts2AGw0uLnkHkg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.IMessageSource.yml","output":{".html":{"relative_path":"api/Amqp.Listener.IMessageSource.html","hash":"mtTLDMPSWiAM/IA8nHcY1Q=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.IMessageProcessor.yml","output":{".html":{"relative_path":"api/Amqp.Listener.IMessageProcessor.html","hash":"EdaNmKjFCzdTgP+5Y6qzkg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ILinkProcessor.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ILinkProcessor.html","hash":"fvVzzfOaRiXcQy0qpOwj1g=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.IContainer.yml","output":{".html":{"relative_path":"api/Amqp.Listener.IContainer.html","hash":"kykcu5kLFxHAQyyHe2HTiA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.FlowContext.yml","output":{".html":{"relative_path":"api/Amqp.Listener.FlowContext.html","hash":"fwMx4B2Ha6GXaBAemRPhCw=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.DispositionContext.yml","output":{".html":{"relative_path":"api/Amqp.Listener.DispositionContext.html","hash":"jdEU1HPg2Gndv3QnWnBkmg=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.ContextState.yml","output":{".html":{"relative_path":"api/Amqp.Listener.ContextState.html","hash":"clNp5bSQx3WXU1aG60uomA=="}}},{"type":"ManagedReference","original":"docs/api/Amqp.Listener.Context.yml","output":{".html":{"relative_path":"api/Amqp.Listener.Context.html","hash":"XWJevbk7JNYLjc8X24s/RQ=="}}}]}
+{
+  "homepages": [],
+  "source_base_path": "C:/Users/mqt/repo/amqpnetlite.rel/docs",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Address.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Address.html",
+          "hash": "FTg17PNPifoB0caLLIP9rg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.AmqpBitConverter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.AmqpBitConverter.html",
+          "hash": "HD1PEkjZcdi8JN5Z7l/Yuw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.AmqpException.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.AmqpException.html",
+          "hash": "hh+c0smthsAC40nc8/cLcQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.AmqpObject.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.AmqpObject.html",
+          "hash": "rgD193wmyEkNlmiF1/PLIQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.AmqpSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.AmqpSettings.html",
+          "hash": "n7FdenU6mHWS9EQ3UjmQgQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.BufferManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.BufferManager.html",
+          "hash": "UU9rcYaFS+WyFSpS2M0piQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ByteBuffer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ByteBuffer.html",
+          "hash": "eT1kt0zWHLPZrUhPF7bOqQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ClosedCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ClosedCallback.html",
+          "hash": "PvTlrngSGnGVGF/mjQhhrw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Connection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Connection.html",
+          "hash": "GSMsIKYHruGTrYHJfs8ynQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ConnectionFactory.SaslSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ConnectionFactory.SaslSettings.html",
+          "hash": "un6NJjLLknNihQMVEtlK2Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ConnectionFactory.SslSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ConnectionFactory.SslSettings.html",
+          "hash": "Pt2oYwWuLSplzVIHT7pNhg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ConnectionFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ConnectionFactory.html",
+          "hash": "BWvIWdcwmEfVPnaCiKebWA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ConnectionFactoryBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ConnectionFactoryBase.html",
+          "hash": "km6JAAYuIVQuIcfpS7/ZSQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ErrorCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ErrorCode.html",
+          "hash": "okwls5EA7ft1ajBpFUHArg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Extensions.html",
+          "hash": "AwLjtGE2pMpEG99Ze/JhkQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Accepted.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Accepted.html",
+          "hash": "bsNfVWXMsJJZSD+kk0Zy1w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.AmqpSequence.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.AmqpSequence.html",
+          "hash": "ffAL0IN0SlLWPEewrfTqIg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.AmqpValue-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.AmqpValue-1.html",
+          "hash": "tc+gbeyW08Af+Oa01Nllug=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.AmqpValue.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.AmqpValue.html",
+          "hash": "pmpw7vcPLJ+BK2BO2Sogug=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.ApplicationProperties.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.ApplicationProperties.html",
+          "hash": "8esPuYGYac1h0ewzkSgtyw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Attach.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Attach.html",
+          "hash": "UaGG3Nc0HtDRwFWx88ze+Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Begin.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Begin.html",
+          "hash": "nM27IVUBIEL7o8xjt9tdmA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Data.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Data.html",
+          "hash": "pRFFT2eLn1ImvgAhgd2LqQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.DeliveryAnnotations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.DeliveryAnnotations.html",
+          "hash": "t0VSkwVJuVs8BLdHgev/gQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.DeliveryState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.DeliveryState.html",
+          "hash": "7BGPSzWPEdgbylaaqZOF9Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Error.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Error.html",
+          "hash": "CEVQu2skaPsOfiOGKPeV4A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Footer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Footer.html",
+          "hash": "as7ImGIhd8uKdmZEKki9ag=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Header.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Header.html",
+          "hash": "kd/7kSOPSurCZXNsX2h3OA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.MessageAnnotations.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.MessageAnnotations.html",
+          "hash": "IlDGcnnvxmanfa0IWvagNA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Modified.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Modified.html",
+          "hash": "NHa5NKZQXdcVuUtgqJncMQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Open.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Open.html",
+          "hash": "vuAFQXIZpcp03OhBZxro3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Outcome.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Outcome.html",
+          "hash": "6BZB+uaBF73V7BdXgQSy+g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Properties.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Properties.html",
+          "hash": "zMrQ3nfO3Cp3fI27PsQKdA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.ReceiverSettleMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.ReceiverSettleMode.html",
+          "hash": "N+8I3YwFuZruZbnw/udjFw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Rejected.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Rejected.html",
+          "hash": "ZU78ZRYNS07QYWGvK/ppGg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Released.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Released.html",
+          "hash": "TxGA4ocmNeHV5e/t46b7ZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.SenderSettleMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.SenderSettleMode.html",
+          "hash": "oYzz4Re7WkR1owKxjEQQpQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Source.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Source.html",
+          "hash": "B1o2Wq48JP7uV4wgoZujjg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Target.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Target.html",
+          "hash": "HzP9JW/BxELgbQgI+2VG/Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.html",
+          "hash": "iftDAB7l22pHH4u2FXdbjw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Fx.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Fx.html",
+          "hash": "M/ooNjUdfbHVkt7byJ10rQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.IAmqpObject.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.IAmqpObject.html",
+          "hash": "jfTK4n3LuV8hM0REA+cCpQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.IAsyncTransport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.IAsyncTransport.html",
+          "hash": "2p//brDrQNFi11J/aPb8dg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.IBufferManager.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.IBufferManager.html",
+          "hash": "GLc+MlFPZQH/gFWKpwWRNA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.IConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.IConnection.html",
+          "hash": "NQjFLypuzlc1sLaNLJmpxQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.IConnectionFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.IConnectionFactory.html",
+          "hash": "BQQE6e4EcPP8eLyEtr/ROg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ILink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ILink.html",
+          "hash": "zTCYugz/owZyM2b2wVxa3w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.IReceiverLink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.IReceiverLink.html",
+          "hash": "mzntDGO5Se9g8t+ExkZeOg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ISenderLink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ISenderLink.html",
+          "hash": "z3je9kl/Rq0d/+wzj1suJg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ISession.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ISession.html",
+          "hash": "LzGCpYKU55YJ6BaUkXK3pw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ITransport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ITransport.html",
+          "hash": "L3MqHROdRqm8usJuNpjyjA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Link.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Link.html",
+          "hash": "uzHlepgbX1f8AgpdpgLF7A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.AttachContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.AttachContext.html",
+          "hash": "YVJ9e/1chcJ5ms4jN5kNiA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ConnectionListener.SaslSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ConnectionListener.SaslSettings.html",
+          "hash": "eBaFB8ZoNCx6uXB6k7HMfw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ConnectionListener.SslSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ConnectionListener.SslSettings.html",
+          "hash": "43ZvVou3aXG/XOR93JfVug=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ConnectionListener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ConnectionListener.html",
+          "hash": "+QxEG8WkQwT56J29iuK1sw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ContainerHost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ContainerHost.html",
+          "hash": "8/hCfgMtehnbOK60WRY9Ow=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.Context.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.Context.html",
+          "hash": "hLuNa5R/coOdhVQ8iWXqtQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ContextState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ContextState.html",
+          "hash": "X8PPQLGFYViCRGfwlVdLtA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.DispositionContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.DispositionContext.html",
+          "hash": "fEvWJf5UGg3xgLP0I7pXvQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.FlowContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.FlowContext.html",
+          "hash": "K7HeYrdxrPvqGBwjwI21rg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.IContainer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.IContainer.html",
+          "hash": "bChGM0P8iwO3ZT6JYTPBqg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.IContainerHost.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.IContainerHost.html",
+          "hash": "jSzvqS2+wrXXQt4f/HCnHw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ILinkProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ILinkProcessor.html",
+          "hash": "BxB51A+PlI6mnJPiFUTVSw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.IMessageProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.IMessageProcessor.html",
+          "hash": "hnRi1GNoAqPBc51UDyUP6A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.IMessageSource.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.IMessageSource.html",
+          "hash": "t3k9N6P4ixLJZ9tVZ1ok6w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.IRequestProcessor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.IRequestProcessor.html",
+          "hash": "MZ/hxYU6qsThv/5S4zsG0A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.LinkEndpoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.LinkEndpoint.html",
+          "hash": "UcSBmsrI3IzJCyH0LyUFAw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ListenerConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ListenerConnection.html",
+          "hash": "sOzv3r1gQgBWBuWpLEAHCQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ListenerLink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ListenerLink.html",
+          "hash": "kbunhu2D5/P/3tNxPbb5yQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ListenerSession.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ListenerSession.html",
+          "hash": "McuelOyo0bGyWl26bExDoA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.MessageContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.MessageContext.html",
+          "hash": "H9Y7ZVS3hJg+4r9D1bMRqQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.ReceiveContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.ReceiveContext.html",
+          "hash": "nboAGZ6EJMLNV29s+OWd8g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.RequestContext.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.RequestContext.html",
+          "hash": "str3jncTOmR3Oex+nYg6Xw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.SourceLinkEndpoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.SourceLinkEndpoint.html",
+          "hash": "bwZKbd2xQuIaK8LhXqk9qQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.TargetLinkEndpoint.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.TargetLinkEndpoint.html",
+          "hash": "JL7D9SVQZ3qhnvKANb8MyQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.X509Identity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.X509Identity.html",
+          "hash": "bzyvVyxhHX5f81wB+OuJAA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Listener.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Listener.html",
+          "hash": "Fyn3X4E+6rHIPaMUQUDqQg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Message.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Message.html",
+          "hash": "iW7Zu6zRUW4IR2S3WbXZEg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.MessageCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.MessageCallback.html",
+          "hash": "F8aPu6UtdNqklIZ7Bpl1qA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.OnAttached.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.OnAttached.html",
+          "hash": "6haWuS/9s21r05Xlnn9CHg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.OnBegin.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.OnBegin.html",
+          "hash": "0J/G6GkJo1OUvEwSgDPgLw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.OnOpened.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.OnOpened.html",
+          "hash": "m1L8wcVNCzbSWtZd40IevQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.OutcomeCallback.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.OutcomeCallback.html",
+          "hash": "fxEOolRI5oacd7UKcUzPnw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ReceiverLink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ReceiverLink.html",
+          "hash": "ghfi2QVG4uB0R8ISqS+OFQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.SRAmqp.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.SRAmqp.html",
+          "hash": "H/LtBHNMrDcgtyAW7QSulA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslProfile.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslProfile.html",
+          "hash": "qXJofa1LAt+Z3y2QGPL6Xg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.html",
+          "hash": "D3jziBMHS/gf0LV1b4YHeQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.SenderLink.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.SenderLink.html",
+          "hash": "nXkgRlc7WGfxI9bBfhmKzg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpContractAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpContractAttribute.html",
+          "hash": "hTJ/295qNZcRNfrzQqaoCg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpMemberAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpMemberAttribute.html",
+          "hash": "uO8UOk3tHZFtBTHApDXKpg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpProvidesAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpProvidesAttribute.html",
+          "hash": "omtvY3X8HvXBYW20GJleOg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpSerializer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpSerializer.html",
+          "hash": "A0a1+bnRCHr8Y/I6hebO1w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.EncodingType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.EncodingType.html",
+          "hash": "mLSm0HDj/ybHvTgoE/s7hQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.IAmqpSerializable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.IAmqpSerializable.html",
+          "hash": "6oiQEuplwhGMy8fpQwz7dg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.OnDeserializedAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.OnDeserializedAttribute.html",
+          "hash": "eEgGgnIvGc7a3cewIVAaQA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.OnDeserializingAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.OnDeserializingAttribute.html",
+          "hash": "WDDecxrCx00SBTJRwzB6YQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.OnSerializedAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.OnSerializedAttribute.html",
+          "hash": "J5TmHAPSqzlIVPAlqaLdYQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.OnSerializingAttribute.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.OnSerializingAttribute.html",
+          "hash": "iI54tWhq7E8WIPS2iC93Mg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.html",
+          "hash": "Rdun8udjQP8FAStwO/upTQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Session.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Session.html",
+          "hash": "JkAtm2pUOX65j4t6ADZ4ZA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.TaskExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.TaskExtensions.html",
+          "hash": "xNN4yTMrV3zykl7GXp8oFA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.TcpSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.TcpSettings.html",
+          "hash": "1LRr2Al3Uya60v+cWiLf3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Trace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Trace.html",
+          "hash": "rqEkpg8KiLPjgVG7Ztn4KQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.TraceLevel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.TraceLevel.html",
+          "hash": "mwuibSUpAw2nqsf+BUjw9Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.Coordinator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.Coordinator.html",
+          "hash": "g4EwvlCv/wAylo7Ugs9QFA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.Declare.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.Declare.html",
+          "hash": "mzu2Am4xqzzV/VNh1cWmUA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.Declared.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.Declared.html",
+          "hash": "jx3NI1zDEoXUYC91EfJa4Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.Discharge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.Discharge.html",
+          "hash": "/cjAGe5MIAzXFq+1TiJB0Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.TransactionalState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.TransactionalState.html",
+          "hash": "WEqhUtCYD8aAE21Mf56PJw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.html",
+          "hash": "nVn1riqOjQr5SFGAoPQF/Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.TransportProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.TransportProvider.html",
+          "hash": "BJT7ohp+Z6mQUc9oIY9q8Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.CreateDescribed.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.CreateDescribed.html",
+          "hash": "vWd2ISzD+5BdSOaIHgSjAA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Decode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Decode.html",
+          "hash": "KoqDRA3DB9E/8U46NL6Low=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Described.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Described.html",
+          "hash": "wXQiQ7fHcPbX1aNJ1PiHng=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.DescribedList.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.DescribedList.html",
+          "hash": "2qNQvCXMpKupUjmUMiQEAg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.DescribedMap.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.DescribedMap.html",
+          "hash": "oNPmkHzCwQCB13dqADSk2g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.DescribedValue.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.DescribedValue.html",
+          "hash": "tb4lp0rDy1zSbwbgc4MBYQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Descriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Descriptor.html",
+          "hash": "hSXEkQxHOyTTt0r/iuXSOw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Encode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Encode.html",
+          "hash": "jIWt55nD6OVlbvkU2USUWg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Encoder.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Encoder.html",
+          "hash": "CJxhsPG1WySaJ6vb8SePHg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Fields.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Fields.html",
+          "hash": "M/Ib0W3RGWMQCEp5ylW1sg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.List.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.List.html",
+          "hash": "G+3s9HALJDOPu62l8uDguA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Map.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Map.html",
+          "hash": "MbjPJNTQ1z6qLJ0L0qvRHw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.RestrictedDescribed.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.RestrictedDescribed.html",
+          "hash": "yNt/PpZ7Vrp3BuxRxzRQhA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Symbol.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Symbol.html",
+          "hash": "RefMkZRAg84blyuw+PyKFA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.html",
+          "hash": "U0SDkVnQ3x3rV4BhfMApTg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.WebSocketTransport.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.WebSocketTransport.html",
+          "hash": "yYYgwB8k6IkOr8jU8C3VUw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.WebSocketTransportFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.WebSocketTransportFactory.html",
+          "hash": "Zex8QArFmvdPTBAHglIjIg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.WriteTrace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.WriteTrace.html",
+          "hash": "4ZIdc0dQclbduyuc6JE9Ag=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.html",
+          "hash": "LtHIHHvESvACCHstaqjiuA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "wdy+azYjQ57AmQDfHA2Tew=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/azure_eventhubs.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/azure_eventhubs.html",
+          "hash": "nSIvzBLRJ5yv/HzoZZUrIQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/buffer_management.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/buffer_management.html",
+          "hash": "1H8a/moPjjis8M9z8MdNqw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/building_application.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/building_application.html",
+          "hash": "0DCcOEBtPd0mbOAKENxgHA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/contributing.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/contributing.html",
+          "hash": "zI2a1xrlkg4xxlcwyRSYbA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/device_to_iothub.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/device_to_iothub.html",
+          "hash": "GEXnRMGiTTS2TInJ3dydcg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/fault_tolerance.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/fault_tolerance.html",
+          "hash": "Am23ZwWwoCtoD3XPg6262Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/hello_amqp.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/hello_amqp.html",
+          "hash": "TsE7sKAPhjX/l+VbyNxddQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/installation.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/installation.html",
+          "hash": "c2+oxo3AlaG/8yOgRAoJ/A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/listener.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/listener.html",
+          "hash": "nZ8jhQ30cZfuNCbfp4Ep/A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/serialization.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/serialization.html",
+          "hash": "j3b8MkrMA7AXfuUUxJbRgg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/service_to_iothub.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/service_to_iothub.html",
+          "hash": "ta3bupforJ2MRXu7mOXfKA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/test_amqp_broker.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/test_amqp_broker.html",
+          "hash": "2l41kX3brtNMlyds3ixeNw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "igzHNfdazTkLa/zoeaTHHg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/tracing.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/tracing.html",
+          "hash": "R8ChaLP2GGHWk3pYvZRRPQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/versioning.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/versioning.html",
+          "hash": "0Qdv4aP/+VH0SBsRhVbv3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/working_with_code.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/working_with_code.html",
+          "hash": "i92k+r5lrWdqyUXY1ol12g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "index",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "57/LNCsvQENP+HgDkRmP6w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "CzFkzRPmRcyFtr2O9lNb9A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build"
+      },
+      "processors": {
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "RestApiDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor RestApiDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing"
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}

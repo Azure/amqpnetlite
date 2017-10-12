@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class WebSocketTransportFactory
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,145 +68,185 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_WebSocketTransportFactory" data-uid="Amqp.WebSocketTransportFactory">Class WebSocketTransportFactory
-              </h1>
-              <div class="markdown level0 summary"><p>The factory to create <a class="xref" href="Amqp.WebSocketTransport.html#Amqp_WebSocketTransport">WebSocketTransport</a> client for address
+            <article class="content wrap" id="_content" data-uid="Amqp.WebSocketTransportFactory">
+  
+  
+  <h1 id="Amqp_WebSocketTransportFactory" data-uid="Amqp.WebSocketTransportFactory" class="text-break">Class WebSocketTransportFactory
+  </h1>
+  <div class="markdown level0 summary"><p>The factory to create <a class="xref" href="Amqp.WebSocketTransport.html">WebSocketTransport</a> client for address
 scheme &quot;ws&quot; and &quot;wss&quot;.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider">TransportProvider</a></div>
-                  <div class="level2"><span class="xref">WebSocketTransportFactory</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider_AddressSchemes">TransportProvider.AddressSchemes</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider_Dispose">TransportProvider.Dispose()</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_WebSocketTransportFactory_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class WebSocketTransportFactory : TransportProvider, IDisposable</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_WebSocketTransportFactory__ctor" data-uid="Amqp.WebSocketTransportFactory.#ctor">WebSocketTransportFactory()</h4>
-              <div class="markdown level1 summary"><p>Initializes a new WebSocketTransportFactory object.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.TransportProvider.html">TransportProvider</a></div>
+    <div class="level2"><span class="xref">WebSocketTransportFactory</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.IDisposable</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider_AddressSchemes">TransportProvider.AddressSchemes</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider_Dispose">TransportProvider.Dispose()</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.html">Amqp</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_WebSocketTransportFactory_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class WebSocketTransportFactory : TransportProvider, IDisposable</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_WebSocketTransportFactory__ctor_" data-uid="Amqp.WebSocketTransportFactory.#ctor*"></a>
+  <h4 id="Amqp_WebSocketTransportFactory__ctor" data-uid="Amqp.WebSocketTransportFactory.#ctor">WebSocketTransportFactory()</h4>
+  <div class="markdown level1 summary"><p>Initializes a WebSocketTransportFactory object with the default subprotocol &apos;amqp&apos;.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public WebSocketTransportFactory()</code></pre>
-              </div>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_WebSocketTransportFactory_Options" data-uid="Amqp.WebSocketTransportFactory.Options">Options</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the delegate to update the ClientWebSocketOptions of the underlying WebSocket object.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WebSocketTransportFactory()</code></pre>
+  </div>
+  <a id="Amqp_WebSocketTransportFactory__ctor_" data-uid="Amqp.WebSocketTransportFactory.#ctor*"></a>
+  <h4 id="Amqp_WebSocketTransportFactory__ctor_System_String_" data-uid="Amqp.WebSocketTransportFactory.#ctor(System.String)">WebSocketTransportFactory(String)</h4>
+  <div class="markdown level1 summary"><p>Initializes a WebSocketTransportFactory object with the specified subprotocol.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Action&lt;ClientWebSocketOptions&gt; Options { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Net.WebSockets.ClientWebSocketOptions</span>&gt;</td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_WebSocketTransportFactory_CreateAsync_Amqp_Address_" data-uid="Amqp.WebSocketTransportFactory.CreateAsync(Amqp.Address)">CreateAsync(Address)</h4>
-              <div class="markdown level1 summary"><p>Creates a WebSocket transport for the given address.</p>
-</div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public override Task&lt;IAsyncTransport&gt; CreateAsync(Address address)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Address.html#Amqp_Address">Address</a></td>
-                    <td><em>address</em></td>
-                    <td><p>The address to connect.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public WebSocketTransportFactory(string subprotocol)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">subprotocol</span></td>
+        <td><p>The subprotocol used for WebSocket upgrade.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.IAsyncTransport.html#Amqp_IAsyncTransport">IAsyncTransport</a>&gt;</td>
-                    <td><p>An IAsyncTransport object representing the transport.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_WebSocketTransportFactory_Options_" data-uid="Amqp.WebSocketTransportFactory.Options*"></a>
+  <h4 id="Amqp_WebSocketTransportFactory_Options" data-uid="Amqp.WebSocketTransportFactory.Options">Options</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the delegate to update the ClientWebSocketOptions of the underlying WebSocket object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Action&lt;ClientWebSocketOptions&gt; Options { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Net.WebSockets.ClientWebSocketOptions</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_WebSocketTransportFactory_CreateAsync_" data-uid="Amqp.WebSocketTransportFactory.CreateAsync*"></a>
+  <h4 id="Amqp_WebSocketTransportFactory_CreateAsync_Amqp_Address_" data-uid="Amqp.WebSocketTransportFactory.CreateAsync(Amqp.Address)">CreateAsync(Address)</h4>
+  <div class="markdown level1 summary"><p>Creates a WebSocket transport for the given address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task&lt;IAsyncTransport&gt; CreateAsync(Address address)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Address.html">Address</a></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address to connect.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider_CreateAsync_Amqp_Address_">TransportProvider.CreateAsync(Address)</a></div>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.IAsyncTransport.html">IAsyncTransport</a>&gt;</td>
+        <td><p>An IAsyncTransport object representing the transport.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Amqp.TransportProvider.html#Amqp_TransportProvider_CreateAsync_Amqp_Address_">TransportProvider.CreateAsync(Address)</a></div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.IDisposable</span>
+  </div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -216,7 +259,7 @@ scheme &quot;ws&quot; and &quot;wss&quot;.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -225,6 +268,5 @@ scheme &quot;ws&quot; and &quot;wss&quot;.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

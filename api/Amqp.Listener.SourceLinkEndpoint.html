@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class SourceLinkEndpoint
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,158 +68,163 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_SourceLinkEndpoint" data-uid="Amqp.Listener.SourceLinkEndpoint">Class SourceLinkEndpoint
-              </h1>
-              <div class="markdown level0 summary"><p>The AMQP link endpoint for a message source. Use this class to attach a link
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.SourceLinkEndpoint">
+  
+  
+  <h1 id="Amqp_Listener_SourceLinkEndpoint" data-uid="Amqp.Listener.SourceLinkEndpoint" class="text-break">Class SourceLinkEndpoint
+  </h1>
+  <div class="markdown level0 summary"><p>The AMQP link endpoint for a message source. Use this class to attach a link
 endpoint to an IMessageSource for sending outgoing messages. This class manages
 the link credit (flow control).</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint">LinkEndpoint</a></div>
-                  <div class="level2"><span class="xref">SourceLinkEndpoint</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnMessage_Amqp_Listener_MessageContext_">LinkEndpoint.OnMessage(MessageContext)</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnLinkClosed_Amqp_Listener_ListenerLink_Amqp_Framing_Error_">LinkEndpoint.OnLinkClosed(ListenerLink, Error)</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_SourceLinkEndpoint_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class SourceLinkEndpoint : LinkEndpoint</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Listener_SourceLinkEndpoint__ctor_Amqp_Listener_IMessageSource_Amqp_Listener_ListenerLink_" data-uid="Amqp.Listener.SourceLinkEndpoint.#ctor(Amqp.Listener.IMessageSource,Amqp.Listener.ListenerLink)">SourceLinkEndpoint(IMessageSource, ListenerLink)</h4>
-              <div class="markdown level1 summary"><p>Initializes a SourceLinkEndpoint object</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.Listener.LinkEndpoint.html">LinkEndpoint</a></div>
+    <div class="level2"><span class="xref">SourceLinkEndpoint</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnMessage_Amqp_Listener_MessageContext_">LinkEndpoint.OnMessage(MessageContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnLinkClosed_Amqp_Listener_ListenerLink_Amqp_Framing_Error_">LinkEndpoint.OnLinkClosed(ListenerLink, Error)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_SourceLinkEndpoint_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SourceLinkEndpoint : LinkEndpoint</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Listener_SourceLinkEndpoint__ctor_" data-uid="Amqp.Listener.SourceLinkEndpoint.#ctor*"></a>
+  <h4 id="Amqp_Listener_SourceLinkEndpoint__ctor_Amqp_Listener_IMessageSource_Amqp_Listener_ListenerLink_" data-uid="Amqp.Listener.SourceLinkEndpoint.#ctor(Amqp.Listener.IMessageSource,Amqp.Listener.ListenerLink)">SourceLinkEndpoint(IMessageSource, ListenerLink)</h4>
+  <div class="markdown level1 summary"><p>Initializes a SourceLinkEndpoint object</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public SourceLinkEndpoint(IMessageSource messageSource, ListenerLink link)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.IMessageSource.html#Amqp_Listener_IMessageSource">IMessageSource</a></td>
-                    <td><em>messageSource</em></td>
-                    <td><p>The associated message source.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SourceLinkEndpoint(IMessageSource messageSource, ListenerLink link)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IMessageSource.html">IMessageSource</a></td>
+        <td><span class="parametername">messageSource</span></td>
+        <td><p>The associated message source.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ListenerLink.html#Amqp_Listener_ListenerLink">ListenerLink</a></td>
-                    <td><em>link</em></td>
-                    <td><p>The listener link.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ListenerLink.html">ListenerLink</a></td>
+        <td><span class="parametername">link</span></td>
+        <td><p>The listener link.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Listener_SourceLinkEndpoint_OnDisposition_Amqp_Listener_DispositionContext_" data-uid="Amqp.Listener.SourceLinkEndpoint.OnDisposition(Amqp.Listener.DispositionContext)">OnDisposition(DispositionContext)</h4>
-              <div class="markdown level1 summary"><p>Notifies the message source the delivery state of an outgoing message.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_SourceLinkEndpoint_OnDisposition_" data-uid="Amqp.Listener.SourceLinkEndpoint.OnDisposition*"></a>
+  <h4 id="Amqp_Listener_SourceLinkEndpoint_OnDisposition_Amqp_Listener_DispositionContext_" data-uid="Amqp.Listener.SourceLinkEndpoint.OnDisposition(Amqp.Listener.DispositionContext)">OnDisposition(DispositionContext)</h4>
+  <div class="markdown level1 summary"><p>Notifies the message source the delivery state of an outgoing message.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public override void OnDisposition(DispositionContext dispositionContext)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.DispositionContext.html#Amqp_Listener_DispositionContext">DispositionContext</a></td>
-                    <td><em>dispositionContext</em></td>
-                    <td><p>Context of the received disposition performative.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnDisposition(DispositionContext dispositionContext)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.DispositionContext.html">DispositionContext</a></td>
+        <td><span class="parametername">dispositionContext</span></td>
+        <td><p>Context of the received disposition performative.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnDisposition_Amqp_Listener_DispositionContext_">LinkEndpoint.OnDisposition(DispositionContext)</a></div>
-              <h4 id="Amqp_Listener_SourceLinkEndpoint_OnFlow_Amqp_Listener_FlowContext_" data-uid="Amqp.Listener.SourceLinkEndpoint.OnFlow(Amqp.Listener.FlowContext)">OnFlow(FlowContext)</h4>
-              <div class="markdown level1 summary"><p>Processes a received flow performative and start receiving from the
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnDisposition_Amqp_Listener_DispositionContext_">LinkEndpoint.OnDisposition(DispositionContext)</a></div>
+  <a id="Amqp_Listener_SourceLinkEndpoint_OnFlow_" data-uid="Amqp.Listener.SourceLinkEndpoint.OnFlow*"></a>
+  <h4 id="Amqp_Listener_SourceLinkEndpoint_OnFlow_Amqp_Listener_FlowContext_" data-uid="Amqp.Listener.SourceLinkEndpoint.OnFlow(Amqp.Listener.FlowContext)">OnFlow(FlowContext)</h4>
+  <div class="markdown level1 summary"><p>Processes a received flow performative and start receiving from the
 message source if required.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public override void OnFlow(FlowContext flowContext)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.FlowContext.html#Amqp_Listener_FlowContext">FlowContext</a></td>
-                    <td><em>flowContext</em></td>
-                    <td><p>Context of the received flow performative.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void OnFlow(FlowContext flowContext)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.FlowContext.html">FlowContext</a></td>
+        <td><span class="parametername">flowContext</span></td>
+        <td><p>Context of the received flow performative.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnFlow_Amqp_Listener_FlowContext_">LinkEndpoint.OnFlow(FlowContext)</a></div>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Amqp.Listener.LinkEndpoint.html#Amqp_Listener_LinkEndpoint_OnFlow_Amqp_Listener_FlowContext_">LinkEndpoint.OnFlow(FlowContext)</a></div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -229,7 +237,7 @@ message source if required.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -238,6 +246,5 @@ message source if required.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

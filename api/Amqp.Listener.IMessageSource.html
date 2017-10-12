@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface IMessageSource
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,113 +68,117 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_IMessageSource" data-uid="Amqp.Listener.IMessageSource">Interface IMessageSource
-              </h1>
-              <div class="markdown level0 summary"><p>Defines the property and methods of a message source.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.IMessageSource">
+  
+  
+  <h1 id="Amqp_Listener_IMessageSource" data-uid="Amqp.Listener.IMessageSource" class="text-break">Interface IMessageSource
+  </h1>
+  <div class="markdown level0 summary"><p>Defines the property and methods of a message source.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_IMessageSource_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public interface IMessageSource</code></pre>
-              </div>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext_" data-uid="Amqp.Listener.IMessageSource.DisposeMessage(Amqp.Listener.ReceiveContext,Amqp.Listener.DispositionContext)">DisposeMessage(ReceiveContext, DispositionContext)</h4>
-              <div class="markdown level1 summary"><p>Disposes the message by releasing any associated resources.
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_IMessageSource_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IMessageSource</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_IMessageSource_DisposeMessage_" data-uid="Amqp.Listener.IMessageSource.DisposeMessage*"></a>
+  <h4 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext_" data-uid="Amqp.Listener.IMessageSource.DisposeMessage(Amqp.Listener.ReceiveContext,Amqp.Listener.DispositionContext)">DisposeMessage(ReceiveContext, DispositionContext)</h4>
+  <div class="markdown level1 summary"><p>Disposes the message by releasing any associated resources.
 This is called when a disposition frame is received from the peer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">void DisposeMessage(ReceiveContext receiveContext, DispositionContext dispositionContext)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ReceiveContext.html#Amqp_Listener_ReceiveContext">ReceiveContext</a></td>
-                    <td><em>receiveContext</em></td>
-                    <td><p>The ReceiveContext object returned by the GetMessageAsync method.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void DisposeMessage(ReceiveContext receiveContext, DispositionContext dispositionContext)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ReceiveContext.html">ReceiveContext</a></td>
+        <td><span class="parametername">receiveContext</span></td>
+        <td><p>The ReceiveContext object returned by the GetMessageAsync method.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.DispositionContext.html#Amqp_Listener_DispositionContext">DispositionContext</a></td>
-                    <td><em>dispositionContext</em></td>
-                    <td><p>The DispositionContext object containing the disposition information.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.DispositionContext.html">DispositionContext</a></td>
+        <td><span class="parametername">dispositionContext</span></td>
+        <td><p>The DispositionContext object containing the disposition information.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>The implementation typically performs the following actions in this event.
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Listener_IMessageSource_DisposeMessage_Amqp_Listener_ReceiveContext_Amqp_Listener_DispositionContext__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The implementation typically performs the following actions in this event.
 (1) release any internal state associated with the message found by receiveContext.UserToken.
 (2) complete the delivery by calling dispositionContext.Complete().</p>
 </div>
-              <h4 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink_" data-uid="Amqp.Listener.IMessageSource.GetMessageAsync(Amqp.Listener.ListenerLink)">GetMessageAsync(ListenerLink)</h4>
-              <div class="markdown level1 summary"><p>Gets a message to send to the remote peer. The implementation may set
+  <a id="Amqp_Listener_IMessageSource_GetMessageAsync_" data-uid="Amqp.Listener.IMessageSource.GetMessageAsync*"></a>
+  <h4 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink_" data-uid="Amqp.Listener.IMessageSource.GetMessageAsync(Amqp.Listener.ListenerLink)">GetMessageAsync(ListenerLink)</h4>
+  <div class="markdown level1 summary"><p>Gets a message to send to the remote peer. The implementation may set
 a UserToken object so that internal state can be found by the context later.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">Task&lt;ReceiveContext&gt; GetMessageAsync(ListenerLink link)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ListenerLink.html#Amqp_Listener_ListenerLink">ListenerLink</a></td>
-                    <td><em>link</em></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.Listener.ReceiveContext.html#Amqp_Listener_ReceiveContext">ReceiveContext</a>&gt;</td>
-                    <td><p>The receive context for the outgoing delivery.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task&lt;ReceiveContext&gt; GetMessageAsync(ListenerLink link)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ListenerLink.html">ListenerLink</a></td>
+        <td><span class="parametername">link</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.Listener.ReceiveContext.html">ReceiveContext</a>&gt;</td>
+        <td><p>The receive context for the outgoing delivery.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>Implementation must not throw exception. If a null context is returned and there
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Listener_IMessageSource_GetMessageAsync_Amqp_Listener_ListenerLink__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Implementation must not throw exception. If a null context is returned and there
 are outstanding link credits, the library calls the method again.</p>
 </div>
-            </article>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -184,7 +191,7 @@ are outstanding link credits, the library calls the method again.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -193,6 +200,5 @@ are outstanding link credits, the library calls the method again.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

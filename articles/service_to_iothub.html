@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -8,7 +8,7 @@
     <title>IoT Hub service endpoints </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="IoT Hub service endpoints ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -31,6 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -64,8 +67,8 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-              <h2 id="iot-hub-service-endpoints">IoT Hub service endpoints</h2>
-              
+<h2 id="iot-hub-service-endpoints">IoT Hub service endpoints</h2>
+
 <p>Inside the IoT Hub architecture, the service has two endpoints to communicate with devices :</p>
 <ul>
 <li>C2D (cloud to device) : the back end system can use this endpoint to send messages (for example commands) to the devices. This endpoint acts like a queue and each message has a TTL (Time To Live) so that it’s removed from the queue if the timeout expires (it’s useful to have commands executed in a short period of time and not executed too late when an offline device comes back online but the execution isn’t needed at that time because it could be harmful). The back end system can receive a confirmation message or delivery fault to understand if device has received command or not;</li>
@@ -81,7 +84,7 @@
 <li>A SenderLink to the /messages/devicebound node;</li>
 <li>A ReceiverLink to the /messages/servicebound/feedback node;</li>
 </ul>
-<h2 id="authentication-sending-the-sas-token">Authentication : sending the SAS token</h2>
+<h2 id="authentication--sending-the-sas-token">Authentication : sending the SAS token</h2>
 <p>The authentication mechanism is the same as device side. In this scenario, we need to send two SAS token on the two different AMQP nodes for sending command and receiving feedback.</p>
 <p>The SAS token audience and resource URI for sending command are the same and defined in the following way :</p>
 <pre><code>string audience = Fx.Format(&quot;{0}/messages/devicebound&quot;, HOST);
@@ -137,7 +140,7 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
 }
 </code></pre><p>As we can see, the sending path “/messages/devicebound” hasn’t any information about the target device. To do that, the service need to set the To AMQP system property to the following value :</p>
 <pre><code>/devices/&lt;DEVICE_ID&gt;/messages/devicebound
-</code></pre><p>where <device_id> is the id assigned to the device when we create it inside the identity registry.<p>
+</code></pre><p>where &lt;DEVICE_ID&gt; is the id assigned to the device when we create it inside the identity registry.</p>
 <p>Finally, it’s importat to notice that the C2D endpoint queue can hold at most 50 messages.</p>
 <h2 id="receiving-feedback">Receiving feedback</h2>
 <p>Using the ReceiverLink instance the service can receive feedback from the device calling the Receive() method.</p>
@@ -177,14 +180,15 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
 <pre><code>[{&quot;originalMessageId&quot;:&quot;5aac3169-af00-4536-acdb-cb9ea6b3980e&quot;,&quot;description&quot;:&quot;Success&quot;,&quot;deviceGenerationId&quot;:&quot;635794823643795743&quot;,&quot;deviceId&quot;:&quot;&lt;device_id&gt;&quot;,&quot;enqueuedTimeUtc&quot;:&quot;2015-10-29T07:59:00.9772497Z&quot;}]
 </code></pre><h2 id="the-full-source-code">The full source code</h2>
 <p>As for all examples related to my blog posts, I update sample from previous article on <a href="https://github.com/ppatierno/codesamples/tree/master/IoTHubAmqp">GitHub</a>. Now you can find a simple console application and a UWP application that are able to send command to a device and receive related feedback.</p>
-</device_id>
-            </article>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -197,7 +201,7 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -206,6 +210,5 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

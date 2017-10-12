@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AmqpContractAttribute
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,174 +68,178 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Serialization_AmqpContractAttribute" data-uid="Amqp.Serialization.AmqpContractAttribute">Class AmqpContractAttribute
-              </h1>
-              <div class="markdown level0 summary"><p>Specifies that the type is serializable by the AMQP serializer.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Serialization.AmqpContractAttribute">
+  
+  
+  <h1 id="Amqp_Serialization_AmqpContractAttribute" data-uid="Amqp.Serialization.AmqpContractAttribute" class="text-break">Class AmqpContractAttribute
+  </h1>
+  <div class="markdown level0 summary"><p>Specifies that the type is serializable by the AMQP serializer.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><span class="xref">System.Attribute</span></div>
-                  <div class="level2"><span class="xref">AmqpContractAttribute</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.MemberInfo, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.MemberInfo, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.MemberInfo, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.MemberInfo, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.ParameterInfo, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.ParameterInfo, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.ParameterInfo, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.ParameterInfo, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.Module, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.Module, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Module, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Module, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.Assembly, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefined(System.Reflection.Assembly, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Assembly, System.Type)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Assembly, System.Type, System.Boolean)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.Match(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.IsDefaultAttribute()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.GetTypeInfoCount(System.UInt32)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.GetTypeInfo(System.UInt32, System.UInt32, System.IntPtr)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.GetIDsOfNames(System.Guid, System.IntPtr, System.UInt32, System.UInt32, System.IntPtr)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.Invoke(System.UInt32, System.Guid, System.UInt32, System.Int16, System.IntPtr, System.IntPtr, System.IntPtr, System.IntPtr)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Attribute.TypeId</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Serialization</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Serialization_AmqpContractAttribute_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">System.Attribute</span></div>
+    <div class="level2"><span class="xref">AmqpContractAttribute</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.Runtime.InteropServices._Attribute</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.MemberInfo, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.MemberInfo, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.MemberInfo, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.MemberInfo, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.MemberInfo, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.ParameterInfo, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.ParameterInfo, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.ParameterInfo, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.ParameterInfo, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.ParameterInfo, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Module, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.Module, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.Module, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Module, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Module, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttributes(System.Reflection.Assembly, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.Assembly, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefined(System.Reflection.Assembly, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Assembly, System.Type)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetCustomAttribute(System.Reflection.Assembly, System.Type, System.Boolean)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.Match(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.IsDefaultAttribute()</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.GetTypeInfoCount(System.UInt32)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.GetTypeInfo(System.UInt32, System.UInt32, System.IntPtr)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.GetIDsOfNames(System.Guid, System.IntPtr, System.UInt32, System.UInt32, System.IntPtr)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.System.Runtime.InteropServices._Attribute.Invoke(System.UInt32, System.Guid, System.UInt32, System.Int16, System.IntPtr, System.IntPtr, System.IntPtr, System.IntPtr)</span>
+    </div>
+    <div>
+      <span class="xref">System.Attribute.TypeId</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Serialization.html">Amqp.Serialization</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Serialization_AmqpContractAttribute_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
 public sealed class AmqpContractAttribute : Attribute, _Attribute</code></pre>
-              </div>
-              <h5 id="Amqp_Serialization_AmqpContractAttribute_remarks"><strong>Remarks</strong></h5>
-              <div class="markdown level0 remarks"><p>The object is serialized as an AMQP described list, a described map,
+  </div>
+  <h5 id="Amqp_Serialization_AmqpContractAttribute_remarks"><strong>Remarks</strong></h5>
+  <div class="markdown level0 remarks"><p>The object is serialized as an AMQP described list, a described map,
 or a simple map, as determined by the Encoding property. The default value is List.</p>
 <p>The Name or Code property specifies the symbol descriptor or the ulong descriptor
 of the described value, respectively. If both are set, the Code property
-(ulong descriptor) takes precedence. If none is set, the class&#39;s full name is used
+(ulong descriptor) takes precedence. If none is set, the class&apos;s full name is used
 as the symbol descriptor. It is recommended to include a domain name/code in the
 descriptor to avoid collision. For example, Name can be &quot;com.microsoft:my-class&quot;,
 and Code can be 0x0000013700000001 (domain code is the company number defined at
@@ -259,94 +266,104 @@ SimpleList: value encoding is the same as List except that no initial descriptor
 written. Because this encoding does not have descriptors, decoding an object with a
 base type decorated with AmqpProvidesAttribute is not supported.</p>
 </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Serialization_AmqpContractAttribute__ctor" data-uid="Amqp.Serialization.AmqpContractAttribute.#ctor">AmqpContractAttribute()</h4>
-              <div class="markdown level1 summary"><p>Initializes a new instance of the AmqpContractAttribute class.</p>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Serialization_AmqpContractAttribute__ctor_" data-uid="Amqp.Serialization.AmqpContractAttribute.#ctor*"></a>
+  <h4 id="Amqp_Serialization_AmqpContractAttribute__ctor" data-uid="Amqp.Serialization.AmqpContractAttribute.#ctor">AmqpContractAttribute()</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the AmqpContractAttribute class.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public AmqpContractAttribute()</code></pre>
-              </div>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Serialization_AmqpContractAttribute_Code" data-uid="Amqp.Serialization.AmqpContractAttribute.Code">Code</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the descriptor code for the type.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AmqpContractAttribute()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Serialization_AmqpContractAttribute_Code_" data-uid="Amqp.Serialization.AmqpContractAttribute.Code*"></a>
+  <h4 id="Amqp_Serialization_AmqpContractAttribute_Code" data-uid="Amqp.Serialization.AmqpContractAttribute.Code">Code</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the descriptor code for the type.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public long Code { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int64</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpContractAttribute_Encoding" data-uid="Amqp.Serialization.AmqpContractAttribute.Encoding">Encoding</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the encoding type for the type.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public long Code { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int64</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpContractAttribute_Encoding_" data-uid="Amqp.Serialization.AmqpContractAttribute.Encoding*"></a>
+  <h4 id="Amqp_Serialization_AmqpContractAttribute_Encoding" data-uid="Amqp.Serialization.AmqpContractAttribute.Encoding">Encoding</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the encoding type for the type.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public EncodingType Encoding { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Serialization.EncodingType.html#Amqp_Serialization_EncodingType">EncodingType</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpContractAttribute_Name" data-uid="Amqp.Serialization.AmqpContractAttribute.Name">Name</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the descriptor name for the type.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EncodingType Encoding { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Serialization.EncodingType.html">EncodingType</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpContractAttribute_Name_" data-uid="Amqp.Serialization.AmqpContractAttribute.Name*"></a>
+  <h4 id="Amqp_Serialization_AmqpContractAttribute_Name" data-uid="Amqp.Serialization.AmqpContractAttribute.Name">Name</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the descriptor name for the type.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Name { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Name { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.Runtime.InteropServices._Attribute</span>
+  </div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -359,7 +376,7 @@ base type decorated with AmqpProvidesAttribute is not supported.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -368,6 +385,5 @@ base type decorated with AmqpProvidesAttribute is not supported.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

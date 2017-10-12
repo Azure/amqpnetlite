@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IAmqpObject
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IAmqpObject
+   ">
+    <meta name="generator" content="docfx 2.25.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Amqp.IAmqpObject">
+  
+  
+  <h1 id="Amqp_IAmqpObject" data-uid="Amqp.IAmqpObject" class="text-break">Interface IAmqpObject
+  </h1>
+  <div class="markdown level0 summary"><p>Represents an AMQP object.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.html">Amqp</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_IAmqpObject_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IAmqpObject</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_IAmqpObject_Error_" data-uid="Amqp.IAmqpObject.Error*"></a>
+  <h4 id="Amqp_IAmqpObject_Error" data-uid="Amqp.IAmqpObject.Error">Error</h4>
+  <div class="markdown level1 summary"><p>Gets the last <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_Error">Error</a>, if any, of the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Error Error { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_IAmqpObject_IsClosed_" data-uid="Amqp.IAmqpObject.IsClosed*"></a>
+  <h4 id="Amqp_IAmqpObject_IsClosed" data-uid="Amqp.IAmqpObject.IsClosed">IsClosed</h4>
+  <div class="markdown level1 summary"><p>Gets a boolean value indicating if the object has been closed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsClosed { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_IAmqpObject_AddClosedCallback_" data-uid="Amqp.IAmqpObject.AddClosedCallback*"></a>
+  <h4 id="Amqp_IAmqpObject_AddClosedCallback_Amqp_ClosedCallback_" data-uid="Amqp.IAmqpObject.AddClosedCallback(Amqp.ClosedCallback)">AddClosedCallback(ClosedCallback)</h4>
+  <div class="markdown level1 summary"><p>Adds a callback to be called when the object is called.
+This method guarantees that the callback is invoked even if
+it is called after the object is closed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void AddClosedCallback(ClosedCallback callback)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ClosedCallback.html">ClosedCallback</a></td>
+        <td><span class="parametername">callback</span></td>
+        <td><p>The callback to be invoked.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_IAmqpObject_Close_" data-uid="Amqp.IAmqpObject.Close*"></a>
+  <h4 id="Amqp_IAmqpObject_Close" data-uid="Amqp.IAmqpObject.Close">Close()</h4>
+  <div class="markdown level1 summary"><p>Closes the AMQP object. It waits until a response is received from the peer,
+or throws TimeoutException after a default timeout.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Close()</code></pre>
+  </div>
+  <a id="Amqp_IAmqpObject_Close_" data-uid="Amqp.IAmqpObject.Close*"></a>
+  <h4 id="Amqp_IAmqpObject_Close_System_TimeSpan_Amqp_Framing_Error_" data-uid="Amqp.IAmqpObject.Close(System.TimeSpan,Amqp.Framing.Error)">Close(TimeSpan, Error)</h4>
+  <div class="markdown level1 summary"><p>Closes the AMQP object with the specified error.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Close(TimeSpan waitUntilEnded, Error error)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">waitUntilEnded</span></td>
+        <td><p>The duration to block until a closing frame is
+received from the peer. If it is TimeSpan.Zero, the call is non-blocking.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The AMQP <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_Error">Error</a> to send to the peer,
+indicating why the object is being closed.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_IAmqpObject_CloseAsync_" data-uid="Amqp.IAmqpObject.CloseAsync*"></a>
+  <h4 id="Amqp_IAmqpObject_CloseAsync" data-uid="Amqp.IAmqpObject.CloseAsync">CloseAsync()</h4>
+  <div class="markdown level1 summary"><p>Closes an AMQP object asynchronously using a default timeout.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task CloseAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A Task for the asynchronous close operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_IAmqpObject_CloseAsync_" data-uid="Amqp.IAmqpObject.CloseAsync*"></a>
+  <h4 id="Amqp_IAmqpObject_CloseAsync_System_TimeSpan_" data-uid="Amqp.IAmqpObject.CloseAsync(System.TimeSpan)">CloseAsync(TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Closes an AMQP object asynchronously.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task CloseAsync(TimeSpan timeout)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">timeout</span></td>
+        <td><p>The time to wait for the task to complete. Refer to AmqpObject.Close for details.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A Task for the asynchronous close operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  <h4 id="Amqp_IAmqpObject_Closed" data-uid="Amqp.IAmqpObject.Closed">Closed</h4>
+  <div class="markdown level1 summary"><p>Gets the event used to notify that the object is closed. Callbacks
+may not be invoked if they are registered after the object is closed.
+It is recommend to call AddClosedCallback method.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">event ClosedCallback Closed</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ClosedCallback.html">ClosedCallback</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

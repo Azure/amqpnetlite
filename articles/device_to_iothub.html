@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -8,7 +8,7 @@
     <title>IoT Hub : connection and device endpoints </title>
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="IoT Hub : connection and device endpoints ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -31,6 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -64,8 +67,8 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-              <h2 id="iot-hub-connection-and-device-endpoints">IoT Hub : connection and device endpoints</h2>
-              
+<h2 id="iot-hub--connection-and-device-endpoints">IoT Hub : connection and device endpoints</h2>
+
 <p>The IoT Hub is reachable using an address that has the following format</p>
 <pre><code>&lt;IOT_HUB_NAME&gt;.azure-devices.net
 </code></pre><p>that we can retrieve from the Azure portal after creating the new IoT Hub instance service. As for all the services inside the Service Bus family (queues, topics/subscriptions and event hubs) the IoT Hub needs an SSL/TLS connection for data encryption and server authentication; it means that we have to connect to the host address to the default AMQPS (AMQP Secure) port that is the 5671.</p>
@@ -85,16 +88,16 @@ connection = new Connection(address);
 <p>At AMQP level the endpoints are accessible from different entity paths; if you know Service Bus queues, topics/subscriptions and event hubs we can think them in the same way.</p>
 <p>The entity path for sending data for telemetry purpose is defined in the following way :</p>
 <pre><code>/devices/&lt;DEVICE_ID&gt;/messages/events
-</code></pre><p>where <device_id> is the id assigned to the device when we create it inside the identity registry.<p>
+</code></pre><p>where &lt;DEVICE_ID&gt; is the id assigned to the device when we create it inside the identity registry.</p>
 <p>The entity path for receiving command from the Cloud is defined in the following way :</p>
 <pre><code>/devices/&lt;DEVICE_ID&gt;/messages/deviceBound
-</code></pre><p>and as for the previous entity you need to provide the <device_id> in the path.<p>
+</code></pre><p>and as for the previous entity you need to provide the &lt;DEVICE_ID&gt; in the path.</p>
 <p>It means that after creating a connection and a session to our IoT Hub host we need to create two links to above entities (or nodes as defined in the AMQP spec). Using the programming model provided by AMQP .Net Lite library we have :</p>
 <ul>
-<li>A SenderLink to the /devices/<device_id>/messages/events node;</device_id></li>
-<li>A ReceiverLink to the /devices/<device_id>/messages/deviceBound node;</device_id></li>
+<li>A SenderLink to the /devices/&lt;DEVICE_ID&gt;/messages/events node;</li>
+<li>A ReceiverLink to the /devices/&lt;DEVICE_ID&gt;/messages/deviceBound node;</li>
 </ul>
-<h2 id="authentication-sending-the-sas-token">Authentication : sending the SAS token</h2>
+<h2 id="authentication--sending-the-sas-token">Authentication : sending the SAS token</h2>
 <p>IoT Hub offers a per-device authentication through a SAS token that we can generate starting from device id and device key. After connection establishment we need to send such token to a specific CBS (Claim Based Security) endpoint to authorize the access to the specific entity.</p>
 <p>As usual for Azure services, the token has the following format :</p>
 <pre><code>SharedAccessSignature sig={signature-string}&amp;se={expiry}&amp;skn={policyName}&amp;sr={URL-encoded-resourceURI}
@@ -144,14 +147,15 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
 <h2 id="the-full-source-code">The full source code</h2>
 <p>The full source code I showed in the previous paragraphs is available on <a href="https://github.com/ppatierno/codesamples/tree/master/IoTHubAmqp">GitHub</a> and it has projects for .Net Framework (so you can test very quickly it on your PC), generic .Net Micro Framework (for testing on your real device) and a third project for <a href="http://www.netduino.com/netduino3wifi/specs.htm">Netduino 3 WiFi</a> as example of embedded device.</p>
 <p>Of course, you can use any other board that support .Net Micro Framework and SSL/TLS protocol that is needed to connect to the IoT Hub. Other then Netduino 3 board, there are the FEZ Raptor and FEZ Spider from <a href="https://www.ghielectronics.com/">GHI Electronics</a> (soon an example using them).</p>
-</device_id></device_id>
-            </article>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -164,7 +168,7 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -173,6 +177,5 @@ bool cbs = PutCbsToken(connection, HOST, sasToken, audience);
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

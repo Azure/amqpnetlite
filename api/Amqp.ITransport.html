@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Interface ITransport
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,118 +68,123 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_ITransport" data-uid="Amqp.ITransport">Interface ITransport
-              </h1>
-              <div class="markdown level0 summary"><p>The transport interface used by a connection for network I/O.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.ITransport">
+  
+  
+  <h1 id="Amqp_ITransport" data-uid="Amqp.ITransport" class="text-break">Interface ITransport
+  </h1>
+  <div class="markdown level0 summary"><p>The transport interface used by a connection for network I/O.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <h6><strong>Namespace</strong>:Amqp</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_ITransport_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public interface ITransport</code></pre>
-              </div>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_ITransport_Close" data-uid="Amqp.ITransport.Close">Close()</h4>
-              <div class="markdown level1 summary"><p>Closes the transport.</p>
+  <div class="markdown level0 conceptual"></div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.html">Amqp</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_ITransport_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ITransport</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_ITransport_Close_" data-uid="Amqp.ITransport.Close*"></a>
+  <h4 id="Amqp_ITransport_Close" data-uid="Amqp.ITransport.Close">Close()</h4>
+  <div class="markdown level1 summary"><p>Closes the transport.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">void Close()</code></pre>
-              </div>
-              <h4 id="Amqp_ITransport_Receive_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.ITransport.Receive(System.Byte[],System.Int32,System.Int32)">Receive(Byte[], Int32, Int32)</h4>
-              <div class="markdown level1 summary"><p>Receives a buffer.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Close()</code></pre>
+  </div>
+  <a id="Amqp_ITransport_Receive_" data-uid="Amqp.ITransport.Receive*"></a>
+  <h4 id="Amqp_ITransport_Receive_System_Byte___System_Int32_System_Int32_" data-uid="Amqp.ITransport.Receive(System.Byte[],System.Int32,System.Int32)">Receive(Byte[], Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Receives a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">int Receive(byte[] buffer, int offset, int count)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to store the received bytes.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">int Receive(byte[] buffer, int offset, int count)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to store the received bytes.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>The start position.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The start position.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>count</em></td>
-                    <td><p>The number of bytes to receive.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">count</span></td>
+        <td><p>The number of bytes to receive.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><p>The number of bytes received. It may be less than <em>count</em>.
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><p>The number of bytes received. It may be less than <code data-dev-comment-type="paramref" class="paramref">count</code>.
 A value of 0 means that the transport is closed.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ITransport_Send_Amqp_ByteBuffer_" data-uid="Amqp.ITransport.Send(Amqp.ByteBuffer)">Send(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Sends a buffer.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ITransport_Send_" data-uid="Amqp.ITransport.Send*"></a>
+  <h4 id="Amqp_ITransport_Send_Amqp_ByteBuffer_" data-uid="Amqp.ITransport.Send(Amqp.ByteBuffer)">Send(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Sends a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">void Send(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to send.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Send(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to send.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -189,7 +197,7 @@ A value of 0 means that the transport is closed.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -198,6 +206,5 @@ A value of 0 means that the transport is closed.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

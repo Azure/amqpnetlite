@@ -1,0 +1,175 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Exceptions </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Exceptions ">
+    <meta name="generator" content="docfx 2.25.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p>In messaging applications, fault tolerance is important. Communication could fail due to many error conditions,
+such as networking failure, service temporary unavailability and planned/unplanned maintenance. Applications
+must handle these errors and be able to recover from them.</p>
+<p>As error handling and reconnect logic are very application specific, the library does not provide a built-in
+retry or recovery logic. Instead it provides several important mechanisms for application to build fault
+tolerance, such as,</p>
+<ul>
+<li>Exceptions and error conditions,</li>
+<li>State and terminal error on AMQP objects,</li>
+<li>Closed event on AMQP objects.</li>
+</ul>
+<h2 id="exceptions">Exceptions</h2>
+<p>Application should expect exceptions being thrown from API calls and handle them. The library defines the
+<code>AmqpException</code> type and throws the exception whenever appropriate. Other common exceptions, such as
+<code>ArgumentException</code> and <code>TimeoutException</code>, could also be thrown.</p>
+<p>When an <code>AmqpException</code> is handled, application should check its <code>Error</code> property, specifically the <code>Condition</code>
+property of the <code>Error</code> object and perform actions accordingly. Please refer to the AMQP specification for the
+standard error conditions, and the extended error conditions, if any, defined by the remote peer that the
+application is communicating with.</p>
+<h2 id="amqpobject">AmqpObject</h2>
+<p>When an <code>AmqpObject</code> (<code>Connection</code>, <code>Session</code>, <code>Link</code>) has transitioned to closing/ending/detaching state,
+any operation other than close will trigger an AmqpException with error condition &quot;amqp:illegal-state&quot; to
+be thrown.</p>
+<p>The <code>AmqpObject.Error</code> property, if set, indicates the error condition under which the object was closed.</p>
+<p>The <code>AmqpObject.IsClosed</code> property also tells if the object has been closed.</p>
+<p>The <code>AmqpObject.Closed</code> event notifies subscribers when the object reaches the end state.</p>
+<h2 id="reconnect">Reconnect</h2>
+<p>Using the primitives provided above, application can build a reconnect logic that fits the best to its
+runtime environment. Following are the typical ways to built such reconnect logic. You can find all of
+them in the <a href="https://github.com/Azure/amqpnetlite/tree/master/test/LongHaulTest">LongHaulTest</a> project.</p>
+<h3 id="proactive-state-check">Proactive State Check</h3>
+<p>Before calling any API, the application can check <code>AmqpObject.IsClosed</code> property and create the object
+if it is closed.</p>
+<p>For example, the LongHaulTest uses this strategy to create connection before calling Send or
+Receive methods. Similar approach is taken to ensure a link is in place.</p>
+<pre><code>protected async Task EnsureConnectionAsync()
+{
+    if (this.connection == null || this.connection.IsClosed)
+    {
+        Address address = this.role.Address;
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.SSL.RemoteCertificateValidationCallback = (a, b, c, e) =&gt; true;
+        factory.AMQP.HostName = this.role.Args.Host ?? address.Host;
+        factory.AMQP.ContainerId = &quot;amqp-test&quot; + this.id;
+        this.connection = await factory.CreateAsync(address);
+    }
+}
+</code></pre><h3 id="handle-exceptions">Handle Exceptions</h3>
+<p>Exceptions must be handled. In the exception handler, the application has a choice of whether to create
+the communication objects, or simply delegate the recreation to the Proactive State Check
+strategy if one is in place.</p>
+<h3 id="subscribe-to-closed-event">Subscribe to Closed Event</h3>
+<p>Application can also subscribe to the Closed event and perform reconnect logic in the event handler.
+the Closed event handler is guaranteed to be invoked at most once, as the object could be closed already
+when the event is subscribed. Application can use the following logic to avoid the race condition
+and ensure the event handler is always invoked. Note that the guarantee becomes at least once so
+the event handler must be idempotent.</p>
+<pre><code>void SafeAddClosed(AmqpObject obj, ClosedCallback callback)
+{
+    obj.Closed += callback;
+    if (obj.IsClosed)
+    {
+        callback(obj, obj.Error);
+    }
+}
+</code></pre><p>If the application ever decides to create the AMQP object(s) in the exception handler or Closed event
+handler, it <strong>must not mix sync and async API calls</strong>. Most async API calls are completed when a
+response is received from the peer and the execution is on the connection&#39;s frame pump (which runs on
+the I/O thread). If a sync operation which also requires a response is performed, a deadlock occurs.
+Most likey you will get a TimeoutException.</p>
+<p>The application can use a combination of the above approaches to achieve optimal results, like what
+has been done in the LongHaulTest project to enable it to run for weeks against an Azure Service Bus
+queue and transfers tens of millions message between the senders and the receivers.</p>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

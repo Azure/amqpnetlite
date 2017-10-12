@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ListenerLink
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,502 +68,540 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_ListenerLink" data-uid="Amqp.Listener.ListenerLink">Class ListenerLink
-              </h1>
-              <div class="markdown level0 summary"><p>The listener link provides non-blocking methods that can be used by brokers/listener
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.ListenerLink">
+  
+  
+  <h1 id="Amqp_Listener_ListenerLink" data-uid="Amqp.Listener.ListenerLink" class="text-break">Class ListenerLink
+  </h1>
+  <div class="markdown level0 summary"><p>The listener link provides non-blocking methods that can be used by brokers/listener
 applications.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject">AmqpObject</a></div>
-                  <div class="level2"><a class="xref" href="Amqp.Link.html#Amqp_Link">Link</a></div>
-                  <div class="level3"><span class="xref">ListenerLink</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.Link.html#Amqp_Link_Name">Link.Name</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Link.html#Amqp_Link_Handle">Link.Handle</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Link.html#Amqp_Link_Session">Link.Session</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Closed">AmqpObject.Closed</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Error">AmqpObject.Error</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close_System_Int32_Amqp_Framing_Error_">AmqpObject.Close(Int32, Error)</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_ListenerLink_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class ListenerLink : Link</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Listener_ListenerLink__ctor_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_" data-uid="Amqp.Listener.ListenerLink.#ctor(Amqp.Listener.ListenerSession,Amqp.Framing.Attach)">ListenerLink(ListenerSession, Attach)</h4>
-              <div class="markdown level1 summary"><p>Initializes a listener link object.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.AmqpObject.html">AmqpObject</a></div>
+    <div class="level2"><a class="xref" href="Amqp.Link.html">Link</a></div>
+    <div class="level3"><span class="xref">ListenerLink</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Amqp.ILink.html">ILink</a></div>
+    <div><a class="xref" href="Amqp.IAmqpObject.html">IAmqpObject</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.Link.html#Amqp_Link_Name">Link.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Link.html#Amqp_Link_Handle">Link.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Link.html#Amqp_Link_Session">Link.Session</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Closed">AmqpObject.Closed</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Error">AmqpObject.Error</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_IsClosed">AmqpObject.IsClosed</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_AddClosedCallback_Amqp_ClosedCallback_">AmqpObject.AddClosedCallback(ClosedCallback)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close">AmqpObject.Close()</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close_System_TimeSpan_Amqp_Framing_Error_">AmqpObject.Close(TimeSpan, Error)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync">AmqpObject.CloseAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_">AmqpObject.CloseAsync(TimeSpan)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_ListenerLink_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ListenerLink : Link, ILink, IAmqpObject</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Listener_ListenerLink__ctor_" data-uid="Amqp.Listener.ListenerLink.#ctor*"></a>
+  <h4 id="Amqp_Listener_ListenerLink__ctor_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_" data-uid="Amqp.Listener.ListenerLink.#ctor(Amqp.Listener.ListenerSession,Amqp.Framing.Attach)">ListenerLink(ListenerSession, Attach)</h4>
+  <div class="markdown level1 summary"><p>Initializes a listener link object.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ListenerLink(ListenerSession session, Attach attach)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ListenerSession.html#Amqp_Listener_ListenerSession">ListenerSession</a></td>
-                    <td><em>session</em></td>
-                    <td><p>The session.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ListenerLink(ListenerSession session, Attach attach)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ListenerSession.html">ListenerSession</a></td>
+        <td><span class="parametername">session</span></td>
+        <td><p>The session.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Attach.html#Amqp_Framing_Attach">Attach</a></td>
-                    <td><em>attach</em></td>
-                    <td><p>The received attach frame.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Attach.html">Attach</a></td>
+        <td><span class="parametername">attach</span></td>
+        <td><p>The received attach frame.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Listener_ListenerLink_Role" data-uid="Amqp.Listener.ListenerLink.Role">Role</h4>
-              <div class="markdown level1 summary"><p>Gets the sender (false) or receiver (true) role of the link.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Listener_ListenerLink_Role_" data-uid="Amqp.Listener.ListenerLink.Role*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_Role" data-uid="Amqp.Listener.ListenerLink.Role">Role</h4>
+  <div class="markdown level1 summary"><p>Gets the sender (false) or receiver (true) role of the link.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public bool Role { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_SettleOnSend" data-uid="Amqp.Listener.ListenerLink.SettleOnSend">SettleOnSend</h4>
-              <div class="markdown level1 summary"><p>Gets the settled flag. If it is true, messages are sent settled.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Role { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_SettleOnSend_" data-uid="Amqp.Listener.ListenerLink.SettleOnSend*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_SettleOnSend" data-uid="Amqp.Listener.ListenerLink.SettleOnSend">SettleOnSend</h4>
+  <div class="markdown level1 summary"><p>Gets the settled flag. If it is true, messages are sent settled.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public bool SettleOnSend { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_State" data-uid="Amqp.Listener.ListenerLink.State">State</h4>
-              <div class="markdown level1 summary"><p>Gets the user state attached to the link when it is initialized.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool SettleOnSend { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_State_" data-uid="Amqp.Listener.ListenerLink.State*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_State" data-uid="Amqp.Listener.ListenerLink.State">State</h4>
+  <div class="markdown level1 summary"><p>Gets the user state attached to the link when it is initialized.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public object State { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Object</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Listener_ListenerLink_CompleteAttach_Amqp_Framing_Attach_Amqp_Framing_Error_" data-uid="Amqp.Listener.ListenerLink.CompleteAttach(Amqp.Framing.Attach,Amqp.Framing.Error)">CompleteAttach(Attach, Error)</h4>
-              <div class="markdown level1 summary"><p>Completes the link attach request. This should be called when the IContainer.AttachLink implementation returns false
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object State { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_ListenerLink_CompleteAttach_" data-uid="Amqp.Listener.ListenerLink.CompleteAttach*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_CompleteAttach_Amqp_Framing_Attach_Amqp_Framing_Error_" data-uid="Amqp.Listener.ListenerLink.CompleteAttach(Amqp.Framing.Attach,Amqp.Framing.Error)">CompleteAttach(Attach, Error)</h4>
+  <div class="markdown level1 summary"><p>Completes the link attach request. This should be called when the IContainer.AttachLink implementation returns false
 and the asynchronous processing completes. </p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void CompleteAttach(Attach attach, Error error)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Attach.html#Amqp_Framing_Attach">Attach</a></td>
-                    <td><em>attach</em></td>
-                    <td><p>The attach to send back.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CompleteAttach(Attach attach, Error error)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Attach.html">Attach</a></td>
+        <td><span class="parametername">attach</span></td>
+        <td><p>The attach to send back.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Error.html#Amqp_Framing_Error">Error</a></td>
-                    <td><em>error</em></td>
-                    <td><p>The error, if any, for the link.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The error, if any, for the link.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_DisposeMessage_Amqp_Message_Amqp_Framing_DeliveryState_System_Boolean_" data-uid="Amqp.Listener.ListenerLink.DisposeMessage(Amqp.Message,Amqp.Framing.DeliveryState,System.Boolean)">DisposeMessage(Message, DeliveryState, Boolean)</h4>
-              <div class="markdown level1 summary"><p>Sends a disposition for the message.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_DisposeMessage_" data-uid="Amqp.Listener.ListenerLink.DisposeMessage*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_DisposeMessage_Amqp_Message_Amqp_Framing_DeliveryState_System_Boolean_" data-uid="Amqp.Listener.ListenerLink.DisposeMessage(Amqp.Message,Amqp.Framing.DeliveryState,System.Boolean)">DisposeMessage(Message, DeliveryState, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sends a disposition for the message.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void DisposeMessage(Message message, DeliveryState deliveryState, bool settled)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
-                    <td><em>message</em></td>
-                    <td><p>The message to be disposed (a disposition performative will be sent for this message).</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void DisposeMessage(Message message, DeliveryState deliveryState, bool settled)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be disposed (a disposition performative will be sent for this message).</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.DeliveryState.html#Amqp_Framing_DeliveryState">DeliveryState</a></td>
-                    <td><em>deliveryState</em></td>
-                    <td><p>The delivery state to set on disposition.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.DeliveryState.html">DeliveryState</a></td>
+        <td><span class="parametername">deliveryState</span></td>
+        <td><p>The delivery state to set on disposition.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td><em>settled</em></td>
-                    <td><p>The settled flag on disposition.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">settled</span></td>
+        <td><p>The settled flag on disposition.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_InitializeReceiver_System_UInt32_System_Action_Amqp_Listener_ListenerLink_Amqp_Message_Amqp_Framing_DeliveryState_System_Object__System_Object_" data-uid="Amqp.Listener.ListenerLink.InitializeReceiver(System.UInt32,System.Action{Amqp.Listener.ListenerLink,Amqp.Message,Amqp.Framing.DeliveryState,System.Object},System.Object)">InitializeReceiver(UInt32, Action&lt;ListenerLink, Message, DeliveryState, Object&gt;, Object)</h4>
-              <div class="markdown level1 summary"><p>Initializes the receiver state for the link.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_InitializeReceiver_" data-uid="Amqp.Listener.ListenerLink.InitializeReceiver*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_InitializeReceiver_System_UInt32_System_Action_Amqp_Listener_ListenerLink_Amqp_Message_Amqp_Framing_DeliveryState_System_Object__System_Object_" data-uid="Amqp.Listener.ListenerLink.InitializeReceiver(System.UInt32,System.Action{Amqp.Listener.ListenerLink,Amqp.Message,Amqp.Framing.DeliveryState,System.Object},System.Object)">InitializeReceiver(UInt32, Action&lt;ListenerLink, Message, DeliveryState, Object&gt;, Object)</h4>
+  <div class="markdown level1 summary"><p>Initializes the receiver state for the link.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void InitializeReceiver(uint credit, Action&lt;ListenerLink, Message, DeliveryState, object&gt; onMessage, object state)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.UInt32</span></td>
-                    <td><em>credit</em></td>
-                    <td><p>The link credit to send to the peer.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InitializeReceiver(uint credit, Action&lt;ListenerLink, Message, DeliveryState, object&gt; onMessage, object state)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt32</span></td>
+        <td><span class="parametername">credit</span></td>
+        <td><p>The link credit to send to the peer.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Amqp.Listener.ListenerLink.html#Amqp_Listener_ListenerLink">ListenerLink</a>, <a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a>, <a class="xref" href="Amqp.Framing.DeliveryState.html#Amqp_Framing_DeliveryState">DeliveryState</a>, <span class="xref">System.Object</span>&gt;</td>
-                    <td><em>onMessage</em></td>
-                    <td><p>The callback to be invoked for received messages.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Amqp.Listener.ListenerLink.html">ListenerLink</a>, <a class="xref" href="Amqp.Message.html">Message</a>, <a class="xref" href="Amqp.Framing.DeliveryState.html">DeliveryState</a>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">onMessage</span></td>
+        <td><p>The callback to be invoked for received messages.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Object</span></td>
-                    <td><em>state</em></td>
-                    <td><p>The user state attached to the link.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">state</span></td>
+        <td><p>The user state attached to the link.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_InitializeSender_System_Action_System_Int32_System_Object__System_Action_Amqp_Message_Amqp_Framing_DeliveryState_System_Boolean_System_Object__System_Object_" data-uid="Amqp.Listener.ListenerLink.InitializeSender(System.Action{System.Int32,System.Object},System.Action{Amqp.Message,Amqp.Framing.DeliveryState,System.Boolean,System.Object},System.Object)">InitializeSender(Action&lt;Int32, Object&gt;, Action&lt;Message, DeliveryState, Boolean, Object&gt;, Object)</h4>
-              <div class="markdown level1 summary"><p>Initializes the sender state for the link.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_InitializeSender_" data-uid="Amqp.Listener.ListenerLink.InitializeSender*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_InitializeSender_System_Action_System_Int32_Amqp_Types_Fields_System_Object__System_Action_Amqp_Message_Amqp_Framing_DeliveryState_System_Boolean_System_Object__System_Object_" data-uid="Amqp.Listener.ListenerLink.InitializeSender(System.Action{System.Int32,Amqp.Types.Fields,System.Object},System.Action{Amqp.Message,Amqp.Framing.DeliveryState,System.Boolean,System.Object},System.Object)">InitializeSender(Action&lt;Int32, Fields, Object&gt;, Action&lt;Message, DeliveryState, Boolean, Object&gt;, Object)</h4>
+  <div class="markdown level1 summary"><p>Initializes the sender state for the link.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void InitializeSender(Action&lt;int, object&gt; onCredit, Action&lt;Message, DeliveryState, bool, object&gt; onDispose, object state)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Int32</span>, <span class="xref">System.Object</span>&gt;</td>
-                    <td><em>onCredit</em></td>
-                    <td><p>The callback to be invoked when delivery limit changes (by received flow performatives).</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void InitializeSender(Action&lt;int, Fields, object&gt; onCredit, Action&lt;Message, DeliveryState, bool, object&gt; onDispose, object state)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.Int32</span>, <a class="xref" href="Amqp.Types.Fields.html">Fields</a>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">onCredit</span></td>
+        <td><p>The callback to be invoked when delivery limit changes (by received flow performatives).</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a>, <a class="xref" href="Amqp.Framing.DeliveryState.html#Amqp_Framing_DeliveryState">DeliveryState</a>, <span class="xref">System.Boolean</span>, <span class="xref">System.Object</span>&gt;</td>
-                    <td><em>onDispose</em></td>
-                    <td><p>The callback to be invoked when disposition is received.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Action</span>&lt;<a class="xref" href="Amqp.Message.html">Message</a>, <a class="xref" href="Amqp.Framing.DeliveryState.html">DeliveryState</a>, <span class="xref">System.Boolean</span>, <span class="xref">System.Object</span>&gt;</td>
+        <td><span class="parametername">onDispose</span></td>
+        <td><p>The callback to be invoked when disposition is received.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Object</span></td>
-                    <td><em>state</em></td>
-                    <td><p>The user state attached to the link.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">state</span></td>
+        <td><p>The user state attached to the link.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_OnAbort_Amqp_Framing_Error_" data-uid="Amqp.Listener.ListenerLink.OnAbort(Amqp.Framing.Error)">OnAbort(Error)</h4>
-              <div class="markdown level1 summary"><p>Aborts the link.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_OnAbort_" data-uid="Amqp.Listener.ListenerLink.OnAbort*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_OnAbort_Amqp_Framing_Error_" data-uid="Amqp.Listener.ListenerLink.OnAbort(Amqp.Framing.Error)">OnAbort(Error)</h4>
+  <div class="markdown level1 summary"><p>Aborts the link.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">protected override void OnAbort(Error error)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Error.html#Amqp_Framing_Error">Error</a></td>
-                    <td><em>error</em></td>
-                    <td><p>The error.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void OnAbort(Error error)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The error.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><a class="xref" href="Amqp.Link.html#Amqp_Link_OnAbort_Amqp_Framing_Error_">Link.OnAbort(Error)</a></div>
-              <h4 id="Amqp_Listener_ListenerLink_OnClose_Amqp_Framing_Error_" data-uid="Amqp.Listener.ListenerLink.OnClose(Amqp.Framing.Error)">OnClose(Error)</h4>
-              <div class="markdown level1 summary"><p>Closes the link.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Amqp.Link.html#Amqp_Link_OnAbort_Amqp_Framing_Error_">Link.OnAbort(Error)</a></div>
+  <a id="Amqp_Listener_ListenerLink_OnClose_" data-uid="Amqp.Listener.ListenerLink.OnClose*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_OnClose_Amqp_Framing_Error_" data-uid="Amqp.Listener.ListenerLink.OnClose(Amqp.Framing.Error)">OnClose(Error)</h4>
+  <div class="markdown level1 summary"><p>Closes the link.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">protected override bool OnClose(Error error)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.Error.html#Amqp_Framing_Error">Error</a></td>
-                    <td><em>error</em></td>
-                    <td><p>The error</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override bool OnClose(Error error)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The error</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><a class="xref" href="Amqp.Link.html#Amqp_Link_OnClose_Amqp_Framing_Error_">Link.OnClose(Error)</a></div>
-              <h4 id="Amqp_Listener_ListenerLink_SendMessage_Amqp_Message_" data-uid="Amqp.Listener.ListenerLink.SendMessage(Amqp.Message)">SendMessage(Message)</h4>
-              <div class="markdown level1 summary"><p>Sends a message. This call is non-blocking and it does not wait for acknowledgments.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Amqp.Link.html#Amqp_Link_OnClose_Amqp_Framing_Error_">Link.OnClose(Error)</a></div>
+  <a id="Amqp_Listener_ListenerLink_SendMessage_" data-uid="Amqp.Listener.ListenerLink.SendMessage*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_SendMessage_Amqp_Message_" data-uid="Amqp.Listener.ListenerLink.SendMessage(Amqp.Message)">SendMessage(Message)</h4>
+  <div class="markdown level1 summary"><p>Sends a message. This call is non-blocking and it does not wait for acknowledgments.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void SendMessage(Message message)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
-                    <td><em>message</em></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_SendMessage_Amqp_Message_Amqp_ByteBuffer_" data-uid="Amqp.Listener.ListenerLink.SendMessage(Amqp.Message,Amqp.ByteBuffer)">SendMessage(Message, ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Sends a message with an optional buffer as the message payload.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendMessage(Message message)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td><span class="parametername">message</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_SendMessage_" data-uid="Amqp.Listener.ListenerLink.SendMessage*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_SendMessage_Amqp_Message_Amqp_ByteBuffer_" data-uid="Amqp.Listener.ListenerLink.SendMessage(Amqp.Message,Amqp.ByteBuffer)">SendMessage(Message, ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Sends a message with an optional buffer as the message payload.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void SendMessage(Message message, ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
-                    <td><em>message</em></td>
-                    <td><p>The message to be sent.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SendMessage(Message message, ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to be sent.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The serialized buffer of the message. It is null, the message is serialized.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The serialized buffer of the message. It is null, the message is serialized.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ListenerLink_SetCredit_System_Int32_System_Boolean_System_Boolean_" data-uid="Amqp.Listener.ListenerLink.SetCredit(System.Int32,System.Boolean,System.Boolean)">SetCredit(Int32, Boolean, Boolean)</h4>
-              <div class="markdown level1 summary"><p>Sets a credit on the link. A flow is sent to the peer to update link flow control state.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ListenerLink_SetCredit_" data-uid="Amqp.Listener.ListenerLink.SetCredit*"></a>
+  <h4 id="Amqp_Listener_ListenerLink_SetCredit_System_Int32_System_Boolean_System_Boolean_" data-uid="Amqp.Listener.ListenerLink.SetCredit(System.Int32,System.Boolean,System.Boolean)">SetCredit(Int32, Boolean, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Sets a credit on the link. A flow is sent to the peer to update link flow control state.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void SetCredit(int credit, bool drain, bool autoRestore = true)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>credit</em></td>
-                    <td><p>The new link credit.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCredit(int credit, bool drain, bool autoRestore = true)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">credit</span></td>
+        <td><p>The new link credit.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td><em>drain</em></td>
-                    <td><p>Sets the drain flag in the flow performative.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">drain</span></td>
+        <td><p>Sets the drain flag in the flow performative.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td><em>autoRestore</em></td>
-                    <td><p>If true, link credit is auto-restored when a message is accepted/rejected
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">autoRestore</span></td>
+        <td><p>If true, link credit is auto-restored when a message is accepted/rejected
 by the caller. If false, caller is responsible for manage link credits.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="extensionmethods">Extension Methods</h3>
-              <div>
-                  <a class="xref" href="Amqp.TaskExtensions.html#Amqp_TaskExtensions_CloseAsync_Amqp_AmqpObject_System_Int32_">TaskExtensions.CloseAsync(Int32)</a>
-              </div>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Amqp.ILink.html">ILink</a>
+  </div>
+  <div>
+      <a class="xref" href="Amqp.IAmqpObject.html">IAmqpObject</a>
+  </div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -573,7 +614,7 @@ by the caller. If false, caller is responsible for manage link credits.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -582,6 +623,5 @@ by the caller. If false, caller is responsible for manage link credits.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

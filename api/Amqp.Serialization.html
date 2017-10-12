@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Namespace Amqp.Serialization
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,48 +68,66 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              <h1 id="Amqp_Serialization" data-uid="Amqp.Serialization">Namespace Amqp.Serialization
-              </h1>
-              <div class="markdown level0 summary"></div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="markdown level0 remarks"></div>
-                <h3 id="classes">Classes
-              </h3>
-                  <h4><a class="xref" href="Amqp.Serialization.AmqpContractAttribute.html#Amqp_Serialization_AmqpContractAttribute">AmqpContractAttribute</a></h4>
-                  <section><p>Specifies that the type is serializable by the AMQP serializer.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Serialization">
+  
+  <h1 id="Amqp_Serialization" data-uid="Amqp.Serialization" class="text-break">Namespace Amqp.Serialization
+  </h1>
+  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="markdown level0 remarks"></div>
+    <h3 id="classes">Classes
+  </h3>
+      <h4><a class="xref" href="Amqp.Serialization.AmqpContractAttribute.html">AmqpContractAttribute</a></h4>
+      <section><p>Specifies that the type is serializable by the AMQP serializer.</p>
 </section>
-                  <h4><a class="xref" href="Amqp.Serialization.AmqpMemberAttribute.html#Amqp_Serialization_AmqpMemberAttribute">AmqpMemberAttribute</a></h4>
-                  <section><p>Specifies that the member is part of an AMQP serializable type.</p>
+      <h4><a class="xref" href="Amqp.Serialization.AmqpMemberAttribute.html">AmqpMemberAttribute</a></h4>
+      <section><p>Specifies that the member is part of an AMQP serializable type.</p>
 </section>
-                  <h4><a class="xref" href="Amqp.Serialization.AmqpProvidesAttribute.html#Amqp_Serialization_AmqpProvidesAttribute">AmqpProvidesAttribute</a></h4>
-                  <section><p>Specifies that the current type can be set to the provided type.</p>
+      <h4><a class="xref" href="Amqp.Serialization.AmqpProvidesAttribute.html">AmqpProvidesAttribute</a></h4>
+      <section><p>Specifies that the current type can be set to the provided type.</p>
 </section>
-                  <h4><a class="xref" href="Amqp.Serialization.AmqpSerializer.html#Amqp_Serialization_AmqpSerializer">AmqpSerializer</a></h4>
-                  <section><p>Serializes and deserializes an instance of an AMQP type.
+      <h4><a class="xref" href="Amqp.Serialization.AmqpSerializer.html">AmqpSerializer</a></h4>
+      <section><p>Serializes and deserializes an instance of an AMQP type.
 The descriptor (name and code) is scoped to and must be
 uniqueue within an instance of the serializer.
 When the static Serialize and Deserialize methods are called,
 the default instance is used.</p>
 </section>
-                <h3 id="interfaces">Interfaces
-              </h3>
-                  <h4><a class="xref" href="Amqp.Serialization.IAmqpSerializable.html#Amqp_Serialization_IAmqpSerializable">IAmqpSerializable</a></h4>
-                  <section><p>Specifies that a type is serializable by the AMQP serializer.</p>
+      <h4><a class="xref" href="Amqp.Serialization.OnDeserializedAttribute.html">OnDeserializedAttribute</a></h4>
+      <section><p>When applied to a method, specifies that the method is called after
+deserialization of an object.</p>
 </section>
-                <h3 id="enums">Enums
-              </h3>
-                  <h4><a class="xref" href="Amqp.Serialization.EncodingType.html#Amqp_Serialization_EncodingType">EncodingType</a></h4>
-                  <section><p>Defines the encoding type of an AMQP serializable type.</p>
+      <h4><a class="xref" href="Amqp.Serialization.OnDeserializingAttribute.html">OnDeserializingAttribute</a></h4>
+      <section><p>When applied to a method, specifies that the method is called during
+deserialization of an object.</p>
 </section>
-            </article>
+      <h4><a class="xref" href="Amqp.Serialization.OnSerializedAttribute.html">OnSerializedAttribute</a></h4>
+      <section><p>When applied to a method, specifies that the method is called after serialization
+of an object.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Serialization.OnSerializingAttribute.html">OnSerializingAttribute</a></h4>
+      <section><p>When applied to a method, specifies that the method is called during serialization
+of an object.</p>
+</section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Amqp.Serialization.IAmqpSerializable.html">IAmqpSerializable</a></h4>
+      <section><p>Specifies that a type is serializable by the AMQP serializer.</p>
+</section>
+    <h3 id="enums">Enums
+  </h3>
+      <h4><a class="xref" href="Amqp.Serialization.EncodingType.html">EncodingType</a></h4>
+      <section><p>Defines the encoding type of an AMQP serializable type.</p>
+</section>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -119,7 +140,7 @@ the default instance is used.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -128,6 +149,5 @@ the default instance is used.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Properties
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,409 +68,544 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Framing_Properties" data-uid="Amqp.Framing.Properties">Class Properties
-              </h1>
-              <div class="markdown level0 summary"><p>The Properties class defines the Immutable properties of the Message.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Framing.Properties">
+  
+  
+  <h1 id="Amqp_Framing_Properties" data-uid="Amqp.Framing.Properties" class="text-break">Class Properties
+  </h1>
+  <div class="markdown level0 summary"><p>The Properties class defines the Immutable properties of the Message.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described">Described</a></div>
-                  <div class="level2"><a class="xref" href="Amqp.Types.RestrictedDescribed.html#Amqp_Types_RestrictedDescribed">RestrictedDescribed</a></div>
-                  <div class="level3"><a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList">DescribedList</a></div>
-                  <div class="level4"><span class="xref">Properties</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_Fields">DescribedList.Fields</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_GetDebugString_System_String_System_Object___System_Object___">DescribedList.GetDebugString(String, Object[], Object[])</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Types.RestrictedDescribed.html#Amqp_Types_RestrictedDescribed_Descriptor">RestrictedDescribed.Descriptor</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Encode_Amqp_ByteBuffer_">Described.Encode(ByteBuffer)</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Decode_Amqp_ByteBuffer_">Described.Decode(ByteBuffer)</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Framing</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Framing_Properties_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public sealed class Properties : DescribedList</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Framing_Properties__ctor" data-uid="Amqp.Framing.Properties.#ctor">Properties()</h4>
-              <div class="markdown level1 summary"><p>Initializes a properties section.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.Types.Described.html">Described</a></div>
+    <div class="level2"><a class="xref" href="Amqp.Types.RestrictedDescribed.html">RestrictedDescribed</a></div>
+    <div class="level3"><a class="xref" href="Amqp.Types.DescribedList.html">DescribedList</a></div>
+    <div class="level4"><span class="xref">Properties</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_Fields">DescribedList.Fields</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_GetDebugString_System_String_System_Object___System_Object___">DescribedList.GetDebugString(String, Object[], Object[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.RestrictedDescribed.html#Amqp_Types_RestrictedDescribed_Descriptor">RestrictedDescribed.Descriptor</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Encode_Amqp_ByteBuffer_">Described.Encode(ByteBuffer)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Decode_Amqp_ByteBuffer_">Described.Decode(ByteBuffer)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Framing.html">Amqp.Framing</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Framing_Properties_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class Properties : DescribedList</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Framing_Properties__ctor_" data-uid="Amqp.Framing.Properties.#ctor*"></a>
+  <h4 id="Amqp_Framing_Properties__ctor" data-uid="Amqp.Framing.Properties.#ctor">Properties()</h4>
+  <div class="markdown level1 summary"><p>Initializes a properties section.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Properties()</code></pre>
-              </div>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Framing_Properties_AbsoluteExpiryTime" data-uid="Amqp.Framing.Properties.AbsoluteExpiryTime">AbsoluteExpiryTime</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the absolute-expiry-time field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Properties()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Framing_Properties_AbsoluteExpiryTime_" data-uid="Amqp.Framing.Properties.AbsoluteExpiryTime*"></a>
+  <h4 id="Amqp_Framing_Properties_AbsoluteExpiryTime" data-uid="Amqp.Framing.Properties.AbsoluteExpiryTime">AbsoluteExpiryTime</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the absolute-expiry-time field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public DateTime AbsoluteExpiryTime { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.DateTime</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_ContentEncoding" data-uid="Amqp.Framing.Properties.ContentEncoding">ContentEncoding</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the content-encoding field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime AbsoluteExpiryTime { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTime</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_ContentEncoding_" data-uid="Amqp.Framing.Properties.ContentEncoding*"></a>
+  <h4 id="Amqp_Framing_Properties_ContentEncoding" data-uid="Amqp.Framing.Properties.ContentEncoding">ContentEncoding</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the content-encoding field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Symbol ContentEncoding { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Types.Symbol.html#Amqp_Types_Symbol">Symbol</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_ContentType" data-uid="Amqp.Framing.Properties.ContentType">ContentType</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the content-type field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Symbol ContentEncoding { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Symbol.html">Symbol</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_ContentType_" data-uid="Amqp.Framing.Properties.ContentType*"></a>
+  <h4 id="Amqp_Framing_Properties_ContentType" data-uid="Amqp.Framing.Properties.ContentType">ContentType</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the content-type field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Symbol ContentType { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Types.Symbol.html#Amqp_Types_Symbol">Symbol</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_CorrelationId" data-uid="Amqp.Framing.Properties.CorrelationId">CorrelationId</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the correlation-id field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Symbol ContentType { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Symbol.html">Symbol</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_CorrelationId_" data-uid="Amqp.Framing.Properties.CorrelationId*"></a>
+  <h4 id="Amqp_Framing_Properties_CorrelationId" data-uid="Amqp.Framing.Properties.CorrelationId">CorrelationId</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the correlation-id field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string CorrelationId { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_CreationTime" data-uid="Amqp.Framing.Properties.CreationTime">CreationTime</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the creation-time field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string CorrelationId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Framing_Properties_CorrelationId_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The default correlation identifier type assumed by the library is string.
+If the application needs to process other types (ulong, uuid, or binary),
+it must use the Get/SetCorrelationId methods.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public DateTime CreationTime { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.DateTime</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_GroupId" data-uid="Amqp.Framing.Properties.GroupId">GroupId</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the group-id field.</p>
+  <a id="Amqp_Framing_Properties_CreationTime_" data-uid="Amqp.Framing.Properties.CreationTime*"></a>
+  <h4 id="Amqp_Framing_Properties_CreationTime" data-uid="Amqp.Framing.Properties.CreationTime">CreationTime</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the creation-time field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string GroupId { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_GroupSequence" data-uid="Amqp.Framing.Properties.GroupSequence">GroupSequence</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the group-sequence field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DateTime CreationTime { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.DateTime</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_GroupId_" data-uid="Amqp.Framing.Properties.GroupId*"></a>
+  <h4 id="Amqp_Framing_Properties_GroupId" data-uid="Amqp.Framing.Properties.GroupId">GroupId</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the group-id field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public uint GroupSequence { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.UInt32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_MessageId" data-uid="Amqp.Framing.Properties.MessageId">MessageId</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the message-id field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GroupId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_GroupSequence_" data-uid="Amqp.Framing.Properties.GroupSequence*"></a>
+  <h4 id="Amqp_Framing_Properties_GroupSequence" data-uid="Amqp.Framing.Properties.GroupSequence">GroupSequence</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the group-sequence field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string MessageId { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_ReplyTo" data-uid="Amqp.Framing.Properties.ReplyTo">ReplyTo</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the reply-to field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint GroupSequence { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.UInt32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_MessageId_" data-uid="Amqp.Framing.Properties.MessageId*"></a>
+  <h4 id="Amqp_Framing_Properties_MessageId" data-uid="Amqp.Framing.Properties.MessageId">MessageId</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the message-id field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string ReplyTo { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_ReplyToGroupId" data-uid="Amqp.Framing.Properties.ReplyToGroupId">ReplyToGroupId</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the reply-to-group-id field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string MessageId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Framing_Properties_MessageId_remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The default message identifier type assumed by the library is string.
+If the application needs to process other types (ulong, uuid, or binary),
+it must use the Get/SetMessageId methods.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string ReplyToGroupId { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_Subject" data-uid="Amqp.Framing.Properties.Subject">Subject</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the subject field.</p>
+  <a id="Amqp_Framing_Properties_ReplyTo_" data-uid="Amqp.Framing.Properties.ReplyTo*"></a>
+  <h4 id="Amqp_Framing_Properties_ReplyTo" data-uid="Amqp.Framing.Properties.ReplyTo">ReplyTo</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the reply-to field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string Subject { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_To" data-uid="Amqp.Framing.Properties.To">To</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the to field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ReplyTo { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_ReplyToGroupId_" data-uid="Amqp.Framing.Properties.ReplyToGroupId*"></a>
+  <h4 id="Amqp_Framing_Properties_ReplyToGroupId" data-uid="Amqp.Framing.Properties.ReplyToGroupId">ReplyToGroupId</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the reply-to-group-id field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public string To { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Framing_Properties_UserId" data-uid="Amqp.Framing.Properties.UserId">UserId</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the user-id field.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ReplyToGroupId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_Subject_" data-uid="Amqp.Framing.Properties.Subject*"></a>
+  <h4 id="Amqp_Framing_Properties_Subject" data-uid="Amqp.Framing.Properties.Subject">Subject</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the subject field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public byte[] UserId { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Framing_Properties_ToString" data-uid="Amqp.Framing.Properties.ToString">ToString()</h4>
-              <div class="markdown level1 summary"><p>Returns a string that represents the current properties object.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Subject { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_To_" data-uid="Amqp.Framing.Properties.To*"></a>
+  <h4 id="Amqp_Framing_Properties_To" data-uid="Amqp.Framing.Properties.To">To</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the to field.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
-              </div>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="overrides">Overrides</h5>
-              <div><span class="xref">System.Object.ToString()</span></div>
-            </article>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string To { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_UserId_" data-uid="Amqp.Framing.Properties.UserId*"></a>
+  <h4 id="Amqp_Framing_Properties_UserId" data-uid="Amqp.Framing.Properties.UserId">UserId</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the user-id field.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] UserId { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Framing_Properties_GetCorrelationId_" data-uid="Amqp.Framing.Properties.GetCorrelationId*"></a>
+  <h4 id="Amqp_Framing_Properties_GetCorrelationId" data-uid="Amqp.Framing.Properties.GetCorrelationId">GetCorrelationId()</h4>
+  <div class="markdown level1 summary"><p>Gets the correlation identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object GetCorrelationId()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><p>An object represending the message identifier. null if
+it is not set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_GetMessageId_" data-uid="Amqp.Framing.Properties.GetMessageId*"></a>
+  <h4 id="Amqp_Framing_Properties_GetMessageId" data-uid="Amqp.Framing.Properties.GetMessageId">GetMessageId()</h4>
+  <div class="markdown level1 summary"><p>Gets the message identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object GetMessageId()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><p>An object represending the message identifier. null if
+it is not set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_SetCorrelationId_" data-uid="Amqp.Framing.Properties.SetCorrelationId*"></a>
+  <h4 id="Amqp_Framing_Properties_SetCorrelationId_System_Object_" data-uid="Amqp.Framing.Properties.SetCorrelationId(System.Object)">SetCorrelationId(Object)</h4>
+  <div class="markdown level1 summary"><p>Sets the correlation identifier. If not null, the object type must be
+string, Guid, ulong or byte[].</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCorrelationId(object id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>The identifier object to set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_SetMessageId_" data-uid="Amqp.Framing.Properties.SetMessageId*"></a>
+  <h4 id="Amqp_Framing_Properties_SetMessageId_System_Object_" data-uid="Amqp.Framing.Properties.SetMessageId(System.Object)">SetMessageId(Object)</h4>
+  <div class="markdown level1 summary"><p>Sets the message identifier. If not null, the object type must be
+string, Guid, ulong or byte[].</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetMessageId(object id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>The identifier object to set.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_Properties_ToString_" data-uid="Amqp.Framing.Properties.ToString*"></a>
+  <h4 id="Amqp_Framing_Properties_ToString" data-uid="Amqp.Framing.Properties.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Returns a string that represents the current properties object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.Object.ToString()</span></div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -480,7 +618,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -489,6 +627,5 @@
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ConnectionListener
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,255 +68,265 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_ConnectionListener" data-uid="Amqp.Listener.ConnectionListener">Class ConnectionListener
-              </h1>
-              <div class="markdown level0 summary"><p>The conneciton listener accepts AMQP connections from an address.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.ConnectionListener">
+  
+  
+  <h1 id="Amqp_Listener_ConnectionListener" data-uid="Amqp.Listener.ConnectionListener" class="text-break">Class ConnectionListener
+  </h1>
+  <div class="markdown level0 summary"><p>The conneciton listener accepts AMQP connections from an address.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase">ConnectionFactoryBase</a></div>
-                  <div class="level2"><span class="xref">ConnectionListener</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase_BufferManager">ConnectionFactoryBase.BufferManager</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase_TCP">ConnectionFactoryBase.TCP</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase_AMQP">ConnectionFactoryBase.AMQP</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_ConnectionListener_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class ConnectionListener : ConnectionFactoryBase</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Listener_ConnectionListener__ctor_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.String,Amqp.Listener.IContainer)">ConnectionListener(String, IContainer)</h4>
-              <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.ConnectionFactoryBase.html">ConnectionFactoryBase</a></div>
+    <div class="level2"><span class="xref">ConnectionListener</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase_BufferManager">ConnectionFactoryBase.BufferManager</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase_TCP">ConnectionFactoryBase.TCP</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.ConnectionFactoryBase.html#Amqp_ConnectionFactoryBase_AMQP">ConnectionFactoryBase.AMQP</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_ConnectionListener_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ConnectionListener : ConnectionFactoryBase</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Listener_ConnectionListener__ctor_" data-uid="Amqp.Listener.ConnectionListener.#ctor*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener__ctor_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.String,Amqp.Listener.IContainer)">ConnectionListener(String, IContainer)</h4>
+  <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ConnectionListener(string address, IContainer container)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td><em>address</em></td>
-                    <td><p>The address to listen on.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConnectionListener(string address, IContainer container)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address to listen on.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer">IContainer</a></td>
-                    <td><em>container</em></td>
-                    <td><p>The IContainer implementation to handle client requests.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IContainer.html">IContainer</a></td>
+        <td><span class="parametername">container</span></td>
+        <td><p>The IContainer implementation to handle client requests.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.Uri,System.String,Amqp.Listener.IContainer)">ConnectionListener(Uri, String, IContainer)</h4>
-              <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ConnectionListener__ctor_" data-uid="Amqp.Listener.ConnectionListener.#ctor*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.Uri,System.String,Amqp.Listener.IContainer)">ConnectionListener(Uri, String, IContainer)</h4>
+  <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ConnectionListener(string, IContainer) instead.&quot;)]
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ConnectionListener(string, IContainer) instead.&quot;)]
 public ConnectionListener(Uri addressUri, string userInfo, IContainer container)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Uri</span></td>
-                    <td><em>addressUri</em></td>
-                    <td><p>The address Uri to listen on.</p>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Uri</span></td>
+        <td><span class="parametername">addressUri</span></td>
+        <td><p>The address Uri to listen on.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.String</span></td>
-                    <td><em>userInfo</em></td>
-                    <td><p>The credentials for client authentication using SASL PLAIN mechanism.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userInfo</span></td>
+        <td><p>The credentials for client authentication using SASL PLAIN mechanism.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer">IContainer</a></td>
-                    <td><em>container</em></td>
-                    <td><p>The IContainer implementation to handle client requests.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IContainer.html">IContainer</a></td>
+        <td><span class="parametername">container</span></td>
+        <td><p>The IContainer implementation to handle client requests.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer__remarks">Remarks</h5>
-              <div class="markdown level1 remarks"><p>This constructor is deprecated. To set user info, use ConnectionListener.SASL.EnablePlainMechanism method
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Listener_ConnectionListener__ctor_System_Uri_System_String_Amqp_Listener_IContainer__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>This constructor is deprecated. To set user info, use ConnectionListener.SASL.EnablePlainMechanism method
 after the connection listener is created.</p>
 </div>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Listener_ConnectionListener_Address" data-uid="Amqp.Listener.ConnectionListener.Address">Address</h4>
-              <div class="markdown level1 summary"><p>Gets the address the listener is listening on.</p>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Listener_ConnectionListener_Address_" data-uid="Amqp.Listener.ConnectionListener.Address*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_Address" data-uid="Amqp.Listener.ConnectionListener.Address">Address</h4>
+  <div class="markdown level1 summary"><p>Gets the address the listener is listening on.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Address Address { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Address.html#Amqp_Address">Address</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ConnectionListener_Container" data-uid="Amqp.Listener.ConnectionListener.Container">Container</h4>
-              <div class="markdown level1 summary"><p>Gets the AMQP container.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Address Address { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Address.html">Address</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ConnectionListener_Container_" data-uid="Amqp.Listener.ConnectionListener.Container*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_Container" data-uid="Amqp.Listener.ConnectionListener.Container">Container</h4>
+  <div class="markdown level1 summary"><p>Gets the AMQP container.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public IContainer Container { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer">IContainer</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ConnectionListener_SASL" data-uid="Amqp.Listener.ConnectionListener.SASL">SASL</h4>
-              <div class="markdown level1 summary"><p>Gets the SASL settings on the listener.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IContainer Container { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IContainer.html">IContainer</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ConnectionListener_SASL_" data-uid="Amqp.Listener.ConnectionListener.SASL*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_SASL" data-uid="Amqp.Listener.ConnectionListener.SASL">SASL</h4>
+  <div class="markdown level1 summary"><p>Gets the SASL settings on the listener.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ConnectionListener.SaslSettings SASL { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ConnectionListener.SaslSettings.html#Amqp_Listener_ConnectionListener_SaslSettings">ConnectionListener.SaslSettings</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_ConnectionListener_SSL" data-uid="Amqp.Listener.ConnectionListener.SSL">SSL</h4>
-              <div class="markdown level1 summary"><p>Gets the TLS/SSL settings on the listener.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConnectionListener.SaslSettings SASL { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ConnectionListener.SaslSettings.html">ConnectionListener.SaslSettings</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ConnectionListener_SSL_" data-uid="Amqp.Listener.ConnectionListener.SSL*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_SSL" data-uid="Amqp.Listener.ConnectionListener.SSL">SSL</h4>
+  <div class="markdown level1 summary"><p>Gets the TLS/SSL settings on the listener.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ConnectionListener.SslSettings SSL { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ConnectionListener.SslSettings.html#Amqp_Listener_ConnectionListener_SslSettings">ConnectionListener.SslSettings</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Listener_ConnectionListener_Close" data-uid="Amqp.Listener.ConnectionListener.Close">Close()</h4>
-              <div class="markdown level1 summary"><p>Closes the listener.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConnectionListener.SslSettings SSL { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ConnectionListener.SslSettings.html">ConnectionListener.SslSettings</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_ConnectionListener_Close_" data-uid="Amqp.Listener.ConnectionListener.Close*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_Close" data-uid="Amqp.Listener.ConnectionListener.Close">Close()</h4>
+  <div class="markdown level1 summary"><p>Closes the listener.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Close()</code></pre>
-              </div>
-              <h4 id="Amqp_Listener_ConnectionListener_Open" data-uid="Amqp.Listener.ConnectionListener.Open">Open()</h4>
-              <div class="markdown level1 summary"><p>Opens the listener.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Close()</code></pre>
+  </div>
+  <a id="Amqp_Listener_ConnectionListener_Open_" data-uid="Amqp.Listener.ConnectionListener.Open*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_Open" data-uid="Amqp.Listener.ConnectionListener.Open">Open()</h4>
+  <div class="markdown level1 summary"><p>Opens the listener.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Open()</code></pre>
-              </div>
-            </article>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Open()</code></pre>
+  </div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -326,7 +339,7 @@ after the connection listener is created.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -335,6 +348,5 @@ after the connection listener is created.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

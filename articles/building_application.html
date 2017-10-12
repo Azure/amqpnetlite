@@ -1,14 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Building Application </title>
+    <title>Specifying an Address </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Building Application ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="title" content="Specifying an Address ">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -31,6 +33,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -64,98 +67,206 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-              <h1 id="building-application">Building Application</h1>
-              
-<p>The <a href="http://azure.github.io/amqpnetlite/">APIs</a> map directly to the concepts defined in the <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.xml">AMQP specification</a>. Let&#39;s start with a simple example to send a message and receive it back.</p>
-<h2 id="example-sync-vs-async">Example: Sync vs. Async</h2>
+
+<p>The goal of AmqpNetLite is to provide a library that runs on every possible .Net platform, and
+is simple to use but also gives full control of the AMQP protocol when needed. Domain knowledge
+of AMQP can help your start with the library but is not mandatory.</p>
+<p>The <a href="http://azure.github.io/amqpnetlite/">APIs</a> are a direct mapping to the concepts defined in
+the <a href="http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-overview-v1.0-os.xml">AMQP specification</a>.
+If you have not read the <a href="hello_amqp.html">Hello AMQP!</a> guide, take a few minutes to go through it and
+see how easy it is to exchange messages between your applications.</p>
+<p>In this article, we will be explaining in details of how the library can be used and some best practices
+you, as an application developer, need to be aware of.</p>
+<p>AMQP messages are transferred over a link created in a bi-directional session channel, which is also
+created in a connection. In order to send or receive messages, the application needs to set up
+the protocol artifacts by creating objects of various classes in the library. The class names are
+self-explanatory (e.g. Connection, Session, SenderLink, ReceiverLink).</p>
+<h2 id="specifying-an-address">Specifying an Address</h2>
+<p>The AMQP endpoint where the client is connecting is represented as an Address object. An Address
+object can be created from a Uri string, or individual parameters specifying different parts of
+the Uri.</p>
+<ul>
+<li>When a Uri string is used, the username and password, if any, must be URL encoded.</li>
+<li>When multiple parameters are used, they must not be URL encoded.</li>
+</ul>
+<p>In addition to the TCP endpoint (host and port), the Address object also specifies how the connection
+handshake should take place.</p>
+<ul>
+<li>The Scheme property determines if a secure channel (TLS/SSL) should be established.</li>
+<li>The user info part determines if authentication (AMQP SASL) should be performed after the transport
+is established.</li>
+<li>When user info is absent, the library skips SASL negotiation all together. Please do not assume
+that SASL ANONYMOUS will be used.</li>
+<li>The Path property is only used in WebSockets transport (&quot;ws&quot; and &quot;wss&quot;).</li>
+<li>The Host property is set on the open.hostname field during connection negotiation.</li>
+</ul>
+<h2 id="creating-a-connection">Creating a connection</h2>
+<p>There are two ways to create a connection:</p>
+<ul>
+<li>through the constructors.</li>
+<li>through the <code>ConnectionFactory</code>.  </li>
+</ul>
+<h3 id="constructors">Constructors</h3>
+<p><code>public Connection(Address address)</code><br>This is probably the easiest way to create a connection to the given address. The Address object
+fully determines how the connection is established as explained in <a href="#specifying-an-address">Specifying an Address</a>
+section.</p>
+<p><code>public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)</code><br>This constructor can be used in cases where the application needs more control, such as</p>
+<ul>
+<li>providing a SaslProfile to perform specific SASL negotation, regardless of the user info, if any, in the address.</li>
+<li>providing an Open performative for connection negotiation. It allows the application
+to set desired values on Open, e.g. hostname, container-id, idle-timeout, custom properties, and so on.
+The application must ensure that the mandatory field, ContainerId, is set to avoid connection failures.</li>
+<li>providing an OnOpened callback to handle the Open performative from the remote peer.</li>
+</ul>
+<p>The following example demonstrates the above usages.</p>
+<pre><code>var connection = new connection(
+    new Address(&quot;amqps://contoso.com:5671&quot;),
+    SaslProfile.Anonymous,
+    new Open() { ContainerId = &quot;client.1.2&quot;, HostName = &quot;contoso.com&quot;, MaxFrameSize = 8 * 1024 },
+    (c, o) =&gt; { /* do someting with remote Open o */ });
+</code></pre><p>Keep in mind that the OnOpened callback may be invoked before the constructor returns due to
+the asynchronous nature of the AMQP protocol. It is not guaranteed to be invoked after the
+constructor returns either. If the application requires the remote Open performative to be
+processed before proceeding, it can wait on a task or an event which is completed or set in
+the OnOpened callback.</p>
+<p>The constructors are blocking until the underlying transport is established. This may cause
+undesired behavior, e.g. UI freeze if it is called from a UI thread. In these cases, application
+should use the <code>ConnectionFactory</code> class to perform asynchronous non-blocking creation of
+a connection.</p>
+<h3 id="connectionfactory">ConnectionFactory</h3>
+<p><code>ConnectionFactory</code> provides asynchronous connection creation, and it also gives more control
+on the transport and AMQP protocol.</p>
+<p>If you only need to create a connection asynchronously, do the following.</p>
+<pre><code>var connection = await Connection.Factory.CreateAsync(address);
+</code></pre><p>Optionally you can give the Open and OnOpened callback in the same way as in using constructors.</p>
+<pre><code>var connection = await Connection.Factory.CreateAsync(
+    new Address(&quot;amqps://localhost:5671&quot;),
+    new Open() { ContainerId = &quot;client.1.2&quot;, HostName = &quot;localhost&quot;, MaxFrameSize = 8 * 1024 },
+    (c, o) =&gt; { /*do someting with o*/ });
+</code></pre><p>To control the transport behavior and the AMQP protocol settings, you can create a <code>ConnectionFactory</code>
+object and configure the TCP, SSL, SASL and AMQP properties of the object. For example,</p>
+<pre><code>ConnectionFactory factory = new ConnectionFactory();
+factory.TCP.NoDelay = true;
+factory.TCP.SendBufferSize = 16 * 1024;
+factory.TCP.SendTimeout = 30000;
+factory.SSL.ClientCertificates = GetClientCert();
+factory.SASL.Profile = SaslProfile.External;
+factory.AMQP.MaxFrameSize = 64 * 1024;
+factory.AMQP.HostName = &quot;contoso.com&quot;;
+factory.AMQP.ContainerId = &quot;container:&quot; + testName;
+var connection = await factory.CreateAsync(new Address(&quot;amqps://localhost:5671&quot;));
+</code></pre><h3 id="tlsssl">TLS/SSL</h3>
+<p>Here are some special notes about TLS/SSL.</p>
+<ul>
+<li>It is enabled when the address scheme is &quot;amqps&quot;.</li>
+<li>It is enabled when any properties of <code>ConnectionFactory.SSL</code> is set, regardless of the address scheme.</li>
+<li>In testing, you may need to disable server certificate validation. This is done by one of the following.
+<code>Connection.DisableServerCertValidation = true;</code> or<br><code>factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) = true;</code></li>
+<li>In production, do not disable remote certificate validation as it presents a security risk.</li>
+<li>TLS/SSL SHOULD be used when SASL PLAIN is used to avoid sending credentials in plain text.</li>
+<li>On NETMF, TSL/SSL works only when it is supported by the device.</li>
+</ul>
+<h2 id="creating-a-session">Creating a Session</h2>
+<p>Sessions can be created by calling the constructors. Similar to connection, custom Begin object
+and/or an OnBegin callback can be provided.</p>
+<h2 id="creating-a-link">Creating a Link</h2>
+<p>A link is unidirectional. A SenderLink represents a link that transfers messages to the remote peer;
+a ReceiverLink represents a link that receives messages from the remote peer. A link is created in
+a session, identified by a unique name, and attached to a node specified by an address.<br>Again, application can provide custom Target or Source objects to control the link endpoint behavior,
+and supply an OnAttached callback to handle the remote attach frame.</p>
+<h2 id="sending-messages">Sending Messages</h2>
+<p>A Message contains multiple sections. At least one section must be initialized before the message is sent.
+When the message is created with an AMQP serializable object (<code>Message(object)</code>), its body is set to
+be and AMQP Value.
+The object is serialized using the AMQP type system. To control the body type, application can set the
+BodySection property as follows.</p>
+<pre><code>var message = new Message() { BodySection = new Data() { Binary = Encoding.UTF8.GetBytes(&quot;Hello AMQP&quot;) } };
+</code></pre><p>Application can do a blocking send by calling <code>SenderLink.Send(Message, int)</code>. The call is blocked until
+an acknowledgement is received or the wait time elapses.<br>To perform a non-blocking send, application should call <code>SenderLink.Send(Message, OutcomeCallback, object)</code>.
+The OutcomeCallback is invoked when an acknowledgement is received.<br>If OutcomeCallback is null, the library sends the message in best effort mode or fire-and-forget mode.</p>
+<pre><code>SenderLink.Send(Message, null, null)
+</code></pre><p>It sends the message pre-settled thus an acknowledgement is not required from the remote peer.
+Note that even in best effort mode, if the link is detached, an exception is thrown when Send method is called.</p>
+<h2 id="receiving-messages">Receiving Messages</h2>
+<h3 id="receive-loop">Receive Loop</h3>
+<p>Application can do a blocking receive by calling <code>ReceiverLink.Receive(int)</code>. The call is blocked until a message
+is available or the wait time elapses.<br>To continously receive message, application calls the <code>Receive</code> method in a loop.</p>
+<h3 id="messagecallback">MessageCallback</h3>
+<p>Application can alternatively register a callback to process messages by calling <code>ReceiverLink.Start(int, MessageCallback)</code>.
+The callback model eliminates a receive loop in the application.</p>
+<h3 id="link-credit">Link Credit</h3>
+<p>Link credit is a mechanism for controlling message flow in AMQP. A receiver issues credits to the remote peer and
+the credits determine the maximum number of messages the remote peer can send to the receiver.<br>By default, the ReceiverLink class manages the link credit automatically. The link credit is decremented
+when message arrives and incremented when application finishes processing it (by calling <code>ReceiverLink.Accept(Message)</code>
+or <code>ReceiverLink.Reject(Message)</code>). Periodecially new credit limit is communicated to the peer in flow frames.<br>Application can set the initial link credit by calling <code>ReceiverLink.SetCredit(int, true)</code> before calling the <code>Receive</code>
+method, or setting the value in the Start method when registering the message callback.<br>Application can also fully take over flow control by calling <code>ReceiverLink.SetCredit(int, false)</code>. When autoRestore is
+false, the library stops sending flow performative. The application must keep track of received messages and
+renew link credit as necessary by calling the <code>SetCredit</code> method.</p>
+<h2 id="shutting-down">Shutting Down</h2>
+<p>The connection, session, link objects should be closed when they are no long needed. To close them, simple call the
+<code>AmqpObject.Close</code> method. The <code>Close</code> method blocks until a response is received. By specifying a value of 0
+for waitUntilEnded, the application can initiate the shutdown without waiting for the response.</p>
+<p>Closing an object automatically closes all contained objects. For example, when a Connection is closed, all sessions
+in that connection is automatically closed.</p>
+<h2 id="sync-vs-async">Sync vs. Async</h2>
+<p>On .Net, .Net Core and UWP, it is recommended to use the async APIs.</p>
 <pre><code>Address address = new Address(&quot;amqp://guest:guest@localhost:5672&quot;);
-Connection connection = new Connection(address);
+Connection connection = await Connection.Factory.CreateAsync(address);
 Session session = new Session(connection);
 
-Message message = new Message(&quot;Hello AMQP&quot;);
+Message message = new Message(&quot;Hello AMQP&quot;);    
 SenderLink sender = new SenderLink(session, &quot;sender-link&quot;, &quot;q1&quot;);
-sender.Send(message);
+await sender.SendAsync(message);
 
 ReceiverLink receiver = new ReceiverLink(session, &quot;receiver-link&quot;, &quot;q1&quot;);
-message = receiver.Receive();
+message = await receiver.ReceiveAsync();
 receiver.Accept(message);
 
-sender.Close();
-receiver.Close();
-session.Close();
-connection.Close();
-</code></pre><p>On .Net, .Net Core and UWP, it is recommended to use the async APIs.</p>
-<pre><code>    Address address = new Address(&quot;amqp://guest:guest@localhost:5672&quot;);
-    Connection connection = await Connection.Factory.CreateAsync(address);
-    Session session = new Session(connection);
-
-    Message message = new Message(&quot;Hello AMQP&quot;);    
-    SenderLink sender = new SenderLink(session, &quot;sender-link&quot;, &quot;q1&quot;);
-    await sender.SendAsync(message);
-
-    ReceiverLink receiver = new ReceiverLink(session, &quot;receiver-link&quot;, &quot;q1&quot;);
-    message = await receiver.ReceiveAsync();
-    receiver.Accept(message);
-
-    await sender.CloseAsync();
-    await receiver.CloseAsync();
-    await session.CloseAsync();
-    await connection.CloseAsync();
-</code></pre><p>In order to send or receive messages, the application needs to create a Connection, a Session, and one of the SenderLink or ReceiverLink objects. They are explained in details in the following sections.</p>
-<h2 id="creating-a-connection">Creating a connection</h2>
-<p>There are two ways to create a connection: through the constructors and through the <code>ConnectionFactory</code>.<br>Both methods require an Address that specifies where and how to connect. When the address is created from a Uri string, the username and password, if any, must be URL encoded. When the Address is created from individual parts, the parameter values should not be URL encoded.<br>When the address contains user info, the SASL PLAIN profile is used to send the credentials; otherwise, the library skips SASL negotiation, unless a SaslProfile is provided to the constructor or set on ConnectionFactory.SASL settings. When SASL PLAIN is used, the application SHOULD ensure a secure transport (e.g. TLS) is used to avoid transmitting credentials in plain text.<br>The constructors are blocking until the underlying transport is established. ConnectionFactory provides asynchronous non-blocking creation of a connection, and at the same time it gives more control on the TCP, SSL, SASL and AMQP settings.<br>To customize connection&#39;s settings, the application can provide its own <a href="http://azure.github.io/amqpnetlite/api/Amqp.Framing.Open.html">Open</a> object.<br>If the application needs to inspect the Open performative from the remote peer, it can provide an OnOpened callback.<br>The following example shows,</p>
-<ul>
-<li>SSL without remote certificate validation (maybe for testing purposes).</li>
-<li>SASL anonymous profile.</li>
-<li>a custom Open to define application&#39;s container-id and max-frame-size.</li>
-<li>a callback to inspect the remote Open frame.<pre><code>var factory = new ConnectionFactory();
-factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) =&gt; true;
-factory.SASL.Profile = SaslProfile.Anonymous;
-var conneciton = await factory.CreateAsync(
-  new Address(&quot;amqps://localhost:5671&quot;),
-  new Open() { ContainerId = &quot;client.1.2&quot;, HostName = &quot;localhost&quot;, MaxFrameSize = 8 * 1024 },
-  (c, o) =&gt; { /*do someting with o*/ });
-</code></pre>Note that it is NOT guaranteed that the OnOpened callback is invoked after the connection object is returned due to the asynchronous nature of the AMQP protocol. Application can block on waiting for the callback, or process the received Open frame asynchronously.</li>
-</ul>
-<h2 id="creating-a-session">Creating a session</h2>
-<p>Sessions can be created by calling the constructors. Similar to connection, custom Begin object and/or a OnBegin callback can be provided.</p>
-<h2 id="creating-a-link">Creating a link</h2>
-<p>A link is unidirectional. A SenderLink represents a link that transfers messages to the remote peer; a ReceiverLink represents a link that receives messages from the remote peer. A link is created with a session, identified by a unique name, and attached to a node specified by an address.<br>Again, application can provide custom Target or Source objects to control the link endpoint behavior, and supply an OnAttached callback to handle the remote attach frame.</p>
-<h2 id="sending-messages">Sending messages</h2>
-<p>A Message contains multiple sections. At least one section must be initialized before the message is sent. When the message is created with an AMQP serializable object (<code>Message(object)</code>), its body is AMQP Value. The object is serialized using the AMQP type system. To control the body type, application can set the BodySection property as follows.</p>
-<pre><code>var message = new Message() { BodySection = new Data() { Binary = Encoding.UTF8.GetBytes(&quot;Hello AMQP&quot;) } };
-</code></pre><p>Application can do a blocking send by calling <code>SenderLink.Send(Message, int)</code>. The call is blocked until an acknowledgement is received or the wait times out. To perform a non-blocking send, application should call <code>SenderLink.Send(Message, OutcomeCallback, object)</code>. The OutcomeCallback is invoked when an acknowledgement is received. If OutcomeCallback is null, the library sends the message in best effort mode (i.e. the message is sent pre-settled thus an acknowledgement is not required from the remote peer). Note that even in best effort mode, if the link is detached, an exception will be thrown when Send method is called.</p>
-<h2 id="receiving-messages">Receiving messages</h2>
-<p>Application can do a blocking receive by calling <code>ReceiverLink.Receive(int)</code>. The call is blocked until a message is available or the wait times out. Application can alternatively register a callback to process messages by calling <code>ReceiverLink.Start(int, MessageCallback)</code>. The callback model eliminates a receive loop in the application.<br>By default, the ReceiverLink manages the link credit automatically. The link credit is decremented when message arrives and incremented when application finishes processing it (by calling ReceiverLink.Accept(Message) or ReceiverLink.Reject(Message). Periodecially new credit limit is communicated to the peer in flow frames.<br>Application can take control of link flow control by calling ReceiverLink.SetCredit(int, bool) and setting autoRestore to false. In this case, application must keep track of messages received and renew link credit as necessary.</p>
-<h2 id="shutting-down">Shutting down</h2>
-<p>The connection, session, link objects should be closed when they are no long needed. Typically the AmqpObject.Close(int, Error) method blocks until a response is received. By specifying 0 for waitUntilEnded, the application can initiate the shutdown without waiting for the response.</p>
-<h2 id="error-handling-and-recovery">Error handling and recovery</h2>
-<p>The AmqpOjbect provides a Closed event that the application can subscribe to handle errors. This event is raised when the AmqpObject reaches the End state. Application should subscribe to this event as early as possible (e.g. right after the object is created). If the event is subscribed after the object is already closed, the handler is not invoked.
-Besides the Closed event, application should handle exception from other API calls. If the object is closed, the API may throw AmqpException with &quot;amqp:illegal-state&quot; error. Application should check the AmqpObject.Error property for error conditions.<br>When the application detects the object is closed due to unexpected error, it should perform recovery by recreating the object, and sometimes maybe its container object.</p>
+await sender.CloseAsync();
+await receiver.CloseAsync();
+await session.CloseAsync();
+await connection.CloseAsync();
+</code></pre><h2 id="error-handling-and-recovery">Error Handling and Recovery</h2>
+<p>The AmqpOjbect provides a Closed event that the application can subscribe to handle errors.
+This event is raised when the AmqpObject reaches the End state. Application should subscribe to
+this event as early as possible (e.g. right after the object is created). If the event is
+subscribed after the object is already closed, the handler is not invoked.<br>Besides the Closed event, application should handle exceptions from the API calls.
+If the object is closed, the API may throw AmqpException with &quot;amqp:illegal-state&quot; error.
+Application should check the AmqpObject.Error property for error conditions.<br>When the application detects the object is closed due to unexpected error, it should perform
+recovery by recreating the object, and sometimes maybe its container object.</p>
 <h2 id="threading">Threading</h2>
-<p>Send and receive methods on links are thread safe.<br>Many async operation completion and callback invoke are triggered by an incoming frame received from the network. This is performed on the I/O thread where the connection pump is running. Blocking the thread mean no more incoming frames will be processed. So to avoid deadlock or application hang, do not mix sync and async APIs; do not perform blocking calls from an async callback. Below are examples for potential deadlock.</p>
-<pre><code>    SenderLink sender = new SenderLink(session, &quot;sender&quot;, &quot;q1&quot;);
-    await sender.SendAsync(new Message(&quot;m1&quot;));
-    sender.Send(new Message(&quot;m2&quot;));  // should call SendAsync
-</code></pre><pre><code>    SenderLink sender = new SenderLink(session, &quot;sender&quot;, &quot;q1&quot;);
-    sender.Send(
-        new Message(&quot;test&quot;),
-        (m, o, s) =&gt; ((SenderLink)s).Close(), // should not block
-        sender);
-</code></pre><h2 id="advanced-topics">Advanced topics</h2>
+<p>Send and receive methods on links are thread safe.<br>Usually the library completes an async operation or invokes a callback when a network event
+occurs. These events are generated when a network package is received. So the execution happens
+on the I/O thread where the connection pump is running. Blocking the thread means no more incoming
+frames can be processed and it is very likely to cause deadlock, application hang or timeout errors.<br>To avoid such issues, application should not mix sync and async APIs. DO not perform blocking calls
+from the async callback.<br>Below are examples for potential issues.</p>
+<pre><code>SenderLink sender = new SenderLink(session, &quot;sender&quot;, &quot;q1&quot;);
+await sender.SendAsync(new Message(&quot;m1&quot;));
+sender.Send(new Message(&quot;m2&quot;));
+</code></pre><p>The Send call will timeout because the returned acknowledgement cannot be processed when the I/O
+thread is blocked.</p>
+<pre><code>SenderLink sender = new SenderLink(session, &quot;sender&quot;, &quot;q1&quot;);
+sender.Send(
+    new Message(&quot;test&quot;),
+    (m, o, s) =&gt; Thread.Sleep(120000),
+    sender);
+</code></pre><p>Thread.Sleep is a hypothetical example of having blocking calls in the MessageCallback.</p>
+<h2 id="advanced-topics">Advanced topics</h2>
 <ul>
 <li><a href="listener.html">Listener</a></li>
 <li><a href="serialization.html">Serialization</a></li>
 <li><a href="buffer_management.html">Buffer Management</a></li>
+<li><a href="fault_tolerance.html">Fault Tolerance</a></li>
 </ul>
-
-            </article>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -168,7 +279,7 @@ Besides the Closed event, application should handle exception from other API cal
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -177,6 +288,5 @@ Besides the Closed event, application should handle exception from other API cal
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

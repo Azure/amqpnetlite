@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class Context
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,190 +68,200 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_Context" data-uid="Amqp.Listener.Context">Class Context
-              </h1>
-              <div class="markdown level0 summary"><p>The base class of request context.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.Context">
+  
+  
+  <h1 id="Amqp_Listener_Context" data-uid="Amqp.Listener.Context" class="text-break">Class Context
+  </h1>
+  <div class="markdown level0 summary"><p>The base class of request context.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><span class="xref">Context</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_Context_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public abstract class Context</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Listener_Context__ctor_Amqp_Listener_ListenerLink_Amqp_Message_" data-uid="Amqp.Listener.Context.#ctor(Amqp.Listener.ListenerLink,Amqp.Message)">Context(ListenerLink, Message)</h4>
-              <div class="markdown level1 summary"><p>Initializes a context object.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">Context</span></div>
+      <div class="level2"><a class="xref" href="Amqp.Listener.MessageContext.html">MessageContext</a></div>
+      <div class="level2"><a class="xref" href="Amqp.Listener.ReceiveContext.html">ReceiveContext</a></div>
+      <div class="level2"><a class="xref" href="Amqp.Listener.RequestContext.html">RequestContext</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_Context_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Context</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Listener_Context__ctor_" data-uid="Amqp.Listener.Context.#ctor*"></a>
+  <h4 id="Amqp_Listener_Context__ctor_Amqp_Listener_ListenerLink_Amqp_Message_" data-uid="Amqp.Listener.Context.#ctor(Amqp.Listener.ListenerLink,Amqp.Message)">Context(ListenerLink, Message)</h4>
+  <div class="markdown level1 summary"><p>Initializes a context object.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">protected Context(ListenerLink link, Message message)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ListenerLink.html#Amqp_Listener_ListenerLink">ListenerLink</a></td>
-                    <td><em>link</em></td>
-                    <td><p>The link where the message was received.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected Context(ListenerLink link, Message message)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ListenerLink.html">ListenerLink</a></td>
+        <td><span class="parametername">link</span></td>
+        <td><p>The link where the message was received.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
-                    <td><em>message</em></td>
-                    <td><p>The received message.</p>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The received message.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Listener_Context_Link" data-uid="Amqp.Listener.Context.Link">Link</h4>
-              <div class="markdown level1 summary"><p>Gets the receiving link associated with the context.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Listener_Context_Link_" data-uid="Amqp.Listener.Context.Link*"></a>
+  <h4 id="Amqp_Listener_Context_Link" data-uid="Amqp.Listener.Context.Link">Link</h4>
+  <div class="markdown level1 summary"><p>Gets the receiving link associated with the context.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ListenerLink Link { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ListenerLink.html#Amqp_Listener_ListenerLink">ListenerLink</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_Context_Message" data-uid="Amqp.Listener.Context.Message">Message</h4>
-              <div class="markdown level1 summary"><p>Gets the messages associated with the context.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ListenerLink Link { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ListenerLink.html">ListenerLink</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_Context_Message_" data-uid="Amqp.Listener.Context.Message*"></a>
+  <h4 id="Amqp_Listener_Context_Message" data-uid="Amqp.Listener.Context.Message">Message</h4>
+  <div class="markdown level1 summary"><p>Gets the messages associated with the context.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public Message Message { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Message.html#Amqp_Message">Message</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Listener_Context_State" data-uid="Amqp.Listener.Context.State">State</h4>
-              <div class="markdown level1 summary"><p>Gets the state of the concext.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Message Message { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_Context_State_" data-uid="Amqp.Listener.Context.State*"></a>
+  <h4 id="Amqp_Listener_Context_State" data-uid="Amqp.Listener.Context.State">State</h4>
+  <div class="markdown level1 summary"><p>Gets the state of the concext.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ContextState State { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Listener.ContextState.html#Amqp_Listener_ContextState">ContextState</a></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Listener_Context_Dispose_Amqp_Framing_DeliveryState_" data-uid="Amqp.Listener.Context.Dispose(Amqp.Framing.DeliveryState)">Dispose(DeliveryState)</h4>
-              <div class="markdown level1 summary"><p>Disposes the request. If required, a disposition frame is sent to
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ContextState State { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ContextState.html">ContextState</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_Context_Dispose_" data-uid="Amqp.Listener.Context.Dispose*"></a>
+  <h4 id="Amqp_Listener_Context_Dispose_Amqp_Framing_DeliveryState_" data-uid="Amqp.Listener.Context.Dispose(Amqp.Framing.DeliveryState)">Dispose(DeliveryState)</h4>
+  <div class="markdown level1 summary"><p>Disposes the request. If required, a disposition frame is sent to
 the peer to acknowledge the message.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">protected void Dispose(DeliveryState deliveryState)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.Framing.DeliveryState.html#Amqp_Framing_DeliveryState">DeliveryState</a></td>
-                    <td><em>deliveryState</em></td>
-                    <td><p>The delivery state to send.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected void Dispose(DeliveryState deliveryState)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.DeliveryState.html">DeliveryState</a></td>
+        <td><span class="parametername">deliveryState</span></td>
+        <td><p>The delivery state to send.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -261,7 +274,7 @@ the peer to acknowledge the message.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -270,6 +283,5 @@ the peer to acknowledge the message.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

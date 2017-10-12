@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AmqpSerializer
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,368 +68,383 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Serialization_AmqpSerializer" data-uid="Amqp.Serialization.AmqpSerializer">Class AmqpSerializer
-              </h1>
-              <div class="markdown level0 summary"><p>Serializes and deserializes an instance of an AMQP type.
+            <article class="content wrap" id="_content" data-uid="Amqp.Serialization.AmqpSerializer">
+  
+  
+  <h1 id="Amqp_Serialization_AmqpSerializer" data-uid="Amqp.Serialization.AmqpSerializer" class="text-break">Class AmqpSerializer
+  </h1>
+  <div class="markdown level0 summary"><p>Serializes and deserializes an instance of an AMQP type.
 The descriptor (name and code) is scoped to and must be
 uniqueue within an instance of the serializer.
 When the static Serialize and Deserialize methods are called,
 the default instance is used.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><span class="xref">AmqpSerializer</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Serialization</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Serialization_AmqpSerializer_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public sealed class AmqpSerializer</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Serialization_AmqpSerializer__ctor" data-uid="Amqp.Serialization.AmqpSerializer.#ctor">AmqpSerializer()</h4>
-              <div class="markdown level1 summary"><p>Initializes a new instance of the AmqpSerializer class.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">AmqpSerializer</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Serialization.html">Amqp.Serialization</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Serialization_AmqpSerializer_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class AmqpSerializer</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Serialization_AmqpSerializer__ctor_" data-uid="Amqp.Serialization.AmqpSerializer.#ctor*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer__ctor" data-uid="Amqp.Serialization.AmqpSerializer.#ctor">AmqpSerializer()</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the AmqpSerializer class.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public AmqpSerializer()</code></pre>
-              </div>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_Serialization_AmqpSerializer_Deserialize__1_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.Deserialize``1(Amqp.ByteBuffer)">Deserialize&lt;T&gt;(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Deserializes an instance of an AMQP type from a buffer.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AmqpSerializer()</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Serialization_AmqpSerializer_Deserialize_" data-uid="Amqp.Serialization.AmqpSerializer.Deserialize*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer_Deserialize__1_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.Deserialize``1(Amqp.ByteBuffer)">Deserialize&lt;T&gt;(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Deserializes an instance of an AMQP type from a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static T Deserialize&lt;T&gt;(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T Deserialize&lt;T&gt;(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">T</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="typeParameters">Type Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><em>T</em></td>
-                    <td>The serializable type.</td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpSerializer_Deserialize__2_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.Deserialize``2(Amqp.ByteBuffer)">Deserialize&lt;T, TAs&gt;(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Deserializes an instance of an AMQP type from a buffer.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The serializable type.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpSerializer_Deserialize_" data-uid="Amqp.Serialization.AmqpSerializer.Deserialize*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer_Deserialize__2_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.Deserialize``2(Amqp.ByteBuffer)">Deserialize&lt;T, TAs&gt;(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Deserializes an instance of an AMQP type from a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static TAs Deserialize&lt;T, TAs&gt;(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read from.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TAs Deserialize&lt;T, TAs&gt;(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read from.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">TAs</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="typeParameters">Type Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><em>T</em></td>
-                    <td>The serializable type.</td>
-                  </tr>
-                  <tr>
-                    <td><em>TAs</em></td>
-                    <td>The return type of the deserialized object.</td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpSerializer_ReadObject__1_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.ReadObject``1(Amqp.ByteBuffer)">ReadObject&lt;T&gt;(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads an serializable object from a buffer.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TAs</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The serializable type.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TAs</span></td>
+        <td><p>The return type of the deserialized object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpSerializer_ReadObject_" data-uid="Amqp.Serialization.AmqpSerializer.ReadObject*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer_ReadObject__1_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.ReadObject``1(Amqp.ByteBuffer)">ReadObject&lt;T&gt;(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads an serializable object from a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public T ReadObject&lt;T&gt;(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T ReadObject&lt;T&gt;(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">T</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="typeParameters">Type Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><em>T</em></td>
-                    <td>The type of the serializable object.</td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpSerializer_ReadObject__2_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.ReadObject``2(Amqp.ByteBuffer)">ReadObject&lt;T, TAs&gt;(ByteBuffer)</h4>
-              <div class="markdown level1 summary"><p>Reads an serializable object from a buffer.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The type of the serializable object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpSerializer_ReadObject_" data-uid="Amqp.Serialization.AmqpSerializer.ReadObject*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer_ReadObject__2_Amqp_ByteBuffer_" data-uid="Amqp.Serialization.AmqpSerializer.ReadObject``2(Amqp.ByteBuffer)">ReadObject&lt;T, TAs&gt;(ByteBuffer)</h4>
+  <div class="markdown level1 summary"><p>Reads an serializable object from a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public TAs ReadObject&lt;T, TAs&gt;(ByteBuffer buffer)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to read.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TAs ReadObject&lt;T, TAs&gt;(ByteBuffer buffer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="returns">Returns</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">TAs</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h5 class="typeParameters">Type Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><em>T</em></td>
-                    <td>The type of the serializable object.</td>
-                  </tr>
-                  <tr>
-                    <td><em>TAs</em></td>
-                    <td>The return type of the deserialized object.</td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpSerializer_Serialize_Amqp_ByteBuffer_System_Object_" data-uid="Amqp.Serialization.AmqpSerializer.Serialize(Amqp.ByteBuffer,System.Object)">Serialize(ByteBuffer, Object)</h4>
-              <div class="markdown level1 summary"><p>Serializes an instance of an AMQP type into a buffer.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">TAs</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The type of the serializable object.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="parametername">TAs</span></td>
+        <td><p>The return type of the deserialized object.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpSerializer_Serialize_" data-uid="Amqp.Serialization.AmqpSerializer.Serialize*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer_Serialize_Amqp_ByteBuffer_System_Object_" data-uid="Amqp.Serialization.AmqpSerializer.Serialize(Amqp.ByteBuffer,System.Object)">Serialize(ByteBuffer, Object)</h4>
+  <div class="markdown level1 summary"><p>Serializes an instance of an AMQP type into a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public static void Serialize(ByteBuffer buffer, object graph)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void Serialize(ByteBuffer buffer, object graph)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Object</span></td>
-                    <td><em>graph</em></td>
-                    <td><p>The serializable AMQP object.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">graph</span></td>
+        <td><p>The serializable AMQP object.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_Serialization_AmqpSerializer_WriteObject_Amqp_ByteBuffer_System_Object_" data-uid="Amqp.Serialization.AmqpSerializer.WriteObject(Amqp.ByteBuffer,System.Object)">WriteObject(ByteBuffer, Object)</h4>
-              <div class="markdown level1 summary"><p>Writes an serializable object into a buffer.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Serialization_AmqpSerializer_WriteObject_" data-uid="Amqp.Serialization.AmqpSerializer.WriteObject*"></a>
+  <h4 id="Amqp_Serialization_AmqpSerializer_WriteObject_Amqp_ByteBuffer_System_Object_" data-uid="Amqp.Serialization.AmqpSerializer.WriteObject(Amqp.ByteBuffer,System.Object)">WriteObject(ByteBuffer, Object)</h4>
+  <div class="markdown level1 summary"><p>Writes an serializable object into a buffer.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void WriteObject(ByteBuffer buffer, object graph)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><a class="xref" href="Amqp.ByteBuffer.html#Amqp_ByteBuffer">ByteBuffer</a></td>
-                    <td><em>buffer</em></td>
-                    <td><p>The buffer to write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void WriteObject(ByteBuffer buffer, object graph)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Object</span></td>
-                    <td><em>graph</em></td>
-                    <td><p>The serializable object.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">graph</span></td>
+        <td><p>The serializable object.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -439,7 +457,7 @@ the default instance is used.</p>
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -448,6 +466,5 @@ the default instance is used.</p>
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

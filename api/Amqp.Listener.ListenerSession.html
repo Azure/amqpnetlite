@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ListenerSession
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,77 +68,108 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Listener_ListenerSession" data-uid="Amqp.Listener.ListenerSession">Class ListenerSession
-              </h1>
-              <div class="markdown level0 summary"><p>An AMQP session used by the listener.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.ListenerSession">
+  
+  
+  <h1 id="Amqp_Listener_ListenerSession" data-uid="Amqp.Listener.ListenerSession" class="text-break">Class ListenerSession
+  </h1>
+  <div class="markdown level0 summary"><p>An AMQP session used by the listener.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject">AmqpObject</a></div>
-                  <div class="level2"><a class="xref" href="Amqp.Session.html#Amqp_Session">Session</a></div>
-                  <div class="level3"><span class="xref">ListenerSession</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.Session.html#Amqp_Session_Connection">Session.Connection</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Session.html#Amqp_Session_OnClose_Amqp_Framing_Error_">Session.OnClose(Error)</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Closed">AmqpObject.Closed</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Error">AmqpObject.Error</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close_System_Int32_Amqp_Framing_Error_">AmqpObject.Close(Int32, Error)</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Listener</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Listener_ListenerSession_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class ListenerSession : Session</code></pre>
-              </div>
-              <h3 id="extensionmethods">Extension Methods</h3>
-              <div>
-                  <a class="xref" href="Amqp.TaskExtensions.html#Amqp_TaskExtensions_CloseAsync_Amqp_AmqpObject_System_Int32_">TaskExtensions.CloseAsync(Int32)</a>
-              </div>
-            </article>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.AmqpObject.html">AmqpObject</a></div>
+    <div class="level2"><a class="xref" href="Amqp.Session.html">Session</a></div>
+    <div class="level3"><span class="xref">ListenerSession</span></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><a class="xref" href="Amqp.ISession.html">ISession</a></div>
+    <div><a class="xref" href="Amqp.IAmqpObject.html">IAmqpObject</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.Session.html#Amqp_Session_Amqp_ISession_CreateReceiver_System_String_System_String_">Session.ISession.CreateReceiver(String, String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Session.html#Amqp_Session_Amqp_ISession_CreateSender_System_String_System_String_">Session.ISession.CreateSender(String, String)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Session.html#Amqp_Session_Connection">Session.Connection</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Session.html#Amqp_Session_OnClose_Amqp_Framing_Error_">Session.OnClose(Error)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Closed">AmqpObject.Closed</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Error">AmqpObject.Error</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_IsClosed">AmqpObject.IsClosed</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_AddClosedCallback_Amqp_ClosedCallback_">AmqpObject.AddClosedCallback(ClosedCallback)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close">AmqpObject.Close()</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Close_System_TimeSpan_Amqp_Framing_Error_">AmqpObject.Close(TimeSpan, Error)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync">AmqpObject.CloseAsync()</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_">AmqpObject.CloseAsync(TimeSpan)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_ListenerSession_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ListenerSession : Session, ISession, IAmqpObject</code></pre>
+  </div>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <a class="xref" href="Amqp.ISession.html">ISession</a>
+  </div>
+  <div>
+      <a class="xref" href="Amqp.IAmqpObject.html">IAmqpObject</a>
+  </div>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -148,7 +182,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -157,6 +191,5 @@
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

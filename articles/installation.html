@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>NuGet Packages </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="NuGet Packages ">
+    <meta name="generator" content="docfx 2.25.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+
+<p>The library is installed to the application projects through the NuGet packages.  </p>
+<h2 id="nuget-packages">NuGet Packages</h2>
+<p>The following NuGet packages are available.</p>
+<ul>
+<li><strong>AMQPNetLite</strong> - the package containing the targets of all supported platforms.</li>
+<li><strong>AMQPNetMicro</strong> - the package containing a compact version for NETMF. To reduce
+storage and memory footprints, this version has its own APIs and implementation
+that are specifically designed for memory and space constrained devices.</li>
+<li>.Net Core packages - the packages for any netstandard1.3 compliant platforms.<ul>
+<li><strong>AMQPNetLite.Core</strong> - the core protocol implementation and the client/listener
+APIs.</li>
+<li><strong>AMQPNetLite.Serialization</strong> - the AMQP Serializer that serializes custom
+types using the standard AMQP type system.</li>
+<li><strong>AMQPNetLite.WebSockets</strong> - the WebSocket transport for the client.</li>
+</ul>
+</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>To reference the library, install the corresponding NuGet package into the
+projects you are developing.</p>
+<h3 id="visual-studio">Visual Studio</h3>
+<p>Open Manage NuGet Packages window. Search for the package mentioned above for
+the platform of your application. Install the package.</p>
+<p>Alternatively, open Package Manager Console and execute the following command.</p>
+<pre><code>Install-Package AmqpNetLite -ProjectName YourProjectName
+</code></pre><h3 id="net-core-cli">.Net Core cli</h3>
+<p>If you develop with other editors and build with the cli tool chain, add the
+following to your project.json file.</p>
+<pre><code>  &quot;dependencies&quot;: {
+    &quot;AMQPNetLite.Core&quot;: &quot;2.0.0&quot;,
+    &quot;Other.Dependency&quot;: &quot;1.0.0&quot;
+  }
+</code></pre></article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

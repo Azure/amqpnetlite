@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class ByteBuffer
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,451 +68,468 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_ByteBuffer" data-uid="Amqp.ByteBuffer">Class ByteBuffer
-              </h1>
-              <div class="markdown level0 summary"><p>A byte array wrapper that has a read and a write cursor.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.ByteBuffer">
+  
+  
+  <h1 id="Amqp_ByteBuffer" data-uid="Amqp.ByteBuffer" class="text-break">Class ByteBuffer
+  </h1>
+  <div class="markdown level0 summary"><p>A byte array wrapper that has a read and a write cursor.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><span class="xref">ByteBuffer</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_ByteBuffer_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class ByteBuffer</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_ByteBuffer__ctor_System_Byte___System_Int32_System_Int32_System_Int32_" data-uid="Amqp.ByteBuffer.#ctor(System.Byte[],System.Int32,System.Int32,System.Int32)">ByteBuffer(Byte[], Int32, Int32, Int32)</h4>
-              <div class="markdown level1 summary"><p>Initializes a new buffer from a byte array.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">ByteBuffer</span></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.html">Amqp</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_ByteBuffer_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ByteBuffer</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_ByteBuffer__ctor_" data-uid="Amqp.ByteBuffer.#ctor*"></a>
+  <h4 id="Amqp_ByteBuffer__ctor_System_Byte___System_Int32_System_Int32_System_Int32_" data-uid="Amqp.ByteBuffer.#ctor(System.Byte[],System.Int32,System.Int32,System.Int32)">ByteBuffer(Byte[], Int32, Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new buffer from a byte array.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ByteBuffer(byte[] buffer, int offset, int count, int capacity)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td><em>buffer</em></td>
-                    <td><p>The byte array.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ByteBuffer(byte[] buffer, int offset, int count, int capacity)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The byte array.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>The start position.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>The start position.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>count</em></td>
-                    <td><p>The number of bytes.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">count</span></td>
+        <td><p>The number of bytes.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>capacity</em></td>
-                    <td><p>The total size of the byte array from offset.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">capacity</span></td>
+        <td><p>The total size of the byte array from offset.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer__ctor_System_Int32_System_Boolean_" data-uid="Amqp.ByteBuffer.#ctor(System.Int32,System.Boolean)">ByteBuffer(Int32, Boolean)</h4>
-              <div class="markdown level1 summary"><p>Initializes a new buffer of a specified size.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer__ctor_" data-uid="Amqp.ByteBuffer.#ctor*"></a>
+  <h4 id="Amqp_ByteBuffer__ctor_System_Int32_System_Boolean_" data-uid="Amqp.ByteBuffer.#ctor(System.Int32,System.Boolean)">ByteBuffer(Int32, Boolean)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new buffer of a specified size.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public ByteBuffer(int size, bool autoGrow)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>size</em></td>
-                    <td><p>The size in bytes.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ByteBuffer(int size, bool autoGrow)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">size</span></td>
+        <td><p>The size in bytes.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td><em>autoGrow</em></td>
-                    <td><p>If the buffer should auto-grow when a write size is larger than the buffer size.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">autoGrow</span></td>
+        <td><p>If the buffer should auto-grow when a write size is larger than the buffer size.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_ByteBuffer_Buffer" data-uid="Amqp.ByteBuffer.Buffer">Buffer</h4>
-              <div class="markdown level1 summary"><p>Gets the byte array.</p>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_ByteBuffer_Buffer_" data-uid="Amqp.ByteBuffer.Buffer*"></a>
+  <h4 id="Amqp_ByteBuffer_Buffer" data-uid="Amqp.ByteBuffer.Buffer">Buffer</h4>
+  <div class="markdown level1 summary"><p>Gets the byte array.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public byte[] Buffer { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Byte</span>[]</td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Capacity" data-uid="Amqp.ByteBuffer.Capacity">Capacity</h4>
-              <div class="markdown level1 summary"><p>Gets the capacity.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] Buffer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Capacity_" data-uid="Amqp.ByteBuffer.Capacity*"></a>
+  <h4 id="Amqp_ByteBuffer_Capacity" data-uid="Amqp.ByteBuffer.Capacity">Capacity</h4>
+  <div class="markdown level1 summary"><p>Gets the capacity.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Capacity { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Length" data-uid="Amqp.ByteBuffer.Length">Length</h4>
-              <div class="markdown level1 summary"><p>Gets the available size for read.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Capacity { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Length_" data-uid="Amqp.ByteBuffer.Length*"></a>
+  <h4 id="Amqp_ByteBuffer_Length" data-uid="Amqp.ByteBuffer.Length">Length</h4>
+  <div class="markdown level1 summary"><p>Gets the available size for read.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Length { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Offset" data-uid="Amqp.ByteBuffer.Offset">Offset</h4>
-              <div class="markdown level1 summary"><p>Gets the current offset (read position).</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Length { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Offset_" data-uid="Amqp.ByteBuffer.Offset*"></a>
+  <h4 id="Amqp_ByteBuffer_Offset" data-uid="Amqp.ByteBuffer.Offset">Offset</h4>
+  <div class="markdown level1 summary"><p>Gets the current offset (read position).</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Offset { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Size" data-uid="Amqp.ByteBuffer.Size">Size</h4>
-              <div class="markdown level1 summary"><p>Gets the remaining size for write.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Offset { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Size_" data-uid="Amqp.ByteBuffer.Size*"></a>
+  <h4 id="Amqp_ByteBuffer_Size" data-uid="Amqp.ByteBuffer.Size">Size</h4>
+  <div class="markdown level1 summary"><p>Gets the remaining size for write.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int Size { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_WritePos" data-uid="Amqp.ByteBuffer.WritePos">WritePos</h4>
-              <div class="markdown level1 summary"><p>Gets the write position.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int Size { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_WritePos_" data-uid="Amqp.ByteBuffer.WritePos*"></a>
+  <h4 id="Amqp_ByteBuffer_WritePos" data-uid="Amqp.ByteBuffer.WritePos">WritePos</h4>
+  <div class="markdown level1 summary"><p>Gets the write position.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public int WritePos { get; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h3 id="methods">Methods
-              </h3>
-              <h4 id="Amqp_ByteBuffer_AdjustPosition_System_Int32_System_Int32_" data-uid="Amqp.ByteBuffer.AdjustPosition(System.Int32,System.Int32)">AdjustPosition(Int32, Int32)</h4>
-              <div class="markdown level1 summary"><p>Adjusts the read and write position.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int WritePos { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_ByteBuffer_AdjustPosition_" data-uid="Amqp.ByteBuffer.AdjustPosition*"></a>
+  <h4 id="Amqp_ByteBuffer_AdjustPosition_System_Int32_System_Int32_" data-uid="Amqp.ByteBuffer.AdjustPosition(System.Int32,System.Int32)">AdjustPosition(Int32, Int32)</h4>
+  <div class="markdown level1 summary"><p>Adjusts the read and write position.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void AdjustPosition(int offset, int length)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>offset</em></td>
-                    <td><p>Read position to set.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AdjustPosition(int offset, int length)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">offset</span></td>
+        <td><p>Read position to set.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>length</em></td>
-                    <td><p>Length from read position to set the write position.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">length</span></td>
+        <td><p>Length from read position to set the write position.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Append_System_Int32_" data-uid="Amqp.ByteBuffer.Append(System.Int32)">Append(Int32)</h4>
-              <div class="markdown level1 summary"><p>Advances the write position. As a result, length is increased by size.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Append_" data-uid="Amqp.ByteBuffer.Append*"></a>
+  <h4 id="Amqp_ByteBuffer_Append_System_Int32_" data-uid="Amqp.ByteBuffer.Append(System.Int32)">Append(Int32)</h4>
+  <div class="markdown level1 summary"><p>Advances the write position. As a result, length is increased by size.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Append(int size)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>size</em></td>
-                    <td><p>Size to advance.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Append(int size)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">size</span></td>
+        <td><p>Size to advance.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Complete_System_Int32_" data-uid="Amqp.ByteBuffer.Complete(System.Int32)">Complete(Int32)</h4>
-              <div class="markdown level1 summary"><p>Advances the read position.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Complete_" data-uid="Amqp.ByteBuffer.Complete*"></a>
+  <h4 id="Amqp_ByteBuffer_Complete_System_Int32_" data-uid="Amqp.ByteBuffer.Complete(System.Int32)">Complete(Int32)</h4>
+  <div class="markdown level1 summary"><p>Advances the read position.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Complete(int size)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>size</em></td>
-                    <td><p>Size to advance.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Complete(int size)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">size</span></td>
+        <td><p>Size to advance.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Reset" data-uid="Amqp.ByteBuffer.Reset">Reset()</h4>
-              <div class="markdown level1 summary"><p>Resets read and write position to the initial state.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Reset_" data-uid="Amqp.ByteBuffer.Reset*"></a>
+  <h4 id="Amqp_ByteBuffer_Reset" data-uid="Amqp.ByteBuffer.Reset">Reset()</h4>
+  <div class="markdown level1 summary"><p>Resets read and write position to the initial state.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
-              </div>
-              <h4 id="Amqp_ByteBuffer_Seek_System_Int32_" data-uid="Amqp.ByteBuffer.Seek(System.Int32)">Seek(Int32)</h4>
-              <div class="markdown level1 summary"><p>Sets the read position.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Reset()</code></pre>
+  </div>
+  <a id="Amqp_ByteBuffer_Seek_" data-uid="Amqp.ByteBuffer.Seek*"></a>
+  <h4 id="Amqp_ByteBuffer_Seek_System_Int32_" data-uid="Amqp.ByteBuffer.Seek(System.Int32)">Seek(Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets the read position.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Seek(int seekPosition)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>seekPosition</em></td>
-                    <td><p>Position to set.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Seek(int seekPosition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">seekPosition</span></td>
+        <td><p>Position to set.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Shrink_System_Int32_" data-uid="Amqp.ByteBuffer.Shrink(System.Int32)">Shrink(Int32)</h4>
-              <div class="markdown level1 summary"><p>Moves back the write position. As a result, length is decreased by size.</p>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Shrink_" data-uid="Amqp.ByteBuffer.Shrink*"></a>
+  <h4 id="Amqp_ByteBuffer_Shrink_System_Int32_" data-uid="Amqp.ByteBuffer.Shrink(System.Int32)">Shrink(Int32)</h4>
+  <div class="markdown level1 summary"><p>Moves back the write position. As a result, length is decreased by size.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Shrink(int size)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>size</em></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-              <h4 id="Amqp_ByteBuffer_Validate_System_Boolean_System_Int32_" data-uid="Amqp.ByteBuffer.Validate(System.Boolean,System.Int32)">Validate(Boolean, Int32)</h4>
-              <div class="markdown level1 summary"><p>Verifies that if the buffer has enough bytes for read or enough room for write and grow the buffer if needed.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Shrink(int size)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">size</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_Validate_" data-uid="Amqp.ByteBuffer.Validate*"></a>
+  <h4 id="Amqp_ByteBuffer_Validate_System_Boolean_System_Int32_" data-uid="Amqp.ByteBuffer.Validate(System.Boolean,System.Int32)">Validate(Boolean, Int32)</h4>
+  <div class="markdown level1 summary"><p>Verifies that if the buffer has enough bytes for read or enough room for write and grow the buffer if needed.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public void Validate(bool write, int dataSize)</code></pre>
-              </div>
-              <h5 class="parameters">Parameters</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Boolean</span></td>
-                    <td><em>write</em></td>
-                    <td><p>Operation to verify. True for write and false for read.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Validate(bool write, int dataSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">write</span></td>
+        <td><p>Operation to verify. True for write and false for read.</p>
 </td>
-                  </tr>
-                  <tr>
-                    <td><span class="xref">System.Int32</span></td>
-                    <td><em>dataSize</em></td>
-                    <td><p>The size to read or write.</p>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dataSize</span></td>
+        <td><p>The size to read or write.</p>
 </td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -522,7 +542,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -531,6 +551,5 @@
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>

@@ -1,0 +1,399 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IContainerHost
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IContainerHost
+   ">
+    <meta name="generator" content="docfx 2.25.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Amqp.Listener.IContainerHost">
+  
+  
+  <h1 id="Amqp_Listener_IContainerHost" data-uid="Amqp.Listener.IContainerHost" class="text-break">Interface IContainerHost
+  </h1>
+  <div class="markdown level0 summary"><p>Represents an AMQP container that hosts processors.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer_ServiceCertificate">IContainer.ServiceCertificate</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer_CustomTransports">IContainer.CustomTransports</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer_CreateMessage_Amqp_ByteBuffer_">IContainer.CreateMessage(ByteBuffer)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer_CreateLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Framing_Attach_">IContainer.CreateLink(ListenerConnection, ListenerSession, Attach)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Listener.IContainer.html#Amqp_Listener_IContainer_AttachLink_Amqp_Listener_ListenerConnection_Amqp_Listener_ListenerSession_Amqp_Link_Amqp_Framing_Attach_">IContainer.AttachLink(ListenerConnection, ListenerSession, Link, Attach)</a>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Listener.html">Amqp.Listener</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Listener_IContainerHost_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IContainerHost : IContainer</code></pre>
+  </div>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Listener_IContainerHost_Close_" data-uid="Amqp.Listener.IContainerHost.Close*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_Close" data-uid="Amqp.Listener.IContainerHost.Close">Close()</h4>
+  <div class="markdown level1 summary"><p>Closes the container host object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Close()</code></pre>
+  </div>
+  <a id="Amqp_Listener_IContainerHost_Open_" data-uid="Amqp.Listener.IContainerHost.Open*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_Open" data-uid="Amqp.Listener.IContainerHost.Open">Open()</h4>
+  <div class="markdown level1 summary"><p>Opens the container host object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void Open()</code></pre>
+  </div>
+  <a id="Amqp_Listener_IContainerHost_RegisterLinkProcessor_" data-uid="Amqp.Listener.IContainerHost.RegisterLinkProcessor*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_RegisterLinkProcessor_Amqp_Listener_ILinkProcessor_" data-uid="Amqp.Listener.IContainerHost.RegisterLinkProcessor(Amqp.Listener.ILinkProcessor)">RegisterLinkProcessor(ILinkProcessor)</h4>
+  <div class="markdown level1 summary"><p>Registers a link processor to handle received attach performatives.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RegisterLinkProcessor(ILinkProcessor linkProcessor)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ILinkProcessor.html">ILinkProcessor</a></td>
+        <td><span class="parametername">linkProcessor</span></td>
+        <td><p>The link processor to be registered.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_IContainerHost_RegisterMessageProcessor_" data-uid="Amqp.Listener.IContainerHost.RegisterMessageProcessor*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_RegisterMessageProcessor_System_String_Amqp_Listener_IMessageProcessor_" data-uid="Amqp.Listener.IContainerHost.RegisterMessageProcessor(System.String,Amqp.Listener.IMessageProcessor)">RegisterMessageProcessor(String, IMessageProcessor)</h4>
+  <div class="markdown level1 summary"><p>Registers a message processor to accept incoming messages from the specified address.
+When it is called, the container creates a node where the client can attach.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RegisterMessageProcessor(string address, IMessageProcessor messageProcessor)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IMessageProcessor.html">IMessageProcessor</a></td>
+        <td><span class="parametername">messageProcessor</span></td>
+        <td><p>The message processor to be registered.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_IContainerHost_RegisterMessageSource_" data-uid="Amqp.Listener.IContainerHost.RegisterMessageSource*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_RegisterMessageSource_System_String_Amqp_Listener_IMessageSource_" data-uid="Amqp.Listener.IContainerHost.RegisterMessageSource(System.String,Amqp.Listener.IMessageSource)">RegisterMessageSource(String, IMessageSource)</h4>
+  <div class="markdown level1 summary"><p>Registers a message source at the specified address where client receives messages.
+When it is called, the container creates a node where the client can attach.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RegisterMessageSource(string address, IMessageSource messageSource)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IMessageSource.html">IMessageSource</a></td>
+        <td><span class="parametername">messageSource</span></td>
+        <td><p>The message source to be registered.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_IContainerHost_RegisterRequestProcessor_" data-uid="Amqp.Listener.IContainerHost.RegisterRequestProcessor*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor_" data-uid="Amqp.Listener.IContainerHost.RegisterRequestProcessor(System.String,Amqp.Listener.IRequestProcessor)">RegisterRequestProcessor(String, IRequestProcessor)</h4>
+  <div class="markdown level1 summary"><p>Registers a request processor from the specified address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IRequestProcessor.html">IRequestProcessor</a></td>
+        <td><span class="parametername">requestProcessor</span></td>
+        <td><p>The request processor to be registered.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Listener_IContainerHost_RegisterRequestProcessor_System_String_Amqp_Listener_IRequestProcessor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Client must create a pair of links (sending and receiving) at the address. The
+source.address on the sending link should contain an unique address in the client
+and it should be specified in target.address on the receiving link.</p>
+</div>
+  <a id="Amqp_Listener_IContainerHost_UnregisterLinkProcessor_" data-uid="Amqp.Listener.IContainerHost.UnregisterLinkProcessor*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_UnregisterLinkProcessor_Amqp_Listener_ILinkProcessor_" data-uid="Amqp.Listener.IContainerHost.UnregisterLinkProcessor(Amqp.Listener.ILinkProcessor)">UnregisterLinkProcessor(ILinkProcessor)</h4>
+  <div class="markdown level1 summary"><p>Unregisters a link processor that was previously registered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnregisterLinkProcessor(ILinkProcessor linkProcessor)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.ILinkProcessor.html">ILinkProcessor</a></td>
+        <td><span class="parametername">linkProcessor</span></td>
+        <td><p>The link processor to unregister.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Listener_IContainerHost_UnregisterLinkProcessor_Amqp_Listener_ILinkProcessor__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>If the linkProcessor was not registered or is different
+from the current registered one, an exception is thrown.</p>
+</div>
+  <a id="Amqp_Listener_IContainerHost_UnregisterMessageProcessor_" data-uid="Amqp.Listener.IContainerHost.UnregisterMessageProcessor*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_UnregisterMessageProcessor_System_String_" data-uid="Amqp.Listener.IContainerHost.UnregisterMessageProcessor(System.String)">UnregisterMessageProcessor(String)</h4>
+  <div class="markdown level1 summary"><p>Unregisters a message processor at the specified address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnregisterMessageProcessor(string address)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_IContainerHost_UnregisterMessageSource_" data-uid="Amqp.Listener.IContainerHost.UnregisterMessageSource*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_UnregisterMessageSource_System_String_" data-uid="Amqp.Listener.IContainerHost.UnregisterMessageSource(System.String)">UnregisterMessageSource(String)</h4>
+  <div class="markdown level1 summary"><p>Unregisters a message source at the specified address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnregisterMessageSource(string address)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_IContainerHost_UnregisterRequestProcessor_" data-uid="Amqp.Listener.IContainerHost.UnregisterRequestProcessor*"></a>
+  <h4 id="Amqp_Listener_IContainerHost_UnregisterRequestProcessor_System_String_" data-uid="Amqp.Listener.IContainerHost.UnregisterRequestProcessor(System.String)">UnregisterRequestProcessor(String)</h4>
+  <div class="markdown level1 summary"><p>Unregisters a request processor at the specified address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void UnregisterRequestProcessor(string address)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

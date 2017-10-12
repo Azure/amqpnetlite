@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
   
@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width">
     <meta name="title" content="Class AmqpValue
    ">
-    <meta name="generator" content="docfx 2.2.0.0">
+    <meta name="generator" content="docfx 2.25.2.0">
     
     <link rel="shortcut icon" href="../favicon.ico">
     <link rel="stylesheet" href="../styles/docfx.vendor.css">
@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="../styles/main.css">
     <meta property="docfx:navrel" content="../toc.html">
     <meta property="docfx:tocrel" content="toc.html">
+    
+    
     
   </head>
   <body data-spy="scroll" data-target="#affix">
@@ -33,6 +35,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
+              
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../logo.svg" alt="">
               </a>
@@ -65,102 +68,168 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content">
-              
-              
-              <h1 id="Amqp_Framing_AmqpValue" data-uid="Amqp.Framing.AmqpValue">Class AmqpValue
-              </h1>
-              <div class="markdown level0 summary"><p>An amqp-value section contains a single AMQP value.</p>
+            <article class="content wrap" id="_content" data-uid="Amqp.Framing.AmqpValue">
+  
+  
+  <h1 id="Amqp_Framing_AmqpValue" data-uid="Amqp.Framing.AmqpValue" class="text-break">Class AmqpValue
+  </h1>
+  <div class="markdown level0 summary"><p>An AMQP Value section contains a single value.</p>
 </div>
-              <div class="markdown level0 conceptual"></div>
-              <div class="inheritance">
-                <h5>Inheritance</h5>
-                  <div class="level0"><span class="xref">System.Object</span></div>
-                  <div class="level1"><a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described">Described</a></div>
-                  <div class="level2"><a class="xref" href="Amqp.Types.RestrictedDescribed.html#Amqp_Types_RestrictedDescribed">RestrictedDescribed</a></div>
-                  <div class="level3"><span class="xref">AmqpValue</span></div>
-              </div>
-              <div class="inheritedMembers">
-                <h5>Inherited Members</h5>
-                <div>
-                  <a class="xref" href="Amqp.Types.RestrictedDescribed.html#Amqp_Types_RestrictedDescribed_Descriptor">RestrictedDescribed.Descriptor</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Encode_Amqp_ByteBuffer_">Described.Encode(ByteBuffer)</a>
-                </div>
-                <div>
-                  <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Decode_Amqp_ByteBuffer_">Described.Decode(ByteBuffer)</a>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ToString()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetHashCode()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.GetType()</span>
-                </div>
-                <div>
-                  <span class="xref">System.Object.MemberwiseClone()</span>
-                </div>
-              </div>
-              <h6><strong>Namespace</strong>:Amqp.Framing</h6>
-              <h6><strong>Assembly</strong>:Amqp.Net.dll</h6>
-              <h5 id="Amqp_Framing_AmqpValue_syntax">Syntax</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public sealed class AmqpValue : RestrictedDescribed</code></pre>
-              </div>
-              <h3 id="constructors">Constructors
-              </h3>
-              <h4 id="Amqp_Framing_AmqpValue__ctor" data-uid="Amqp.Framing.AmqpValue.#ctor">AmqpValue()</h4>
-              <div class="markdown level1 summary"><p>Initializes an AmqpValue object.</p>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><a class="xref" href="Amqp.Types.Described.html">Described</a></div>
+    <div class="level2"><a class="xref" href="Amqp.Types.RestrictedDescribed.html">RestrictedDescribed</a></div>
+    <div class="level3"><span class="xref">AmqpValue</span></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.AmqpValue-1.html">AmqpValue&lt;T&gt;</a></div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <a class="xref" href="Amqp.Types.RestrictedDescribed.html#Amqp_Types_RestrictedDescribed_Descriptor">RestrictedDescribed.Descriptor</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Encode_Amqp_ByteBuffer_">Described.Encode(ByteBuffer)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.Described.html#Amqp_Types_Described_Decode_Amqp_ByteBuffer_">Described.Decode(ByteBuffer)</a>
+    </div>
+    <div>
+      <span class="xref">System.Object.ToString()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetHashCode()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.MemberwiseClone()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.Framing.html">Amqp.Framing</a></h6>
+  <h6><strong>Assembly</strong>: Amqp.Net.dll</h6>
+  <h5 id="Amqp_Framing_AmqpValue_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class AmqpValue : RestrictedDescribed</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  <a id="Amqp_Framing_AmqpValue__ctor_" data-uid="Amqp.Framing.AmqpValue.#ctor*"></a>
+  <h4 id="Amqp_Framing_AmqpValue__ctor" data-uid="Amqp.Framing.AmqpValue.#ctor">AmqpValue()</h4>
+  <div class="markdown level1 summary"><p>Initializes an AmqpValue object.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public AmqpValue()</code></pre>
-              </div>
-              <h3 id="properties">Properties
-              </h3>
-              <h4 id="Amqp_Framing_AmqpValue_Value" data-uid="Amqp.Framing.AmqpValue.Value">Value</h4>
-              <div class="markdown level1 summary"><p>Gets or sets the value in the body section.</p>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AmqpValue()</code></pre>
+  </div>
+  <h3 id="properties">Properties
+  </h3>
+  <a id="Amqp_Framing_AmqpValue_Value_" data-uid="Amqp.Framing.AmqpValue.Value*"></a>
+  <h4 id="Amqp_Framing_AmqpValue_Value" data-uid="Amqp.Framing.AmqpValue.Value">Value</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the value in the body section.</p>
 </div>
-              <div class="markdown level1 conceptual"></div>
-              <h5 class="decalaration">Declaration</h5>
-              <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public object Value { get; set; }</code></pre>
-              </div>
-              <h5 class="propertyValue">Property Value</h5>
-              <table class="table table-bordered table-striped table-condensed">
-                <thead>
-                  <tr>
-                    <th>Type</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td><span class="xref">System.Object</span></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </article>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public object Value { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Framing_AmqpValue_ValueBuffer_" data-uid="Amqp.Framing.AmqpValue.ValueBuffer*"></a>
+  <h4 id="Amqp_Framing_AmqpValue_ValueBuffer" data-uid="Amqp.Framing.AmqpValue.ValueBuffer">ValueBuffer</h4>
+  <div class="markdown level1 summary"><p>Gets a ByteBuffer that contains the encoded value. A NULL value
+indicates that the message is not created by the decoder.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ByteBuffer ValueBuffer { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  <a id="Amqp_Framing_AmqpValue_WriteValue_" data-uid="Amqp.Framing.AmqpValue.WriteValue*"></a>
+  <h4 id="Amqp_Framing_AmqpValue_WriteValue_Amqp_ByteBuffer_System_Object_" data-uid="Amqp.Framing.AmqpValue.WriteValue(Amqp.ByteBuffer,System.Object)">WriteValue(ByteBuffer, Object)</h4>
+  <div class="markdown level1 summary"><p>Writes the value into the buffer using the default encoder. Override
+this method to encode the value using an extended or custom encoder.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void WriteValue(ByteBuffer buffer, object value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write the encoded object.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The object to be written.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+</article>
           </div>
           
           <div class="hidden-sm col-md-2" role="complementary">
-            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
-            </nav>
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
           </div>
         </div>
       </div>
@@ -173,7 +242,7 @@
               <a href="#top">Back to top</a>
             </span>
             
-            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+            <span>Copyright © 2015-2017 Microsoft<br>Generated by <strong>DocFX</strong></span>
           </div>
         </div>
       </footer>
@@ -182,6 +251,5 @@
     <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
