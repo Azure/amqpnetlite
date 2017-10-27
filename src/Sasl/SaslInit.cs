@@ -51,7 +51,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-init",
                 new object[] { "mechanism", "initial-response", "hostname" },
-                this.Fields);
+                new object[] { this.Fields[0], "...", this.Fields[2] });
         }
 #endif
     }
