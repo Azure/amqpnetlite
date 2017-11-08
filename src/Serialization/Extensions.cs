@@ -91,7 +91,7 @@ namespace Amqp
 
         static int GetBinaryOffset(ByteBuffer buffer)
         {
-            byte formatCode = buffer.Buffer[0];
+            byte formatCode = buffer.Buffer[buffer.Offset];
             if (formatCode != FormatCode.Binary8 && formatCode != FormatCode.Binary32)
             {
                 throw new InvalidOperationException("Body is not binary type.");

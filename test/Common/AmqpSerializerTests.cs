@@ -534,6 +534,14 @@ namespace Test.Amqp
             MessageBodyTest<Dictionary<Symbol, string>>(
                 new Dictionary<Symbol, string>() { { "product", "computer" }, { "company", "contoso" } },
                 (x, y) => CollectionAssert.AreEqual(x, y));
+
+            MessageBodyTest<ByteBuffer>(
+                new ByteBuffer(new byte[] { 1, 2, 3, 4, 5 }, 0, 5, 5),
+                (x, y) => Assert.AreEqual(x.Length, y.Length));
+
+            MessageBodyTest<byte[]>(
+                new byte[] { 1, 2, 3, 4, 5 },
+                (x, y) => Assert.AreEqual(x, y));
         }
 
         [TestMethod]
@@ -605,6 +613,57 @@ namespace Test.Amqp
             AppDomain.Unload(ad);
 
             Assert.AreEqual("pass", result);
+        }
+
+        [TestMethod]
+        public void MessageSerializationByteArrayBodyTest()
+        {
+            var payload = new byte[] { 1, 2, 3, 4, 5 };
+            var message = new Message(payload)
+            {
+                Properties = new Properties
+                {
+                    Subject = "testsubject",
+                    ContentEncoding = "testencoding",
+                    ContentType = "testtype"
+                }
+            };
+
+            var message2 = Message.Decode(message.Encode());
+            var payload2 = message2.GetBody<ByteBuffer>();
+            Assert.AreEqual(payload.Length, payload2.Length, "length not equal");
+            for (int i = 0; i < payload.Length; i++)
+            {
+                Assert.AreEqual(payload[i], payload2.Buffer[payload2.Offset + i]);
+            }
+
+            Assert.AreEqual(payload, message2.Body);
+        }
+
+        [TestMethod]
+        public void MessageSerializationByteBufferBodyTest()
+        {
+            var bytes = new byte[] { 1, 2, 3, 4, 5 };
+            var payload = new ByteBuffer(bytes, 0, bytes.Length, bytes.Length);
+            var message = new Message(payload)
+            {
+                Properties = new Properties
+                {
+                    Subject = "testsubject",
+                    ContentEncoding = "testencoding",
+                    ContentType = "testtype"
+                }
+            };
+
+            var message2 = Message.Decode(message.Encode());
+            var payload2 = message2.GetBody<byte[]>();
+            Assert.AreEqual(payload.Length, payload2.Length, "length not equal");
+            for (int i = 0; i < payload.Length; i++)
+            {
+                Assert.AreEqual(payload.Buffer[payload.Offset + i], payload2[i]);
+            }
+
+            Assert.AreEqual(bytes, message2.Body);
         }
 #endif
 
