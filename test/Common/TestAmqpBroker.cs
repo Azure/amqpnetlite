@@ -72,6 +72,10 @@ namespace Listener.IContainer
                         Uri.UnescapeDataString(a[0]),
                         a.Length == 1 ? string.Empty : Uri.UnescapeDataString(a[1]));
                 }
+                else
+                {
+                    this.listeners[i].SASL.EnableAnonymousMechanism = true;
+                }
             }
         }
 
