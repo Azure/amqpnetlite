@@ -23,6 +23,7 @@ namespace Amqp
 
     /// <summary>
     /// The base class of all AMQP objects.
+    /// <seealso cref="Connection"/>
     /// <seealso cref="Session"/>
     /// <seealso cref="SenderLink"/>
     /// <seealso cref="ReceiverLink"/>
@@ -158,11 +159,28 @@ namespace Amqp
             }
 
             this.Error = error;
+
             if (!this.OnClose(error))
             {
                 if (waitMilliseconds > 0)
                 {
-                    this.endEvent.WaitOne(waitMilliseconds);
+                    try
+                    {
+                        if (!this.endEvent.WaitOne(waitMilliseconds))
+                        {
+                            throw new TimeoutException(Fx.Format(SRAmqp.AmqpTimeout,
+                                "close", waitMilliseconds, this.GetType().Name));
+                        }
+
+                        if (this.error != null && this.error != error)
+                        {
+                            throw new AmqpException(this.error);
+                        }
+                    }
+                    finally
+                    {
+                        this.NotifyClosed(this.Error);
+                    }
                 }
             }
             else

@@ -110,7 +110,7 @@ namespace Amqp
             if (!signaled)
             {
                 this.OnTimeout(message);
-                throw new TimeoutException();
+                throw new TimeoutException(Fx.Format(SRAmqp.AmqpTimeout, "send", waitMilliseconds, "message"));
             }
 
             if (outcome != null)

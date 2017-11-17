@@ -154,6 +154,16 @@ namespace Amqp
         /// Gets the link name.
         /// </summary>
         string Name { get; }
+
+        /// <summary>
+        /// Detaches the link endpoint without closing it.
+        /// </summary>
+        /// <param name="error">The error causing a detach.</param>
+        /// <remarks>
+        /// An exception will be thrown if the peer responded with an error
+        /// or the link was closed instead of being detached.
+        /// </remarks>
+        void Detach(Error error);
     }
 
     /// <summary>

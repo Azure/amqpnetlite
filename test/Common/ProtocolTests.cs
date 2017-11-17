@@ -488,6 +488,247 @@ namespace Test.Amqp
             }).Unwrap().GetAwaiter().GetResult();
         }
 
+#if !NETFX40
+        [TestMethod]
+        public void CloseLinkTimeoutTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "CloseLinkTimeoutTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    sender.Close(TimeSpan.FromSeconds(1));
+                    Assert.IsTrue(false, "timeout exception expected");
+                }
+                catch (TimeoutException) { }
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    await sender.CloseAsync(TimeSpan.FromSeconds(1), null);
+                    Assert.IsTrue(false, "timeout exception expected");
+                }
+                catch (TimeoutException) { }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+#endif
+
+        [TestMethod]
+        public void CloseLinkLocalErrorTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                // detach without error
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true);
+                return TestOutcome.Stop;
+            });
+
+            string testName = "CloseLinkLocalErrorTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                sender.Close(TimeSpan.FromSeconds(60), new Error() { Condition = ErrorCode.NotImplemented });
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                await sender.CloseAsync(TimeSpan.FromSeconds(60), new Error() { Condition = ErrorCode.NotImplemented });
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void CloseLinkRemoteErrorTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                // detach with error
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true, new Error() { Condition = ErrorCode.InternalError });
+                return TestOutcome.Stop;
+            });
+
+            string testName = "CloseLinkRemoteErrorTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    sender.Close();
+                    Assert.IsTrue(false, "exception expected");
+                }
+                catch (AmqpException) { }
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    await sender.CloseAsync();
+                    Assert.IsTrue(false, "exception expected");
+                }
+                catch (AmqpException) { }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void DetachLinkTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], false);
+                return TestOutcome.Stop;
+            });
+
+            string testName = "DetachLinkTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                sender.Detach();
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                await sender.DetachAsync();
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void DetachLinkRemoteErrorTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], false, new Error() { Condition = ErrorCode.InternalError });
+                return TestOutcome.Stop;
+            });
+
+            string testName = "DetachLinkRemoteErrorTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    sender.Detach();
+                    Assert.IsTrue(false, "exception expected");
+                }
+                catch (AmqpException) { }
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    await sender.DetachAsync();
+                    Assert.IsTrue(false, "exception expected");
+                }
+                catch (AmqpException) { }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void DetachLinkRemoteCloseTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true);
+                return TestOutcome.Stop;
+            });
+
+            string testName = "DetachLinkRemoteCloseTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    sender.Detach();
+                    Assert.IsTrue(false, "exception expected");
+                }
+                catch (AmqpException) { }
+                connection.Close();
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                Connection connection = await Connection.Factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                try
+                {
+                    await sender.DetachAsync();
+                    Assert.IsTrue(false, "exception expected");
+                }
+                catch (AmqpException) { }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
         [TestMethod]
         public void ClosedCallbackGuaranteeTest()
         {

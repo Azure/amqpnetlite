@@ -28,8 +28,8 @@ namespace Amqp
         /// <summary>
         /// Initializes a new instance of the System.TimeoutException class.
         /// </summary>
-        public TimeoutException()
-            : base(SRAmqp.AmqpTimeout)
+        public TimeoutException(string message)
+            : base(message)
         {
         }
     }

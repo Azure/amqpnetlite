@@ -41,6 +41,7 @@ namespace Amqp
         readonly uint handle;
         readonly OnAttached onAttached;
         LinkState state;
+        bool detach;
 
         /// <summary>
         /// Initializes the link.
@@ -96,6 +97,20 @@ namespace Amqp
             get { return this.state; }
         }
 
+        /// <summary>
+        /// Detaches the link endpoint without closing it.
+        /// </summary>
+        /// <param name="error">The error causing a detach.</param>
+        /// <remarks>
+        /// An exception will be thrown if the peer responded with an error
+        /// or the link was closed instead of being detached.
+        /// </remarks>
+        public void Detach(Error error = null)
+        {
+            this.detach = true;
+            this.CloseInternal(DefaultTimeout, error);
+        }
+
         internal void Abort(Error error, string reason)
         {
             this.CloseCalled = true;
@@ -137,7 +152,17 @@ namespace Amqp
 
         internal bool OnDetach(Detach detach)
         {
-            this.Error = detach.Error;
+            Error remoteError = detach.Error;
+            if (remoteError == null && this.detach && detach.Closed)
+            {
+                remoteError = new Error()
+                {
+                    Condition = ErrorCode.InternalError,
+                    Description = "Link is closed by peer though a detach was requested."
+                };
+            }
+
+            this.Error = remoteError;
 
             lock (this.ThisLock)
             {
@@ -156,11 +181,11 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnDetach", this.state));
                 }
 
-                this.OnClose(detach.Error);
+                this.OnClose(remoteError);
             }
 
             this.session.RemoveLink(this, detach.Handle);
-            this.NotifyClosed(detach.Error);
+            this.NotifyClosed(remoteError);
 
             return true;
         }
@@ -255,7 +280,7 @@ namespace Amqp
 
         void SendDetach(Error error)
         {
-            Detach detach = new Detach() { Handle = this.handle, Error = error, Closed = true };
+            Detach detach = new Detach() { Handle = this.handle, Error = error, Closed = !this.detach };
             this.session.SendCommand(detach);
         }
     }

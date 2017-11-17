@@ -39,7 +39,23 @@ namespace Amqp
         /// </summary>
         /// <param name="timeout">The time to wait for the task to complete. Refer to AmqpObject.Close for details.</param>
         /// <returns>A Task for the asynchronous close operation.</returns>
-        Task CloseAsync(TimeSpan timeout);
+        /// <param name="error">The AMQP <see cref="Error"/> to send to the peer,
+        /// indicating why the object is being closed.</param>
+        Task CloseAsync(TimeSpan timeout, Error error);
+    }
+
+    public partial interface ILink
+    {
+        /// <summary>
+        /// Detaches the link endpoint without closing it.
+        /// </summary>
+        /// <param name="error">The error causing a detach.</param>
+        /// <returns>A Task for the asynchronous detach operation.</returns>
+        /// <remarks>
+        /// An exception will be thrown if the peer responded with an error
+        /// or the link was closed instead of being detached.
+        /// </remarks>
+        Task DetachAsync(Error error);
     }
 
     public partial interface ISenderLink
@@ -94,42 +110,70 @@ namespace Amqp
         /// </summary>
         /// <param name="timeout">The time to wait for the task to complete. Refer to AmqpObject.Close for details.</param>
         /// <returns>A Task for the asynchronous close operation.</returns>
-        public Task CloseAsync(TimeSpan timeout)
+        /// <param name="error">The AMQP <see cref="Error"/> to send to the peer,
+        /// indicating why the object is being closed.</param>
+        public Task CloseAsync(TimeSpan timeout, Error error = null)
         {
-            return this.CloseInternalAsync(DefaultTimeout);
+            return this.CloseInternalAsync((int)timeout.TotalMilliseconds, error);
         }
 
-        internal Task CloseInternalAsync(int timeout = 60000)
+        internal async Task CloseInternalAsync(int timeout = 60000, Error error = null)
         {
-            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
             if (this.CloseCalled)
             {
-                tcs.SetResult(null);
-                return tcs.Task;
+                return;
             }
+
+            TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
 
             try
             {
-                this.Closed += (o, e) =>
+                this.AddClosedCallback((o, e) =>
                 {
                     if (e != null)
                     {
-                        tcs.SetException(new AmqpException(e));
+                        tcs.TrySetException(new AmqpException(e));
                     }
                     else
                     {
-                        tcs.SetResult(null);
+                        tcs.TrySetResult(null);
                     }
-                };
+                });
 
-                this.CloseInternal(0, null);
+                this.CloseInternal(0, error);
             }
             catch (Exception exception)
             {
-                tcs.SetException(exception);
+                tcs.TrySetException(exception);
             }
 
-            return tcs.Task;
+#if !NETFX40
+            Task task = await Task.WhenAny(tcs.Task, Task.Delay(timeout));
+            if (task != tcs.Task)
+            {
+                tcs.TrySetException(new TimeoutException(Fx.Format(SRAmqp.AmqpTimeout,
+                    "close", timeout, this.GetType().Name)));
+            }
+#endif
+            await tcs.Task;
+        }
+    }
+
+    public partial class Link
+    {
+        /// <summary>
+        /// Detaches the link endpoint without closing it.
+        /// </summary>
+        /// <param name="error">The error causing a detach.</param>
+        /// <returns>A Task for the asynchronous detach operation.</returns>
+        /// <remarks>
+        /// An exception will be thrown if the peer responded with an error
+        /// or the link was closed instead of being detached.
+        /// </remarks>
+        public Task DetachAsync(Error error = null)
+        {
+            this.detach = true;
+            return this.CloseInternalAsync(DefaultTimeout, error);
         }
     }
 
