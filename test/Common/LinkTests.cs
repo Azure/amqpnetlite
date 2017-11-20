@@ -618,41 +618,22 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
-        public void TestMethod_LinkCloseWithPendingSend()
+        public void TestMethod_LinkCloseWithSettledSend()
         {
-            string testName = "LinkCloseWithPendingSend";
+            string testName = "LinkCloseWithSettledSend";
             Connection connection = new Connection(testTarget.Address);
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
-            bool cancelled = false;
-            Message message = new Message("released");
-            sender.Send(message, (l, m, o, s) => cancelled = true, null);
-            sender.Close(TimeSpan.Zero, null);
+            Message message = new Message(testName);
+            sender.Send(message, null, null);
+            sender.Close();
 
-            // assume that Close is called before connection/link is open so message is still queued in link
-            // but this is not very reliable, so just do a best effort check
-            if (cancelled)
-            {
-                Trace.WriteLine(TraceLevel.Verbose, "The send was cancelled as expected");
-            }
-            else
-            {
-                Trace.WriteLine(TraceLevel.Verbose, "The send was not cancelled as expected. This can happen if close call loses the race");
-            }
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            message = receiver.Receive(new TimeSpan(0, 0, 10));
+            Assert.IsTrue(message != null, "no message was received.");
+            receiver.Accept(message);
 
-            try
-            {
-                message = new Message("failed");
-                sender.Send(message, (l, m, o, s) => cancelled = true, null);
-                Assert.IsTrue(false, "Send should fail after link is closed");
-            }
-            catch (AmqpException exception)
-            {
-                Trace.WriteLine(TraceLevel.Verbose, "Caught exception: ", exception.Error);
-            }
-
-            session.Close();
             connection.Close();
         }
 

@@ -267,7 +267,7 @@ namespace Amqp
 
         internal void ThrowIfDetaching(string operation)
         {
-            if (this.IsDetaching)
+            if (this.IsDetaching || this.CloseCalled)
             {
                 throw new AmqpException(this.Error ??
                     new Error()

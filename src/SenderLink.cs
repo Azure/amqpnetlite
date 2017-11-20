@@ -256,8 +256,16 @@ namespace Amqp
         /// <returns></returns>
         protected override bool OnClose(Error error)
         {
-            this.OnAbort(error);
+            lock (this.ThisLock)
+            {
+                bool wait = this.writing || (this.credit == 0 && this.outgoingList.First != null);
+                if (this.CloseCalled && wait && !this.Session.IsClosed)
+                {
+                    return false;
+                }
+            }
 
+            this.OnAbort(error);
             return base.OnClose(error);
         }
 
@@ -267,21 +275,10 @@ namespace Amqp
         /// <param name="error">The error for the abort.</param>
         protected override void OnAbort(Error error)
         {
-            Delivery toRelease = null;
-            while (true)
+            Delivery toRelease;
+            lock (this.ThisLock)
             {
-                lock (this.ThisLock)
-                {
-                    if (this.writing && !this.Session.IsClosed)
-                    {
-                        // wait until write finishes (either all deliveries are handed over to session or no credit is available)
-                    }
-                    else
-                    {
-                        toRelease = (Delivery)this.outgoingList.Clear();
-                        break;
-                    }
-                }
+                toRelease = (Delivery)this.outgoingList.Clear();
             }
 
             Delivery.ReleaseAll(toRelease, error);
@@ -305,15 +302,22 @@ namespace Amqp
                 }
                 catch
                 {
-                    this.writing = false;
+                    lock (this.ThisLock)
+                    {
+                        this.writing = false;
+                    }
+
                     throw;
                 }
 
+                bool shouldClose = false;
                 lock (this.ThisLock)
                 {
                     delivery = (Delivery)this.outgoingList.First;
-                    if (delivery == null)
+                    if (delivery == null || this.credit == 0)
                     {
+                        shouldClose = this.CloseCalled;
+                        delivery = null;
                         this.writing = false;
                     }
                     else if (this.credit > 0)
@@ -323,10 +327,15 @@ namespace Amqp
                         this.credit--;
                         this.deliveryCount++;
                     }
-                    else
+                }
+
+                if (shouldClose)
+                {
+                    Error error = this.Error;
+                    this.OnAbort(error);
+                    if (base.OnClose(error))
                     {
-                        delivery = null;
-                        this.writing = false;
+                        this.NotifyClosed(error);
                     }
                 }
             }
