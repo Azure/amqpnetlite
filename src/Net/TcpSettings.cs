@@ -16,6 +16,7 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
+using Amqp.Net;
 
 namespace Amqp
 {
@@ -34,11 +35,9 @@ namespace Amqp
         int? sendTimeout;
 
         /// <summary>
-        /// Specifies the KeepAlive option of a TCP socket.
-        /// Tuple.Item1: KeepAliveTime.
-        /// Tuple.Item2: KeepAliveInterval.
+        /// Specifies the KeepAlive setting of a TCP socket.
         /// </summary>
-        public Tuple<ulong, ulong> KeepAlive
+        public TcpKeepAliveSettings KeepAlive
         {
             get;
             set;
@@ -100,7 +99,7 @@ namespace Amqp
 
         internal void Configure(Socket socket)
         {
-            if (this.KeepAlive != null) socket.SetTcpKeepAlive(this.KeepAlive.Item1, this.KeepAlive.Item2);
+            if (this.KeepAlive != null) socket.SetTcpKeepAlive(this.KeepAlive);
             if (this.noDelay != null) socket.NoDelay = this.noDelay.Value;
             if (this.receiveBufferSize != null) socket.ReceiveBufferSize = this.receiveBufferSize.Value;
             if (this.receiveTimeout != null) socket.ReceiveTimeout = this.receiveTimeout.Value;

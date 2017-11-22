@@ -15,6 +15,8 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
+using Amqp.Net;
+
 namespace Amqp
 {
     using System;
@@ -26,7 +28,7 @@ namespace Amqp
 
     static class SocketExtensions
     {
-        public static bool SetTcpKeepAlive(this Socket socket, ulong keepAliveTime, ulong keepAliveInterval)
+        public static void SetTcpKeepAlive(this Socket socket, TcpKeepAliveSettings settings)
         {
             /* the native structure
             struct tcp_keepalive {
@@ -36,23 +38,16 @@ namespace Amqp
             };
             */
 
-            try
-            {
-                ulong dummy = 0;
-                byte[] inOptionValues = new byte[Marshal.SizeOf(dummy) * 3];
-                BitConverter.GetBytes((ulong)1).CopyTo(inOptionValues, 0);
-                BitConverter.GetBytes(keepAliveTime).CopyTo(inOptionValues, Marshal.SizeOf(dummy));
-                BitConverter.GetBytes(keepAliveInterval).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);
-                
-                socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
-            }
-            catch (SocketException e)
-            {
-                Trace.WriteLine(TraceLevel.Warning, e.ToString());
-                return false;
-            }
+            ulong keepAliveTime = settings.KeepAliveTime;
+            ulong keepAliveInterval = settings.KeepAliveInterval;
 
-            return true;
+            int bytesPerULong = 8;
+            byte[] inOptionValues = new byte[bytesPerULong * 3];
+            BitConverter.GetBytes((ulong)1).CopyTo(inOptionValues, 0);
+            BitConverter.GetBytes(keepAliveTime).CopyTo(inOptionValues, bytesPerULong);
+            BitConverter.GetBytes(keepAliveInterval).CopyTo(inOptionValues, bytesPerULong * 2);
+                
+            socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
         }
 
         public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)
