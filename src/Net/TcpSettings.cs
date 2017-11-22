@@ -15,12 +15,10 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using System;
-using Amqp.Net;
-
 namespace Amqp
 {
     using System.Net.Sockets;
+    using System;
 
     /// <summary>
     /// Contains the TCP settings of a connection.

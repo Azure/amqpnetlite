@@ -15,8 +15,6 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using Amqp.Net;
-
 namespace Amqp
 {
     using System;
@@ -24,7 +22,7 @@ namespace Amqp
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
-	using System.Runtime.InteropServices;
+    using System.Runtime.InteropServices;
 
     static class SocketExtensions
     {
