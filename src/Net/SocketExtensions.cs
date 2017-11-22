@@ -45,11 +45,7 @@ namespace Amqp
             BitConverter.GetBytes(keepAliveTime).CopyTo(inOptionValues, bytesPerULong);
             BitConverter.GetBytes(keepAliveInterval).CopyTo(inOptionValues, bytesPerULong * 2);
 
-            var x = socket.GetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.KeepAlive);
-
-            var a = socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
-
-            var y = socket.GetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive);
+            socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
         }
 
         public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)

@@ -15,7 +15,7 @@
         }
 
         /// <summary>
-        /// How often a keep-alive transmission is sent when no response is received rom previous keep-alive transmissions.
+        /// How often a keep-alive transmission is sent when no response is received from previous keep-alive transmissions.
         /// </summary>
         public ulong KeepAliveInterval
         {
