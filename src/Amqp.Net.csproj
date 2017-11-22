@@ -72,6 +72,7 @@
     <Compile Include="Listener\Context.cs" />
     <Compile Include="Listener\ListenerLink.cs" />
     <Compile Include="Net\IConnectionFactory.cs" />
+    <Compile Include="Net\TcpKeepAliveSettings.cs" />
     <Compile Include="Net\TransportProvider.cs" />
     <Compile Include="Net\SocketExtensions.cs" />
     <Compile Include="Net\ResourceManager.cs" />
