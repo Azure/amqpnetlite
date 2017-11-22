@@ -41,7 +41,7 @@ namespace Amqp
 
             int bytesPerULong = 8;
             byte[] inOptionValues = new byte[bytesPerULong * 3];
-            BitConverter.GetBytes((ulong)1).CopyTo(inOptionValues, 0);
+            BitConverter.GetBytes((ulong)1).CopyTo(inOptionValues, 1);
             BitConverter.GetBytes(keepAliveTime).CopyTo(inOptionValues, bytesPerULong);
             BitConverter.GetBytes(keepAliveInterval).CopyTo(inOptionValues, bytesPerULong * 2);
                 
