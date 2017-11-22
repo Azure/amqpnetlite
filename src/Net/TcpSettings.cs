@@ -15,6 +15,8 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
+using System;
+
 namespace Amqp
 {
     using System.Net.Sockets;
@@ -30,6 +32,17 @@ namespace Amqp
         int? receiveTimeout;
         int? sendBufferSize;
         int? sendTimeout;
+
+        /// <summary>
+        /// Specifies the KeepAlive option of a TCP socket.
+        /// Tuple.Item1: KeepAliveTime.
+        /// Tuple.Item2: KeepAliveInterval.
+        /// </summary>
+        public Tuple<ulong, ulong> KeepAlive
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Specifies the LingerOption option of the TCP socket.
@@ -87,6 +100,7 @@ namespace Amqp
 
         internal void Configure(Socket socket)
         {
+            if (this.KeepAlive != null) socket.SetTcpKeepAlive(this.KeepAlive.Item1, this.KeepAlive.Item2);
             if (this.noDelay != null) socket.NoDelay = this.noDelay.Value;
             if (this.receiveBufferSize != null) socket.ReceiveBufferSize = this.receiveBufferSize.Value;
             if (this.receiveTimeout != null) socket.ReceiveTimeout = this.receiveTimeout.Value;

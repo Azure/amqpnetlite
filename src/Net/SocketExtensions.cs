@@ -1,4 +1,4 @@
-﻿//  ------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation
 //  All rights reserved. 
 //  
@@ -22,9 +22,39 @@ namespace Amqp
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
+	using System.Runtime.InteropServices;
 
     static class SocketExtensions
     {
+        public static bool SetTcpKeepAlive(this Socket socket, ulong keepAliveTime, ulong keepAliveInterval)
+        {
+            /* the native structure
+            struct tcp_keepalive {
+            ULONG onoff;
+            ULONG keepalivetime;
+            ULONG keepaliveinterval;
+            };
+            */
+
+            try
+            {
+                ulong dummy = 0;
+                byte[] inOptionValues = new byte[Marshal.SizeOf(dummy) * 3];
+                BitConverter.GetBytes((ulong)1).CopyTo(inOptionValues, 0);
+                BitConverter.GetBytes(keepAliveTime).CopyTo(inOptionValues, Marshal.SizeOf(dummy));
+                BitConverter.GetBytes(keepAliveInterval).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);
+                
+                socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
+            }
+            catch (SocketException e)
+            {
+                Trace.WriteLine(TraceLevel.Warning, e.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
         public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)
         {
             var tcs = (TaskCompletionSource<T>)args.UserToken;
