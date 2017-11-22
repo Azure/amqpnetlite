@@ -18,6 +18,7 @@
 namespace Amqp
 {
     using System.Net.Sockets;
+    using System;
 
     /// <summary>
     /// Contains the TCP settings of a connection.
@@ -30,6 +31,16 @@ namespace Amqp
         int? receiveTimeout;
         int? sendBufferSize;
         int? sendTimeout;
+
+        /// <summary>
+        /// Specifies the Keep-Alive settings of a TCP socket. 
+        /// If not null, TCP Keep-Alive is enabled.
+        /// </summary>
+        public TcpKeepAliveSettings KeepAlive
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Specifies the LingerOption option of the TCP socket.
@@ -87,6 +98,7 @@ namespace Amqp
 
         internal void Configure(Socket socket)
         {
+            if (this.KeepAlive != null) socket.SetTcpKeepAlive(this.KeepAlive);
             if (this.noDelay != null) socket.NoDelay = this.noDelay.Value;
             if (this.receiveBufferSize != null) socket.ReceiveBufferSize = this.receiveBufferSize.Value;
             if (this.receiveTimeout != null) socket.ReceiveTimeout = this.receiveTimeout.Value;
