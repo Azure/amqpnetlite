@@ -33,7 +33,8 @@ namespace Amqp
         int? sendTimeout;
 
         /// <summary>
-        /// Specifies the KeepAlive setting of a TCP socket.
+        /// Specifies the Keep-Alive setting of a TCP socket. 
+        /// If not null, TCP Keep-Alive is enabled.
         /// </summary>
         public TcpKeepAliveSettings KeepAlive
         {

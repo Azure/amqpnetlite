@@ -1,5 +1,8 @@
 ﻿namespace Amqp
 {
+    /// <summary>
+    /// TCP Keep-Alive settings.
+    /// </summary>
     public class TcpKeepAliveSettings
     {
         public ulong KeepAliveTime
