@@ -8,7 +8,7 @@
         /// <summary>
         /// How often a keep-alive transmission is sent to an idle connection.
         /// </summary>
-        public ulong KeepAliveTime
+        public uint KeepAliveTime
         {
             get;
             set;
@@ -17,7 +17,7 @@
         /// <summary>
         /// How often a keep-alive transmission is sent when no response is received from previous keep-alive transmissions.
         /// </summary>
-        public ulong KeepAliveInterval
+        public uint KeepAliveInterval
         {
             get;
             set;
