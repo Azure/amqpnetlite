@@ -22,7 +22,6 @@ namespace Amqp
     using System.Net;
     using System.Net.Sockets;
     using System.Threading.Tasks;
-    using System.Runtime.InteropServices;
 
     static class SocketExtensions
     {
@@ -35,15 +34,13 @@ namespace Amqp
             ULONG keepaliveinterval;
             };
             */
-
-            ulong keepAliveTime = settings.KeepAliveTime;
-            ulong keepAliveInterval = settings.KeepAliveInterval;
-
-            int bytesPerULong = 8;
+            
+            int bytesPerULong = 4;
             byte[] inOptionValues = new byte[bytesPerULong * 3];
-            BitConverter.GetBytes((ulong)1).CopyTo(inOptionValues, 0);
-            BitConverter.GetBytes(keepAliveTime).CopyTo(inOptionValues, bytesPerULong);
-            BitConverter.GetBytes(keepAliveInterval).CopyTo(inOptionValues, bytesPerULong * 2);
+            
+            BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 0);
+            BitConverter.GetBytes((uint)settings.KeepAliveTime).CopyTo(inOptionValues, bytesPerULong);
+            BitConverter.GetBytes((uint)settings.KeepAliveInterval).CopyTo(inOptionValues, bytesPerULong*2);
 
             socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
         }
