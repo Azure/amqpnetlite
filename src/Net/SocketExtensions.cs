@@ -33,14 +33,16 @@ namespace Amqp
             ULONG keepalivetime;
             ULONG keepaliveinterval;
             };
+            
+            ULONG is an unsigned 32 bit integer
             */
             
-            int bytesPerULong = 4;
-            byte[] inOptionValues = new byte[bytesPerULong * 3];
+            int bytesPerUInt = 4;
+            byte[] inOptionValues = new byte[bytesPerUInt * 3];
             
             BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 0);
-            BitConverter.GetBytes((uint)settings.KeepAliveTime).CopyTo(inOptionValues, bytesPerULong);
-            BitConverter.GetBytes((uint)settings.KeepAliveInterval).CopyTo(inOptionValues, bytesPerULong*2);
+            BitConverter.GetBytes((uint)settings.KeepAliveTime).CopyTo(inOptionValues, bytesPerUInt);
+            BitConverter.GetBytes((uint)settings.KeepAliveInterval).CopyTo(inOptionValues, bytesPerUInt * 2);
 
             socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
         }
