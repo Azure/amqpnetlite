@@ -358,7 +358,7 @@ namespace Amqp
             var error = new Error()
             {
                 Condition = ErrorCode.ConnectionForced,
-                Description = Fx.Format(SRAmqp.AmqpTimeout, state)
+                Description = "AMQP Idle-Timeout Exceeded"
             };
 
             if (thisPtr.state < State.CloseSent)
