@@ -70,7 +70,7 @@ namespace Amqp
         /// <summary>
         /// Gets or sets the open.idle-time-out field.
         /// </summary>
-        public uint IdleTimeout
+        public int IdleTimeout
         {
             get;
             set;
