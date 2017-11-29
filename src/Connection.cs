@@ -355,8 +355,26 @@ namespace Amqp
         static void OnTimeoutTimer(object state)
         {
             var thisPtr = (Connection)state;
-            thisPtr.Close();
-            thisPtr.timeoutTimer.Dispose();
+            var error = new Error()
+            {
+                Condition = ErrorCode.ConnectionForced,
+                Description = Fx.Format(SRAmqp.AmqpTimeout, state)
+            };
+
+            if (thisPtr.state < State.CloseSent)
+            {
+                // send close and shutdown the transport.
+                try
+                {
+                    thisPtr.CloseInternal(0, error);
+                }
+                catch
+                {
+                }
+            }
+
+            thisPtr.state = State.End;
+            thisPtr.OnEnded(error);
         }
 
         void Connect(SaslProfile saslProfile, Open open)
