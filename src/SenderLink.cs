@@ -21,7 +21,7 @@ namespace Amqp
     using System.Threading;
     using Amqp.Framing;
 
-    /// <summary>b
+    /// <summary>
     /// The SenderLink represents a link that sends outgoing messages.
     /// </summary>
     public partial class SenderLink : Link
