@@ -356,6 +356,7 @@ namespace Amqp
         {
             var thisPtr = (Connection)state;
             thisPtr.Close();
+            thisPtr.timeoutTimer.Dispose();
         }
 
         void Connect(SaslProfile saslProfile, Open open)
@@ -473,7 +474,7 @@ namespace Amqp
 
             if (this.amqpSettings.IdleTimeout > 0)
             {
-                //timeoutTimer = new Timer(onTimeoutTimer, this,  (int)this.amqpSettings.IdleTimeout, (int)this.amqpSettings.IdleTimeout);
+                timeoutTimer = new Timer(onTimeoutTimer, this,  (int)this.amqpSettings.IdleTimeout, (int)this.amqpSettings.IdleTimeout);
             }
 
             if (this.onOpened != null)
@@ -609,7 +610,7 @@ namespace Amqp
             bool shouldContinue = true;
             try
             {
-                this.timeoutTimer.Change(this.amqpSettings.IdleTimeout, this.amqpSettings.IdleTimeout);
+                this.timeoutTimer?.Change(this.amqpSettings.IdleTimeout, this.amqpSettings.IdleTimeout);
 
                 ushort channel;
                 DescribedList command;
