@@ -75,7 +75,7 @@ namespace Amqp
                 options(cws.Options);
             }
 
-            await cws.ConnectAsync(uri, CancellationToken.None);
+            await cws.ConnectAsync(uri, CancellationToken.None).ConfigureAwait(false);
             this.webSocket = cws;
 
             return this;
@@ -88,7 +88,9 @@ namespace Amqp
 
         async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
         {
-            var result = await this.webSocket.ReceiveAsync(new ArraySegment<byte>(buffer, offset, count), CancellationToken.None);
+            var result = await this.webSocket
+                .ReceiveAsync(new ArraySegment<byte>(buffer, offset, count), CancellationToken.None)
+                .ConfigureAwait(false);
             if (result.MessageType == WebSocketMessageType.Close)
             {
                 return 0;
@@ -101,8 +103,9 @@ namespace Amqp
         {
             foreach (var buffer in bufferList)
             {
-                await this.webSocket.SendAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
-                    WebSocketMessageType.Binary, true, CancellationToken.None);
+                await this.webSocket
+                    .SendAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length), WebSocketMessageType.Binary, true, CancellationToken.None)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -114,13 +117,19 @@ namespace Amqp
 
         void ITransport.Send(ByteBuffer buffer)
         {
-            this.webSocket.SendAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
-                WebSocketMessageType.Binary, true, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
+            this.webSocket
+                .SendAsync(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length), WebSocketMessageType.Binary, true, CancellationToken.None)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
         {
-            return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count).ConfigureAwait(false).GetAwaiter().GetResult();
+            return ((IAsyncTransport)this).ReceiveAsync(buffer, offset, count)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
         }
 
         static int GetDefaultPort(string scheme, int port)

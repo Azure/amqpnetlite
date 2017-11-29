@@ -107,7 +107,7 @@ namespace Amqp
             TransportProvider provider;
             if (this.transportFactories != null && this.transportFactories.TryGetValue(address.Scheme, out provider))
             {
-                transport = await provider.CreateAsync(address);
+                transport = await provider.CreateAsync(address).ConfigureAwait(false);
             }
             else if (TcpTransport.MatchScheme(address.Scheme))
             {

@@ -313,92 +313,92 @@ namespace Amqp
 #endif
 
 #if NETFX || DOTNET
-        internal static Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
+        internal static async Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
         {
-            return System.Net.Dns.GetHostAddressesAsync(host);
+            return await System.Net.Dns.GetHostAddressesAsync(host).ConfigureAwait(false);
         }
 
-        internal static Task<System.Net.IPHostEntry> GetHostEntryAsync(string host)
+        internal static async Task<System.Net.IPHostEntry> GetHostEntryAsync(string host)
         {
-            return System.Net.Dns.GetHostEntryAsync(host);
+            return await System.Net.Dns.GetHostEntryAsync(host).ConfigureAwait(false);
         }
 #endif
 
 #if NETFX40
-        internal static Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
+        internal static async Task<System.Net.IPAddress[]> GetHostAddressesAsync(string host)
         {
-            return Task.Factory.FromAsync(
+            return await Task.Factory.FromAsync(
                 (c, s) => System.Net.Dns.BeginGetHostAddresses(host, c, s),
                 (r) => System.Net.Dns.EndGetHostAddresses(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task<System.Net.IPHostEntry> GetHostEntryAsync(string host)
+        internal static async Task<System.Net.IPHostEntry> GetHostEntryAsync(string host)
         {
-            return Task.Factory.FromAsync(
+            return await Task.Factory.FromAsync(
                 (c, s) => System.Net.Dns.BeginGetHostEntry(host, c, s),
                 (r) => System.Net.Dns.EndGetHostEntry(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task AuthenticateAsClientAsync(this System.Net.Security.SslStream source,
+        internal static async Task AuthenticateAsClientAsync(this System.Net.Security.SslStream source,
             string targetHost)
         {
-            return Task.Factory.FromAsync(
+            await Task.Factory.FromAsync(
                 (c, s) => source.BeginAuthenticateAsClient(targetHost, c, s),
                 (r) => source.EndAuthenticateAsClient(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task AuthenticateAsClientAsync(this System.Net.Security.SslStream source,
+        internal static async Task AuthenticateAsClientAsync(this System.Net.Security.SslStream source,
             string targetHost,
             System.Security.Cryptography.X509Certificates.X509CertificateCollection clientCertificates,
             System.Security.Authentication.SslProtocols enabledSslProtocols,
             bool checkCertificateRevocation)
         {
-            return Task.Factory.FromAsync(
+            await Task.Factory.FromAsync(
                 (c, s) => source.BeginAuthenticateAsClient(targetHost, clientCertificates, enabledSslProtocols, checkCertificateRevocation, c, s),
                 (r) => source.EndAuthenticateAsClient(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task AuthenticateAsServerAsync(this System.Net.Security.SslStream source,
+        internal static async Task AuthenticateAsServerAsync(this System.Net.Security.SslStream source,
             System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate)
         {
-            return Task.Factory.FromAsync(
+            await Task.Factory.FromAsync(
                 (c, s) => source.BeginAuthenticateAsServer(serverCertificate, c, s),
                 (r) => source.EndAuthenticateAsServer(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task AuthenticateAsServerAsync(this System.Net.Security.SslStream source,
+        internal static async Task AuthenticateAsServerAsync(this System.Net.Security.SslStream source,
             System.Security.Cryptography.X509Certificates.X509Certificate serverCertificate,
             bool clientCertificateRequired,
             System.Security.Authentication.SslProtocols enabledSslProtocols,
             bool checkCertificateRevocation)
         {
-            return Task.Factory.FromAsync(
+            await Task.Factory.FromAsync(
                 (c, s) => source.BeginAuthenticateAsServer(serverCertificate, clientCertificateRequired, enabledSslProtocols, checkCertificateRevocation, c, s),
                 (r) => source.EndAuthenticateAsServer(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task<int> ReadAsync(this System.Net.Security.SslStream source,
+        internal static async Task<int> ReadAsync(this System.Net.Security.SslStream source,
             byte[] buffer, int offset, int count)
         {
-            return Task.Factory.FromAsync(
+            return await Task.Factory.FromAsync(
                 (c, s) => source.BeginRead(buffer, offset, count, c, s),
                 (r) => source.EndRead(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
-        internal static Task WriteAsync(this System.Net.Security.SslStream source,
+        internal static async Task WriteAsync(this System.Net.Security.SslStream source,
             byte[] buffer, int offset, int count)
         {
-            return Task.Factory.FromAsync(
+            await Task.Factory.FromAsync(
                 (c, s) => source.BeginWrite(buffer, offset, count, c, s),
                 (r) => source.EndWrite(r),
-                null);
+                null).ConfigureAwait(false);
         }
 
         internal static Task ContinueWith(this Task task, Action<Task, object> action, object state)

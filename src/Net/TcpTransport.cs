@@ -69,7 +69,7 @@ namespace Amqp
             }
             else
             {
-                ipAddresses = await TaskExtensions.GetHostAddressesAsync(address.Host);
+                ipAddresses = await TaskExtensions.GetHostAddressesAsync(address.Host).ConfigureAwait(false);
             }
 
             // need to handle both IPv4 and IPv6
@@ -88,7 +88,7 @@ namespace Amqp
                 try
                 {
 
-                    await socket.ConnectAsync(ipAddresses[i], address.Port);
+                    await socket.ConnectAsync(ipAddresses[i], address.Port).ConfigureAwait(false);
 
                     exception = null;
                     break;
@@ -119,13 +119,13 @@ namespace Amqp
                 if (ssl == null)
                 {
                     sslStream = new SslStream(new NetworkStream(socket));
-                    await sslStream.AuthenticateAsClientAsync(address.Host);
+                    await sslStream.AuthenticateAsClientAsync(address.Host).ConfigureAwait(false);
                 }
                 else
                 {
                     sslStream = new SslStream(new NetworkStream(socket), false, ssl.RemoteCertificateValidationCallback, ssl.LocalCertificateSelectionCallback);
                     await sslStream.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
-                        ssl.Protocols, ssl.CheckCertificateRevocation);
+                        ssl.Protocols, ssl.CheckCertificateRevocation).ConfigureAwait(false);
                 }
 
                 transport = new SslSocket(this, sslStream);
@@ -335,7 +335,7 @@ namespace Amqp
 
                 try
                 {
-                    await this.sslStream.WriteAsync(writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Length);
+                    await this.sslStream.WriteAsync(writeBuffer.Buffer, writeBuffer.Offset, writeBuffer.Length).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -346,9 +346,9 @@ namespace Amqp
                 }
             }
 
-            Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
+            async Task<int> IAsyncTransport.ReceiveAsync(byte[] buffer, int offset, int count)
             {
-                return this.sslStream.ReadAsync(buffer, offset, count);
+                return await this.sslStream.ReadAsync(buffer, offset, count).ConfigureAwait(false);
             }
 
             void ITransport.Send(ByteBuffer buffer)
