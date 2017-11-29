@@ -55,8 +55,10 @@ namespace Amqp
         internal const int DefaultMaxLinksPerSession = 64;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
+        static readonly TimerCallback onTimeoutTimer = OnTimeoutTimer;
         readonly Address address;
         readonly OnOpened onOpened;
+        readonly AmqpSettings amqpSettings;
         Session[] localSessions;
         Session[] remoteSessions;
         ushort channelMax;
@@ -66,6 +68,7 @@ namespace Amqp
         ITransport writer;
         Pump reader;
         Timer heartBeatTimer;
+        Timer timeoutTimer;
 
         Connection(ushort channelMax, uint maxFrameSize)
         {
@@ -142,6 +145,7 @@ namespace Amqp
         {
             transport.SetConnection(this);
 
+            this.amqpSettings = amqpSettings;
             this.BufferManager = bufferManager;
             this.MaxLinksPerSession = amqpSettings.MaxLinksPerSession;
             this.address = address;
@@ -348,6 +352,31 @@ namespace Amqp
             }
         }
 
+        static void OnTimeoutTimer(object state)
+        {
+            var thisPtr = (Connection)state;
+            var error = new Error()
+            {
+                Condition = ErrorCode.ConnectionForced,
+                Description = "AMQP Idle-Timeout Exceeded"
+            };
+
+            if (thisPtr.state < State.CloseSent)
+            {
+                // send close and shutdown the transport.
+                try
+                {
+                    thisPtr.CloseInternal(0, error);
+                }
+                catch
+                {
+                }
+            }
+
+            thisPtr.state = State.End;
+            thisPtr.OnEnded(error);
+        }
+
         void Connect(SaslProfile saslProfile, Open open)
         {
             ITransport transport;
@@ -459,6 +488,11 @@ namespace Amqp
                 }
 
                 this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
+            }
+
+            if (this.amqpSettings?.IdleTimeout > 0)
+            {
+                timeoutTimer = new Timer(onTimeoutTimer, this,  (int)this.amqpSettings.IdleTimeout, (int)this.amqpSettings.IdleTimeout);
             }
 
             if (this.onOpened != null)
@@ -594,6 +628,8 @@ namespace Amqp
             bool shouldContinue = true;
             try
             {
+                this.timeoutTimer?.Change(this.amqpSettings.IdleTimeout, this.amqpSettings.IdleTimeout);
+
                 ushort channel;
                 DescribedList command;
                 Frame.Decode(buffer, out channel, out command);
@@ -683,6 +719,11 @@ namespace Amqp
             if (this.heartBeatTimer != null)
             {
                 this.heartBeatTimer.Dispose();
+            }
+
+            if (this.timeoutTimer != null)
+            {
+                this.timeoutTimer.Dispose();
             }
 
             if (this.writer != null)
