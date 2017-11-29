@@ -490,7 +490,7 @@ namespace Amqp
                 this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
             }
 
-            if (this.amqpSettings.IdleTimeout > 0)
+            if (this.amqpSettings?.IdleTimeout > 0)
             {
                 timeoutTimer = new Timer(onTimeoutTimer, this,  (int)this.amqpSettings.IdleTimeout, (int)this.amqpSettings.IdleTimeout);
             }
