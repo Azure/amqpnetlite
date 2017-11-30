@@ -58,13 +58,13 @@ namespace Amqp
         static readonly TimerCallback onTimeoutTimer = OnTimeoutTimer;
         readonly Address address;
         readonly OnOpened onOpened;
-        readonly AmqpSettings amqpSettings;
         Session[] localSessions;
         Session[] remoteSessions;
         ushort channelMax;
         State state;
         uint maxFrameSize;
         uint remoteMaxFrameSize;
+        int idleTimeout;
         ITransport writer;
         Pump reader;
         Timer heartBeatTimer;
@@ -144,10 +144,10 @@ namespace Amqp
             : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
         {
             transport.SetConnection(this);
-
-            this.amqpSettings = amqpSettings;
+            
             this.BufferManager = bufferManager;
             this.MaxLinksPerSession = amqpSettings.MaxLinksPerSession;
+            this.idleTimeout = amqpSettings.IdleTimeout;
             this.address = address;
             this.onOpened = onOpened;
             this.writer = new TransportWriter(transport, this.OnIoException);
@@ -490,9 +490,9 @@ namespace Amqp
                 this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
             }
 
-            if (this.amqpSettings?.IdleTimeout > 0)
+            if (this.idleTimeout > 0)
             {
-                timeoutTimer = new Timer(onTimeoutTimer, this,  (int)this.amqpSettings.IdleTimeout, (int)this.amqpSettings.IdleTimeout);
+                timeoutTimer = new Timer(onTimeoutTimer, this,  (int)this.idleTimeout, (int)this.idleTimeout);
             }
 
             if (this.onOpened != null)
@@ -628,7 +628,7 @@ namespace Amqp
             bool shouldContinue = true;
             try
             {
-                this.timeoutTimer?.Change(this.amqpSettings.IdleTimeout, this.amqpSettings.IdleTimeout);
+                this.timeoutTimer?.Change(this.idleTimeout, this.idleTimeout);
 
                 ushort channel;
                 DescribedList command;
