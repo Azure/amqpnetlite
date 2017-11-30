@@ -628,7 +628,10 @@ namespace Amqp
             bool shouldContinue = true;
             try
             {
-                this.timeoutTimer?.Change(this.idleTimeout, this.idleTimeout);
+                if (this.timeoutTimer != null)
+                {
+                    this.timeoutTimer.Change(this.idleTimeout, this.idleTimeout);
+                }
 
                 ushort channel;
                 DescribedList command;
