@@ -156,7 +156,8 @@ namespace Amqp
                     ContainerId = amqpSettings.ContainerId,
                     HostName = amqpSettings.HostName ?? this.address.Host,
                     ChannelMax = this.channelMax,
-                    MaxFrameSize = this.maxFrameSize
+                    MaxFrameSize = this.maxFrameSize,
+                    IdleTimeOut = (uint)amqpSettings.IdleTimeout
                 };
             }
 
@@ -451,7 +452,7 @@ namespace Amqp
             uint idleTimeout = open.IdleTimeOut;
             if (idleTimeout > 0 && idleTimeout < uint.MaxValue)
             {
-                idleTimeout -= 3000;
+                idleTimeout /= 2;
                 if (idleTimeout > MaxIdleTimeout)
                 {
                     idleTimeout = MaxIdleTimeout;
