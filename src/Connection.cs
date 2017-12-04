@@ -54,7 +54,6 @@ namespace Amqp
         internal const ushort DefaultMaxSessions = 256;
         internal const int DefaultMaxLinksPerSession = 64;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
-        static readonly TimerCallback onHeartBeatTimer = OnHeartBeatTimer;
         readonly Address address;
         readonly OnOpened onOpened;
         Session[] localSessions;
@@ -65,7 +64,7 @@ namespace Amqp
         uint remoteMaxFrameSize;
         ITransport writer;
         Pump reader;
-        Timer heartBeatTimer;
+        HeartBeat heartBeat;
 
         Connection(ushort channelMax, uint maxFrameSize)
         {
@@ -127,6 +126,11 @@ namespace Amqp
                 };
             }
 
+            if (open.IdleTimeOut > 0)
+            {
+                this.heartBeat = new HeartBeat(this, open.IdleTimeOut);
+            }
+
             this.Connect(saslProfile, open);
         }
 
@@ -159,6 +163,11 @@ namespace Amqp
                     MaxFrameSize = this.maxFrameSize,
                     IdleTimeOut = (uint)amqpSettings.IdleTimeout
                 };
+            }
+
+            if (open.IdleTimeOut > 0)
+            {
+                this.heartBeat = new HeartBeat(this, open.IdleTimeOut);
             }
 
             this.SendHeader();
@@ -247,6 +256,11 @@ namespace Amqp
                 ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
                 Frame.Encode(buffer, FrameType.Amqp, channel, command);
                 this.writer.Send(buffer);
+                if (this.heartBeat != null)
+                {
+                    this.heartBeat.OnSend();
+                }
+
                 Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
             }
         }
@@ -330,21 +344,6 @@ namespace Amqp
                 this.SendClose(error);
                 this.state = newState;
                 return this.state == State.End;
-            }
-        }
-
-        static void OnHeartBeatTimer(object state)
-        {
-            var thisPtr = (Connection)state;
-            try
-            {
-                byte[] frame = new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 };
-                thisPtr.writer.Send(new ByteBuffer(frame, 0, frame.Length, frame.Length));
-                Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
-            }
-            catch
-            {
-                // ignore failures
             }
         }
 
@@ -443,6 +442,11 @@ namespace Amqp
                 }
             }
 
+            if (this.onOpened != null)
+            {
+                this.onOpened(this, open);
+            }
+
             if (open.ChannelMax < this.channelMax)
             {
                 this.channelMax = open.ChannelMax;
@@ -450,20 +454,14 @@ namespace Amqp
 
             this.remoteMaxFrameSize = open.MaxFrameSize;
             uint idleTimeout = open.IdleTimeOut;
-            if (idleTimeout > 0 && idleTimeout < uint.MaxValue)
+            if (idleTimeout > 0 && this.heartBeat == null)
             {
-                idleTimeout /= 2;
-                if (idleTimeout > MaxIdleTimeout)
-                {
-                    idleTimeout = MaxIdleTimeout;
-                }
-
-                this.heartBeatTimer = new Timer(onHeartBeatTimer, this, (int)idleTimeout, (int)idleTimeout);
+                this.heartBeat = new HeartBeat(this, 0);
             }
 
-            if (this.onOpened != null)
+            if (this.heartBeat != null)
             {
-                this.onOpened(this, open);
+                this.heartBeat.Start(idleTimeout);
             }
         }
 
@@ -606,6 +604,11 @@ namespace Amqp
                     Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
                 }
 
+                if (this.heartBeat != null)
+                {
+                    this.heartBeat.OnReceive();
+                }
+
                 if (command != null)
                 {
                     if (command.Descriptor.Code == Codec.Open.Code)
@@ -680,9 +683,9 @@ namespace Amqp
         {
             this.Error = error;
 
-            if (this.heartBeatTimer != null)
+            if (this.heartBeat != null)
             {
-                this.heartBeatTimer.Dispose();
+                this.heartBeat.Stop();
             }
 
             if (this.writer != null)
@@ -700,6 +703,111 @@ namespace Amqp
             }
 
             this.NotifyClosed(this.Error);
+        }
+
+        sealed class HeartBeat
+        {
+            readonly Connection connection;
+            readonly Timer timer;
+            uint local;  // for enforcing heartbeats
+            uint remote; // for sending heartbeats
+            DateTime lastSend;
+            DateTime lastReceive;
+
+            public HeartBeat(Connection connection, uint local)
+            {
+                this.connection = connection;
+                this.local = local;
+                this.timer = new Timer(OnTimer, this, -1, -1);
+            }
+
+            public void Start(uint remote)
+            {
+                this.remote = remote / 2;
+                this.lastSend = DateTime.UtcNow;
+                this.lastReceive = DateTime.UtcNow;
+                this.SetTimer();
+            }
+
+            public void Stop()
+            {
+                if (this.timer != null)
+                {
+                    this.timer.Dispose();
+                }
+            }
+
+            public void OnSend()
+            {
+                this.lastSend = DateTime.UtcNow;
+            }
+
+            public void OnReceive()
+            {
+                this.lastReceive = DateTime.UtcNow;
+            }
+
+            static void OnTimer(object state)
+            {
+                var thisPtr = (HeartBeat)state;
+                try
+                {
+                    DateTime now = DateTime.UtcNow;
+                    if (thisPtr.local > 0 &&
+                        GetDueMilliseconds(thisPtr.local, now, thisPtr.lastReceive) == 0)
+                    {
+                        thisPtr.connection.CloseInternal(
+                            0,
+                            new Error()
+                            {
+                                Condition = ErrorCode.ConnectionForced,
+                                Description = Fx.Format("Connection closed after idle timeout %d ms", thisPtr.local)
+                            });
+                        return;
+                    }
+
+                    if (thisPtr.remote > 0 &&
+                        GetDueMilliseconds(thisPtr.remote, now, thisPtr.lastSend) == 0)
+                    {
+                        thisPtr.connection.writer.Send(new ByteBuffer(new byte[] { 0, 0, 0, 8, 2, 0, 0, 0 }, 0, 8, 8));
+                        thisPtr.OnSend();
+                        Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Trace.WriteLine(TraceLevel.Warning, "{0}:{1}", exception.GetType().Name, exception.Message);
+                }
+                finally
+                {
+                    if (!thisPtr.connection.IsClosed)
+                    {
+                        thisPtr.SetTimer();
+                    }
+                }
+            }
+
+            static uint GetDueMilliseconds(uint timeout, DateTime now, DateTime last)
+            {
+                uint due = uint.MaxValue;
+                if (timeout > 0)
+                {
+                    uint elapsed = (uint)((now.Ticks - last.Ticks) / Encoder.TicksPerMillisecond);
+                    due = timeout > elapsed ? timeout - elapsed : 0;
+                }
+
+                return due;
+            }
+
+            void SetTimer()
+            {
+                DateTime now = DateTime.UtcNow;
+                uint localDue = GetDueMilliseconds(this.local, now, this.lastReceive);
+                uint remoteDue = GetDueMilliseconds(this.remote, now, this.lastSend);
+                uint due = localDue < remoteDue ? localDue : remoteDue;
+                Fx.Assert(due < uint.MaxValue, "At least one timeout should be set");
+                this.timer.Change(due > int.MaxValue ? int.MaxValue : (int)due, -1);
+            }
         }
 
         // Writer and Pump are for synchronous transport created from the constructors

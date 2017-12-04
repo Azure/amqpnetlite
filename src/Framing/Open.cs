@@ -73,7 +73,7 @@ namespace Amqp.Framing
         /// </summary>
         public uint IdleTimeOut
         {
-            get { return this.Fields[4] == null ? uint.MaxValue : (uint)this.Fields[4]; }
+            get { return this.Fields[4] == null ? 0 : (uint)this.Fields[4]; }
             set { this.Fields[4] = value; }
         }
 

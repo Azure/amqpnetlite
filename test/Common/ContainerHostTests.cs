@@ -435,6 +435,22 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostConnectionIdleTimeoutTest()
+        {
+            string name = "ContainerHostConnectionIdleTimeoutTest";
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+            this.host.Listeners[0].AMQP.IdleTimeout = 1000;
+
+            var connection = new Connection(Address, null, null, (c, o) => o.IdleTimeOut = 0);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+            sender.Send(new Message("test") { Properties = new Properties() { MessageId = name } });
+            Thread.Sleep(1100);
+            Assert.IsTrue(connection.Error != null, "error should be set");
+            Assert.AreEqual((Symbol)ErrorCode.ConnectionForced, connection.Error.Condition);
+        }
+
+        [TestMethod]
         public void ContainerHostIncorrectProcessorTest()
         {
             this.host.RegisterMessageProcessor("message-processor", new TestMessageProcessor());

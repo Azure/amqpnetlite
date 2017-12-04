@@ -62,7 +62,7 @@ namespace Amqp.Types
 #else
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
 #endif
-        const long ticksPerMillisecond = 10000;
+        internal const long TicksPerMillisecond = 10000;
 
         static Serializer[] serializers;
         static Map codecByType;
@@ -352,7 +352,7 @@ namespace Amqp.Types
         /// <returns></returns>
         public static long DateTimeToTimestamp(DateTime dateTime)
         {
-            return (long)((dateTime.ToUniversalTime().Ticks - epochTicks) / ticksPerMillisecond);
+            return (long)((dateTime.ToUniversalTime().Ticks - epochTicks) / TicksPerMillisecond);
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace Amqp.Types
         /// <returns></returns>
         public static DateTime TimestampToDateTime(long timestamp)
         {
-            return new DateTime(epochTicks + timestamp * ticksPerMillisecond, DateTimeKind.Utc);
+            return new DateTime(epochTicks + timestamp * TicksPerMillisecond, DateTimeKind.Utc);
         }
 
         /// <summary>

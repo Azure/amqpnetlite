@@ -41,6 +41,8 @@ namespace Test.Amqp
         Detach,
         End,
         Close,
+
+        Empty,
     }
 
     public enum TestOutcome
@@ -199,6 +201,12 @@ namespace Test.Amqp
             buffer.Complete(1);
             byte type = AmqpBitConverter.ReadUByte(buffer);
             ushort channel = AmqpBitConverter.ReadUShort(buffer);
+            if (buffer.Length == 0)
+            {
+                this.HandleTestPoint(TestPoint.Empty, stream, channel, null);
+                return true;
+            }
+
             buffer.Complete(1);
             ulong code = Encoder.ReadULong(buffer, Encoder.ReadFormatCode(buffer));
             List fields = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
@@ -300,7 +308,10 @@ namespace Test.Amqp
                         int len = AmqpBitConverter.ReadInt(buffer, 0);
                         byte[] frame = new byte[len - 4];
                         Read(stream, frame, 0, frame.Length);
-                        if (!OnFrame(stream, new ByteBuffer(frame, 0, frame.Length, frame.Length))) break;
+                        if (!OnFrame(stream, new ByteBuffer(frame, 0, frame.Length, frame.Length)))
+                        {
+                            break;
+                        }
                     }
                 }
             }
