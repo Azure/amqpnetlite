@@ -289,6 +289,7 @@ namespace Amqp.Listener
                     Link = this,
                     Settled = this.SettleOnSend,
                     Tag = Delivery.GetDeliveryTag(tag),
+                    OnOutcome = (a, b, c, d) => b.Delivery.OnStateChange(c),
                     UserToken = userToken
                 };
 

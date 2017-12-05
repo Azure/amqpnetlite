@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -175,8 +176,8 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
 
-            Assert.AreEqual(released + ignored, messages.Count);
-            Assert.AreEqual(rejected, source.DeadletterMessage.Count);
+            Assert.AreEqual(released + ignored, messages.Count, string.Join(",", messages.Select(m => m.Properties.MessageId)));
+            Assert.AreEqual(rejected, source.DeadletterMessage.Count, string.Join(",", source.DeadletterMessage.Select(m => m.Properties.MessageId)));
         }
 
         [TestMethod]
