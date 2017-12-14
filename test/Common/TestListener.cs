@@ -254,7 +254,10 @@ namespace Test.Amqp
                 case 0x14ul:  // transfer
                     if (this.HandleTestPoint(TestPoint.Transfer, stream, channel, fields) == TestOutcome.Continue)
                     {
-                        FRM(stream, 0x15UL, 0, channel, true, fields[1], null, true, new Accepted());
+                        if (false.Equals(fields[4]))
+                        {
+                            FRM(stream, 0x15UL, 0, channel, true, fields[1], null, true, new Accepted());
+                        }
                     }
                     break;
 

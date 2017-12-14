@@ -523,11 +523,6 @@ namespace Amqp
                         this.WriteDelivery(delivery);
                     }
                 }
-
-                if (this.outgoingWindow == 0)
-                {
-                    return;
-                }
             }
 
             if (flow.HasHandle)

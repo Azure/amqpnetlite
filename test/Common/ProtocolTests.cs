@@ -545,6 +545,55 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void SmallSessionWindowTest()
+        {
+            ManualResetEvent done = new ManualResetEvent(false);
+            int window = 37;
+            int total = 8000;
+            int received = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, (uint)window, 65536u, 8u);
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                received++;
+                if (received % window == 0)
+                {
+                    TestListener.FRM(stream, 0x13UL, 0, channel, (uint)received, (uint)window, 0u, 65536u);
+                }
+
+                if (received >= total)
+                {
+                    done.Set();
+                }
+
+                return TestOutcome.Continue;
+            });
+
+            string testName = "SmallSessionWindowTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            SenderLink[] senders = new SenderLink[8];
+            for (int i = 0; i < senders.Length; i++)
+            {
+                senders[i] = new SenderLink(session, "sender:" + i, testName);
+            }
+
+            for (int i = 0; i < total; i++)
+            {
+                senders[i % senders.Length].Send(new Message("message" + i), null, null);
+            }
+
+            Assert.IsTrue(done.WaitOne(10000), "not all messages are transferred");
+            connection.Close();
+        }
+
+        [TestMethod]
         public void ClosedEventOnTransportResetTest()
         {
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
