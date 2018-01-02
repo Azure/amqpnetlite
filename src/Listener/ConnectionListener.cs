@@ -188,7 +188,7 @@ namespace Amqp.Listener
 
             foreach (var connection in snapshot)
             {
-                connection.CloseInternal(0, new Error() { Condition = ErrorCode.ConnectionForced });
+                connection.CloseInternal(0, new Error(ErrorCode.ConnectionForced) { Description = "listener close" });
             }
         }
 

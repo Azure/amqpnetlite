@@ -41,7 +41,7 @@ namespace Amqp
         /// <param name="condition">The error condition.</param>
         /// <param name="description">The error description.</param>
         public AmqpException(string condition, string description)
-            : this(new Error() { Condition = condition, Description = description })
+            : this(new Error(condition) { Description = description })
         {
         }
 

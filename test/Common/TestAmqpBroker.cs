@@ -590,7 +590,7 @@ namespace Listener.IContainer
                     {
                         link.DisposeMessage(
                             message,
-                            new Rejected() { Error = new Error() { Condition = errorCondition, Description = "message was rejected" } },
+                            new Rejected() { Error = new Error(errorCondition) { Description = "message was rejected" } },
                             true);
                     }
                     else
@@ -794,7 +794,7 @@ namespace Listener.IContainer
                     Trace.WriteLine(TraceLevel.Error, exception.Message);
                     link.DisposeMessage(
                         message,
-                        new Rejected() { Error = new Error() { Condition = ErrorCode.DecodeError, Description = "Cannot decode txn message" } },
+                        new Rejected() { Error = new Error(ErrorCode.DecodeError) { Description = "Cannot decode txn message" } },
                         true);
 
                     return;
@@ -825,7 +825,7 @@ namespace Listener.IContainer
                     {
                         link.DisposeMessage(
                             message, 
-                            new Rejected() { Error = new Error() { Condition = ErrorCode.NotFound, Description = "Transaction not found" } },
+                            new Rejected() { Error = new Error(ErrorCode.NotFound) { Description = "Transaction not found" } },
                             true);
                     }
                 }
@@ -833,7 +833,7 @@ namespace Listener.IContainer
                 {
                     link.DisposeMessage(
                         message,
-                        new Rejected() { Error = new Error() { Condition = ErrorCode.NotImplemented, Description = "Unsupported message body" } },
+                        new Rejected() { Error = new Error(ErrorCode.NotImplemented) { Description = "Unsupported message body" } },
                         true);
                 }
             }

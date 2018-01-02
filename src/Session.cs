@@ -608,9 +608,8 @@ namespace Amqp
             if (this.state >= State.EndSent)
             {
                 throw new AmqpException(this.Error ??
-                    new Error()
+                    new Error(ErrorCode.IllegalState)
                     {
-                        Condition = ErrorCode.IllegalState,
                         Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
                     });
             }

@@ -73,7 +73,7 @@ namespace Listener.ContainerHost
                 if (attachContext.Attach.LinkName == "")
                 {
                     // how to fail the attach request
-                    attachContext.Complete(new Error() { Condition = ErrorCode.InvalidField, Description = "Empty link name not allowed." });
+                    attachContext.Complete(new Error(ErrorCode.InvalidField) { Description = "Empty link name not allowed." });
                 }
                 else if (attachContext.Link.Role)
                 {
@@ -161,7 +161,7 @@ namespace Listener.ContainerHost
                     {
                         if (!t.Result)
                         {
-                            attachContext.Complete(new Error() { Condition = ErrorCode.ResourceLimitExceeded });
+                            attachContext.Complete(new Error(ErrorCode.ResourceLimitExceeded));
                         }
                         else
                         {
@@ -178,7 +178,7 @@ namespace Listener.ContainerHost
                     {
                         if (!t.Result)
                         {
-                            messageContext.Complete(new Error() { Condition = ErrorCode.ResourceLimitExceeded });
+                            messageContext.Complete(new Error(ErrorCode.ResourceLimitExceeded));
                         }
                         else
                         {

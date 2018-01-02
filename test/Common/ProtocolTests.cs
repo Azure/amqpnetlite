@@ -686,7 +686,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                sender.Close(TimeSpan.FromSeconds(60), new Error() { Condition = ErrorCode.NotImplemented });
+                sender.Close(TimeSpan.FromSeconds(60), new Error(ErrorCode.NotImplemented));
                 connection.Close();
             }
 
@@ -697,7 +697,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                await sender.CloseAsync(TimeSpan.FromSeconds(60), new Error() { Condition = ErrorCode.NotImplemented });
+                await sender.CloseAsync(TimeSpan.FromSeconds(60), new Error(ErrorCode.NotImplemented));
                 await connection.CloseAsync();
             }).Unwrap().GetAwaiter().GetResult();
         }
@@ -708,7 +708,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
             {
                 // detach with error
-                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true, new Error() { Condition = ErrorCode.InternalError });
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true, new Error(ErrorCode.InternalError));
                 return TestOutcome.Stop;
             });
 
@@ -784,7 +784,7 @@ namespace Test.Amqp
         {
             this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
             {
-                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], false, new Error() { Condition = ErrorCode.InternalError });
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], false, new Error(ErrorCode.InternalError));
                 return TestOutcome.Stop;
             });
 
@@ -1141,7 +1141,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 // detach link with error. receive calls should throw
-                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true, new Error() { Condition = ErrorCode.InternalError });
+                TestListener.FRM(stream, 0x16UL, 0, channel, fields[0], true, new Error(ErrorCode.InternalError));
                 return TestOutcome.Stop;
             });
             this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>

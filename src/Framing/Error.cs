@@ -17,6 +17,7 @@
 
 namespace Amqp.Framing
 {
+    using System;
     using Amqp.Types;
 
     /// <summary>
@@ -27,9 +28,20 @@ namespace Amqp.Framing
         /// <summary>
         /// Initializes an error object.
         /// </summary>
+        [Obsolete]
         public Error()
+            : this(ErrorCode.InternalError)
+        {
+        }
+
+        /// <summary>
+        /// Initializes an error object.
+        /// </summary>
+        /// <param name="condition">The error condition (<see cref="ErrorCode"/> for standard error conditions).</param>
+        public Error(Symbol condition)
             : base(Codec.Error, 3)
         {
+            this.Condition = condition;
         }
 
         /// <summary>

@@ -90,7 +90,7 @@ namespace Amqp.Framing
             Encoder.AddKnownDescribed(Codec.Dispose, () => new Dispose());
             Encoder.AddKnownDescribed(Codec.Transfer, () => new Transfer());
 
-            Encoder.AddKnownDescribed(Codec.Error, () => new Error());
+            Encoder.AddKnownDescribed(Codec.Error, () => new Error(null));
             Encoder.AddKnownDescribed(Codec.Source, () => new Source());
             Encoder.AddKnownDescribed(Codec.Target, () => new Target());
 

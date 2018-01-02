@@ -442,9 +442,8 @@ namespace Amqp.Listener
                     links.AddRange(this.collection.Keys);
                     foreach (var link in links)
                     {
-                        link.CloseInternal(0, new Error()
+                        link.CloseInternal(0, new Error(ErrorCode.DetachForced)
                         {
-                            Condition = ErrorCode.DetachForced,
                             Description = "Source was unregistered."
                         });
                     }
@@ -568,9 +567,8 @@ namespace Amqp.Listener
                 {
                     outcome = new Rejected()
                     {
-                        Error = new Error()
+                        Error = new Error(ErrorCode.NotFound)
                         {
-                            Condition = ErrorCode.NotFound,
                             Description = "Not response link was found. Ensure the link is attached or reply-to is set on the request."
                         }
                     };
@@ -588,7 +586,7 @@ namespace Amqp.Listener
 
             void IDisposable.Dispose()
             {
-                Error error = new Error() { Condition = ErrorCode.DetachForced, Description = "Processor was unregistered." };
+                Error error = new Error(ErrorCode.DetachForced) { Description = "Processor was unregistered." };
                 lock (this.requestLinks)
                 {
                     for (int i = 0; i < this.requestLinks.Count; i++)

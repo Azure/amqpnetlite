@@ -114,7 +114,7 @@ namespace Amqp
         internal void Abort(Error error, string reason)
         {
             this.CloseCalled = true;
-            this.Error = error ?? new Error() { Condition = ErrorCode.DetachForced, Description = reason };
+            this.Error = error ?? new Error(ErrorCode.DetachForced) { Description = reason };
 
             this.OnAbort(error);
 
@@ -155,9 +155,8 @@ namespace Amqp
             Error remoteError = detach.Error;
             if (remoteError == null && this.detach && detach.Closed)
             {
-                remoteError = new Error()
+                remoteError = new Error(ErrorCode.InternalError)
                 {
-                    Condition = ErrorCode.InternalError,
                     Description = "Link is closed by peer though a detach was requested."
                 };
             }
@@ -270,9 +269,8 @@ namespace Amqp
             if (this.IsDetaching || this.CloseCalled)
             {
                 throw new AmqpException(this.Error ??
-                    new Error()
+                    new Error(ErrorCode.IllegalState)
                     {
-                        Condition = ErrorCode.IllegalState,
                         Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
                     });
             }

@@ -64,14 +64,14 @@ namespace PeerToPeer.Server
             {
                 if (!attachContext.Attach.Role)
                 {
-                    attachContext.Complete(new Error() { Condition = ErrorCode.NotAllowed, Description = "Only receiver link is allowed." });
+                    attachContext.Complete(new Error(ErrorCode.NotAllowed) { Description = "Only receiver link is allowed." });
                     return;
                 }
 
                 string address = ((Source)attachContext.Attach.Source).Address;
                 if (!string.Equals("$monitoring", address, StringComparison.OrdinalIgnoreCase))
                 {
-                    attachContext.Complete(new Error() { Condition = ErrorCode.NotFound, Description = "Cannot find address " + address });
+                    attachContext.Complete(new Error(ErrorCode.NotFound) { Description = "Cannot find address " + address });
                     return;
                 }
 

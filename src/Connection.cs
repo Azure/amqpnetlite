@@ -398,9 +398,8 @@ namespace Amqp
             if (this.state >= State.CloseSent)
             {
                 throw new AmqpException(this.Error ??
-                    new Error()
+                    new Error(ErrorCode.IllegalState)
                     {
-                        Condition = ErrorCode.IllegalState,
                         Description = Fx.Format(SRAmqp.AmqpIllegalOperationState, operation, this.state)
                     });
             }
@@ -649,7 +648,7 @@ namespace Amqp
             AmqpException amqpException = exception as AmqpException;
             Error error = amqpException != null ?
                 amqpException.Error :
-                new Error() { Condition = ErrorCode.InternalError, Description = exception.Message };
+                new Error(ErrorCode.InternalError) { Description = exception.Message };
 
             if (this.state < State.CloseSent)
             {
@@ -674,7 +673,7 @@ namespace Amqp
             {
                 this.state = State.End;
                 this.CloseCalled = true;
-                Error error = new Error() { Condition = ErrorCode.ConnectionForced, Description = exception.Message };
+                Error error = new Error(ErrorCode.ConnectionForced) { Description = exception.Message };
                 this.OnEnded(error);
             }
         }
@@ -758,9 +757,8 @@ namespace Amqp
                     {
                         thisPtr.connection.CloseInternal(
                             0,
-                            new Error()
+                            new Error(ErrorCode.ConnectionForced)
                             {
-                                Condition = ErrorCode.ConnectionForced,
                                 Description = Fx.Format("Connection closed after idle timeout %d ms", thisPtr.local)
                             });
                         return;
