@@ -24,6 +24,7 @@ namespace Test.Amqp
     using global::Amqp.Serialization;
     using global::Amqp.Types;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using AmqpDecimal = global::Amqp.Types.Decimal;
 
     [TestClass]
     public class AmqpSerializerTests
@@ -89,6 +90,10 @@ namespace Test.Amqp
             RunPrimitiveTypeTest<double>(0);
             RunPrimitiveTypeTest<double>(123.456789F);
             RunPrimitiveTypeTest<double>(double.MaxValue);
+
+            RunPrimitiveTypeTest<AmqpDecimal>(new AmqpDecimal(new byte[] { 0, 1, 2, 3 }));
+            RunPrimitiveTypeTest<AmqpDecimal>(new AmqpDecimal(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7 }));
+            RunPrimitiveTypeTest<AmqpDecimal>(new AmqpDecimal(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }));
 
             RunPrimitiveTypeTest<char>('A');
             RunPrimitiveTypeTest<char>('中');
@@ -189,7 +194,8 @@ namespace Test.Amqp
             Person p = new Student("Tom")
             {
                 Address = new StreetAddress() { FullAddress = new string('B', 1024) },
-                Grades = new List<int>() { 1, 2, 3, 4, 5 }
+                Grades = new List<int>() { 1, 2, 3, 4, 5 },
+                Gpa = new AmqpDecimal(new byte[] { 4, 5, 6, 7 })
             };
 
             p.Age = 20;
@@ -210,6 +216,7 @@ namespace Test.Amqp
             personValidator(p, p3);
             Assert.AreEqual(((Student)p).Address.FullAddress, ((Student)p3).Address.FullAddress);
             gradesValidator(((Student)p).Grades, ((Student)p3).Grades);
+            Assert.AreEqual(((Student)p).Gpa, ((Student)p3).Gpa);
 
             // Inter-op: it should be an AMQP described list as other clients see it
             buffer.Seek(0);
@@ -228,6 +235,7 @@ namespace Test.Amqp
             Assert.AreEqual(((Map)lv[4])["male"], p.Properties["male"]);
             Assert.AreEqual(((Map)lv[4])["nick-name"], p.Properties["nick-name"]);
             Assert.IsTrue(lv[5] is List);
+            Assert.IsTrue(lv[6] is AmqpDecimal);
 
             // Non-default serializer
             AmqpSerializer serializer = new AmqpSerializer();

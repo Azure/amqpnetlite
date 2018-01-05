@@ -196,6 +196,7 @@
     <Compile Include="Types\FixedWidth.cs" />
     <Compile Include="Types\FormatCode.cs" />
     <Compile Include="Types\Map.cs" />
+    <Compile Include="Types\Decimal.cs" />
     <Compile Include="Types\Symbol.cs" />
   </ItemGroup>
   <ItemGroup>

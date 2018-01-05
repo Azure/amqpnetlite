@@ -19,6 +19,7 @@ namespace Test.Amqp
 {
     using System.Collections.Generic;
     using global::Amqp.Serialization;
+    using global::Amqp.Types;
 
     [AmqpContract(Name = "test.amqp:student", Code = 0x0000123400000001)]
     class Student : Person
@@ -35,6 +36,9 @@ namespace Test.Amqp
 
         [AmqpMember(Name = "grades", Order = 10)]
         public List<int> Grades { get; set; }
+
+        [AmqpMember(Name = "gpa", Order = 11)]
+        public Decimal Gpa { get; set; }
 
         [OnSerializing]
         void OnSerializing()

@@ -111,6 +111,7 @@
     <Compile Include="Framing\ReceiverSettleMode.cs" />
     <Compile Include="Framing\SenderSettleMode.cs" />
     <Compile Include="ITransport.cs" />
+    <Compile Include="Types\Decimal.cs" />
     <Compile Include="Types\DescribedMap.cs" />
     <Compile Include="Types\DescribedValue.cs" />
     <Compile Include="Types\Fields.cs" />

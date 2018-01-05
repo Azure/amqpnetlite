@@ -229,7 +229,14 @@ namespace Amqp.Types
                     Encoder = delegate(ByteBuffer b, object o, bool s) { WriteArray(b, (Array)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadArray(b, c); }
                 },
-                // 21: invalid
+                // 21: decimal
+                new Serializer()
+                {
+                    Type = typeof(Decimal),
+                    Encoder = delegate(ByteBuffer b, object o, bool s) { WriteDecimal(b, (Decimal)o); },
+                    Decoder = delegate(ByteBuffer b, byte c) { return ReadDecimal(b, c); }
+                },
+                // 22: invalid
                 null
             };
 
@@ -257,7 +264,10 @@ namespace Amqp.Types
 #if !NETMF_LITE
                 { typeof(Fields),   serializers[19] },
 #endif
+                { typeof(Decimal),   serializers[21] },
             };
+
+            byte nil = (byte)(serializers.Length - 1);
 
             codecIndexTable = new byte[][]
             {
@@ -271,19 +281,19 @@ namespace Amqp.Types
                 new byte[] { 3, 7 },
 
                 // 0x70:uint, 0x71:int, 0x72:float, 0x73:char, 0x74:decimal32
-                new byte[] { 4, 8, 10, 12 },
+                new byte[] { 4, 8, 10, 12, 21 },
 
                 // 0x80:ulong, 0x81:long, 0x82:double, 0x83:timestamp, 0x84:decimal64
-                new byte[] { 5, 9, 11, 13 },
+                new byte[] { 5, 9, 11, 13, 21 },
 
-                // 0x98:uuid
-                new byte[] { 21, 21, 21, 21, 21, 21, 21, 21, 14 },
+                // 0x94:decimal128, 0x98:uuid
+                new byte[] { nil, nil, nil, nil, 21, nil, nil, nil, 14 },
             
                 // 0xa0:bin8, 0xa1:str8, 0xa3:sym8
                 new byte[] { 15, 16, 21, 17 },
 
                 // 0xb0:bin32, 0xb1:str32, 0xb3:sym32
-                new byte[] { 15, 16, 21, 17 },
+                new byte[] { 15, 16, nil, 17 },
 
                 // 0xc0:list8, 0xc1:map8
                 new byte[] { 18, 19 },
@@ -588,6 +598,34 @@ namespace Amqp.Types
         {
             AmqpBitConverter.WriteUByte(buffer, FormatCode.Double);
             AmqpBitConverter.WriteDouble(buffer, value);
+        }
+
+        /// <summary>
+        /// Writes a <see cref="Decimal"/> value to a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to write.</param>
+        /// <param name="value">The Decimal value.</param>
+        public static void WriteDecimal(ByteBuffer buffer, Decimal value)
+        {
+            if (value == null)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
+            }
+            else
+            {
+                byte formatCode = FormatCode.Decimal32;
+                if (value.Bytes.Length == FixedWidth.Decimal64)
+                {
+                    formatCode = FormatCode.Decimal64;
+                }
+                else if (value.Bytes.Length == FixedWidth.Decimal128)
+                {
+                    formatCode = FormatCode.Decimal128;
+                }
+
+                AmqpBitConverter.WriteUByte(buffer, formatCode);
+                AmqpBitConverter.WriteBytes(buffer, value.Bytes, 0, value.Bytes.Length);
+            }
         }
 
         /// <summary>
@@ -1149,6 +1187,41 @@ namespace Amqp.Types
             {
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
+        }
+
+        /// <summary>
+        /// Reads a <see cref="Decimal"/> value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        public static Decimal ReadDecimal(ByteBuffer buffer, byte formatCode)
+        {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
+            int width = -1;
+            if (formatCode == FormatCode.Decimal32)
+            {
+                width = FixedWidth.Decimal32;
+            }
+            else if (formatCode == FormatCode.Decimal64)
+            {
+                width = FixedWidth.Decimal64;
+            }
+            else if (formatCode == FormatCode.Decimal128)
+            {
+                width = FixedWidth.Decimal128;
+            }
+            else
+            {
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+
+            byte[] bytes = new byte[width];
+            AmqpBitConverter.ReadBytes(buffer, bytes, 0, width);
+            return new Decimal(bytes);
         }
 
         /// <summary>

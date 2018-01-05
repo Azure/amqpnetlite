@@ -24,6 +24,7 @@ namespace Test.Amqp
     using global::Amqp.Framing;
     using global::Amqp.Types;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Decimal = global::Amqp.Types.Decimal;
 
     [TestClass]
     public class AmqpCodecTests
@@ -84,14 +85,14 @@ namespace Test.Amqp
         double doubleValue = 111111111111111.22222222222;
         byte[] doubleValueBin = new byte[] { 0x82, 0x42, 0xd9, 0x43, 0x84, 0x93, 0xbc, 0x71, 0xce };
 
-        //decimal decimal32Value = 123.4567M; // 0x12D687 * 10 (0x61 - 101)
-        //byte[] decimal32ValueBin = new byte[] { 0x30, 0x92, 0xd6, 0x87 };
+        byte[] decimal32ValueBin = new byte[] { 0x74, 0x30, 0x92, 0xd6, 0x87 };
+        Decimal decimal32Value = new Decimal(new byte[] { 0x30, 0x92, 0xd6, 0x87 });
 
-        //decimal decimal64Value = -1234567899.999988M; // s=0x462D53D216EF4, e = 0x188
-        //byte[] decimal64ValueBin = new byte[] { 0xb1, 0x04, 0x62, 0xd5, 0x3d, 0x21, 0x6e, 0xf4 };
+        byte[] decimal64ValueBin = new byte[] { 0x84, 0xb1, 0x04, 0x62, 0xd5, 0x3d, 0x21, 0x6e, 0xf4 };
+        Decimal decimal64Value = new Decimal(new byte[] { 0xb1, 0x04, 0x62, 0xd5, 0x3d, 0x21, 0x6e, 0xf4 });
 
-        //decimal decimal128Value = decimal.MaxValue; // s=0xffffffffffff, e = 6176
-        //byte[] decimal128ValueBin = new byte[] { 0x30, 0x40, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+        byte[] decimal128ValueBin = new byte[] { 0x94, 0x30, 0x40, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+        Decimal decimal128Value = new Decimal(new byte[] { 0x30, 0x40, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff });
 
         char charValue = 'A';
         byte[] charValueBin = new byte[] { 0x73, 0x00, 0x00, 0x00, 0x41 };
@@ -168,6 +169,9 @@ namespace Test.Amqp
             RunSingleValueTest(workBuffer, longValue, longValueBin, "Long value is not equal.");
             RunSingleValueTest(workBuffer, floatValue, floatValueBin, "Float value is not equal.");
             RunSingleValueTest(workBuffer, doubleValue, doubleValueBin, "Double value is not equal.");
+            RunSingleValueTest(workBuffer, decimal32Value, decimal32ValueBin, "Decimal32 value is not equal.");
+            RunSingleValueTest(workBuffer, decimal64Value, decimal64ValueBin, "Decimal64 value is not equal.");
+            RunSingleValueTest(workBuffer, decimal128Value, decimal128ValueBin, "Decimal128 value is not equal.");
             RunSingleValueTest(workBuffer, charValue, charValueBin, "Char value is not equal.");
             RunSingleValueTest(workBuffer, dtValue, dtValueBin, "Timestamp value is not equal.");
             RunSingleValueTest(workBuffer, uuidValue, uuidValueBin, "Uuid value is not equal.");
