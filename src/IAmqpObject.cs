@@ -143,6 +143,24 @@ namespace Amqp
         /// <param name="address">The source address where to receive messages.</param>
         /// <returns>An IReceiverLink object.</returns>
         IReceiverLink CreateReceiver(string name, string address);
+
+        /// <summary>
+        /// Creates a sender link in the session.
+        /// </summary>
+        /// <param name="name">The link name.</param>
+        /// <param name="target">The target where to send messages.</param>
+        /// <param name="onAttached">The callback that is invoked when an attach performative is received from the peer.</param>
+        /// <returns>An ISenderLink object.</returns>
+        ISenderLink CreateSender(string name, Target target, OnAttached onAttached = null);
+
+        /// <summary>
+        /// Creates a receiver link in the session.
+        /// </summary>
+        /// <param name="name">The link name.</param>
+        /// <param name="source">The source where to receive messages.</param>
+        /// <param name="onAttached">The callback that is invoked when an attach performative is received from the peer.</param>
+        /// <returns>An IReceiverLink object.</returns>
+        IReceiverLink CreateReceiver(string name, Source source, OnAttached onAttached = null);
     }
 
     /// <summary>
@@ -282,6 +300,16 @@ namespace Amqp
         ISenderLink ISession.CreateSender(string name, string address)
         {
             return new SenderLink(this, name, address);
+        }
+
+        IReceiverLink ISession.CreateReceiver(string name, Source source, OnAttached onAttached)
+        {
+            return new ReceiverLink(this, name, source, onAttached);
+        }
+
+        ISenderLink ISession.CreateSender(string name, Target target, OnAttached onAttached)
+        {
+            return new SenderLink(this, name, target, onAttached);
         }
     }
 
