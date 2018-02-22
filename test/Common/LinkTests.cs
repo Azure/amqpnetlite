@@ -113,6 +113,44 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_InterfaceSendReceiveOnAttach()
+        {
+            string testName = "InterfaceSendReceiveOnAttach";
+            const int nMsgs = 200;
+            int nAttaches = 0;
+
+            OnAttached onAttached = (link, attach) => {
+                nAttaches++;
+            };
+
+            IConnection connection = new Connection(testTarget.Address);
+            ISession session = connection.CreateSession();
+            ISenderLink sender = session.CreateSender("sender-" + testName, new Target() { Address = testTarget.Path }, onAttached);
+
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            IReceiverLink receiver = session.CreateReceiver("receiver-" + testName, new Source() { Address = testTarget.Path }, onAttached);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            Assert.AreEqual(2, nAttaches);
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ConnectionFrameSize()
         {
             string testName = "ConnectionFrameSize";
