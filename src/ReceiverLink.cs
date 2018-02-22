@@ -502,6 +502,11 @@ namespace Amqp
             static void OnTimer(object state)
             {
                 var thisPtr = (AsyncWaiter)state;
+                lock (thisPtr.link.ThisLock)
+                {
+                    thisPtr.link.waiterList.Remove(thisPtr);
+                }
+
                 thisPtr.Signal(null);
             }
         }
