@@ -67,13 +67,31 @@ namespace Amqp
         /// </summary>
         public bool IsClosed
         {
-            get { return this.closedCalled || this.closedNotified; }
+            get
+            {
+                lock (this)
+                {
+                    return this.closedCalled || this.closedNotified;
+                }
+            }
         }
 
         internal bool CloseCalled
         {
-            get { return this.closedCalled; }
-            set { this.closedCalled = true; }
+            get
+            {
+                lock (this)
+                {
+                    return this.closedCalled;
+                }
+            }
+            set
+            {
+                lock (this)
+                {
+                    this.closedCalled = true;
+                }
+            }
         }
 
         internal void NotifyClosed(Error error)
@@ -109,7 +127,7 @@ namespace Amqp
         {
             lock (this)
             {
-                if (!this.closedCalled)
+                if (!this.closedNotified)
                 {
                     this.Closed += callback;
                     return;
