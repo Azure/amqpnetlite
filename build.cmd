@@ -99,8 +99,9 @@ GOTO :args-error
 TASKKILL /F /IM TestAmqpBroker.exe >nul 2>&1
 
 :build-clean
+SET return-code=0
 CALL :run-build Clean
-SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 SET return-code=1
 GOTO :exit
 
 :build-target
@@ -122,8 +123,8 @@ IF "%NuGetPath%" == "" (
 )
 
 CALL :run-build Rebuild
-IF %ERRORLEVEL% NEQ 0 (
-  SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
   GOTO :exit
 )
 
@@ -138,7 +139,7 @@ IF "%MSTestPath%" == "" (
 )
 
 TASKLIST /NH /FI "IMAGENAME eq TestAmqpBroker.exe" | FINDSTR TestAmqpBroker.exe 1>nul 2>nul
-IF %ERRORLEVEL% EQU 0 (
+IF NOT ERRORLEVEL 1 (
   ECHO TestAmqpBroker is already running.
   GOTO :run-test
 )
@@ -154,8 +155,8 @@ PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
 ECHO.
 ECHO Running NET tests...
 "%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net\Test.Amqp.Net.dll
-IF %ERRORLEVEL% NEQ 0 (
-  SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
   ECHO Test failed!
   TASKKILL /F /IM TestAmqpBroker.exe
   IF /I "%is-elevated%" == "false" ECHO WebSocket tests may be failing because the broker was started without Administrator permission
@@ -165,8 +166,8 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO Running NET40 tests...
 "%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net40\Test.Amqp.Net40.dll
-IF %ERRORLEVEL% NEQ 0 (
-  SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
   ECHO Test failed!
   TASKKILL /F /IM TestAmqpBroker.exe
   GOTO :exit
@@ -175,8 +176,8 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO Running NET35 tests...
 "%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net35\Test.Amqp.Net35.dll
-IF %ERRORLEVEL% NEQ 0 (
-  SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
   ECHO Test failed!
   TASKKILL /F /IM TestAmqpBroker.exe
   GOTO :exit
@@ -185,8 +186,8 @@ IF %ERRORLEVEL% NEQ 0 (
 ECHO.
 ECHO Running DOTNET (.Net Core 1.0) tests...
 "%dotnetPath%" bin\Test.Amqp\bin\%build-config%\netcoreapp1.0\Test.Amqp.dll -- no-broker
-IF %ERRORLEVEL% NEQ 0 (
-  SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
   ECHO .Net Core Test failed!
   GOTO :exit
 )
@@ -213,28 +214,28 @@ IF "%NuGetPath%" == "" (
   IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
   ECHO Building NuGet package with version %build-version%
   "%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  IF %ERRORLEVEL% NEQ 0 (
-    SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
     GOTO :exit
   )
   "%NuGetPath%" pack .\nuspec\AMQPNetMicro.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  IF %ERRORLEVEL% NEQ 0 (
-    SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
     GOTO :exit
   )
   "%NuGetPath%" pack .\nuspec\AMQPNetLite.Core.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  IF %ERRORLEVEL% NEQ 0 (
-    SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
     GOTO :exit
   )
   "%NuGetPath%" pack .\nuspec\AMQPNetLite.Serialization.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  IF %ERRORLEVEL% NEQ 0 (
-    SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
     GOTO :exit
   )
   "%NuGetPath%" pack .\nuspec\AMQPNetLite.WebSockets.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-  IF %ERRORLEVEL% NEQ 0 (
-    SET return-code=%ERRORLEVEL%
+IF ERRORLEVEL 1 (
+  SET return-code=1
     GOTO :exit
   )
 )
@@ -265,12 +266,12 @@ EXIT /b %return-code%
 :run-build
   ECHO Build solution amqp.sln
   "%MSBuildPath%" amqp.sln /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
-  IF %ERRORLEVEL% NEQ 0 EXIT /b %ERRORLEVEL%
+  IF ERRORLEVEL 1 EXIT /b 1
 
   ECHO Build other versions of the micro NETMF projects
   FOR /L %%I IN (2,1,3) DO (
     "%MSBuildPath%" .\src\Amqp.Micro.NetMF.csproj /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
-    IF !ERRORLEVEL! NEQ 0 EXIT /b !ERRORLEVEL!
+    IF ERRORLEVEL 1 EXIT /b 1
   )
 
   EXIT /b 0
