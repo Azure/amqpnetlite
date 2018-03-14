@@ -37,7 +37,7 @@
       <group targetFramework="netcore451" />
       <group targetFramework="uap10.0" />
       <group targetFramework="netstandard1.3">
-        <dependency id="AMQPNetLite.Core" version="2.1.1" />
+        <dependency id="AMQPNetLite.Core" version="2.1.2" />
       </group>
     </dependencies>
   </metadata>
