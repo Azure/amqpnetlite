@@ -176,6 +176,7 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
 
+            Thread.Sleep(500);
             Assert.AreEqual(released + ignored, messages.Count, string.Join(",", messages.Select(m => m.Properties.MessageId)));
             Assert.AreEqual(rejected, source.DeadletterMessage.Count, string.Join(",", source.DeadletterMessage.Select(m => m.Properties.MessageId)));
         }
