@@ -121,42 +121,69 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Verifies that if the buffer has enough bytes for read or enough room for write and grow the buffer if needed.
+        /// Verifies that the buffer has enough bytes for read or enough room for write and grow the buffer if needed.
         /// </summary>
         /// <param name="write">Operation to verify. True for write and false for read.</param>
         /// <param name="dataSize">The size to read or write.</param>
         public void Validate(bool write, int dataSize)
         {
-            bool valid = false;
             if (write)
             {
-                if (this.Size < dataSize && this.autoGrow)
-                {
-                    int newSize = Math.Max(this.Capacity * 2, this.Capacity + dataSize);
-                    byte[] newBuffer;
-                    int offset;
-                    int count;
-                    this.DuplicateBuffer(newSize, this.write - this.start, out newBuffer, out offset, out count);
-
-                    int bufferOffset = this.start - offset;
-                    this.buffer = newBuffer;
-                    this.start = offset;
-                    this.read -= bufferOffset;
-                    this.write -= bufferOffset;
-                    this.end = offset + count;
-                }
-
-                valid = this.Size >= dataSize;
+                ValidateWrite(dataSize);
             }
             else
             {
-                valid = this.Length >= dataSize;
+                ValidateRead(dataSize);
+            }
+        }
+
+        /// <summary>
+        /// Verifies that the buffer has enough bytes for read.
+        /// </summary>
+        /// <param name="dataSize">The size to read.</param>
+        public void ValidateRead(int dataSize)
+        {
+            if (this.Length < dataSize)
+                ThrowBufferTooSmallException();
+        }
+
+        /// <summary>
+        /// Verifies that the buffer has enough room for write and grow the buffer if needed.
+        /// </summary>
+        /// <param name="dataSize">The size to write.</param>
+        public void ValidateWrite(int dataSize)
+        {
+            if (this.Size < dataSize)
+                TryAutoGrowBuffer(dataSize);
+        }
+
+        private void TryAutoGrowBuffer(int dataSize)
+        {
+            if (this.Size < dataSize && this.autoGrow)
+            {
+                int newSize = Math.Max(this.Capacity * 2, this.Capacity + dataSize);
+                byte[] newBuffer;
+                int offset;
+                int count;
+                this.DuplicateBuffer(newSize, this.write - this.start, out newBuffer, out offset, out count);
+
+                int bufferOffset = this.start - offset;
+                this.buffer = newBuffer;
+                this.start = offset;
+                this.read -= bufferOffset;
+                this.write -= bufferOffset;
+                this.end = offset + count;
             }
 
+            bool valid = this.Size >= dataSize;
+
             if (!valid)
-            {
-                throw new InvalidOperationException("buffer too small");
-            }
+                ThrowBufferTooSmallException();
+        }
+
+        private static void ThrowBufferTooSmallException()
+        {
+            throw new InvalidOperationException("buffer too small");
         }
 
         /// <summary>
