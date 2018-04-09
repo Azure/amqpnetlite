@@ -41,7 +41,7 @@ namespace Amqp
         /// <returns></returns>
         public static sbyte ReadByte(ByteBuffer buffer)
         {
-            buffer.Validate(false, FixedWidth.UByte);
+            buffer.ValidateRead(FixedWidth.UByte);
             sbyte data = (sbyte)buffer.Buffer[buffer.Offset];
             buffer.Complete(FixedWidth.UByte);
             return data;
@@ -64,7 +64,7 @@ namespace Amqp
         /// <returns></returns>
         public static short ReadShort(ByteBuffer buffer)
         {
-            buffer.Validate(false, FixedWidth.Short);
+            buffer.ValidateRead(FixedWidth.Short);
             short data = (short)((buffer.Buffer[buffer.Offset] << 8) | buffer.Buffer[buffer.Offset + 1]);
             buffer.Complete(FixedWidth.Short);
             return data;
@@ -87,7 +87,7 @@ namespace Amqp
         /// <returns></returns>
         public static int ReadInt(ByteBuffer buffer)
         {
-            buffer.Validate(false, FixedWidth.Int);
+            buffer.ValidateRead(FixedWidth.Int);
             int data = ReadInt(buffer.Buffer, buffer.Offset);
             buffer.Complete(FixedWidth.Int);
             return data;
@@ -121,7 +121,7 @@ namespace Amqp
         /// <returns></returns>
         public static long ReadLong(ByteBuffer buffer)
         {
-            buffer.Validate(false, FixedWidth.Long);
+            buffer.ValidateRead(FixedWidth.Long);
             long high = ReadInt(buffer.Buffer, buffer.Offset);
             long low = (uint)ReadInt(buffer.Buffer, buffer.Offset + 4);
             long data = (high << 32) | low;
@@ -168,7 +168,7 @@ namespace Amqp
         /// <returns></returns>
         public static Guid ReadUuid(ByteBuffer buffer)
         {
-            buffer.Validate(false, FixedWidth.Uuid);
+            buffer.ValidateRead(FixedWidth.Uuid);
             byte[] d = new byte[FixedWidth.Uuid];
             if (AmqpBitConverter.IsLittleEndian)
             {
@@ -204,7 +204,7 @@ namespace Amqp
         /// <param name="count">The number of bytes to read.</param>
         public static void ReadBytes(ByteBuffer buffer, byte[] data, int offset, int count)
         {
-            buffer.Validate(false, count);
+            buffer.ValidateRead(count);
             Array.Copy(buffer.Buffer, buffer.Offset, data, offset, count);
             buffer.Complete(count);
         }
@@ -216,7 +216,7 @@ namespace Amqp
         /// <param name="data">The data to write.</param>
         public static void WriteByte(ByteBuffer buffer, sbyte data)
         {
-            buffer.Validate(true, FixedWidth.Byte);
+            buffer.ValidateWrite(FixedWidth.Byte);
             buffer.Buffer[buffer.WritePos] = (byte)data;
             buffer.Append(FixedWidth.Byte);
         }
@@ -238,7 +238,7 @@ namespace Amqp
         /// <param name="data">The data to write.</param>
         public static void WriteShort(ByteBuffer buffer, short data)
         {
-            buffer.Validate(true, FixedWidth.Short);
+            buffer.ValidateWrite(FixedWidth.Short);
             buffer.Buffer[buffer.WritePos] = (byte)(data >> 8);
             buffer.Buffer[buffer.WritePos + 1] = (byte)data;
             buffer.Append(FixedWidth.Short);
@@ -261,7 +261,7 @@ namespace Amqp
         /// <param name="data">The data to write.</param>
         public static void WriteInt(ByteBuffer buffer, int data)
         {
-            buffer.Validate(true, FixedWidth.Int);
+            buffer.ValidateWrite(FixedWidth.Int);
             WriteInt(buffer.Buffer, buffer.WritePos, data);
             buffer.Append(FixedWidth.Int);
         }
@@ -340,7 +340,7 @@ namespace Amqp
         /// <param name="data">The data to write.</param>
         public static void WriteUuid(ByteBuffer buffer, Guid data)
         {
-            buffer.Validate(true, FixedWidth.Uuid);
+            buffer.ValidateWrite(FixedWidth.Uuid);
             byte[] p = data.ToByteArray();
             int pos = buffer.WritePos;
 
@@ -376,7 +376,7 @@ namespace Amqp
         /// <param name="count">The number of bytes to write.</param>
         public static void WriteBytes(ByteBuffer buffer, byte[] data, int offset, int count)
         {
-            buffer.Validate(true, count);
+            buffer.ValidateWrite(count);
             Array.Copy(data, offset, buffer.Buffer, buffer.WritePos, count);
             buffer.Append(count);
         }
