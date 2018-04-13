@@ -144,7 +144,16 @@ namespace Amqp
             this.Send(message, deliveryState, callback, state);
         }
 
-        internal void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
+        /// <summary>
+        /// Sends a message asynchronously. If callback is null, the message is sent without
+        /// requesting for an acknowledgement (best effort). This method is not transaction aware. If you need transaction support,
+        /// use <see cref="Send(Amqp.Message,Amqp.OutcomeCallback,object)"/>.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="deliveryState">The transactional state of the message. If null, no transaction is used.</param>
+        /// <param name="callback">The callback to invoke when acknowledgement is received.</param>
+        /// <param name="state">The object that is passed back to the outcome callback.</param>
+        public void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
             const int reservedBytes = 40;
 #if NETFX || NETFX40 || DOTNET
