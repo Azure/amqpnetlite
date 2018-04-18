@@ -759,7 +759,7 @@ namespace Amqp
                             0,
                             new Error(ErrorCode.ConnectionForced)
                             {
-                                Description = Fx.Format("Connection closed after idle timeout %d ms", thisPtr.local)
+                                Description = Fx.Format("Connection closed after idle timeout {0} ms", thisPtr.local)
                             });
                         return;
                     }
