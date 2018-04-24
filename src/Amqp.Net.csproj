@@ -160,6 +160,10 @@
     <Compile Include="SenderLink.cs" />
     <Compile Include="SequenceNumber.cs" />
     <Compile Include="Serialization\AmqpContractAttribute.cs" />
+    <Compile Include="Serialization\AmqpContract.cs" />
+    <Compile Include="Serialization\AmqpContractResolver.cs" />
+    <Compile Include="Serialization\AmqpMember.cs" />
+    <Compile Include="Serialization\IContractResolver.cs" />
     <Compile Include="Serialization\OnDeserializedAttribute.cs" />
     <Compile Include="Serialization\OnSerializedAttribute.cs" />
     <Compile Include="Serialization\OnDeserializingAttribute.cs" />

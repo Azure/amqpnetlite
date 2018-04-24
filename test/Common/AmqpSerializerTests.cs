@@ -24,6 +24,7 @@ namespace Test.Amqp
     using global::Amqp.Serialization;
     using global::Amqp.Types;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Serialization.Poco;
     using AmqpDecimal = global::Amqp.Types.Decimal;
 
     [TestClass]
@@ -550,6 +551,43 @@ namespace Test.Amqp
             MessageBodyTest<byte[]>(
                 new byte[] { 1, 2, 3, 4, 5 },
                 (x, y) => Assert.AreEqual(x, y));
+        }
+
+        [TestMethod]
+        public void AmqpSerializerCustomResolverTest()
+        {
+            var serializer = new AmqpSerializer(new PocoContractResolver()
+            {
+                PrefixList = new[] { "Serialization.Poco" }
+            });
+
+            Circle circle = new Circle() { Id = Guid.NewGuid(), Radius = 3.5 };
+            ByteBuffer buffer = new ByteBuffer(1024, true);
+            serializer.WriteObject(buffer, circle);
+
+            Shape shape = serializer.ReadObject<Shape>(buffer);
+            Assert.AreEqual(typeof(Circle), shape.GetType());
+            Assert.AreEqual(circle.Id, ((Circle)shape).Id);
+            Assert.AreEqual(circle.Radius, ((Circle)shape).Radius);
+        }
+
+        [TestMethod]
+        public void AmqpSerializerMessageCustomResolverTest()
+        {
+            var serializer = new AmqpSerializer(new PocoContractResolver()
+            {
+                PrefixList = new[] { "Serialization.Poco" }
+            });
+
+            Rectangle rect = new Rectangle() { Id = Guid.NewGuid(), Width = 8, Height = 6 };
+            Message message = new Message() { BodySection = new AmqpValue<Shape>(rect, serializer) };
+            ByteBuffer buffer = message.Encode();
+
+            Shape shape = message.GetBody<Shape>(serializer);
+            Assert.AreEqual(typeof(Rectangle), shape.GetType());
+            Assert.AreEqual(rect.Id, ((Rectangle)shape).Id);
+            Assert.AreEqual(rect.Width, ((Rectangle)shape).Width);
+            Assert.AreEqual(rect.Height, ((Rectangle)shape).Height);
         }
 
         [TestMethod]

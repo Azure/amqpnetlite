@@ -34,15 +34,31 @@ namespace Amqp.Serialization
     /// </summary>
     public sealed class AmqpSerializer
     {
-        static readonly AmqpSerializer instance = new AmqpSerializer();
+        internal static readonly AmqpSerializer instance = new AmqpSerializer();
         readonly ConcurrentDictionary<Type, SerializableType> typeCache;
+        readonly IContractResolver contractResolver;
 
         /// <summary>
-        /// Initializes a new instance of the AmqpSerializer class.
+        /// Initializes a new instance of the AmqpSerializer class with the default contract
+        /// resolver that supports custom classes decorated with
+        /// <see cref="AmqpContractAttribute"/> and <see cref="AmqpMemberAttribute"/>.
         /// </summary>
         public AmqpSerializer()
+            : this(new AmqpContractResolver())
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the AmqpSerializer class with a custom contract
+        /// resolver. See documentation for the order followed by the serializer to resolve
+        /// a type.
+        /// </summary>
+        /// <param name="contractResolver">A contract resolver to create a serialization
+        /// contract for a given type.</param>
+        public AmqpSerializer(IContractResolver contractResolver)
         {
             this.typeCache = new ConcurrentDictionary<Type, SerializableType>();
+            this.contractResolver = contractResolver;
         }
 
         /// <summary>
@@ -157,184 +173,90 @@ namespace Amqp.Serialization
 
         SerializableType CompileType(Type type, bool describedOnly)
         {
-            AmqpContractAttribute contractAttribute = type.GetCustomAttribute<AmqpContractAttribute>(false);
-            if (contractAttribute == null)
+            AmqpContract contract = this.contractResolver.Resolve(type);
+            if (contract != null)
             {
-                if (describedOnly)
-                {
-                    return null;
-                }
-                else
-                {
-                    return CompileNonContractTypes(type);
-                }
+                return this.CreateContractType(contract);
             }
 
-            SerializableType baseType = null;
-            if (type.BaseType() != typeof(object))
-            {
-                baseType = this.CompileType(type.BaseType(), true);
-                if (baseType != null)
-                {
-                    if (baseType.Encoding != contractAttribute.Encoding)
-                    {
-                        throw new AmqpException(ErrorCode.NotAllowed,
-                            Fx.Format("{0}.Encoding ({1}) is different from {2}.Encoding ({3})",
-                                type.Name, contractAttribute.Encoding, type.BaseType().Name, baseType.Encoding));
-                    }
+            return this.CompileNonContractTypes(type);
+        }
 
-                    baseType = this.typeCache.GetOrAdd(type.BaseType(), baseType);
-                }
-            }
-
-            string descriptorName = contractAttribute.Name;
-            ulong? descriptorCode = contractAttribute.InternalCode;
+        SerializableType CreateContractType(AmqpContract contract)
+        {
+            Type type = contract.Type;
+            string descriptorName = contract.Attribute.Name;
+            ulong? descriptorCode = contract.Attribute.InternalCode;
             if (descriptorName == null && descriptorCode == null)
             {
                 descriptorName = type.FullName;
             }
 
-            List<SerializableMember> memberList = new List<SerializableMember>();
-            if (baseType != null)
+            SerializableMember[] members = new SerializableMember[contract.Members.Length];
+            for (int i = 0; i < contract.Members.Length; i++)
             {
-                memberList.AddRange(baseType.Members);
+                SerializableMember member = new SerializableMember();
+                members[i] = member;
+
+                AmqpMember amqpMember = contract.Members[i];
+                member.Name = amqpMember.Name;
+                member.Order = amqpMember.Order;
+                member.Accessor = MemberAccessor.Create(amqpMember.Info, true);
+
+                // This will recursively resolve member types
+                Type memberType = amqpMember.Info is FieldInfo ?
+                    ((FieldInfo)amqpMember.Info).FieldType :
+                    ((PropertyInfo)amqpMember.Info).PropertyType;
+                member.Type = GetType(memberType);
             }
 
-            int lastOrder = memberList.Count + 1;
-            MemberInfo[] memberInfos = type.GetMembers(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            MethodAccessor[] serializationCallbacks = new MethodAccessor[SerializationCallback.Size];
-            foreach (MemberInfo memberInfo in memberInfos)
+            MethodAccessor[] serializationCallbacks = new MethodAccessor[]
             {
-                if (memberInfo.DeclaringType != type)
-                {
-                    continue;
-                }
+                contract.Serializing == null ? null : MethodAccessor.Create(contract.Serializing),
+                contract.Serialized == null ? null : MethodAccessor.Create(contract.Serialized),
+                contract.Deserializing == null ? null : MethodAccessor.Create(contract.Deserializing),
+                contract.Deserialized == null ? null : MethodAccessor.Create(contract.Deserialized)
+            };
 
-                if (memberInfo is FieldInfo || memberInfo is PropertyInfo)
-                {
-                    AmqpMemberAttribute attribute = memberInfo.GetCustomAttribute<AmqpMemberAttribute>(true);
-                    if (attribute == null)
-                    {
-                        continue;
-                    }
-
-                    SerializableMember member = new SerializableMember();
-                    member.Name = attribute.Name ?? memberInfo.Name;
-                    member.Order = attribute.InternalOrder ?? lastOrder++;
-                    member.Accessor = MemberAccessor.Create(memberInfo, true);
-
-                    // This will recursively resolve member types
-                    Type memberType = memberInfo is FieldInfo ? ((FieldInfo)memberInfo).FieldType : ((PropertyInfo)memberInfo).PropertyType;
-                    member.Type = GetType(memberType);
-
-                    memberList.Add(member);
-                }
-                else if (memberInfo is MethodInfo)
-                {
-                    MethodInfo methodInfo = (MethodInfo)memberInfo;
-                    MethodAccessor methodAccessor;
-                    if (this.TryCreateMethodAccessor<OnSerializingAttribute>(methodInfo, out methodAccessor))
-                    {
-                        serializationCallbacks[SerializationCallback.OnSerializing] = methodAccessor;
-                    }
-                    else if (this.TryCreateMethodAccessor<OnSerializedAttribute>(methodInfo, out methodAccessor))
-                    {
-                        serializationCallbacks[SerializationCallback.OnSerialized] = methodAccessor;
-                    }
-                    else if (this.TryCreateMethodAccessor<OnDeserializingAttribute>(methodInfo, out methodAccessor))
-                    {
-                        serializationCallbacks[SerializationCallback.OnDeserializing] = methodAccessor;
-                    }
-                    else if (this.TryCreateMethodAccessor<OnDeserializedAttribute>(methodInfo, out methodAccessor))
-                    {
-                        serializationCallbacks[SerializationCallback.OnDeserialized] = methodAccessor;
-                    }
-                }
-            }
-
-            if (contractAttribute.Encoding == EncodingType.List)
+            SerializableType baseType = null;
+            if (contract.BaseContract != null)
             {
-                memberList.Sort(MemberOrderComparer.Instance);
-                int order = -1;
-                foreach (SerializableMember member in memberList)
-                {
-                    if (order > 0 && member.Order == order)
-                    {
-                        throw new AmqpException(ErrorCode.NotAllowed, Fx.Format("Duplicate Order {0} detected in {1}", order, type.Name));
-                    }
-
-                    order = member.Order;
-                }
-            }
-
-            SerializableMember[] members = memberList.ToArray();
-
-            if (contractAttribute.Encoding == EncodingType.SimpleMap &&
-                type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
-            {
-                throw new AmqpException(ErrorCode.NotAllowed,
-                    Fx.Format("{0}: SimpleMap encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
-            }
-
-            if (contractAttribute.Encoding == EncodingType.SimpleList &&
-                type.GetCustomAttribute<AmqpProvidesAttribute>(false) != null)
-            {
-                throw new AmqpException(ErrorCode.NotAllowed,
-                    Fx.Format("{0}: SimpleList encoding does not include descriptors so it does not support AmqpProvidesAttribute.", type.Name));
+                baseType = this.CreateContractType(contract.BaseContract);
             }
 
             Dictionary<Type, SerializableType> knownTypes = null;
-            var providesAttributes = type.GetCustomAttributes<AmqpProvidesAttribute>(false);
-            foreach (object o in providesAttributes)
+            if (contract.Provides != null)
             {
-                AmqpProvidesAttribute knownAttribute = (AmqpProvidesAttribute)o;
-                if (knownAttribute.Type.GetCustomAttribute<AmqpContractAttribute>(false) != null)
+                knownTypes = new Dictionary<Type, SerializableType>();
+                for (int i = 0; i < contract.Provides.Length; i++)
                 {
-                    if (knownTypes == null)
-                    {
-                        knownTypes = new Dictionary<Type, SerializableType>();
-                    }
-
                     // KnownType compilation is delayed and non-recursive to avoid circular references
-                    knownTypes.Add(knownAttribute.Type, null);
+                    knownTypes.Add(contract.Provides[i], null);
                 }
             }
 
-            if (contractAttribute.Encoding == EncodingType.List)
+            if (contract.Attribute.Encoding == EncodingType.List)
             {
                 return SerializableType.CreateDescribedListType(this, type, baseType, descriptorName,
                     descriptorCode, members, knownTypes, serializationCallbacks);
             }
-            else if (contractAttribute.Encoding == EncodingType.Map)
+            else if (contract.Attribute.Encoding == EncodingType.Map)
             {
                 return SerializableType.CreateDescribedMapType(this, type, baseType, descriptorName,
                     descriptorCode, members, knownTypes, serializationCallbacks);
             }
-            else if (contractAttribute.Encoding == EncodingType.SimpleMap)
+            else if (contract.Attribute.Encoding == EncodingType.SimpleMap)
             {
                 return SerializableType.CreateDescribedSimpleMapType(this, type, baseType, members, serializationCallbacks);
             }
-            else if (contractAttribute.Encoding == EncodingType.SimpleList)
+            else if (contract.Attribute.Encoding == EncodingType.SimpleList)
             {
                 return SerializableType.CreateDescribedSimpleListType(this, type, baseType, members, serializationCallbacks);
             }
             else
             {
-                throw new NotSupportedException(contractAttribute.Encoding.ToString());
+                throw new NotSupportedException(contract.Attribute.Encoding.ToString());
             }
-        }
-
-        bool TryCreateMethodAccessor<T>(MethodInfo methodInfo, out MethodAccessor methodAccessor) where T : Attribute
-        {
-            T memberAttribute = methodInfo.GetCustomAttribute<T>(false);
-            if (memberAttribute != null)
-            {
-                methodAccessor = MethodAccessor.Create((MethodInfo)methodInfo);
-                return true;
-            }
-
-            methodAccessor = null;
-            return false;
         }
 
         SerializableType CompileNonContractTypes(Type type)

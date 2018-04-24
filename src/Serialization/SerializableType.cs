@@ -29,8 +29,6 @@ namespace Amqp.Serialization
         public const int OnSerialized = 1;
         public const int OnDeserializing = 2;
         public const int OnDeserialized = 3;
-
-        public const int Size = 4;
     }
 
     abstract class SerializableType
