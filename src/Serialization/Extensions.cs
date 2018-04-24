@@ -18,8 +18,6 @@
 namespace Amqp
 {
     using System;
-    using System.Collections.Generic;
-    using System.Reflection;
     using Amqp.Framing;
     using Amqp.Serialization;
     using Amqp.Types;
@@ -33,14 +31,28 @@ namespace Amqp
         /// Gets an object of type T from the message body.
         /// </summary>
         /// <typeparam name="T">The object type.</typeparam>
+        /// <param name="message">The message from which the body is deserialized.</param>
         /// <returns>An object of type T.</returns>
         public static T GetBody<T>(this Message message)
+        {
+            return GetBody<T>(message, AmqpSerializer.instance);
+        }
+
+        /// <summary>
+        /// Gets an object of type T from the message body using the
+        /// provided serializer.
+        /// </summary>
+        /// <typeparam name="T">The object type.</typeparam>
+        /// <param name="message">The message from which the body is deserialized.</param>
+        /// <param name="serializer">The serializer to deserialize the object.</param>
+        /// <returns>An object of type T.</returns>
+        public static T GetBody<T>(this Message message, AmqpSerializer serializer)
         {
             if (message.BodySection != null)
             {
                 if (message.BodySection.Descriptor.Code == 0x0000000000000077UL/*Codec.AmqpValue.Code*/)
                 {
-                    return ((AmqpValue)message.BodySection).GetValue<T>();
+                    return ((AmqpValue)message.BodySection).GetValue<T>(serializer);
                 }
                 else if (message.BodySection.Descriptor.Code == 0x0000000000000075UL/*Codec.Data.Code*/)
                 {
@@ -59,7 +71,7 @@ namespace Amqp
             return (T)message.Body;
         }
 
-        static T GetValue<T>(this AmqpValue value)
+        static T GetValue<T>(this AmqpValue value, AmqpSerializer serializer)
         {
             ByteBuffer buffer = value.ValueBuffer;
             if (buffer == null)
@@ -85,7 +97,7 @@ namespace Amqp
             }
             else
             {
-                return AmqpSerializer.Deserialize<T>(buffer);
+                return serializer.ReadObject<T>(buffer);
             }
         }
 
@@ -99,47 +111,5 @@ namespace Amqp
 
             return FixedWidth.FormatCode + (formatCode == FormatCode.Binary8 ? FixedWidth.UByte : FixedWidth.UInt);
         }
-
-#if DOTNET
-        internal static T GetCustomAttribute<T>(this Type type, bool inherit) where T : Attribute
-        {
-            return type.GetTypeInfo().GetCustomAttribute<T>(inherit);
-        }
-
-        internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit) where T : Attribute
-        {
-            return type.GetTypeInfo().GetCustomAttributes<T>(inherit);
-        }
-
-        internal static Type BaseType(this Type type)
-        {
-            return type.GetTypeInfo().BaseType;
-        }
-
-        internal static bool IsValueType(this Type type)
-        {
-            return type.GetTypeInfo().IsValueType;
-        }
-
-        internal static bool IsEnum(this Type type)
-        {
-            return type.GetTypeInfo().IsEnum;
-        }
-
-        internal static bool IsGenericType(this Type type)
-        {
-            return type.GetTypeInfo().IsGenericType;
-        }
-
-        internal static bool IsAssignableFrom(this Type type, Type from)
-        {
-            return type.GetTypeInfo().IsAssignableFrom(from.GetTypeInfo());
-        }
-
-        internal static object CreateInstance(this Type type, bool hasDefaultCtor)
-        {
-            return Activator.CreateInstance(type);
-        }
-#endif
     }
 }

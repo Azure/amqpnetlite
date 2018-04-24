@@ -158,7 +158,10 @@
     <Compile Include="Sasl\SaslResponse.cs" />
     <Compile Include="SenderLink.cs" />
     <Compile Include="SequenceNumber.cs" />
+    <Compile Include="Serialization\AmqpContract.cs" />
     <Compile Include="Serialization\AmqpContractAttribute.cs" />
+    <Compile Include="Serialization\AmqpContractResolver.cs" />
+    <Compile Include="Serialization\AmqpMember.cs" />
     <Compile Include="Serialization\AmqpSerializer.cs" />
     <Compile Include="Serialization\AmqpMemberAttribute.cs" />
     <Compile Include="Serialization\AmqpProvidesAttribute.cs" />
@@ -166,6 +169,7 @@
     <Compile Include="Serialization\Extensions.cs" />
     <Compile Include="Serialization\IAmqpSerializable.cs" />
     <Compile Include="Serialization\EncodingType.cs" />
+    <Compile Include="Serialization\IContractResolver.cs" />
     <Compile Include="Serialization\MemberAccessor.cs" />
     <Compile Include="Serialization\MethodAccessor.cs" />
     <Compile Include="Serialization\OnDeserializedAttribute.cs" />

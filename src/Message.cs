@@ -17,9 +17,9 @@
 
 namespace Amqp
 {
+    using System;
     using Amqp.Framing;
     using Amqp.Types;
-    using System;
 
     /// <summary>
     /// The Message class represents an AMQP message.
@@ -69,7 +69,10 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Initializes a message with an AmqpValue body. The body must be a defined AMQP type.
+        /// Initializes a message from an object as the body. The object is wrapped
+        /// in an <see cref="AmqpValue"/> section. To control the body section type,
+        /// create an empty message and set <see cref="Message.BodySection"/> to either
+        /// <see cref="AmqpValue"/>, <see cref="Data"/> or <see cref="AmqpSequence"/>.
         /// </summary>
         /// <param name="body">the object stored in the AmqpValue section.</param>
         public Message(object body)

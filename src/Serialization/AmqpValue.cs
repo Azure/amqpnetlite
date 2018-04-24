@@ -24,13 +24,27 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class AmqpValue<T> : AmqpValue
     {
+        readonly AmqpSerializer serializer;
+
         /// <summary>
         /// Initializes an AmqpValue object.
         /// </summary>
         public AmqpValue(T value)
+            : this(value, AmqpSerializer.instance)
+        {
+        }
+
+        /// <summary>
+        /// Initializes an AmqpValue object with an <see cref="AmqpSerializer"/> that
+        /// is used to serialize the value.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="serializer"></param>
+        public AmqpValue(T value, AmqpSerializer serializer)
             : base()
         {
             this.Value = value;
+            this.serializer = serializer;
         }
 
         /// <summary>
@@ -40,7 +54,7 @@ namespace Amqp.Framing
         /// <param name="value">The object to be written.</param>
         protected override void WriteValue(ByteBuffer buffer, object value)
         {
-            AmqpSerializer.Serialize(buffer, this.Value);
+            this.serializer.WriteObject(buffer, this.Value);
         }
     }
 }

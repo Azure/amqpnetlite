@@ -74,6 +74,47 @@ namespace Amqp
         {
             return type.GetTypeInfo().Assembly;
         }
+
+        internal static Type BaseType(this Type type)
+        {
+            return type.GetTypeInfo().BaseType;
+        }
+#endif
+#if DOTNET_SERIALIZATION
+        internal static T GetCustomAttribute<T>(this Type type, bool inherit) where T : Attribute
+        {
+            return type.GetTypeInfo().GetCustomAttribute<T>(inherit);
+        }
+
+        internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit) where T : Attribute
+        {
+            return type.GetTypeInfo().GetCustomAttributes<T>(inherit);
+        }
+
+        internal static bool IsValueType(this Type type)
+        {
+            return type.GetTypeInfo().IsValueType;
+        }
+
+        internal static bool IsEnum(this Type type)
+        {
+            return type.GetTypeInfo().IsEnum;
+        }
+
+        internal static bool IsGenericType(this Type type)
+        {
+            return type.GetTypeInfo().IsGenericType;
+        }
+
+        internal static bool IsAssignableFrom(this Type type, Type from)
+        {
+            return type.GetTypeInfo().IsAssignableFrom(from.GetTypeInfo());
+        }
+
+        internal static object CreateInstance(this Type type, bool hasDefaultCtor)
+        {
+            return Activator.CreateInstance(type);
+        }
 #endif
     }
 }

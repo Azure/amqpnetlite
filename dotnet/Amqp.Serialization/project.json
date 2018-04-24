@@ -38,7 +38,7 @@
     "frameworks": {
         "netstandard1.3": {
             "buildOptions": {
-                "define": [ "TRACE", "DOTNET" ]
+                "define": [ "TRACE", "DOTNET", "DOTNET_SERIALIZATION" ]
             },
             "imports": [ "dnxcore50" ],
             "dependencies": {

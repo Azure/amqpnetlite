@@ -52,6 +52,15 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="..\..\Examples\Serialization\Serialization.Poco\PocoContractResolver.cs">
+      <Link>PocoContractResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Examples\Serialization\Serialization.Poco\Shape.cs">
+      <Link>Types\Shape.cs</Link>
+    </Compile>
+    <Compile Include="..\..\src\Net\TypeExtensions.cs">
+      <Link>TypeExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Common\AmqpSerializerTests.cs">
       <Link>AmqpSerializerTests.cs</Link>
     </Compile>
