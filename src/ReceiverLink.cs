@@ -236,7 +236,6 @@ namespace Amqp
                 {
                     if (waiter.Signal(delivery.Message))
                     {
-                        this.OnDeliverMessage();
                         return;
                     }
 
@@ -258,7 +257,6 @@ namespace Amqp
                 Fx.Assert(waiter == null, "waiter must be null now");
                 Fx.Assert(callback != null, "callback must not be null now");
                 callback(this, delivery.Message);
-                this.OnDeliverMessage();
             }
             else
             {
@@ -307,15 +305,6 @@ namespace Amqp
             }
         }
 
-        void OnDeliverMessage()
-        {
-            if (this.totalCredit > 0 &&
-                Interlocked.Increment(ref this.restored) >= (this.totalCredit / 2))
-            {
-                this.SetCredit(this.totalCredit, true);
-            }
-        }
-
         internal Message ReceiveInternal(MessageCallback callback, int timeout = 60000)
         {
             Waiter waiter = null;
@@ -326,7 +315,6 @@ namespace Amqp
                 if (first != null)
                 {
                     this.receivedMessages.Remove(first);
-                    this.OnDeliverMessage();
                     return first.Message;
                 }
 
@@ -363,6 +351,11 @@ namespace Amqp
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;
+            if (this.totalCredit > 0 &&
+            Interlocked.Increment(ref this.restored) >= (this.totalCredit / 2))
+            {
+                this.SetCredit(this.totalCredit, true);
+            }
             if (delivery == null || delivery.Settled)
             {
                 return;
