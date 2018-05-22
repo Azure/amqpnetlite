@@ -40,6 +40,7 @@ namespace Amqp
         int credit;
         bool autoRestore;
         int restoreCountRcv;
+        int deliveryLimitSnd;
 
         // received messages queue
         LinkedList receivedMessages;
@@ -87,6 +88,7 @@ namespace Amqp
             this.credit = CREDIT_NOT_SET;
             this.autoRestore = true;
             this.restoreCountRcv = 0;
+            this.deliveryLimitSnd = 0;
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(true, 0, attach);
@@ -114,7 +116,7 @@ namespace Amqp
         /// <returns></returns>
         internal int ComputeCredit(int count_rcv, int count_snd, int credit)
         {
-            uint rCredit = (uint)count_rcv + (uint)credit - (uint)count_snd;
+            uint rCredit = unchecked((uint)count_rcv + (uint)credit - (uint)count_snd);
             int iCredit = Math.Max((int)rCredit, 0);
             return iCredit;
         }
@@ -128,7 +130,7 @@ namespace Amqp
         /// <returns></returns>
         internal int ComputeRestoreCount(int count_rcv, int credit)
         {
-            int rCount = count_rcv + ((credit + 1) / 2);
+            int rCount = unchecked(count_rcv + ((credit + 1) / 2));
             return rCount;
         }
 
@@ -145,7 +147,7 @@ namespace Amqp
         /// credit/2 may be issued.</param>
         public void SetCredit(int credit, bool autoRestore = true)
         {
-            int newCredit;
+            int flowCredit;
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -155,10 +157,11 @@ namespace Amqp
 
                 this.credit = credit;
                 this.autoRestore = autoRestore;
-                newCredit  = ComputeCredit(this.deliveryCountRcv, this.deliveryCountSnd, this.credit);
-                this.restoreCountRcv = ComputeRestoreCount(this.deliveryCountRcv, this.credit);
+                flowCredit  = ComputeCredit(deliveryCountRcv, deliveryCountSnd, credit);
+                restoreCountRcv = ComputeRestoreCount(deliveryCountRcv, credit);
+                deliveryLimitSnd = unchecked(deliveryCountRcv + credit);
             }
-            this.SendFlow((uint)this.deliveryCountRcv, (uint)newCredit, false);
+            this.SendFlow((uint)this.deliveryCountRcv, (uint)flowCredit, false);
         }
 
         /// <summary>
@@ -252,7 +255,13 @@ namespace Amqp
 
             if (!transfer.More)
             {
-                Interlocked.Increment(ref this.deliveryCountSnd); // message has arrived
+                if (deliveryCountSnd >= deliveryLimitSnd)
+                {
+                    throw new AmqpException(ErrorCode.TransferLimitExceeded,
+                        Fx.Format(SRAmqp.DeliveryLimitExceeded, transfer.DeliveryId));
+                }
+                Interlocked.Increment(ref deliveryCountSnd); // message has arrived
+
                 this.deliveryCurrent = null;
                 delivery.Message = Message.Decode(delivery.Buffer);
 
@@ -307,7 +316,8 @@ namespace Amqp
         internal override void OnAttach(uint remoteHandle, Attach attach)
         {
             base.OnAttach(remoteHandle, attach);
-            this.deliveryCountSnd = this.deliveryCountRcv = (int)attach.InitialDeliveryCount;
+            deliveryCountSnd = deliveryCountRcv = (int)attach.InitialDeliveryCount;
+            this.deliveryLimitSnd = unchecked(deliveryCountSnd + credit);
         }
 
         internal override void OnDeliveryStateChanged(Delivery delivery)
@@ -392,22 +402,23 @@ namespace Amqp
         {
             Delivery delivery = message.Delivery;
             bool issueFlow = false;
-            int newCredit = 0;
+            int flowCredit = 0;
             int dcSnd = 0;
-            lock (this.ThisLock)
+            lock (ThisLock)
             {
-                Interlocked.Increment(ref this.deliveryCountRcv);
-                if (this.autoRestore && this.credit > 0 && this.restoreCountRcv == this.deliveryCountRcv)
+                Interlocked.Increment(ref deliveryCountRcv);
+                if (autoRestore && credit > 0 && restoreCountRcv == deliveryCountRcv)
                 {
                     issueFlow = true;
-                    newCredit = ComputeCredit(this.deliveryCountRcv, this.deliveryCountSnd, this.credit);
-                    dcSnd = this.deliveryCountSnd;
-                    this.restoreCountRcv = ComputeRestoreCount(this.deliveryCountRcv, this.credit);
+                    flowCredit = ComputeCredit(deliveryCountRcv, deliveryCountSnd, credit);
+                    dcSnd = deliveryCountSnd;
+                    restoreCountRcv = ComputeRestoreCount(deliveryCountRcv, credit);
+                    deliveryLimitSnd = unchecked(deliveryCountRcv + credit);
                 }
             }
             if (issueFlow)
             {
-                this.SendFlow((uint)dcSnd, (uint)newCredit, false);
+                this.SendFlow((uint)dcSnd, (uint)flowCredit, false);
             }
             if (delivery == null || delivery.Settled)
             {
@@ -430,6 +441,7 @@ namespace Amqp
 
         void OnDelivery(SequenceNumber deliveryId)
         {
+            // called with lock held
         }
 
         sealed class MessageNode : INode
