@@ -156,7 +156,7 @@ namespace Amqp
                 this.credit = credit;
                 this.autoRestore = autoRestore;
                 newCredit  = ComputeCredit(this.deliveryCountRcv, this.deliveryCountSnd, this.credit);
-                this.restoreCountRcv = ComputeRestoreCount(this.deliveryCountSnd, this.credit);
+                this.restoreCountRcv = ComputeRestoreCount(this.deliveryCountRcv, this.credit);
             }
             this.SendFlow((uint)this.deliveryCountRcv, (uint)newCredit, false);
         }
