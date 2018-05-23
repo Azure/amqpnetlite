@@ -34,13 +34,15 @@ namespace Amqp
 #endif
         const int CREDIT_NOT_SET = -1;
 
-        // flow control
-        int deliveryCountSnd;
-        int deliveryCountRcv;
+        // flow control - user controlled settings
         int credit;
         bool autoRestore;
-        int restoreCountRcv;
-        int deliveryLimitSnd;
+        // flow control - messages-in-flight tracking
+        int deliveryCountSnd;  // sender's sequence of next message to be received
+        int deliveryCountRcv;  // receiver's sequence of messages disposed
+        // flow control - event thresholds
+        int restoreCountRcv;   // receiver's sequence that triggers autoRestore
+        int overrunLimitSnd;   // sender's sequence that constitutes credit overrun
 
         // received messages queue
         LinkedList receivedMessages;
@@ -83,12 +85,12 @@ namespace Amqp
         public ReceiverLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, name, onAttached)
         {
-            this.deliveryCountSnd = 0;
-            this.deliveryCountRcv = 0;
             this.credit = CREDIT_NOT_SET;
             this.autoRestore = true;
+            this.deliveryCountSnd = 0;
+            this.deliveryCountRcv = 0;
             this.restoreCountRcv = 0;
-            this.deliveryLimitSnd = 0;
+            this.overrunLimitSnd = 0;
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(true, 0, attach);
@@ -107,14 +109,14 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Computes amount of credit to issue based on desired credit and
-        /// number of messages in flight. Will not return negative credit.
+        /// Computes amount of credit to issue in a Flow based on desired credit and
+        /// numbers of messages in flight. Will not return negative credit.
         /// </summary>
         /// <param name="count_rcv">reciever delivery count</param>
         /// <param name="count_snd">sender deliver count</param>
         /// <param name="credit">desirec message credit</param>
         /// <returns></returns>
-        internal int ComputeCredit(int count_rcv, int count_snd, int credit)
+        internal int ComputeFlowCredit(int count_rcv, int count_snd, int credit)
         {
             uint rCredit = unchecked((uint)count_rcv + (uint)credit - (uint)count_snd);
             int iCredit = Math.Max((int)rCredit, 0);
@@ -135,9 +137,10 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
-        /// Lowering the credit value may result in send a flow with zero credits.
-        /// The autoRestore receive delivery count is computed.
+        /// Sets a credit on the link. 
+        ///  * A flow is sent to the peer to update link flow control state.
+        ///  * Sender's credit overrun limit is recalculated.
+        ///  * Receiver's credit autoRestore point is recalcaulted.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
         /// <param name="autoRestore"> If false, caller is responsible for
@@ -148,7 +151,7 @@ namespace Amqp
         public void SetCredit(int credit, bool autoRestore = true)
         {
             int flowCredit;
-            int dCountSnd;
+            int dcSnd;
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -158,12 +161,12 @@ namespace Amqp
 
                 this.credit = credit;
                 this.autoRestore = autoRestore;
-                dCountSnd = deliveryCountSnd;
-                flowCredit  = ComputeCredit(deliveryCountRcv, deliveryCountSnd, credit);
+                dcSnd = deliveryCountSnd;
+                flowCredit  = ComputeFlowCredit(deliveryCountRcv, dcSnd, credit);
                 restoreCountRcv = ComputeRestoreCount(deliveryCountRcv, credit);
-                deliveryLimitSnd = unchecked(deliveryCountRcv + credit);
+                overrunLimitSnd = unchecked(deliveryCountRcv + credit);
             }
-            this.SendFlow((uint)dCountSnd, (uint)flowCredit, false);
+            this.SendFlow((uint)dcSnd, (uint)flowCredit, false);
         }
 
         /// <summary>
@@ -257,7 +260,7 @@ namespace Amqp
 
             if (!transfer.More)
             {
-                if (deliveryCountSnd >= deliveryLimitSnd)
+                if (deliveryCountSnd >= overrunLimitSnd)
                 {
                     throw new AmqpException(ErrorCode.TransferLimitExceeded,
                         Fx.Format(SRAmqp.DeliveryLimitExceeded, transfer.DeliveryId));
@@ -319,7 +322,7 @@ namespace Amqp
         {
             base.OnAttach(remoteHandle, attach);
             deliveryCountSnd = deliveryCountRcv = (int)attach.InitialDeliveryCount;
-            this.deliveryLimitSnd = unchecked(deliveryCountSnd + credit);
+            this.overrunLimitSnd = unchecked(deliveryCountSnd + credit);
         }
 
         internal override void OnDeliveryStateChanged(Delivery delivery)
@@ -413,9 +416,9 @@ namespace Amqp
                 {
                     issueFlow = true;
                     dcSnd = deliveryCountSnd;
-                    flowCredit = ComputeCredit(deliveryCountRcv, dcSnd, credit);
+                    flowCredit = ComputeFlowCredit(deliveryCountRcv, dcSnd, credit);
                     restoreCountRcv = ComputeRestoreCount(deliveryCountRcv, credit);
-                    deliveryLimitSnd = unchecked(deliveryCountRcv + credit);
+                    overrunLimitSnd = unchecked(deliveryCountRcv + credit);
                 }
             }
             if (issueFlow)
