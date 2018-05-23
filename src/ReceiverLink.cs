@@ -148,6 +148,7 @@ namespace Amqp
         public void SetCredit(int credit, bool autoRestore = true)
         {
             int flowCredit;
+            int dCountSnd;
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -157,11 +158,12 @@ namespace Amqp
 
                 this.credit = credit;
                 this.autoRestore = autoRestore;
+                dCountSnd = deliveryCountSnd;
                 flowCredit  = ComputeCredit(deliveryCountRcv, deliveryCountSnd, credit);
                 restoreCountRcv = ComputeRestoreCount(deliveryCountRcv, credit);
                 deliveryLimitSnd = unchecked(deliveryCountRcv + credit);
             }
-            this.SendFlow((uint)this.deliveryCountRcv, (uint)flowCredit, false);
+            this.SendFlow((uint)dCountSnd, (uint)flowCredit, false);
         }
 
         /// <summary>
@@ -410,8 +412,8 @@ namespace Amqp
                 if (autoRestore && credit > 0 && restoreCountRcv == deliveryCountRcv)
                 {
                     issueFlow = true;
-                    flowCredit = ComputeCredit(deliveryCountRcv, deliveryCountSnd, credit);
                     dcSnd = deliveryCountSnd;
+                    flowCredit = ComputeCredit(deliveryCountRcv, dcSnd, credit);
                     restoreCountRcv = ComputeRestoreCount(deliveryCountRcv, credit);
                     deliveryLimitSnd = unchecked(deliveryCountRcv + credit);
                 }
