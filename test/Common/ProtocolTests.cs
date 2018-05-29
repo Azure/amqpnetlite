@@ -1316,8 +1316,12 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 uint current = total;
-                total = (uint)fields[5] + (uint)fields[6];
-                for (uint i = current; i < total; i++)
+                uint limit = (uint)fields[5] + (uint)fields[6];
+                if (limit > total)
+                {
+                    total = limit;
+                }
+                for (uint i = current; i < limit; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
                 }
