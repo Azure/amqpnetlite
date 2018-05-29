@@ -76,6 +76,12 @@ namespace Test.Amqp
             AmqpBitConverter.WriteUByte(buffer, type);
             AmqpBitConverter.WriteUShort(buffer, channel);
             Encoder.WriteObject(buffer, new DescribedValue(code, list));
+            if (code == 0x14UL) // transfer
+            {
+                byte[] bytes = new byte[] { 0x00, 0x53, 0x77, 0xa1, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f };
+                AmqpBitConverter.WriteBytes(buffer, bytes, 0, bytes.Length);
+            }
+
             AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length);
             stream.Write(buffer.Buffer, buffer.Offset, buffer.Length);
         }

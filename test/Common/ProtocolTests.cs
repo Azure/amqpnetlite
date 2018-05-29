@@ -1271,6 +1271,125 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ReceiverLinkCreditRestoreTest()
+        {
+            uint total = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint limit = (uint)fields[5] + (uint)fields[6];
+                for (uint i = total; i < limit; i++, total++)
+                {
+                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
+                }
+
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiverLinkCreditRestoreTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+            receiver.SetCredit(10);
+            for (int i = 0; i < 10; i++)
+            {
+                Message message = receiver.Receive();
+                if (i % 2 == 0)
+                {
+                    receiver.Accept(message);
+                }
+            }
+
+            receiver.Receive();
+
+            Assert.AreEqual(15u, total);    // initial 10 + 5 accept calls
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ReceiverLinkStoppingTest()
+        {
+            uint total = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint limit = (uint)fields[5] + (uint)fields[6];
+                for (uint i = total; i < limit; i++, total++)
+                {
+                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
+                }
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiverLinkStoppingTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+            receiver.SetCredit(10);
+            receiver.Accept(receiver.Receive());
+            receiver.SetCredit(0);
+            for (int i = 0; i < 9; i++)
+            {
+                receiver.Accept(receiver.Receive());
+            }
+
+            Message message = receiver.Receive(TimeSpan.FromSeconds(1));
+            Assert.IsTrue(message == null);
+
+            Assert.AreEqual(10u, total);
+
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ReceiverLinkCreditReduceTest()
+        {
+            uint total = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint limit = (uint)fields[5] + (uint)fields[6];
+                for (uint i = total; i < limit; i++, total++)
+                {
+                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
+                }
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiverLinkCreditReduceTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+            receiver.SetCredit(10);
+            for (int i = 0; i < 4; i++)
+            {
+                receiver.Accept(receiver.Receive());
+            }
+
+            receiver.SetCredit(4);
+            for (int i = 0; i < 4; i++)
+            {
+                receiver.Accept(receiver.Receive());
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                Message msg = receiver.Receive();
+                Assert.IsTrue(msg != null);
+            }
+
+            Message message = receiver.Receive(TimeSpan.FromSeconds(1));
+            Assert.IsTrue(message == null);
+
+            Assert.AreEqual(12u, total);    // initial 10 + 2 accepts
+
+            connection.Close();
+        }
+
+        [TestMethod]
         public void ConnectionEventsOnProtocolError()
         {
             ManualResetEvent closeReceived = null;

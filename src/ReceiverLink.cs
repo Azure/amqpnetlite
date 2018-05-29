@@ -34,9 +34,11 @@ namespace Amqp
 #endif
         // flow control
         SequenceNumber deliveryCount;
-        int totalCredit;
-        int credit;
-        int restored;
+        int totalCredit;    // total credit set by app or the default
+        bool autoRestore;   // auto flow credit
+        int pending;        // queued or being processed by application
+        int credit;         // remaining credit
+        int restored;       // processed by the application
 
         // received messages queue
         LinkedList receivedMessages;
@@ -88,7 +90,7 @@ namespace Amqp
         /// <summary>
         /// Starts the message pump.
         /// </summary>
-        /// <param name="credit">The link credit to issue.</param>
+        /// <param name="credit">The link credit to issue. See <seealso cref="SetCredit(int, bool)"/> for more details.</param>
         /// <param name="onMessage">If specified, the callback to invoke when messages are received.
         /// If not specified, call Receive method to get the messages.</param>
         public void Start(int credit, MessageCallback onMessage = null)
@@ -98,14 +100,23 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
+        /// Sets a credit on the link. It is the total number of unacknowledged messages the remote peer can send.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
         /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted
-        /// or rejected by the caller. If false, caller is responsible for manage link credits.</param>
+        /// or rejected by the caller. If false, caller is responsible for managing link credits and
+        /// in-flight transfers.</param>
+        /// <remarks>
+        /// By default the credit is set to 200 (20 for netmf). If the default value is not optimal,
+        /// application should call this method once after the receiver link is created. Calling this
+        /// method multiple times with different credits is allowed but not recommended. Application may
+        /// do this if, for example, it needs to control local queue depth based on resource usage.
+        /// The <paramref name="autoRestore"/> parameter should not be changed after it is initially set.
+        /// To stop a receiver link, set <paramref name="credit"/> to 0. However application should expect
+        /// in-flight messages to come as a result of the previous credit.
+        /// </remarks>
         public void SetCredit(int credit, bool autoRestore = true)
         {
-            uint dc;
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -113,13 +124,33 @@ namespace Amqp
                     return;
                 }
 
-                this.totalCredit = autoRestore ? credit : 0;
-                this.credit = credit;
-                this.restored = 0;
-                dc = this.deliveryCount;
-            }
+                if (this.totalCredit < 0)
+                {
+                    this.totalCredit = 0;
+                }
 
-            this.SendFlow(dc, (uint)credit, false);
+                if (autoRestore)
+                {
+                    if (credit > this.totalCredit)
+                    {
+                        // if total credit is reduced, do not change pending credit to allow
+                        // accepting incoming messages
+                        this.credit += credit - this.totalCredit;
+                    }
+                }
+                else
+                {
+                    this.credit = credit;
+                    this.pending = 0;
+                    this.restored = 0;
+                }
+
+                this.totalCredit = credit;
+                this.autoRestore = autoRestore;
+                int flowCredit = Math.Max(0, this.totalCredit - this.pending);
+                this.SendFlow(this.deliveryCount, (uint)flowCredit, false);
+                this.restored = 0;
+            }
         }
 
         /// <summary>
@@ -351,28 +382,42 @@ namespace Amqp
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;
-            if (this.totalCredit > 0 &&
-            Interlocked.Increment(ref this.restored) >= (this.totalCredit / 2))
+            if (delivery != null && !delivery.Settled)
             {
-                this.SetCredit(this.totalCredit, true);
-            }
-            if (delivery == null || delivery.Settled)
-            {
-                return;
+                DeliveryState state = outcome;
+                bool settled = true;
+#if NETFX || NETFX40
+                var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
+                if (txnState != null)
+                {
+                    txnState.Outcome = outcome;
+                    state = txnState;
+                    settled = false;
+                }
+#endif
+                this.Session.DisposeDelivery(true, delivery, state, settled);
             }
 
-            DeliveryState state = outcome;
-            bool settled = true;
-#if NETFX || NETFX40
-            var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
-            if (txnState != null)
+            if (this.autoRestore)
             {
-                txnState.Outcome = outcome;
-                state = txnState;
-                settled = false;
+                lock (this.ThisLock)
+                {
+                    this.restored++;
+                    this.pending--;
+                    if (this.restored >= this.totalCredit / 2)
+                    {
+                        // total credit may be reduced. restore to what is allowed
+                        int delta = Math.Min(this.restored, this.totalCredit - this.credit - this.pending);
+                        if (delta > 0)
+                        {
+                            this.credit += delta;
+                            this.SendFlow(this.deliveryCount, (uint)this.credit, false);
+                        }
+
+                        this.restored = 0;
+                    }
+                }
             }
-#endif
-            this.Session.DisposeDelivery(true, delivery, state, settled);
         }
 
         void OnDelivery(SequenceNumber deliveryId)
@@ -385,6 +430,7 @@ namespace Amqp
             }
 
             this.deliveryCount++;
+            this.pending++;
             this.credit--;
         }
 
