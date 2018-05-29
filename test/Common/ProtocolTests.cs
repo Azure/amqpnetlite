@@ -1277,8 +1277,9 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
-                uint limit = (uint)fields[5] + (uint)fields[6];
-                for (uint i = total; i < limit; i++, total++)
+                uint current = total;
+                total = (uint)fields[5] + (uint)fields[6];
+                for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
                 }
@@ -1314,8 +1315,9 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
-                uint limit = (uint)fields[5] + (uint)fields[6];
-                for (uint i = total; i < limit; i++, total++)
+                uint current = total;
+                total = (uint)fields[5] + (uint)fields[6];
+                for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
                 }
@@ -1350,8 +1352,9 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
-                uint limit = (uint)fields[5] + (uint)fields[6];
-                for (uint i = total; i < limit; i++, total++)
+                uint current = total;
+                total = (uint)fields[5] + (uint)fields[6];
+                for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
                 }
