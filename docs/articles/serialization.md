@@ -9,17 +9,18 @@ clients that can read/write AMQP values.
 The following types are serializable.
 * Primitives as listed in the below mapping table.
 * Collection (Array/List/Map) of serializable types.
+* AMQP [Described](https://github.com/Azure/amqpnetlite/blob/master/src/Types/Described.cs)
 * Enum
-* Custom Types - User defined classes are encoded as AMQP described types when the class
-and its fields/properties are annotated with the AMQP serialization attributes.
-See [AmqpContract](#amqpcontract) for details.
-* [IAmqpSerializable](#iamqpserializable) - User defined classes that implement this
-interface can be serialized using the Encode and Decode implementation provided by the user.
+* Nullable
+* [IAmqpSerializable](#iamqpserializable) - User defined classes that implements this interface.
+* Custom Types - User defined classes that are,
+** annotated with the [AMQP serialization attributes](#amqpcontract).
+** supported by a custom IContractResolver implementation.
 
 The serializer follows this order to resolve a type. If a type cannot be resolved, an
 exception is thrown.
 ```
-[AmqpContract] -> AMQP primitive types -> IAmqpSerializable -> Enum -> Array/List/Map
+[AmqpContract] -> AMQP primitive types -> IAmqpSerializable -> Nullable -> Enum -> Array/List/Map
 ```
 A custom class should not have AmqpContractAttribute and implement IAmqpSerializable at
 the same time, because the serializer stops checking for IAmqpSerializable as soon as
@@ -41,6 +42,7 @@ The mapping between .NET and AMQP primitive types is defined in the following ta
 | long | long |
 | float | float |
 | double | double |
+| Decimal | decimal* |
 | char | char |
 | DateTime | timestamp |
 | Guid | uuid |
@@ -52,7 +54,7 @@ The mapping between .NET and AMQP primitive types is defined in the following ta
 | IDictionary | map |
 | Enum | the underlying type, e.g. int |
 | `Nullable<T>` | null or the supported type T |
-* decimal is not supported
+* decimal is supported only for protocol passthrough.
 
 ## AmqpContract
 
@@ -205,11 +207,20 @@ Note that Student and Teacher should be added even when Person is added.
 ### Serialization Callbacks
 
 Extra logic can be inserted before and after serialization/deserialization by serialization callbacks.
-The callback methods should be annotated with the system runtime serialization attributes.
-* [OnSerializingAttribute](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.onserializingattribute(v=vs.110).aspx) - invoked before writing members
-* [OnSerializedAttribute](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.onserializedattribute(v=vs.110).aspx) - invoked after writing members
-* [OnDeserializingAttribute](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ondeserializingattribute(v=vs.110).aspx) - invoked before reading members
-* [OnDeserializedAttribute](https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ondeserializedattribute(v=vs.110).aspx) - invoked after reading members
+The callback methods should be annotated with the serialization attributes.
+* [OnSerializingAttribute](https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnSerializingAttribute.cs) - invoked before writing members
+* [OnSerializedAttribute](https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnSerializedAttribute.cs) - invoked after writing members
+* [OnDeserializingAttribute](https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnDeserializingAttribute.cs) - invoked before reading members
+* [OnDeserializedAttribute](https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnDeserializedAttribute.cs) - invoked after reading members
+
+### Custom Contract Resolver
+
+It can be used in cases where the application cannot define the attributes on existing types. The resolver is responsible
+for creating an [AmqpContract](https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/AmqpContract.cs) object
+that defines the serialization logic for a given type, as if the attributes are defined.
+
+For example, the [Serialization.Poco](https://github.com/Azure/amqpnetlite/tree/master/Examples/Serialization/Serialization.Poco)
+project shows how to implement a resolver to support Poco classes.
 
 ## IAmqpSerializable
 
