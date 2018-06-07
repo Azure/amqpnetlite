@@ -167,9 +167,20 @@ namespace Amqp
         /// </summary>
         /// <param name="timeout">The time to wait for a message.</param>
         /// <returns>A Message object if available; otherwise a null value.</returns>
+        /// <remarks>
+        /// Use TimeSpan.MaxValue or Timeout.InfiniteTimeSpan to wait infinitely. If TimeSpan.Zero is supplied,
+        /// the call returns immediately.
+        /// </remarks>
         public Message Receive(TimeSpan timeout)
         {
-            return this.ReceiveInternal(null, (int)(timeout.Ticks / 10000));
+            int waitTime = timeout == TimeSpan.MaxValue ? -1 : (int)(timeout.Ticks / 10000);
+#if NETFX || DOTNET || NETFX_CORE || UWP
+            if (timeout == Timeout.InfiniteTimeSpan)
+            {
+                waitTime = -1;
+            }
+#endif
+            return this.ReceiveInternal(null, waitTime);
         }
 
         /// <summary>
@@ -349,7 +360,7 @@ namespace Amqp
                     return first.Message;
                 }
 
-                if (timeout > 0)
+                if (timeout != 0)
                 {
 #if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
                     waiter = callback == null ? (Waiter)new SyncWaiter() : new AsyncWaiter(this, callback);
@@ -366,14 +377,16 @@ namespace Amqp
                 this.SetCredit(DefaultCredit, true);
             }
 
-            Message message = null;
-            if (timeout > 0)
+            if (timeout == 0)
             {
-                message = waiter.Wait(timeout);
-                if (this.Error != null)
-                {
-                    throw new AmqpException(this.Error);
-                }
+                return null;
+            }
+
+            Message message = null;
+            message = waiter.Wait(timeout);
+            if (this.Error != null)
+            {
+                throw new AmqpException(this.Error);
             }
 
             return message;

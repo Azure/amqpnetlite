@@ -96,7 +96,7 @@ namespace Test.Amqp
             IReceiverLink receiver = session.CreateReceiver("receiver-" + testName, testTarget.Path);
             for (int i = 0; i < nMsgs; ++i)
             {
-                Message message = await receiver.ReceiveAsync();
+                Message message = await receiver.ReceiveAsync(Timeout.InfiniteTimeSpan);
                 Trace.WriteLine(TraceLevel.Information, "receive: {0}", message.ApplicationProperties["sn"]);
                 receiver.Accept(message);
             }

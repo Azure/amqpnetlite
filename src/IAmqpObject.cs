@@ -246,6 +246,10 @@ namespace Amqp
         /// </summary>
         /// <param name="timeout">The time to wait for a message.</param>
         /// <returns>A Message object if available; otherwise a null value.</returns>
+        /// <remarks>
+        /// Use TimeSpan.MaxValue or Timeout.InfiniteTimeSpan to wait infinitely. If TimeSpan.Zero is supplied,
+        /// the call returns immediately.
+        /// </remarks>
         Message Receive(TimeSpan timeout);
 
         /// <summary>

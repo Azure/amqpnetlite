@@ -602,7 +602,7 @@ namespace Test.Amqp
             ManualResetEvent gotMessage = new ManualResetEvent(false);
             StartThread(() =>
             {
-                Message message = receiver.Receive();
+                Message message = receiver.Receive(TimeSpan.MaxValue);
                 if (message != null)
                 {
                     receiver.Accept(message);
@@ -615,6 +615,47 @@ namespace Test.Amqp
             sender.Send(msg, null, null);
 
             Assert.IsTrue(gotMessage.WaitOne(5000), "No message was received");
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
+        public void TestMethod_ReceiveWaiterZero()
+        {
+            string testName = "ReceiveWaiterZero";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            Message msg = receiver.Receive(TimeSpan.Zero);
+            Assert.IsTrue(msg == null);
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            msg = new Message() { Properties = new Properties() { MessageId = "123456" } };
+            sender.Send(msg, null, null);
+
+            for (int i = 0; i < 1000; i++)
+            {
+                msg = receiver.Receive(TimeSpan.Zero);
+                if (msg != null)
+                {
+                    receiver.Accept(msg);
+                    break;
+                }
+
+#if NETFX_CORE
+                System.Threading.Tasks.Task.Delay(10).Wait();
+#else
+                Thread.Sleep(10);
+#endif
+            }
+
+            Assert.IsTrue(msg != null, "Message not received");
 
             sender.Close();
             receiver.Close();

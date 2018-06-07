@@ -91,6 +91,10 @@ namespace Amqp
         /// <param name="timeout">The time to wait for a message.</param>
         /// <returns>A Task for the asynchronous receive operation. The result is a Message object
         /// if available within the specified timeout; otherwise a null value.</returns>
+        /// <remarks>
+        /// Use TimeSpan.MaxValue or Timeout.InfiniteTimeSpan to wait infinitely. If TimeSpan.Zero is supplied,
+        /// the task completes immediately.
+        /// </remarks>
         Task<Message> ReceiveAsync(TimeSpan timeout);
     }
 
@@ -232,8 +236,20 @@ namespace Amqp
         /// <param name="timeout">The time to wait for a message.</param>
         /// <returns>A Task for the asynchronous receive operation. The result is a Message object
         /// if available within the specified timeout; otherwise a null value.</returns>
+        /// <remarks>
+        /// Use TimeSpan.MaxValue or Timeout.InfiniteTimeSpan to wait infinitely. If TimeSpan.Zero is supplied,
+        /// the task completes immediately.
+        /// </remarks>
         public Task<Message> ReceiveAsync(TimeSpan timeout)
         {
+            int waitTime = timeout == TimeSpan.MaxValue ? -1 : (int)(timeout.Ticks / 10000);
+#if !NETFX40
+            if (timeout == Timeout.InfiniteTimeSpan)
+            {
+                waitTime = -1;
+            }
+#endif
+
             TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();
             var message = this.ReceiveInternal(
                 (l, m) =>
@@ -247,7 +263,7 @@ namespace Amqp
                         tcs.TrySetResult(m);
                     }
                 },
-                (int)timeout.TotalMilliseconds);
+                waitTime);
 
             if (message != null)
             {
