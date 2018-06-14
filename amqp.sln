@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2
 	ProjectSection(SolutionItems) = preProject
 		src\amqp.snk = src\amqp.snk
 		nuspec\AMQPNetLite.Core.nuspec = nuspec\AMQPNetLite.Core.nuspec
+		nuspec\AMQPNetLite.NetMF.nuspec = nuspec\AMQPNetLite.NetMF.nuspec
 		nuspec\AMQPNetLite.nuspec = nuspec\AMQPNetLite.nuspec
 		nuspec\AMQPNetLite.Serialization.nuspec = nuspec\AMQPNetLite.Serialization.nuspec
 		nuspec\AMQPNetLite.WebSockets.nuspec = nuspec\AMQPNetLite.WebSockets.nuspec

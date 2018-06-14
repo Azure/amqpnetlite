@@ -39,6 +39,14 @@ IF /I "%1" EQU "test" (
   GOTO :args-done
 )
 
+IF /I "%1" EQU "package" (
+  SET build-target=package
+  set build-config=Release
+  set build-test=false
+  set build-nuget=true
+  GOTO :args-done
+)
+
 :args-start
 IF /I "%1" EQU "" GOTO args-done
 
@@ -94,6 +102,7 @@ IF "%dotnetPath%" == "" (
 IF /I "%build-target%" == "clean" GOTO :build-clean
 IF /I "%build-target%" == "build" GOTO :build-target
 IF /I "%build-target%" == "test" GOTO :build-done
+IF /I "%build-target%" == "package" GOTO :build-target
 GOTO :args-error
 
 TASKKILL /F /IM TestAmqpBroker.exe >nul 2>&1
@@ -118,9 +127,11 @@ echo Build version %build-version%
 CALL :findfile NuGet exe
 IF "%NuGetPath%" == "" (
   ECHO NuGet.exe does not exist or is not under PATH.
-) ELSE (
-  "%NuGetPath%" restore amqp.sln
+  SET return-code=1
+  GOTO :exit
 )
+
+IF /I "%build-target%" == "package" GOTO :build-done
 
 CALL :run-build Rebuild
 IF ERRORLEVEL 1 (
@@ -213,30 +224,12 @@ IF "%NuGetPath%" == "" (
 ) ELSE (
   IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
   ECHO Building NuGet package with version %build-version%
-  "%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-IF ERRORLEVEL 1 (
-  SET return-code=1
-    GOTO :exit
-  )
-  "%NuGetPath%" pack .\nuspec\AMQPNetMicro.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-IF ERRORLEVEL 1 (
-  SET return-code=1
-    GOTO :exit
-  )
-  "%NuGetPath%" pack .\nuspec\AMQPNetLite.Core.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-IF ERRORLEVEL 1 (
-  SET return-code=1
-    GOTO :exit
-  )
-  "%NuGetPath%" pack .\nuspec\AMQPNetLite.Serialization.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-IF ERRORLEVEL 1 (
-  SET return-code=1
-    GOTO :exit
-  )
-  "%NuGetPath%" pack .\nuspec\AMQPNetLite.WebSockets.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-IF ERRORLEVEL 1 (
-  SET return-code=1
-    GOTO :exit
+  FOR %%G IN (AMQPNetLite AMQPNetLite.NetMF AMQPNetMicro AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) DO (
+    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+    IF ERRORLEVEL 1 (
+      SET return-code=1
+      GOTO :exit
+    )
   )
 )
 
@@ -246,10 +239,11 @@ GOTO :exit
 EXIT /b %return-code%
 
 :usage
-  ECHO build.cmd [clean^|release^|test] [options]
+  ECHO build.cmd [clean^|release^|test^|package] [options]
   ECHO   clean: clean intermediate files
   ECHO   release: a shortcut for "--config Release --nuget"
   ECHO   test: run tests only from existing build
+  ECHO   package: create NuGet packages only from Release build
   ECHO options:
   ECHO  --config ^<value^>      [Debug]   build configuration (e.g. Debug, Release)
   ECHO  --platform ^<value^>    [Any CPU] build platform (e.g. Win32, x64, ...)
@@ -265,6 +259,8 @@ EXIT /b %return-code%
 
 :run-build
   ECHO Build solution amqp.sln
+  "%NuGetPath%" restore amqp.sln
+  IF ERRORLEVEL 1 EXIT /b 1
   "%MSBuildPath%" amqp.sln /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
   IF ERRORLEVEL 1 EXIT /b 1
 

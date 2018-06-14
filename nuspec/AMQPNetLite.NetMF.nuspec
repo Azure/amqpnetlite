@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AMQPNetLite.NetMF</id>
+    <title>AMQP.Net Lite for NetMF</title>
+    <version>0.0.0</version>
+    <authors>xinchen</authors>
+    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>AMQP 1.0 library for .Net Micro Framework</summary>
+    <description>
+      This is a lightweight AMQP 1.0 library for .Net Micro Framework (netmf). A more compact version
+      for NETMF is available in the AmqpNetMicro package.
+    </description>
+    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>AMQP net netmf</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Native" targetFramework="netmf" />
+      <frameworkAssembly assemblyName="Microsoft.SPOT.Net.Security" targetFramework="netmf" />
+      <frameworkAssembly assemblyName="System" targetFramework="netmf" />
+      <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42" />
+    </frameworkAssemblies>
+    <dependencies>
+      <group targetFramework="netmf" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.dll" target="lib\netmf42" />
+    <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.pdb" target="lib\netmf42" />
+    <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.xml" target="lib\netmf42" />
+    <file src="bin\Release\Amqp.NetMF42\be\Amqp.NetMF.pe" target="lib\netmf42\be" />
+    <file src="bin\Release\Amqp.NetMF42\be\Amqp.NetMF.pdbx" target="lib\netmf42\be" />
+    <file src="bin\Release\Amqp.NetMF42\le\Amqp.NetMF.pe" target="lib\netmf42\le" />
+    <file src="bin\Release\Amqp.NetMF42\le\Amqp.NetMF.pdbx" target="lib\netmf42\le" />
+    <file src="bin\Release\Amqp.NetMF43\Amqp.NetMF.dll" target="lib\netmf43" />
+    <file src="bin\Release\Amqp.NetMF43\Amqp.NetMF.pdb" target="lib\netmf43" />
+    <file src="bin\Release\Amqp.NetMF43\Amqp.NetMF.xml" target="lib\netmf43" />
+    <file src="bin\Release\Amqp.NetMF43\be\Amqp.NetMF.pe" target="lib\netmf43\be" />
+    <file src="bin\Release\Amqp.NetMF43\be\Amqp.NetMF.pdbx" target="lib\netmf43\be" />
+    <file src="bin\Release\Amqp.NetMF43\le\Amqp.NetMF.pe" target="lib\netmf43\le" />
+    <file src="bin\Release\Amqp.NetMF43\le\Amqp.NetMF.pdbx" target="lib\netmf43\le" />
+    <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.dll" target="lib\netmf44" />
+    <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.pdb" target="lib\netmf44" />
+    <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.xml" target="lib\netmf44" />
+    <file src="bin\Release\Amqp.NetMF44\be\Amqp.NetMF.pe" target="lib\netmf44\be" />
+    <file src="bin\Release\Amqp.NetMF44\be\Amqp.NetMF.pdbx" target="lib\netmf44\be" />
+    <file src="bin\Release\Amqp.NetMF44\le\Amqp.NetMF.pe" target="lib\netmf44\le" />
+    <file src="bin\Release\Amqp.NetMF44\le\Amqp.NetMF.pdbx" target="lib\netmf44\le" />
+  </files>
+</package>
