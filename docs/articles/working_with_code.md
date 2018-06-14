@@ -1,7 +1,6 @@
 # Prerequisites
 * Visual Studio 2013. [Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx) works.
 * NETMF SDK (4.2 and 4.3) and Visual Studio project system. You can build fro [sources](https://github.com/NETMF/netmf-interpreter) or download them from the old [netmf web site](https://netmf.codeplex.com).
-* Application Builder for Windows Embedded Compact 2013. To build .Net Compact Framework projects, you need to download [Application Builder for Windows Embedded Compact 2013](http://www.microsoft.com/en-us/download/details.aspx?id=38819)
 * NuGet tools if you want to build the NuGet package. 
 
 # Build the projects
@@ -13,7 +12,6 @@
 * The solution has a test broker which can be used to run tests. It can be started by running the following command. Note that the value of the "/cert" option is the subject name or the thumbprint of the service certificate that is already installed on the machine.
 `TestAmqpBroker.exe amqp://localhost:5672 amqps://localhost:5671 ws://localhost:80 /creds:guest:guest /cert:localhost`
 * NETMF tests are in project Test.Amqp.NetMF42/43. It is a NETMF application that runs in the emulator or a real device. It executes all methods whose names begin with "TestMethod_". 
-* Test.Amqp.NetCF39 project can be run in a .Net Compact Framework environment. You can try it on a VirtualPC virtual machine created using Platform Builder also with the related SDK. If you have a real device, you need an SDK for it too.
 
 # Start building applications
 * First take a look at the example projects under the Examples directory. The examples are working code against the Azure Service Bus service or other AMQP 1.0 compliant brokers.
