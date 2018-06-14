@@ -12,13 +12,13 @@
     <ProjectGuid>{2C4CBC7A-16BD-4F27-86BA-3CF38BE0F426}</ProjectGuid>
     <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
-    <IntermediateOutputPath>..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;DEBUG;NETMF,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,30 +26,29 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
     <DefineConstants>TRACE;NETMF,MF_FRAMEWORK_VERSION_V4_3</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="..\Common\Assert.cs">
+    <Compile Include="..\test\Common\Assert.cs">
       <Link>Assert.cs</Link>
     </Compile>
-    <Compile Include="..\Common\LinkTests.cs">
+    <Compile Include="..\test\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
-    <Compile Include="..\Common\TestRunner.cs">
+    <Compile Include="..\test\Common\TestRunner.cs">
       <Link>TestRunner.cs</Link>
     </Compile>
-    <Compile Include="..\Common\TestTarget.cs">
+    <Compile Include="..\test\Common\TestTarget.cs">
       <Link>TestTarget.cs</Link>
     </Compile>
-    <Compile Include="..\Common\UtilityTests.cs">
+    <Compile Include="..\test\Common\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test\Program.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">
@@ -58,9 +57,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Amqp.NetMF44.csproj">
+    <ProjectReference Include="Amqp.NetMF44.csproj">
       <Project>{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}</Project>
       <Name>Amqp.NetMF44</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

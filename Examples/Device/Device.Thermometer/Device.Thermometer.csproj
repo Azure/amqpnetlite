@@ -67,9 +67,9 @@
     <None Include="Resources\small.tinyfnt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Amqp.NetMF42.csproj">
-      <Project>{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}</Project>
-      <Name>Amqp.NetMF42</Name>
+    <ProjectReference Include="..\..\..\netmf\Amqp.NetMF44.csproj">
+      <Project>{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}</Project>
+      <Name>Amqp.NetMF44</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

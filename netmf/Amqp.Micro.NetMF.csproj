@@ -43,8 +43,8 @@
     <Reference Include="System.Net.Security" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AmqpBitConverter.cs" />
-    <Compile Include="ByteBuffer.cs" />
+    <Compile Include="..\src\AmqpBitConverter.cs" />
+    <Compile Include="..\src\ByteBuffer.cs" />
     <Compile Include="NetMFLite\Link.cs" />
     <Compile Include="NetMFLite\ErrorCode.cs" />
     <Compile Include="NetMFLite\Message.cs" />
@@ -54,17 +54,39 @@
     <Compile Include="NetMF\List.cs" />
     <Compile Include="NetMF\Map.cs" />
     <Compile Include="NetMFLite\Client.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Version.cs" />
-    <Compile Include="Types\Decimal.cs" />
-    <Compile Include="Types\Described.cs" />
-    <Compile Include="Types\DescribedValue.cs" />
-    <Compile Include="Types\Descriptor.cs" />
-    <Compile Include="Types\Encoder.cs" />
-    <Compile Include="Types\FixedWidth.cs" />
-    <Compile Include="Types\FormatCode.cs" />
-    <Compile Include="Types\RestrictedDescribed.cs" />
-    <Compile Include="Types\Symbol.cs" />
+    <Compile Include="..\src\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Properties\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Decimal.cs">
+      <Link>Types\Decimal.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Described.cs">
+      <Link>Types\Described.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\DescribedValue.cs">
+      <Link>Types\DescribedValue.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Descriptor.cs">
+      <Link>Types\Descriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Encoder.cs">
+      <Link>Types\Encoder.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\FixedWidth.cs">
+      <Link>Types\FixedWidth.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\FormatCode.cs">
+      <Link>Types\FormatCode.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\RestrictedDescribed.cs">
+      <Link>Types\RestrictedDescribed.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Symbol.cs">
+      <Link>Types\Symbol.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup />
 </Project>

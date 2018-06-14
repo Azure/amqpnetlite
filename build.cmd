@@ -270,7 +270,7 @@ EXIT /b %return-code%
 
   ECHO Build other versions of the micro NETMF projects
   FOR /L %%I IN (2,1,3) DO (
-    "%MSBuildPath%" .\src\Amqp.Micro.NetMF.csproj /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
+    "%MSBuildPath%" .\netmf\Amqp.Micro.NetMF.csproj /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
     IF ERRORLEVEL 1 EXIT /b 1
   )
 
