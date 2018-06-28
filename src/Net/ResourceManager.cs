@@ -44,7 +44,7 @@ namespace Amqp.Transactions
             Transaction txn = Transaction.Current;
             if (txn != null)
             {
-                byte[] txnId = await instance.EnlistAsync(link, txn);
+                byte[] txnId = await instance.EnlistAsync(link, txn).ConfigureAwait(false);
                 return new TransactionalState() { TxnId = txnId };
             }
 
@@ -72,7 +72,7 @@ namespace Amqp.Transactions
                 }
             }
 
-            return await enlistment.EnlistAsync(link);
+            return await enlistment.EnlistAsync(link).ConfigureAwait(false);
         }
 
         void OnTransactionCompleted(object sender, TransactionEventArgs e)
@@ -150,7 +150,7 @@ namespace Amqp.Transactions
                     }
                 }
 
-                return this.txnid = await this.declareTask;
+                return this.txnid = await this.declareTask.ConfigureAwait(false);
             }
 
             void IPromotableSinglePhaseNotification.Initialize()

@@ -324,7 +324,7 @@ namespace Amqp
 #if NETFX || NETFX40
         internal static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
-            return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender);
+            return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender).ConfigureAwait(false);
         }
 #endif
 
@@ -467,9 +467,9 @@ namespace Amqp
                 buffer =>
                 {
                     return saslProfile.OnFrame(hostname, writer, buffer, out code);
-                });
+                }).ConfigureAwait(false);
 
-            await writer.FlushAsync();
+            await writer.FlushAsync().ConfigureAwait(false);
 
             if (code != SaslCode.Ok)
             {

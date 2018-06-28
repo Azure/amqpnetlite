@@ -152,7 +152,7 @@ namespace Amqp
                 {
                     if (size > 0)
                     {
-                        await this.transport.SendAsync(buffers, size);
+                        await this.transport.SendAsync(buffers, size).ConfigureAwait(false);
                     }
                 }
                 catch (Exception exception)
