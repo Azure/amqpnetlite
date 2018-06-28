@@ -45,7 +45,7 @@ namespace Amqp
             if (onHeader != null)
             {
                 // header
-                await this.ReceiveBufferAsync(header, 0, FixedWidth.ULong);
+                await this.ReceiveBufferAsync(header, 0, FixedWidth.ULong).ConfigureAwait(false);
                 if (!onHeader(ProtocolHeader.Create(header, 0)))
                 {
                     return;
@@ -55,7 +55,7 @@ namespace Amqp
             // frames
             while (true)
             {
-                await this.ReceiveBufferAsync(header, 0, FixedWidth.UInt);
+                await this.ReceiveBufferAsync(header, 0, FixedWidth.UInt).ConfigureAwait(false);
                 int frameSize = AmqpBitConverter.ReadInt(header, 0);
                 if ((uint)frameSize > maxFrameSize)
                 {
@@ -68,7 +68,7 @@ namespace Amqp
                 try
                 {
                     Buffer.BlockCopy(header, 0, buffer.Buffer, buffer.Offset, FixedWidth.UInt);
-                    await this.ReceiveBufferAsync(buffer.Buffer, buffer.Offset + FixedWidth.UInt, frameSize - FixedWidth.UInt);
+                    await this.ReceiveBufferAsync(buffer.Buffer, buffer.Offset + FixedWidth.UInt, frameSize - FixedWidth.UInt).ConfigureAwait(false);
                     buffer.Append(frameSize);
 
                     if (!onBuffer(buffer))
@@ -87,7 +87,7 @@ namespace Amqp
         {
             try
             {
-                await this.PumpAsync(connection.MaxFrameSize, connection.OnHeader, connection.OnFrame);
+                await this.PumpAsync(connection.MaxFrameSize, connection.OnHeader, connection.OnFrame).ConfigureAwait(false); 
             }
             catch (Exception exception)
             {
@@ -100,7 +100,7 @@ namespace Amqp
         {
             while (count > 0)
             {
-                int received = await this.transport.ReceiveAsync(buffer, offset, count);
+                int received = await this.transport.ReceiveAsync(buffer, offset, count).ConfigureAwait(false);
                 if (received == 0)
                 {
                     throw new ObjectDisposedException(this.transport.GetType().Name);

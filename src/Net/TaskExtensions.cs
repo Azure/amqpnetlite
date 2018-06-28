@@ -467,9 +467,9 @@ namespace Amqp
                 buffer =>
                 {
                     return saslProfile.OnFrame(hostname, writer, buffer, out code);
-                });
+                }).ConfigureAwait(false);
 
-            await writer.FlushAsync();
+            await writer.FlushAsync().ConfigureAwait(false);
 
             if (code != SaslCode.Ok)
             {

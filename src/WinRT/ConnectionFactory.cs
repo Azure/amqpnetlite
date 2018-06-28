@@ -91,7 +91,7 @@ namespace Amqp
             if (WebSocketTransport.MatchScheme(address.Scheme))
             {
                 WebSocketTransport wsTransport = new WebSocketTransport();
-                await wsTransport.ConnectAsync(address);
+                await wsTransport.ConnectAsync(address).ConfigureAwait(false);
                 transport = wsTransport;
             }
             else
@@ -100,7 +100,7 @@ namespace Amqp
                 string.Equals(address.Scheme, Address.Amqps, StringComparison.OrdinalIgnoreCase))
             {
                 TcpTransport tcpTransport = new TcpTransport();
-                await tcpTransport.ConnectAsync(address, this);
+                await tcpTransport.ConnectAsync(address, this).ConfigureAwait(false);
                 transport = tcpTransport;
             }
             else
@@ -111,11 +111,11 @@ namespace Amqp
             if (address.User != null)
             {
                 SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                transport = await profile.OpenAsync(address.Host, null, transport, null);
+                transport = await profile.OpenAsync(address.Host, null, transport, null).ConfigureAwait(false);
             }
             else if (this.saslSettings != null && this.saslSettings.Profile != null)
             {
-                transport = await this.saslSettings.Profile.OpenAsync(address.Host, null, transport, null);
+                transport = await this.saslSettings.Profile.OpenAsync(address.Host, null, transport, null).ConfigureAwait(false);
             }
 
             AsyncPump pump = new AsyncPump(null, transport);

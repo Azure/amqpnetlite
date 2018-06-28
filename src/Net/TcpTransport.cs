@@ -239,7 +239,7 @@ namespace Amqp
 
                 if (this.receiveBuffer == null)
                 {
-                    return await this.socket.ReceiveAsync(this.receiveArgs, buffer, offset, count);
+                    return await this.socket.ReceiveAsync(this.receiveArgs, buffer, offset, count).ConfigureAwait(false);
                 }
                 else
                 {
@@ -247,7 +247,7 @@ namespace Amqp
                     {
                         this.receiveBuffer.AddReference();
                         int bytes = await this.socket.ReceiveAsync(this.receiveArgs, this.receiveBuffer.Buffer,
-                            this.receiveBuffer.WritePos, this.receiveBuffer.Size);
+                            this.receiveBuffer.WritePos, this.receiveBuffer.Size).ConfigureAwait(false);
                         this.receiveBuffer.Append(bytes);
                         return ReceiveFromBuffer(this.receiveBuffer, buffer, offset, count);
                     }

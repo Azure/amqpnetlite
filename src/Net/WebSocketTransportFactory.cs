@@ -64,7 +64,7 @@ namespace Amqp
         public override async Task<IAsyncTransport> CreateAsync(Address address)
         {
             var wsTransport = new WebSocketTransport();
-            await wsTransport.ConnectAsync(address, this.subprotocol, this.Options);
+            await wsTransport.ConnectAsync(address, this.subprotocol, this.Options).ConfigureAwait(false);
             return wsTransport;
         }
     }
