@@ -18,6 +18,8 @@
 namespace Amqp
 {
     using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Types;
 
@@ -418,7 +420,7 @@ namespace Amqp
                 throw new AmqpException(ErrorCode.NotFound,
                     Fx.Format(SRAmqp.LinkNotFound, attach.LinkName));
             }
-            
+
             link.OnAttach(attach.Handle, attach);
         }
 
@@ -575,10 +577,49 @@ namespace Amqp
             link.OnTransfer(delivery, transfer, buffer);
         }
 
+        //void OnDispose(Dispose dispose)
+        //{
+        //    SequenceNumber first = dispose.First;
+        //    SequenceNumber last = dispose.Last;
+
+        //    lock (this.ThisLock)
+        //    {
+        //        LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
+        //        Delivery delivery = (Delivery)linkedList.First;
+        //        while (delivery != null && delivery.DeliveryId <= last)
+        //        {
+        //            Delivery next = (Delivery)delivery.Next;
+
+        //            if (delivery.DeliveryId >= first)
+        //            {
+        //                delivery.Settled = dispose.Settled;
+        //                if (delivery.Settled)
+        //                {
+        //                    linkedList.Remove(delivery);
+        //                }
+
+        //                // DEADLOCK!!!!
+        //                // delivery.OnStateChanged will cause the original SendTask to be completed, and
+        //                // that means continuation code will be run at that point
+        //                // If that continuation code takes a lock on another session, that other session
+        //                // might end up in the same code path, and attempt to take a lock on this session, thereby
+        //                // causing a deadlock
+        //                // This call needs to be moved out of the lock (or maybe done inside of a Task.Run?)
+        //                delivery.OnStateChange(dispose.State);
+        //            }
+
+        //            delivery = next;
+        //        }
+        //    }
+        //}
+
+
         void OnDispose(Dispose dispose)
         {
             SequenceNumber first = dispose.First;
             SequenceNumber last = dispose.Last;
+
+            var disposedDeliveries = new List<Delivery>();
             lock (this.ThisLock)
             {
                 LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
@@ -595,10 +636,42 @@ namespace Amqp
                             linkedList.Remove(delivery);
                         }
 
-                        delivery.OnStateChange(dispose.State);
+                        // DEADLOCK!!!!
+                        // delivery.OnStateChanged will cause the original SendTask to be completed, and
+                        // that means continuation code will be run at that point
+                        // If that continuation code takes a lock on another session, that other session
+                        // might end up in the same code path, and attempt to take a lock on this session, thereby
+                        // causing a deadlock
+                        // This call needs to be moved out of the lock (or maybe done inside of a Task.Run?)
+
+                        disposedDeliveries.Add(delivery);
                     }
 
                     delivery = next;
+                }
+            }
+
+            // Update the state of the disposed deliveries
+            // Note that calling delivery.OnStateChange may complete some pending SendTask, thereby triggering the
+            // execution of some continuations. To avoid any deadlock, this MUST be done outside of any locks.
+            // Also, to avoid delaying some tasks in case multiple deliveries are to be notified, we marshall all these
+            // notifications to new tasks, except the last one
+            for (int i = 0; i < disposedDeliveries.Count; i++)
+            {
+                var delivery = disposedDeliveries[i];
+                disposedDeliveries[i] = null;   // Avoid trailing reference
+
+                if (i < disposedDeliveries.Count - 1)
+                {
+                    // Marshall the OnStateChange call to another task so that this one doesn't get held because
+                    // of potential continuations
+                    Task.Run(() => delivery.OnStateChange(dispose.State));
+                }
+                else
+                {
+                    // No need to marshall the last notification; we do want to avoid any context switching for the last
+                    // delivery (especially in the typical case where there's only one)
+                    delivery.OnStateChange(dispose.State);
                 }
             }
         }
