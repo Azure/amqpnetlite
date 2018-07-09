@@ -968,7 +968,7 @@ namespace Test.Amqp
                     Connection connection = new Connection(myAddress);
                     Assert.IsTrue(false, "no exception was thrown 1");
                 }
-                catch (ObjectDisposedException) { }
+                catch (OperationCanceledException) { }
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
@@ -978,7 +978,7 @@ namespace Test.Amqp
                 {
                     Connection connection = await Connection.Factory.CreateAsync(myAddress);
                 }
-                catch (ObjectDisposedException) { }
+                catch (OperationCanceledException) { }
             }).Unwrap().GetAwaiter().GetResult();
         }
 
