@@ -47,6 +47,7 @@ namespace Amqp
             InvalidSequenceNumberComparison = 89,
             AmqpInvalidFormatCode = 3446,
             DeliveryLimitExceeded = 3476,
+            TransportClosed = 6975,
             EncodingTypeNotSupported = 9570,
             AmqpHandleInUse = 10028,
             AmqpChannelNotFound = 18049,

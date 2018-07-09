@@ -180,4 +180,7 @@
   <data name="WindowViolation" xml:space="preserve">
     <value>There is no window to accept an incoming transfer (incoming-id={0}).</value>
   </data>
+  <data name="TransportClosed" xml:space="preserve">
+    <value>The transport '{0}' is closed.</value>
+  </data>
 </root>

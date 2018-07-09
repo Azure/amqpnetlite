@@ -80,7 +80,7 @@ namespace Amqp.Sasl
                 ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], MaxFrameSize);
                 if (buffer == null)
                 {
-                    throw new ObjectDisposedException(transport.GetType().Name);
+                    throw new OperationCanceledException(Fx.Format(SRAmqp.TransportClosed, transport.GetType().Name));
                 }
 
                 if (!this.OnFrame(hostname, transport, buffer, out code))

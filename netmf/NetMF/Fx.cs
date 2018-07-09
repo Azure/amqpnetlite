@@ -88,6 +88,20 @@ namespace Amqp
         }
     }
 
+    /// <summary>
+    /// The exception is thrown when an operation is canceled.
+    /// </summary>
+    public class OperationCanceledException : Exception
+    {
+        /// <summary>
+        /// Initialize a new OperationCanceledException object.
+        /// </summary>
+        /// <param name="message">The exception message, usually the details about why the operation is canceled.</param>
+        public OperationCanceledException(string message)
+            : base(message)
+        { }
+    }
+
     class Uri
     {
         public static string UnescapeDataString(string url)
