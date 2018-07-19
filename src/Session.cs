@@ -18,8 +18,6 @@
 namespace Amqp
 {
     using System;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Types;
 
@@ -619,7 +617,7 @@ namespace Amqp
             SequenceNumber first = dispose.First;
             SequenceNumber last = dispose.Last;
 
-            var disposedDeliveries = new List<Delivery>();
+            var disposedDeliveries = new List();
             lock (this.ThisLock)
             {
                 LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
@@ -658,16 +656,17 @@ namespace Amqp
             // notifications to new tasks, except the last one
             for (int i = 0; i < disposedDeliveries.Count; i++)
             {
-                var delivery = disposedDeliveries[i];
+                var delivery = (Delivery)disposedDeliveries[i];
                 disposedDeliveries[i] = null;   // Avoid trailing reference
-
+#if !NETFX35 && !NETMF
                 if (i < disposedDeliveries.Count - 1)
                 {
                     // Marshall the OnStateChange call to another task so that this one doesn't get held because
                     // of potential continuations
-                    Task.Run(() => delivery.OnStateChange(dispose.State));
+                    System.Threading.Tasks.Task.Factory.StartNew(() => delivery.OnStateChange(dispose.State));
                 }
                 else
+#endif
                 {
                     // No need to marshall the last notification; we do want to avoid any context switching for the last
                     // delivery (especially in the typical case where there's only one)
