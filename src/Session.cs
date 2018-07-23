@@ -642,6 +642,7 @@ namespace Amqp
                         // causing a deadlock
                         // This call needs to be moved out of the lock (or maybe done inside of a Task.Run?)
 
+                        //delivery.OnStateChange(dispose.State);
                         disposedDeliveries.Add(delivery);
                     }
 
