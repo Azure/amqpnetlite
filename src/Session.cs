@@ -574,44 +574,7 @@ namespace Amqp
 
             link.OnTransfer(delivery, transfer, buffer);
         }
-
-        //void OnDispose(Dispose dispose)
-        //{
-        //    SequenceNumber first = dispose.First;
-        //    SequenceNumber last = dispose.Last;
-
-        //    lock (this.ThisLock)
-        //    {
-        //        LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
-        //        Delivery delivery = (Delivery)linkedList.First;
-        //        while (delivery != null && delivery.DeliveryId <= last)
-        //        {
-        //            Delivery next = (Delivery)delivery.Next;
-
-        //            if (delivery.DeliveryId >= first)
-        //            {
-        //                delivery.Settled = dispose.Settled;
-        //                if (delivery.Settled)
-        //                {
-        //                    linkedList.Remove(delivery);
-        //                }
-
-        //                // DEADLOCK!!!!
-        //                // delivery.OnStateChanged will cause the original SendTask to be completed, and
-        //                // that means continuation code will be run at that point
-        //                // If that continuation code takes a lock on another session, that other session
-        //                // might end up in the same code path, and attempt to take a lock on this session, thereby
-        //                // causing a deadlock
-        //                // This call needs to be moved out of the lock (or maybe done inside of a Task.Run?)
-        //                delivery.OnStateChange(dispose.State);
-        //            }
-
-        //            delivery = next;
-        //        }
-        //    }
-        //}
-
-
+        
         void OnDispose(Dispose dispose)
         {
             SequenceNumber first = dispose.First;
@@ -634,15 +597,6 @@ namespace Amqp
                             linkedList.Remove(delivery);
                         }
 
-                        // DEADLOCK!!!!
-                        // delivery.OnStateChanged will cause the original SendTask to be completed, and
-                        // that means continuation code will be run at that point
-                        // If that continuation code takes a lock on another session, that other session
-                        // might end up in the same code path, and attempt to take a lock on this session, thereby
-                        // causing a deadlock
-                        // This call needs to be moved out of the lock (or maybe done inside of a Task.Run?)
-
-                        //delivery.OnStateChange(dispose.State);
                         disposedDeliveries.Add(delivery);
                     }
 
@@ -652,7 +606,8 @@ namespace Amqp
 
             // Update the state of the disposed deliveries
             // Note that calling delivery.OnStateChange may complete some pending SendTask, thereby triggering the
-            // execution of some continuations. To avoid any deadlock, this MUST be done outside of any locks.
+            // execution of some continuations. To avoid any deadlock, this MUST be done outside of any
+            // locks (cf issue https://github.com/Azure/amqpnetlite/issues/287).
             // Also, to avoid delaying some tasks in case multiple deliveries are to be notified, we marshall all these
             // notifications to new tasks, except the last one
             for (int i = 0; i < disposedDeliveries.Count; i++)

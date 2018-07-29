@@ -33,6 +33,7 @@ namespace Test.Amqp
     [TestClass]
     public class TaskTests
     {
+        private static readonly TimeSpan TestTimeout = TimeSpan.FromSeconds(10);
         TestTarget testTarget = new TestTarget();
 
         [ClassInitialize]
@@ -338,121 +339,38 @@ namespace Test.Amqp
         [TestMethod]
         public async Task MultipleConcurrentWriters()
         {
-            // Up to version 2.1.3, multiple writers from a single task could cause a deadlock
-            // This test checks it's fixed
-            var senderName = "Sender";
-            const int NbQueues = 2;
-            const int NbProducerTasks = 4;
-            const int NbMessages = 10;
-            const int MessageSize = 102400;
-            int startedProducers = 0;
-            bool testStarted = false;
-            Trace.TraceLevel = TraceLevel.Information;
-            Trace.TraceListener = (l, f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+            // Up to version 2.1.3, multiple writers from a single task could cause
+            // a deadlock (cf issue https://github.com/Azure/amqpnetlite/issues/287)
+            // This test checks that it's fixed
+            const int NbProducerTasks = 4;            
+            var data = Enumerable.Range(0, 100 * 1024).Select(x => (byte)x).ToArray();
 
-            var senderLinks = new SenderLink[NbQueues];
+            // Open 2 connections and sender links to 2 queues
+            var connection1 = await Connection.Factory.CreateAsync(
+                testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
+            var connection2 = await Connection.Factory.CreateAsync(
+                testTarget.Address, new Open() { ContainerId = "c2", MaxFrameSize = 4096 }, null);
+            var senderLink1 = new SenderLink(new Session(connection1), "Sender 1", "q1");
+            var senderLink2 = new SenderLink(new Session(connection2), "Sender 2", "q2");
 
-            for (int i = 0; i < NbQueues; i++)
-            {
-                Connection connection = await Connection.Factory.CreateAsync(
-                    this.testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
-
-                var queueName = "q" + (i % NbQueues);
-                Session session = new Session(connection);
-                senderLinks[i] = new SenderLink(session, senderName, queueName);
-            }
-
-            var tasks = new Task[NbProducerTasks];
-            var latch = new object();
-
-            for (int i = 0; i < tasks.Length; i++)
-            {
-                var testId = i;
-                tasks[i] = Task.Run(async () =>
+            // Start multiple sender tasks that will use both sender links concurrently
+            var tasks = Enumerable.Range(0, NbProducerTasks).Select(_ =>
+                Task.Run(async () =>
                 {
-                    lock (latch)
+                    // Send 10 messages on both queues
+                    for (int i = 0; i < 10; i++)
                     {
-                        startedProducers++;
-                        Trace.WriteLine(TraceLevel.Information, "Producer {0} ready; waiting for start signal", testId);
-                        while (!testStarted)
-                        {
-                            Monitor.Pulse(latch);
-                            Monitor.Wait(latch);
-                        }
+                        var message = new Message() { BodySection = new Data() { Binary = data } };
+                        await senderLink1.SendAsync(message, TimeSpan.FromSeconds(10));
+                        await senderLink2.SendAsync(message, TimeSpan.FromSeconds(10));
                     }
+                }));
 
-                    Trace.WriteLine(TraceLevel.Information, "Starting test run {0}", testId);
-
-                    var rand = new Random();
-                    var data = Enumerable.Range(0, rand.Next(MessageSize) + 1000).Select(x => (byte)x).ToArray();
-                    for (int j = 0; j < NbMessages; j++)
-                    {
-                        data[0] = (byte)j;
-                        var message = new Message()
-                        {
-                            BodySection = new Data()
-                            {
-                                Binary = data
-                            },
-                            Properties = new Properties
-                            {
-                                AbsoluteExpiryTime = DateTime.Today.AddDays(1),
-                                MessageId = j.ToString()
-                            }
-                        };
-
-
-                        Trace.WriteLine(TraceLevel.Information, "Test {0} - Sending message {1}", testId, j);
-                        await senderLinks[j % NbQueues].SendAsync(message, TimeSpan.FromSeconds(10));
-                        Trace.WriteLine(TraceLevel.Information, "Test {0} - Message {1} sent", testId, j);
-
-                    }
-                });
-            }
-
-            lock (latch)
-            {
-                Trace.WriteLine(TraceLevel.Information, "Waiting for producers");
-                while (startedProducers < tasks.Length)
-                {
-                    Trace.WriteLine(TraceLevel.Information, "Started producers: {0}", startedProducers);
-                    Monitor.Wait(latch);
-                }
-
-                // All producers are started; wake them up!
-                testStarted = true;
-                Monitor.PulseAll(latch);
-            }
-
-            await Task.WhenAll(tasks);
+            var sendersFinished = Task.WhenAll(tasks);
+            var timeoutTask = Task.Delay(TestTimeout);
+            Assert.AreEqual(sendersFinished, await Task.WhenAny(sendersFinished, timeoutTask),
+                "Probable deadlock detected: timeout while waiting for concurrent sender tasks to complete");
         }
-        
-        //private static async Task<Connection> Connect()
-        //{
-        //    var connectionFactory = new ConnectionFactory();
-        //    connectionFactory.AMQP.ContainerId = Guid.NewGuid().ToString();
-
-        //    // This is required on RHEL to avoid timeouts, especially for small messages
-        //    connectionFactory.TCP.ReceiveBufferSize = 1_048_576; // 1MB
-        //    connectionFactory.TCP.SendBufferSize = 1_048_576; // 1MB
-
-        //    connectionFactory.SSL.RemoteCertificateValidationCallback = delegate { return true; };
-
-        //    var mq = new
-        //    {
-        //        Scheme = "amqp",
-        //        UserName = "amq",
-        //        Password = "amq",
-        //        ServerName = "localhost",
-        //        Port = 5672
-        //    };
-        //    var address = new Address($"{mq.Scheme}://{mq.UserName}:{mq.Password}@{mq.ServerName}:{mq.Port}");
-        //    Log.Information("Connecting MessageQueueHandler to {Url}", address);
-
-        //    var connection = await connectionFactory.CreateAsync(address).ConfigureAwait(false);
-        //    return connection;
-        //}
-        
 #endif
     }
 }
