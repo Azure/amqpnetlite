@@ -370,6 +370,9 @@ namespace Test.Amqp
             var timeoutTask = Task.Delay(TestTimeout);
             Assert.AreEqual(sendersFinished, await Task.WhenAny(sendersFinished, timeoutTask),
                 "Probable deadlock detected: timeout while waiting for concurrent sender tasks to complete");
+
+            await connection1.CloseAsync();
+            await connection2.CloseAsync();
         }
 #endif
     }
