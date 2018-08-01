@@ -608,26 +608,11 @@ namespace Amqp
             // Note that calling delivery.OnStateChange may complete some pending SendTask, thereby triggering the
             // execution of some continuations. To avoid any deadlock, this MUST be done outside of any
             // locks (cf issue https://github.com/Azure/amqpnetlite/issues/287).
-            // Also, to avoid delaying some tasks in case multiple deliveries are to be notified, we marshall all these
-            // notifications to new tasks, except the last one
             for (int i = 0; i < disposedDeliveries.Count; i++)
             {
                 var delivery = (Delivery)disposedDeliveries[i];
                 disposedDeliveries[i] = null;   // Avoid trailing reference
-#if !NETFX35 && !NETMF
-                if (i < disposedDeliveries.Count - 1)
-                {
-                    // Marshall the OnStateChange call to another task so that this one doesn't get held because
-                    // of potential continuations
-                    System.Threading.Tasks.Task.Factory.StartNew(() => delivery.OnStateChange(dispose.State));
-                }
-                else
-#endif
-                {
-                    // No need to marshall the last notification; we do want to avoid any context switching for the last
-                    // delivery (especially in the typical case where there's only one)
-                    delivery.OnStateChange(dispose.State);
-                }
+                delivery.OnStateChange(dispose.State);
             }
         }
 
