@@ -25,7 +25,7 @@ documentType: index
       <div class="col-md-6 col-md-offset-3 text-center">
         <section>
           <h2>AMQP on .Net</h2>
-          <p class="lead">AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Compact Framework, .Net Framework, .Net Core, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.</p>
+          <p class="lead">AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .NET nanoFramework, .Net Compact Framework, .Net Framework, .Net Core, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.</p>
         </section>
       </div>
     </div>

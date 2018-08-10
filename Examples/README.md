@@ -1,6 +1,6 @@
 ## AmqpNetLite C# Examples
 This directory contains example C# programs using the library. Some of the examples require an AMQP 1.0 broker with pre-configured queues. The examples are organized as follows:
-* Device: examples for NETMF and Windows Phone.
+* Device: examples for NETMF, nanoFramework and Windows Phone.
 * Interop: clients interoperating with a broker in different patterns.
 * Listener: usage of the listener APIs in server or broker applications.
 * PeerToPeer: peer-to-peer communication.
@@ -12,7 +12,9 @@ This directory contains example C# programs using the library. Some of the examp
 | Device.Controller | A Windows Phone 8.0 app that reads temprature data from a "data" queue and sends commands to a "control" queue to adjust the temprature. |
 | Device.Controller2 | Same as Device.Controller but for Windows Phone 8.1. |
 | Device.Thermometer | A NETMF app that displays current temprature, sends it to a "data" queue, and reads commands from a "control" queue to change the temprature. |
+| Device.Thermometer.nanoFramework | A nanoFramework app that displays current temprature, sends it to a "data" queue, and reads commands from a "control" queue to change the temprature. |
 | Device.SmallMemory | A NETMF app that uses the Amqp.Micro.NetMF client to send and receive data to the Azure IoT Hub service. |
+| Device.SmallMemory.nanoFramework | A nanoFramework app that uses the Amqp.Micro.NetMF client to send and receive data to the Azure IoT Hub service. |
 
 ### Interop Examples
 | Project | Description |

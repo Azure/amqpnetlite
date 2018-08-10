@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AMQPNetMicro.nanoFramework</id>
+    <title>A compact version of AMQP.Net Lite for nanoFramework</title>
+    <version>0.0.0</version>
+    <authors>xinchen</authors>
+    <owners>Microsoft</owners>
+    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is a compact version of AMQP.Net Lite for .Net nanoFramework on memory/space constrained devices.</description>
+    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <copyright>Copyright 2014</copyright>
+    <tags>AMQP netmf nf nanoframework</tags>
+    <dependencies>
+      <group targetFramework="netnanoframework10">
+        <dependency id="nanoFramework.CoreLibrary" version="1.0.0-preview073" />
+        <dependency id="nanoFramework.Runtime.Events" version="1.0.0-preview188" />
+        <dependency id="nanoFramework.Runtime.Native" version="1.0.0-preview194" />
+        <dependency id="nanoFramework.System.Net" version="1.0.0-preview047" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Amqp.Micro.nanoFramework\Amqp.Micro.nanoFramework.*" target="lib" />
+  </files>
+</package>

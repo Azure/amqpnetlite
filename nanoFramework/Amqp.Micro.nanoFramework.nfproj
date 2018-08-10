@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <NanoFrameworkProjectSystemPath>$(MSBuildToolsPath)..\..\..\nanoFramework\v1.0\</NanoFrameworkProjectSystemPath>
+  </PropertyGroup>
+  <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.Default.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.Default.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{11A8DD76-328B-46DF-9F39-F559912D0360};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{F66A975C-A958-4D17-BCF3-AC28CE9D460B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <FileAlignment>512</FileAlignment>
+    <RootNamespace>Amqp.Micro.nanoFramework</RootNamespace>
+    <AssemblyName>Amqp.Micro.nanoFramework</AssemblyName>
+    <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+    <DefineConstants>$(DefineConstants);NETMF;NETMF_LITE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>..\bin\$(Configuration)\$(MSBuildProjectName)\$(AssemblyName).XML</DocumentationFile>
+  </PropertyGroup>
+  <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\src\amqp.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\src\AmqpBitConverter.cs">
+      <Link>AmqpBitConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\src\ByteBuffer.cs">
+      <Link>ByteBuffer.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\Link.cs">
+      <Link>nFLite\Link.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\ErrorCode.cs">
+      <Link>nFLite\ErrorCode.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\Message.cs">
+      <Link>nFLite\Message.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\Receiver.cs">
+      <Link>nFLite\Receiver.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\Sender.cs">
+      <Link>nFLite\Sender.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\Fx.cs">
+      <Link>nFLite\Fx.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMF\List.cs">
+      <Link>nFLite\List.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMF\Map.cs">
+      <Link>nFLite\Map.cs</Link>
+    </Compile>
+    <Compile Include="..\netmf\NetMFLite\Client.cs">
+      <Link>nFLite\Client.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Properties\Version.cs">
+      <Link>Properties\Version.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Decimal.cs">
+      <Link>Types\Decimal.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Described.cs">
+      <Link>Types\Described.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\DescribedValue.cs">
+      <Link>Types\DescribedValue.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Descriptor.cs">
+      <Link>Types\Descriptor.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Encoder.cs">
+      <Link>Types\Encoder.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\FixedWidth.cs">
+      <Link>Types\FixedWidth.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\FormatCode.cs">
+      <Link>Types\FormatCode.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\RestrictedDescribed.cs">
+      <Link>Types\RestrictedDescribed.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Types\Symbol.cs">
+      <Link>Types\Symbol.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib, Version=1.0.4.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\packages\nanoFramework.CoreLibrary.1.0.4\lib\mscorlib.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="nanoFramework.Runtime.Events, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\packages\nanoFramework.Runtime.Events.1.0.0\lib\nanoFramework.Runtime.Events.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="nanoFramework.Runtime.Native, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\packages\nanoFramework.Runtime.Native.1.0.0\lib\nanoFramework.Runtime.Native.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Net, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\packages\nanoFramework.System.Net.1.0.0\lib\System.Net.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
+  <ProjectExtensions>
+    <ProjectCapabilities>
+      <ProjectConfigurationsDeclaredAsItems />
+    </ProjectCapabilities>
+  </ProjectExtensions>
+</Project>

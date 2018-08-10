@@ -17,7 +17,11 @@
 
 namespace Amqp
 {
+#if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
     using Microsoft.SPOT.Net.Security;
+#elif (NANOFRAMEWORK_V1_0)
+    using System.Net.Security;
+#endif
     using System;
     using System.Net;
     using System.Net.Sockets;

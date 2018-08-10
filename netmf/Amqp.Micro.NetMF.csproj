@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NETMF;NETMF_LITE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETMF;NETMF_LITE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -30,7 +30,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</OutputPath>
-    <DefineConstants>NETMF;NETMF_LITE</DefineConstants>
+    <DefineConstants>NETMF;NETMF_LITE,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
