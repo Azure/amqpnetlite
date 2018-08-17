@@ -242,6 +242,15 @@ namespace Amqp {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The transport &apos;{0}&apos; is closed..
+        /// </summary>
+        internal static string TransportClosed {
+            get {
+                return ResourceManager.GetString("TransportClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There is no window to accept an incoming transfer (incoming-id={0})..
         /// </summary>
         internal static string WindowViolation {

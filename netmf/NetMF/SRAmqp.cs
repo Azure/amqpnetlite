@@ -123,5 +123,10 @@ namespace Amqp
         {
             get { return SRAmqp.GetString(StringResources.WindowViolation); }
         }
+
+        public static string TransportClosed
+        {
+            get { return SRAmqp.GetString(StringResources.TransportClosed); }
+        }
     }
 }

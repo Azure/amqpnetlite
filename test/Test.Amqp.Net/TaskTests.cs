@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Types;
+using System.Linq;
 #if NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 #else
@@ -32,6 +33,7 @@ namespace Test.Amqp
     [TestClass]
     public class TaskTests
     {
+        private static readonly TimeSpan TestTimeout = TimeSpan.FromSeconds(10);
         TestTarget testTarget = new TestTarget();
 
         [ClassInitialize]
@@ -332,6 +334,45 @@ namespace Test.Amqp
             receiver.Accept(message2);
 
             await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task MultipleConcurrentWriters()
+        {
+            // Up to version 2.1.3, multiple writers from a single task could cause
+            // a deadlock (cf issue https://github.com/Azure/amqpnetlite/issues/287)
+            // This test checks that it's fixed
+            const int NbProducerTasks = 4;            
+            var data = Enumerable.Range(0, 100 * 1024).Select(x => (byte)x).ToArray();
+
+            // Open 2 connections and sender links to 2 queues
+            var connection1 = await Connection.Factory.CreateAsync(
+                testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
+            var connection2 = await Connection.Factory.CreateAsync(
+                testTarget.Address, new Open() { ContainerId = "c2", MaxFrameSize = 4096 }, null);
+            var senderLink1 = new SenderLink(new Session(connection1), "Sender 1", "q1");
+            var senderLink2 = new SenderLink(new Session(connection2), "Sender 2", "q2");
+
+            // Start multiple sender tasks that will use both sender links concurrently
+            var tasks = Enumerable.Range(0, NbProducerTasks).Select(_ =>
+                Task.Run(async () =>
+                {
+                    // Send 10 messages on both queues
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var message = new Message() { BodySection = new Data() { Binary = data } };
+                        await senderLink1.SendAsync(message, TimeSpan.FromSeconds(10));
+                        await senderLink2.SendAsync(message, TimeSpan.FromSeconds(10));
+                    }
+                }));
+
+            var sendersFinished = Task.WhenAll(tasks);
+            var timeoutTask = Task.Delay(TestTimeout);
+            Assert.AreEqual(sendersFinished, await Task.WhenAny(sendersFinished, timeoutTask),
+                "Probable deadlock detected: timeout while waiting for concurrent sender tasks to complete");
+
+            await connection1.CloseAsync();
+            await connection2.CloseAsync();
         }
 #endif
     }

@@ -103,7 +103,7 @@ namespace Amqp
                 int received = await this.transport.ReceiveAsync(buffer, offset, count).ConfigureAwait(false);
                 if (received == 0)
                 {
-                    throw new ObjectDisposedException(this.transport.GetType().Name);
+                    throw new OperationCanceledException(Fx.Format(SRAmqp.TransportClosed, this.transport.GetType().Name));
                 }
 
                 offset += received;
