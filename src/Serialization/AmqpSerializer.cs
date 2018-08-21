@@ -28,7 +28,7 @@ namespace Amqp.Serialization
     /// <summary>
     /// Serializes and deserializes an instance of an AMQP type.
     /// The descriptor (name and code) is scoped to and must be
-    /// uniqueue within an instance of the serializer.
+    /// unique within an instance of the serializer.
     /// When the static Serialize and Deserialize methods are called,
     /// the default instance is used.
     /// </summary>

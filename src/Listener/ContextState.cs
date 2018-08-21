@@ -18,7 +18,7 @@
 namespace Amqp.Listener
 {
     /// <summary>
-    /// The state of a concext.
+    /// The state of a context.
     /// </summary>
     public enum ContextState
     {

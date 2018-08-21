@@ -632,7 +632,7 @@ namespace Test.Amqp
             inputMessage.ApplicationProperties["p2"] = 5ul;
             ByteBuffer buffer = inputMessage.Encode();
 
-            // decode the message in a new app domain to ensure codec is intialized
+            // decode the message in a new app domain to ensure codec is initialized
             AppDomain ad = AppDomain.CreateDomain(
                 "test-app-domain",
                 AppDomain.CurrentDomain.Evidence,
@@ -744,7 +744,7 @@ namespace Test.Amqp
         static void MessageBodyTest<T>(T value, Action<T, T> validator)
         {
 #if DOTNET
-            // on .Net Core, serializer is in seperated package
+            // on .Net Core, serializer is in separated package
             // the generic AmqpValue<T> must be used to support custom types
             var inputMessage = new Message() { BodySection = new AmqpValue<T>(value) };
 #else

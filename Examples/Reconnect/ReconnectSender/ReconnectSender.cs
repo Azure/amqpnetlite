@@ -14,9 +14,9 @@
 
 //
 // ReconnectSender 
-//  * Detects a failed AMQP connection and automatically reconnets it.
+//  * Detects a failed AMQP connection and automatically reconnects it.
 //  * Recovers from a peer failure by connecting to a list of AMQP brokers/peers.
-//  * Builds or rebuilds the AMPQ object hierarchy in response to protocol events.
+//  * Builds or rebuilds the AMQP object hierarchy in response to protocol events.
 //  * Recovers from all failures by reconnecting the AMQP connection.
 //
 // Command line:
