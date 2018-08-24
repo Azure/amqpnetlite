@@ -23,7 +23,7 @@ namespace Test.Amqp
     ///
     /// The default broker on localhost may be overridden with
     /// environment variable AMQPNETLITE_TESTTARGET. A single URI
-    /// specifies both the broker (scheme, user, password, host, port)
+    /// specifies both the broker (scheme, user, password, host, porte
     /// and source or target (path) of the broker resource to be
     /// exercised by the self tests.
     /// </summary>
