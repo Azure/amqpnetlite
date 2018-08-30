@@ -14,8 +14,7 @@
         },
         "warningsAsErrors": true,
         "xmlDoc": true,
-        "keyFile": "../../src/amqp.snk",
-        "publicSign": true
+        "keyFile": "../../src/amqp.snk"
     },
 
     "dependencies": {
