@@ -526,6 +526,7 @@ namespace Amqp.Listener
                 for (int i = 0; i < addresses.Count; ++i)
                 {
                     this.listenSockets[i] = new Socket(addresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp) { NoDelay = true };
+                    this.listenSockets[i].SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
                     this.listenSockets[i].Bind(new IPEndPoint(addresses[i], port));
                     this.listenSockets[i].Listen(20);
                 }
