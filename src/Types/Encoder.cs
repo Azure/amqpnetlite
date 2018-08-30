@@ -23,7 +23,7 @@ namespace Amqp.Types
     using System.Globalization;
 
     /// <summary>
-    /// The delegate to create a decribed object.
+    /// The delegate to create a described object.
     /// </summary>
     /// <returns></returns>
     public delegate Described CreateDescribed();

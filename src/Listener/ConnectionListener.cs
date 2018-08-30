@@ -34,7 +34,7 @@ namespace Amqp.Listener
     using Amqp.Types;
 
     /// <summary>
-    /// The conneciton listener accepts AMQP connections from an address.
+    /// The connection listener accepts AMQP connections from an address.
     /// </summary>
     public class ConnectionListener : ConnectionFactoryBase
     {

@@ -52,7 +52,7 @@ namespace Amqp
     /// <summary>
     /// A callback that is invoked when an outcome is received from peer for a message.
     /// </summary>
-    /// <param name="sender">The link where the message is transfered.</param>
+    /// <param name="sender">The link where the message is transferred.</param>
     /// <param name="message">The message to which the outcome applies.</param>
     /// <param name="outcome">The received outcome from the remote peer.</param>
     /// <param name="state">The user object specified in the Send method.</param>
@@ -117,7 +117,7 @@ namespace Amqp
     public partial interface IConnection : IAmqpObject
     {
         /// <summary>
-        /// Creates a session in the connectioin.
+        /// Creates a session in the connection.
         /// </summary>
         /// <returns>An ISession object.</returns>
         ISession CreateSession();

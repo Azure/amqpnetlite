@@ -40,7 +40,7 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Notifies the message processor to processe a received message.
+        /// Notifies the message processor to process a received message.
         /// </summary>
         /// <param name="messageContext">Context of the received message.</param>
         public override void OnMessage(MessageContext messageContext)

@@ -163,7 +163,7 @@ namespace Amqp.Framing
         /// <summary>
         /// Gets the message identifier.
         /// </summary>
-        /// <returns>An object represending the message identifier. null if
+        /// <returns>An object representing the message identifier. null if
         /// it is not set.</returns>
         public object GetMessageId()
         {
@@ -183,7 +183,7 @@ namespace Amqp.Framing
         /// <summary>
         /// Gets the correlation identifier.
         /// </summary>
-        /// <returns>An object represending the message identifier. null if
+        /// <returns>An object representing the message identifier. null if
         /// it is not set.</returns>
         public object GetCorrelationId()
         {

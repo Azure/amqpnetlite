@@ -273,7 +273,7 @@ namespace Test.Amqp
                     }
                     break;
 
-                case 0x16ul:  // dettach
+                case 0x16ul:  // detach
                     if (this.HandleTestPoint(TestPoint.Detach, stream, channel, fields) == TestOutcome.Continue)
                     {
                         FRM(stream, 0x16UL, 0, channel, fields[0], true);

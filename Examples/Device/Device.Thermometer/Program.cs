@@ -26,13 +26,13 @@ using AmqpTrace = Amqp.Trace;
 
 namespace Device.Thermometer
 {
-    /// The thermomeer runs on NETMF. It displays a number for the current
-    /// temprature. Click up and down buttons to increase/decrease the number.
+    /// The thermometer runs on NETMF. It displays a number for the current
+    /// temperature. Click up and down buttons to increase/decrease the number.
     /// Ensure the broker is running and change the host name below.
     /// If using "amqps", ensure SSL is working on the device.
     /// The app works with the test broker. Start it as follows:
     ///   TestAmqpBroker.exe amqp://localhost:5672 /creds:guest:guest
-    /// Add "/trace:frame" to output frames for debugging if requried.
+    /// Add "/trace:frame" to output frames for debugging if required.
     public class Program : Application
     {
         string address = "amqp://guest:guest@localhost:5672";
@@ -58,7 +58,7 @@ namespace Device.Thermometer
 
         private void Listen()
         {
-            // real applicaiton needs to implement error handling and recovery
+            // real application needs to implement error handling and recovery
             Connection connection = new Connection(new Address(this.address));
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "send-link", "data");

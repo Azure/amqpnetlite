@@ -127,7 +127,7 @@ namespace Amqp.Framing
 
         // Transport layer should call Codec to encode/decode frames. It ensures that
         // all dependant static fields in other class are initialized correctly.
-        // NETMF does not track cross-class static field/ctor dependancies
+        // NETMF does not track cross-class static field/ctor dependencies
 
         public static void Encode(RestrictedDescribed command, ByteBuffer buffer)
         {
