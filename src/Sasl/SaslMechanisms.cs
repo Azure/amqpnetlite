@@ -20,13 +20,22 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
-    sealed class SaslMechanisms : DescribedList
+    /// <summary>
+    /// Available SASL mechanisms advertised by the server.
+    /// </summary>
+    public class SaslMechanisms : DescribedList
     {
+        /// <summary>
+        /// Initializes a SaslMechanisms object.
+        /// </summary>
         public SaslMechanisms()
             : base(Codec.SaslMechanisms, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the available SASL mechanisms.
+        /// </summary>
         public Symbol[] SaslServerMechanisms
         {
             get { return Codec.GetSymbolMultiple(this.Fields, 0); }
@@ -34,6 +43,9 @@ namespace Amqp.Sasl
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current SASL mechanisms object.
+        /// </summary>
         public override string ToString()
         {
             return this.GetDebugString(
