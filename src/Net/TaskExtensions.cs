@@ -312,6 +312,7 @@ namespace Amqp
         static void OnTimer(object state)
         {
             var thisPtr = (SendTask)state;
+            thisPtr.timer.Dispose();
             thisPtr.TrySetException(new TimeoutException());
         }
     }
