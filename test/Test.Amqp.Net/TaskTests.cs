@@ -404,6 +404,25 @@ namespace Test.Amqp
 
             await connection.CloseAsync();
         }
+
+        [TestMethod]
+        public async Task ConcurrentLinkCreateClose()
+        {
+            const int NbProducerTasks = 4;
+            var connection = await Connection.Factory.CreateAsync(testTarget.Address);
+            var session = new Session(connection);
+            var tasks = Enumerable.Range(0, NbProducerTasks).Select(n =>
+                Task.Run(async () =>
+                {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        var senderLink = new SenderLink(session, $"link{n % NbProducerTasks}", $"q{n % 2}");
+                        await senderLink.CloseAsync().ConfigureAwait(false);
+                    }
+                }));
+            await Task.WhenAll(tasks);
+            await connection.CloseAsync();
+        }
 #endif
     }
 }
