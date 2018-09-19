@@ -80,8 +80,8 @@ namespace Amqp
             this.onBegin = onBegin;
             this.handleMax = begin.HandleMax;
             this.nextOutgoingId = begin.NextOutgoingId;
-            this.incomingWindow = defaultWindowSize;
-            this.outgoingWindow = begin.IncomingWindow;
+            this.incomingWindow = begin.IncomingWindow;
+            this.outgoingWindow = begin.OutgoingWindow;
             this.incomingDeliveryId = uint.MaxValue;
             this.localLinks = new Link[1];
             this.remoteLinks = new Link[1];
