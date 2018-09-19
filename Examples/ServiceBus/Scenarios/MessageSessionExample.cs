@@ -34,7 +34,7 @@ namespace ServiceBus.Scenarios
         {
             string[] priorites = new string[] { "low", "medium", "high" };
 
-            // send messages with differnt session IDs
+            // send messages with different session IDs
             this.SendMessages(100, priorites);
 
             // receive messages from a specific session

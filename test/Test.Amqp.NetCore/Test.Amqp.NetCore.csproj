@@ -149,7 +149,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Amqp.NetCore.csproj">
+    <ProjectReference Include="..\..\csproj\Amqp.NetCore.csproj">
       <Project>{35f64888-3446-444d-8e44-128378434ab3}</Project>
       <Name>Amqp.NetCore</Name>
     </ProjectReference>

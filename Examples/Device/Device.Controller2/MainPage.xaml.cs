@@ -32,7 +32,7 @@ namespace Device.Controller
     /// to the phone).
     /// The app works with the test broker. Start it as follows:
     ///   TestAmqpBroker.exe amqp://localhost:5672 /creds:guest:guest
-    /// Add "/trace:frame" to output frames for debugging if requried.
+    /// Add "/trace:frame" to output frames for debugging if required.
     /// </summary>
     public sealed partial class MainPage : Page
     {

@@ -203,12 +203,12 @@ namespace Amqp
         {
             DeliveryState txnState = null;
 #if NETFX || NETFX40
-            txnState = await TaskExtensions.GetTransactionalStateAsync(this);
+            txnState = await TaskExtensions.GetTransactionalStateAsync(this).ConfigureAwait(false);
 #endif
 
             try
             {
-                await new SendTask(this, message, txnState, timeout).Task;
+                await new SendTask(this, message, txnState, timeout).Task.ConfigureAwait(false);
             }
             catch (TimeoutException)
             {
@@ -312,6 +312,7 @@ namespace Amqp
         static void OnTimer(object state)
         {
             var thisPtr = (SendTask)state;
+            thisPtr.timer.Dispose();
             thisPtr.TrySetException(new TimeoutException());
         }
     }

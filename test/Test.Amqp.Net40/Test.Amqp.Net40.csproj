@@ -145,14 +145,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(NUGET_PACKAGES)\Microsoft.Bcl.1.1.8\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
-    <ProjectReference Include="..\..\src\Amqp.Net40.csproj">
-      <Project>{4a250b81-35e9-4d2f-8030-62909f6c8c63}</Project>
-      <Name>Amqp.Net40</Name>
-      <Properties>SkipValidatePackageReferences=true</Properties>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\csproj\Amqp.Net40.csproj">
+      <Project>{4a250b81-35e9-4d2f-8030-62909f6c8c63}</Project>
+      <Name>Amqp.Net40</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

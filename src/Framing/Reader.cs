@@ -53,7 +53,7 @@ namespace Amqp.Framing
                 int bytes = transport.Receive(buffer, offset, count);
                 if (bytes == 0)
                 {
-                    throw new ObjectDisposedException(transport.GetType().Name);
+                    throw new OperationCanceledException(Fx.Format(SRAmqp.TransportClosed, transport.GetType().Name));
                 }
 
                 offset += bytes;

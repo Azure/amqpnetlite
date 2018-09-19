@@ -418,7 +418,7 @@ namespace Amqp
                 throw new AmqpException(ErrorCode.NotFound,
                     Fx.Format(SRAmqp.LinkNotFound, attach.LinkName));
             }
-            
+
             link.OnAttach(attach.Handle, attach);
         }
 
@@ -574,11 +574,13 @@ namespace Amqp
 
             link.OnTransfer(delivery, transfer, buffer);
         }
-
+        
         void OnDispose(Dispose dispose)
         {
             SequenceNumber first = dispose.First;
             SequenceNumber last = dispose.Last;
+
+            var disposedDeliveries = new List();
             lock (this.ThisLock)
             {
                 LinkedList linkedList = dispose.Role ? this.outgoingList : this.incomingList;
@@ -595,11 +597,22 @@ namespace Amqp
                             linkedList.Remove(delivery);
                         }
 
-                        delivery.OnStateChange(dispose.State);
+                        disposedDeliveries.Add(delivery);
                     }
 
                     delivery = next;
                 }
+            }
+
+            // Update the state of the disposed deliveries
+            // Note that calling delivery.OnStateChange may complete some pending SendTask, thereby triggering the
+            // execution of some continuations. To avoid any deadlock, this MUST be done outside of any
+            // locks (cf issue https://github.com/Azure/amqpnetlite/issues/287).
+            for (int i = 0; i < disposedDeliveries.Count; i++)
+            {
+                var delivery = (Delivery)disposedDeliveries[i];
+                disposedDeliveries[i] = null;   // Avoid trailing reference
+                delivery.OnStateChange(dispose.State);
             }
         }
 

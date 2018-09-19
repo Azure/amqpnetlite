@@ -250,5 +250,13 @@ namespace Amqp {
                 return ResourceManager.GetString("WindowViolation", resourceCulture);
             }
         }
+        /// <summary>
+        ///   Looks up a localized string similar to The transport &apos;{0}&apos; is closed..
+        /// </summary>
+        public static string TransportClosed {
+            get {
+                return ResourceManager.GetString("TransportClosed", resourceCulture);
+            }
+        }
     }
 }
