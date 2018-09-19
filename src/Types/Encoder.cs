@@ -156,6 +156,7 @@ namespace Amqp.Types
                 // 10: float
                 new Serializer()
                 {
+                    Type = typeof(float),
                     Encoder = delegate(ByteBuffer b, object o, bool s) { WriteFloat(b, (float)o); },
                     Decoder = delegate(ByteBuffer b, byte c) { return ReadFloat(b, c); }
                 },
