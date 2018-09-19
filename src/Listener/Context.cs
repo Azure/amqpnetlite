@@ -58,7 +58,7 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Gets the state of the concext.
+        /// Gets the state of the context.
         /// </summary>
         public ContextState State
         {

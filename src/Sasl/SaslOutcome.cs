@@ -20,19 +20,31 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
-    sealed class SaslOutcome : DescribedList
+    /// <summary>
+    /// Indicates the outcome of the sasl dialog.
+    /// </summary>
+    public class SaslOutcome : DescribedList
     {
+        /// <summary>
+        /// Initializes a SaslOutcome object.
+        /// </summary>
         public SaslOutcome()
             : base(Codec.SaslOutcome, 2)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the outcome of the sasl dialog.
+        /// </summary>
         public SaslCode Code
         {
             get { return (SaslCode)this.Fields[0]; }
             set { this.Fields[0] = (byte)value; }
         }
 
+        /// <summary>
+        /// Gets or sets the additional data as specified in RFC-4422.
+        /// </summary>
         public byte[] AdditionalData
         {
             get { return (byte[])this.Fields[1]; }
@@ -40,6 +52,9 @@ namespace Amqp.Sasl
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current SASL outcome object.
+        /// </summary>
         public override string ToString()
         {
             return this.GetDebugString(

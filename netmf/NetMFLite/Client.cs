@@ -553,7 +553,7 @@ namespace Amqp
                     }
                     break;
                 }
-                case 0x16ul:  // dettach
+                case 0x16ul:  // detach
                 {
                     Fx.DebugPrint(false, channel, "detach", fields, "handle");
                     Link link = this.links[(uint)fields[0]];
@@ -678,7 +678,7 @@ namespace Amqp
         {
             byte[] headerBuffer = this.ReadFixedSizeBuffer(8);
             int size = AmqpBitConverter.ReadInt(headerBuffer, 0);
-            frameType = headerBuffer[5];    // TOOD: header EXT
+            frameType = headerBuffer[5];    // TODO: header EXT
             channel = (ushort)(headerBuffer[6] << 8 | headerBuffer[7]);
 
             size -= 8;

@@ -183,7 +183,7 @@ namespace Amqp.Serialization
         }
 
         /// <summary>
-        /// Called when a type is successully resolved. Derived class can
+        /// Called when a type is successfully resolved. Derived class can
         /// override this method to update the contract if necessary.
         /// </summary>
         /// <param name="contract">The serialization contract.</param>

@@ -40,7 +40,7 @@ namespace Amqp
         /// </summary>
         /// <param name="minBufferSize">The minimum size in bytes of pooled buffers.</param>
         /// <param name="maxBufferSize">The maximum size in bytes of pooled buffers.</param>
-        /// <param name="maxMemorySize">The maximum totoal size in bytes of pooled buffers.</param>
+        /// <param name="maxMemorySize">The maximum total size in bytes of pooled buffers.</param>
         public BufferManager(int minBufferSize, int maxBufferSize, long maxMemorySize)
         {
             CheckBufferSize(minBufferSize, "minBufferSize");

@@ -23,7 +23,7 @@ namespace ServiceBus.Scenarios
     using Amqp.Framing;
 
     /// <summary>
-    /// This example assumes a topic and a subscirption named "sub1" is precreated.
+    /// This example assumes a topic and a subscription named "sub1" is precreated.
     /// Example.Entity should be set to the topic name.
     /// </summary>
     class TopicExample : Example

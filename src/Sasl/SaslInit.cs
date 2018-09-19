@@ -20,25 +20,40 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
-    sealed class SaslInit : DescribedList
+    /// <summary>
+    /// SaslInit selects the mechanism and provides the initial response if needed.
+    /// </summary>
+    public class SaslInit : DescribedList
     {
+        /// <summary>
+        /// Initializes a SaslInit object.
+        /// </summary>
         public SaslInit()
             : base(Codec.SaslInit, 3)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the selected security mechanism.
+        /// </summary>
         public Symbol Mechanism
         {
             get { return (Symbol)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the initial security response data.
+        /// </summary>
         public byte[] InitialResponse
         {
             get { return (byte[])this.Fields[1]; }
             set { this.Fields[1] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the name of the target host.
+        /// </summary>
         public string HostName
         {
             get { return (string)this.Fields[2]; }
@@ -46,6 +61,9 @@ namespace Amqp.Sasl
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current SASL init object.
+        /// </summary>
         public override string ToString()
         {
             return this.GetDebugString(

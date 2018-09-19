@@ -335,7 +335,7 @@ namespace Amqp.Serialization
 
                     if (count > 0)
                     {
-                        // skip unknow members
+                        // skip unknown members
                         buffer.Complete(size - (buffer.Offset - offset) - encodeWidth);
                     }
                 }

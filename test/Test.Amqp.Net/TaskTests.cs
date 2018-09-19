@@ -337,7 +337,7 @@ namespace Test.Amqp
         }
 
         [TestMethod]
-        public async Task MultipleConcurrentWriters()
+        public async Task ConcurrentWritersMultipleConnections()
         {
             // Up to version 2.1.3, multiple writers from a single task could cause
             // a deadlock (cf issue https://github.com/Azure/amqpnetlite/issues/287)
@@ -373,6 +373,55 @@ namespace Test.Amqp
 
             await connection1.CloseAsync();
             await connection2.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task ConcurrentWritersOneConnectionSession()
+        {
+            const int NbProducerTasks = 4;
+            var data = Enumerable.Range(0, 100 * 1024).Select(x => (byte)x).ToArray();
+
+            var connection = await Connection.Factory.CreateAsync(testTarget.Address);
+            var session = new Session(connection);
+            var senderLink1 = new SenderLink(session, "Sender 1", "q1");
+            var senderLink2 = new SenderLink(session, "Sender 2", "q2");
+
+            // Start multiple sender tasks that will use both sender links concurrently
+            var tasks = Enumerable.Range(0, NbProducerTasks).Select(t =>
+                Task.Run(async () =>
+                {
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var message = new Message() { BodySection = new Data() { Binary = data } };
+                        await senderLink1.SendAsync(message, TimeSpan.FromSeconds(30));
+                        await senderLink2.SendAsync(message, TimeSpan.FromSeconds(30));
+                    }
+                }));
+            var sendersFinished = Task.WhenAll(tasks);
+            var timeoutTask = Task.Delay(TestTimeout);
+            Assert.AreEqual(sendersFinished, await Task.WhenAny(sendersFinished, timeoutTask),
+                "Probable deadlock detected: timeout while waiting for concurrent sender tasks to complete");
+
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task ConcurrentLinkCreateClose()
+        {
+            const int NbProducerTasks = 4;
+            var connection = await Connection.Factory.CreateAsync(testTarget.Address);
+            var session = new Session(connection);
+            var tasks = Enumerable.Range(0, NbProducerTasks).Select(n =>
+                Task.Run(async () =>
+                {
+                    for (int i = 0; i < 100; i++)
+                    {
+                        var senderLink = new SenderLink(session, $"link{n % NbProducerTasks}", $"q{n % 2}");
+                        await senderLink.CloseAsync().ConfigureAwait(false);
+                    }
+                }));
+            await Task.WhenAll(tasks);
+            await connection.CloseAsync();
         }
 #endif
     }

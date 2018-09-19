@@ -148,8 +148,9 @@ namespace Amqp.Sasl
                 Symbol matched = null;
                 foreach (var m in mechanisms.SaslServerMechanisms)
                 {
-                    if (m.Equals(this.Mechanism))
+                    if (this.Match(m))
                     {
+                        this.Mechanism = m;
                         matched = m;
                         break;
                     }
@@ -192,6 +193,16 @@ namespace Amqp.Sasl
         internal ITransport UpgradeTransportInternal(ITransport transport)
         {
             return this.UpgradeTransport(transport);
+        }
+
+        /// <summary>
+        /// Checks if a mechanism is supported.
+        /// </summary>
+        /// <param name="mechanism">A mechanism supported by the remote peer.</param>
+        /// <returns>True if the mechanism is supported; False otherwise.</returns>
+        protected virtual bool Match(Symbol mechanism)
+        {
+            return mechanism.Equals(this.Mechanism);
         }
 
         /// <summary>

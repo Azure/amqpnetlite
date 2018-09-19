@@ -20,13 +20,22 @@ namespace Amqp.Sasl
     using Amqp.Framing;
     using Amqp.Types;
 
-    sealed class SaslResponse : DescribedList
+    /// <summary>
+    /// Security mechanism response.
+    /// </summary>
+    public class SaslResponse : DescribedList
     {
+        /// <summary>
+        /// Initializes a SaslResponse object.
+        /// </summary>
         public SaslResponse()
             : base(Codec.SaslResponse, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the security response data.
+        /// </summary>
         public byte[] Response
         {
             get { return (byte[])this.Fields[0]; }
@@ -34,6 +43,9 @@ namespace Amqp.Sasl
         }
 
 #if TRACE
+        /// <summary>
+        /// Returns a string that represents the current SASL response object.
+        /// </summary>
         public override string ToString()
         {
             return this.GetDebugString(

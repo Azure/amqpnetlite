@@ -51,14 +51,14 @@ namespace Amqp.Listener
     ///    to handle all link events (flow, transfer and disposition). However, it
     ///    is recommended to use the built-in LinkEndpoint classes.
     ///  * TargetLinkEndpoint: a TargetLinkEndpoint simply forwards the request
-    ///    to the IMessgeProcessor.
+    ///    to the IMessageProcessor.
     ///  * SourceLinkEndpoint: a SourceLinkEndpoint manages link credit and
     ///    transforms flow state into a receive loop on the IMessageSource. Delivery
     ///    acknowledgements are simply forwarded to the IMessageSource.
     /// 
     /// When per-link handling is required, it is recommended to combine message
     /// level processing with link level processing.
-    ///  * An IMessageProcessor/Souce should be implemented.
+    ///  * An IMessageProcessor/Source should be implemented.
     ///  * After the link attach is handled, wrap it in a Target/SourceLinkEndpoint
     ///    that works with the previously implemented message processor or source.
     ///
@@ -66,7 +66,7 @@ namespace Amqp.Listener
     /// processors (IMessageProcessor, IMessageSource, IRequestProcessor) are
     /// checked first. If a processor matches the address on the received attach
     /// performative, a link is automatically created and the send/receive requests
-    /// will be rounted to the associated processor.
+    /// will be routed to the associated processor.
     /// Otherwise, the registered link processor, if any, is invoked to create a
     /// LinkEndpoint, where subsequent send/receive requests will be routed.
     /// When none is found, the link is detached with error "amqp:not-found".

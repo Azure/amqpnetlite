@@ -47,7 +47,7 @@ namespace Amqp.Framing
         /// </summary>
         public byte Priority
         {
-            get { return this.Fields[1] == null ? byte.MinValue : (byte)this.Fields[1]; }
+            get { return this.Fields[1] == null ? (byte)4 : (byte)this.Fields[1]; }
             set { this.Fields[1] = value; }
         }
 
