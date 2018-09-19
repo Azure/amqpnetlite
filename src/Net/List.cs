@@ -24,5 +24,13 @@ namespace Amqp.Types
     /// </summary>
     public class List : List<object>
     {
+        
+        public List()
+        {
+        }
+
+        public List(int capacity) : base(capacity)
+        {
+        }
     }
 }
