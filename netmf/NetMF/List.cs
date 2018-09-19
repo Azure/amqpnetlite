@@ -24,5 +24,19 @@ namespace Amqp.Types
     /// </summary>
     public class List : ArrayList
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="List"/> class.
+        /// </summary>
+        public List()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="List"/> class.
+        /// </summary>
+        /// <param name="capacity">The number of elements that the new list can initially store.</param>
+        public List(int capacity) : base(capacity)
+        {
+        }
     }
 }
