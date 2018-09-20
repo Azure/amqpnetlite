@@ -35,8 +35,9 @@ namespace Amqp.Types
         /// Initializes a new instance of the <see cref="List"/> class.
         /// </summary>
         /// <param name="capacity">The number of elements that the new list can initially store.</param>
-        public List(int capacity) : base(capacity)
+        public List(int capacity) : base()
         {
+            // NOTE: NETMF ArrayList does not have a constructor that takes an int parameter, so we cannot set initial capacity in this case
         }
     }
 }
