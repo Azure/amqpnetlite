@@ -1346,7 +1346,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
-            List value = new List();
+            List value = new List(count);
             for (int i = 0; i < count; ++i)
             {
                 value.Add(ReadObject(buffer));
