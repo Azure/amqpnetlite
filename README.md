@@ -1,6 +1,6 @@
 # AMQP.Net Lite
 
-AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .Net Framework, .Net Core, Windows Runtime platforms, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.  
+AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Framework, .Net Core, Windows Runtime platforms, .Net Micro Framework, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.  
 [Documentation](http://azure.github.io/amqpnetlite/)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/dph11pp7doubyw7t/branch/master?svg=true)](https://ci.appveyor.com/project/xinchen10/amqpnetlite/branch/master)
@@ -8,10 +8,11 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Micro Framework, .N
 |NuGet Package|Status|
 |------|-------------|
 |AMQPNetLite (main package)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite)](https://www.nuget.org/packages/AMQPNetLite/)|
-|AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
 |AMQPNetLite.Core (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Core?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Core/)|
 |AMQPNetLite.Serialization (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Serialization?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Serialization/)|
 |AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
+|AMQPNetLite.NetMF (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.NetMF)](https://www.nuget.org/packages/AMQPNetLite.NetMF/)|
+|AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior.
