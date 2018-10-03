@@ -537,7 +537,12 @@ namespace Amqp
                 int old = Interlocked.Exchange(ref this.state, 2);
                 if (old != 2)
                 {
-                    this.timer.Dispose();
+                    Timer temp = this.timer;
+                    if (temp != null)
+                    {
+                        temp.Dispose();
+                    }
+
                     this.callback(this.link, message);
                     return true;
                 }
