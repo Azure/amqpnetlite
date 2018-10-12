@@ -1,5 +1,5 @@
 {
-    "version": "2.1.4",
+    "version": "2.1.5",
 
     "buildOptions": {
         "compile": {
@@ -16,7 +16,7 @@
     },
 
     "dependencies": {
-        "Amqp": "2.1.4"
+        "Amqp": "2.1.5"
     },
 
     "configurations": {
