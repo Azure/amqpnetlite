@@ -23,7 +23,11 @@ namespace Amqp
     using System.Text;
     using System.Threading;
     using Amqp.Types;
+#if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
     using Microsoft.SPOT.Net.Security;
+#elif (NANOFRAMEWORK_V1_0)
+    using System.Net.Security;
+#endif
 
     /// <summary>
     /// The event handler that is invoked when an AMQP object is closed unexpectedly.
@@ -769,7 +773,13 @@ namespace Amqp
             if (useSsl)
             {
                 SslStream sslStream = new SslStream(socket);
-                sslStream.AuthenticateAsClient(host, null, SslVerification.VerifyPeer, SslProtocols.Default);
+
+              #if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
+                sslStream.AuthenticateAsClient(host, null, SslVerification.VerifyPeer, SslProtocols.TLSv1);
+#elif (NANOFRAMEWORK_V1_0)
+                sslStream.AuthenticateAsClient(host, null, SslVerification.VerifyPeer, SslProtocols.TLSv11);
+#endif
+
                 stream = sslStream;
             }
             else

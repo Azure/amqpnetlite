@@ -3,60 +3,115 @@ branches:
   only:
   - master
 skip_tags: true
-image: Visual Studio 2015
+
+environment:
+  matrix:
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      FRAMEWORKS_TO_BUILD: REST_OF_FRAMEWORKS
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      FRAMEWORKS_TO_BUILD: NANOFRAMEWORK
+
+before_build:
+- ps: >-
+
+    If($env:FRAMEWORKS_TO_BUILD -eq "REST_OF_FRAMEWORKS")
+    {
+      Write-Output "Installing .NET MicroFramework 4.3 ..."
+
+      $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
+
+      (New-Object Net.WebClient).DownloadFile('https://github.com/Azure/amqpnetlite/releases/download/netmf4.3/MicroFrameworkSDK4.3.MSI', $msiPath)
+
+      & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
+
+      Write-Output "NETMF43 Installed"
+
+
+      Write-Output "Installing .NET MicroFramework 4.4 ..."
+
+      $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
+
+      (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
+
+      & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+
+      Write-Output "NETMF44 Installed"
+
+
+      Write-Output "Copying NuGet.exe ..."
+
+      New-Item c:\projects\amqpnetlite\build\tools -type directory
+
+      copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
+
+
+      Write-Output "Expanding PATH ..."
+
+      $env:Path = "$($env:PATH);$($env:ProgramFiles)\dotnet;$($env:VS140COMNTOOLS)..\IDE"
+
+      [Environment]::SetEnvironmentVariable("PATH", $env:Path, "User")
+
+
+      Write-Output "Restoring dotnet projects ..."
+
+      pushd dotnet
+
+      dotnet restore
+
+      popd
+
+    }
+    Else
+    {
+      
+      $vsixPath = "$($env:USERPROFILE)\nanoFramework.Tools.VS2017.Extension.vsix"
+      
+      (New-Object Net.WebClient).DownloadFile('https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vs-publisher-1470366/vsextensions/nanoFrameworkVS2017Extension/0/vspackage', $vsixPath)
+      
+      "`"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VSIXInstaller.exe`" /q /a $vsixPath" | out-file ".\install-vsix.cmd" -Encoding ASCII
+
+      'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
+
+      &.\install-vsix.cmd --quiet --no-verbose > $null
+
+      'OK' | Write-Host -ForegroundColor Green
+
+
+      Write-Output "Copying NuGet.exe ..."
+
+      New-Item c:\projects\amqpnetlite\build\tools -type directory
+
+      copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
+
+
+      Write-Output "Restoring projects ..."
+
+      nuget restore amqp-nanoFramework.sln
+
+    }
+
 build_script:
 - ps: >-
-    Write-Output "Installing .NET MicroFramework 4.3 ..."
 
-    $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
+    If($env:FRAMEWORKS_TO_BUILD -eq "REST_OF_FRAMEWORKS")
+    {
+      Write-Output "Invoking build.cmd script ..."
 
-    (New-Object Net.WebClient).DownloadFile('https://github.com/Azure/amqpnetlite/releases/download/netmf4.3/MicroFrameworkSDK4.3.MSI', $msiPath)
+      & c:\projects\amqpnetlite\build.cmd | Write-Output
 
-    & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
+      & c:\projects\amqpnetlite\build.cmd release | Write-Output
 
-    Write-Output "NETMF43 Installed"
+    }
+    Else
+    {
+      Write-Output "Invoking build.cmd script ..."
 
+      & c:\projects\amqpnetlite\build.2017.cmd | Write-Output
 
-    Write-Output "Installing .NET MicroFramework 4.4 ..."
+      & c:\projects\amqpnetlite\build.2017.cmd release | Write-Output
 
-    $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
+    }
 
-    (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
-
-    & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
-
-    Write-Output "NETMF44 Installed"
-
-
-    Write-Output "Copying NuGet.exe ..."
-
-    New-Item c:\projects\amqpnetlite\build\tools -type directory
-
-    copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
-
-
-    Write-Output "Expanding PATH ..."
-
-    $env:Path = "$($env:PATH);$($env:ProgramFiles)\dotnet;$($env:VS140COMNTOOLS)..\IDE"
-
-    [Environment]::SetEnvironmentVariable("PATH", $env:Path, "User")
-
-
-    Write-Output "Restoring dotnet projects ..."
-
-    pushd dotnet
-
-    dotnet restore
-
-    popd
-
-
-    Write-Output "Invoking build.cmd script ..."
-
-    & c:\projects\amqpnetlite\build.cmd | Write-Output
-
-
-    & c:\projects\amqpnetlite\build.cmd release | Write-Output
 test: off
 deploy: off
 on_failure:

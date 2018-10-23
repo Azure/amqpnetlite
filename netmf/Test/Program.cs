@@ -15,8 +15,10 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 using Amqp;
-#if NETMF
+#if NETMF && !NANOFRAMEWORK_V1_0
 using Microsoft.SPOT;
+#elif NANOFRAMEWORK_V1_0
+using System;
 #endif
 #if COMPACT_FRAMEWORK
 using System.Diagnostics;
@@ -39,8 +41,10 @@ namespace Test.Amqp
         static void WriteTrace(TraceLevel level, string format, params object[] args)
         {
             string message = args == null ? format : Fx.Format(format, args);
-#if NETMF
+#if NETMF && !NANOFRAMEWORK_V1_0
             Debug.Print(message);
+#elif NANOFRAMEWORK_V1_0
+            Console.WriteLine(message);
 #elif COMPACT_FRAMEWORK
             Debug.WriteLine(message);
 #endif

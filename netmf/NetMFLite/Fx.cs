@@ -19,7 +19,11 @@ namespace Amqp
 {
     using System;
     using System.Diagnostics;
+#if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
     using Microsoft.SPOT;
+#elif (NANOFRAMEWORK_V1_0)
+    using nanoFramework.Runtime.Native;
+#endif
 
     static class Fx
     {
@@ -92,7 +96,13 @@ namespace Amqp
             }
 
             sb.Append(')');
+
+#if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
             Microsoft.SPOT.Debug.Print(sb.ToString());
+#elif (NANOFRAMEWORK_V1_0)
+            Console.WriteLine(sb.ToString());
+#endif
+
 #endif
         }
     }

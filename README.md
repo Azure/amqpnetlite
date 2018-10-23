@@ -1,6 +1,6 @@
 # AMQP.Net Lite
 
-AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Framework, .Net Core, Windows Runtime platforms, .Net Micro Framework, and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.  
+AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Framework, .Net Core, Windows Runtime platforms, .Net Micro Framework, .NET nanoFramework and Mono. The library includes both a client and listener to enable peer to peer and broker based messaging.  
 [Documentation](http://azure.github.io/amqpnetlite/)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/dph11pp7doubyw7t/branch/master?svg=true)](https://ci.appveyor.com/project/xinchen10/amqpnetlite/branch/master)
@@ -12,7 +12,9 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Framework, .Net Cor
 |AMQPNetLite.Serialization (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Serialization?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Serialization/)|
 |AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
 |AMQPNetLite.NetMF (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.NetMF)](https://www.nuget.org/packages/AMQPNetLite.NetMF/)|
+|AMQPNetLite.nanoFramework (nanoFramework)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.nanoFramework)](https://www.nuget.org/packages/AMQPNetLite.nanoFramework/)|
 |AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
+|AMQPNetMicro.nanoFramework (nanoFramework)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro.nanoFramework)](https://www.nuget.org/packages/AMQPNetMicro.nanoFramework/)|
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior.
@@ -31,6 +33,7 @@ The following table shows what features are supported on each platform/framework
 |net40   |+|+|+|+<sup>3</sup>|+|+| |+|
 |net35   |+|+| | |+| | | |
 |netmf   |+<sup>1</sup>|+| | | | | | |
+|nanoFramework|+|+| | | | | | |
 |uap10|+|+| |+| | | | |
 |netcore451|+|+| |+| | | | |
 |wpa81   |+|+| |+| | | | |
@@ -47,6 +50,7 @@ The following table shows what features are supported on each platform/framework
 ## Tested Platforms
 * .Net Framework 3.5, 4.0 and 4.5+.
 * .NET Micro Framework 4.2, 4.3, 4.4.
+* .NET nanoFramework 1.0.
 * .NET Compact Framework 3.9.
 * Windows Phone 8 and 8.1.
 * Windows Store 8 and 8.1. Universal Windows App 10.

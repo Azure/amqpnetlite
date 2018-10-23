@@ -363,7 +363,11 @@ namespace Amqp.Types
         /// <returns></returns>
         public static long DateTimeToTimestamp(DateTime dateTime)
         {
+#if (NANOFRAMEWORK_V1_0)
+            return (long)((dateTime.Ticks - epochTicks) / TicksPerMillisecond);
+#else
             return (long)((dateTime.ToUniversalTime().Ticks - epochTicks) / TicksPerMillisecond);
+#endif
         }
 
         /// <summary>
