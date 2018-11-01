@@ -1338,7 +1338,7 @@ namespace Test.Amqp
             {
                 Message message = receiver.Receive();
                 Interlocked.Increment(ref pending);
-                Task.Run(() =>
+                Task.Factory.StartNew(() =>
                 {
                     receiver.Accept(message);
                     if (Interlocked.Increment(ref received) % credit == 0)
@@ -1350,7 +1350,7 @@ namespace Test.Amqp
                 });
             }
 
-            while (Volatile.Read(ref pending) > 0)
+            while (pending > 0)
             {
                 Thread.Sleep(10);
             }
@@ -1429,21 +1429,14 @@ namespace Test.Amqp
             }
 
             receiver.SetCredit(4);
-            for (int i = 0; i < 4; i++)
+
+            // should get at least 6 more
+            for (int i = 0; i < 6; i++)
             {
                 receiver.Accept(receiver.Receive());
             }
 
-            for (int i = 0; i < 4; i++)
-            {
-                Message msg = receiver.Receive();
-                Assert.IsTrue(msg != null);
-            }
-
-            Message message = receiver.Receive(TimeSpan.FromSeconds(1));
-            Assert.IsTrue(message == null);
-
-            Assert.AreEqual(12u, total);    // initial 10 + 2 accepts
+            Assert.IsTrue(total >= 10u, "total " + total);
 
             connection.Close();
         }
