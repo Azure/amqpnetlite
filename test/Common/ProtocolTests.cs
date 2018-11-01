@@ -1309,6 +1309,56 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ReceiverLinkSetCreditAutoTest()
+        {
+            uint total = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint current = total;
+                total = (uint)fields[5] + (uint)fields[6];
+                for (uint i = current; i < total; i++)
+                {
+                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
+                }
+
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiverLinkSetCreditAutoTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+            int credit = 4;
+            int received = 0;
+            int pending = 0;
+            receiver.SetCredit(credit);
+            for (int i = 0; i < 3000; i++)
+            {
+                Message message = receiver.Receive();
+                Interlocked.Increment(ref pending);
+                Task.Run(() =>
+                {
+                    receiver.Accept(message);
+                    if (Interlocked.Increment(ref received) % credit == 0)
+                    {
+                        receiver.SetCredit(credit);
+                    }
+
+                    Interlocked.Decrement(ref pending);
+                });
+            }
+
+            while (Volatile.Read(ref pending) > 0)
+            {
+                Thread.Sleep(10);
+            }
+
+            connection.Close();
+        }
+
+        [TestMethod]
         public void ReceiverLinkStoppingTest()
         {
             uint total = 0;

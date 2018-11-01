@@ -133,9 +133,15 @@ namespace Amqp
                 {
                     if (credit > this.totalCredit)
                     {
-                        // if total credit is reduced, do not change pending credit to allow
-                        // accepting incoming messages
                         this.credit += credit - this.totalCredit;
+                    }
+                    else
+                    {
+                        // if total credit is reduced, do not change pending credit to allow
+                        // accepting incoming messages. Update total so credit will be resored
+                        // to the new limit.
+                        this.totalCredit = credit;
+                        return;
                     }
                 }
                 else
@@ -147,8 +153,7 @@ namespace Amqp
 
                 this.totalCredit = credit;
                 this.autoRestore = autoRestore;
-                int flowCredit = Math.Max(0, this.totalCredit - this.pending);
-                this.SendFlow(this.deliveryCount, (uint)flowCredit, false);
+                this.SendFlow(this.deliveryCount, (uint)this.credit, false);
                 this.restored = 0;
             }
         }
