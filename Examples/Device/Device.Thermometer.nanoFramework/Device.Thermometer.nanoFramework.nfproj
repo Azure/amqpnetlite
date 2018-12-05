@@ -25,18 +25,18 @@
     <ProjectReference Include="..\..\..\nanoFramework\Amqp.nanoFramework.nfproj" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="mscorlib, Version=1.0.4.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.1.0.4\lib\mscorlib.dll</HintPath>
+    <Reference Include="mscorlib, Version=1.0.6.21, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.1.0.6-preview-021\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
-    <Reference Include="nanoFramework.Runtime.Events, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.Runtime.Events.1.0.0\lib\nanoFramework.Runtime.Events.dll</HintPath>
+    <Reference Include="nanoFramework.Runtime.Events, Version=1.0.2.23, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.Runtime.Events.1.0.2-preview-023\lib\nanoFramework.Runtime.Events.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
-    <Reference Include="Windows.Devices.Gpio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.Windows.Devices.Gpio.1.0.0\lib\Windows.Devices.Gpio.dll</HintPath>
+    <Reference Include="Windows.Devices.Gpio, Version=1.0.2.25, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.Windows.Devices.Gpio.1.0.2-preview-025\lib\Windows.Devices.Gpio.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
