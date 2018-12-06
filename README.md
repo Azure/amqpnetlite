@@ -13,8 +13,8 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Framework, .Net Cor
 |AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
 |AMQPNetLite.NetMF (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.NetMF)](https://www.nuget.org/packages/AMQPNetLite.NetMF/)|
 |AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
-|AMQPNetLite.nanoFramework (nanoFramework)||
-|AMQPNetMicro.nanoFramework (nanoFramework)||
+|AMQPNetLite.nanoFramework (nanoFramework)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.nanoFramework?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.nanoFramework/)|
+|AMQPNetMicro.nanoFramework (nanoFramework)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro.nanoFramework?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetMicro.nanoFramework/)|
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior.
