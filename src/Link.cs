@@ -17,6 +17,7 @@
 
 namespace Amqp
 {
+    using System;
     using Amqp.Framing;
 
     enum LinkState
@@ -51,6 +52,16 @@ namespace Amqp
         /// <param name="onAttached">The callback to handle received attach.</param>
         protected Link(Session session, string name, OnAttached onAttached)
         {
+            if (session == null)
+            {
+                throw new ArgumentNullException("session");
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
             this.session = session;
             this.name = name;
             this.onAttached = onAttached;

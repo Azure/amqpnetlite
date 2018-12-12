@@ -243,7 +243,7 @@ namespace Test.Amqp
                     if (this.HandleTestPoint(TestPoint.Attach, stream, channel, fields) == TestOutcome.Continue)
                     {
                         bool role = !(bool)fields[2];
-                        FRM(stream, 0x12UL, 0, channel, fields[0], fields[1], role, fields[3], fields[4], new Source(), new Target());
+                        FRM(stream, 0x12UL, 0, channel, fields[0], fields[1], role, fields[3], fields[4], fields[5], fields[6]);
                         if (role)
                         {
                             FRM(stream, 0x13UL, 0, channel, 0u, 100u, 0u, 100u, fields[1], 0u, 1000u);
@@ -260,9 +260,15 @@ namespace Test.Amqp
                 case 0x14ul:  // transfer
                     if (this.HandleTestPoint(TestPoint.Transfer, stream, channel, fields) == TestOutcome.Continue)
                     {
-                        if (false.Equals(fields[4]))
+                        if (fields[4] == null || false.Equals(fields[4]))
                         {
                             FRM(stream, 0x15UL, 0, channel, true, fields[1], null, true, new Accepted());
+                        }
+
+                        uint nextId = (uint)fields[1] + 1;
+                        if (nextId % 50u == 0)
+                        {
+                            FRM(stream, 0x13UL, 0, channel, nextId, 100u, 0u, 100u, fields[0], nextId, 1000u);
                         }
                     }
                     break;
