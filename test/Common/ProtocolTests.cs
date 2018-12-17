@@ -37,8 +37,8 @@ namespace Test.Amqp
 
         static ProtocolTests()
         {
-            Trace.TraceLevel = TraceLevel.Frame | TraceLevel.Information;
-            Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+            //Trace.TraceLevel = TraceLevel.Frame | TraceLevel.Information;
+            //Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
         [TestInitialize]
@@ -58,8 +58,6 @@ namespace Test.Amqp
         [TestMethod]
         public void ConnectionMaxFrameSizeTest()
         {
-            Thread.Sleep(-1);
-
             this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
             {
                 TestListener.FRM(stream, 0x10UL, 0, 0, "TestListener", "localhost", 512u);
