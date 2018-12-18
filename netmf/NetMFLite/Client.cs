@@ -777,7 +777,7 @@ namespace Amqp
               #if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
                 sslStream.AuthenticateAsClient(host, null, SslVerification.VerifyPeer, SslProtocols.TLSv1);
 #elif (NANOFRAMEWORK_V1_0)
-                sslStream.AuthenticateAsClient(host, null, SslVerification.VerifyPeer, SslProtocols.TLSv11);
+                sslStream.AuthenticateAsClient(host, null, SslProtocols.TLSv11);
 #endif
 
                 stream = sslStream;

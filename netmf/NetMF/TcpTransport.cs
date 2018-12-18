@@ -70,11 +70,23 @@ namespace Amqp
             if (address.UseSsl)
             {
                 SslSocket sslSocket = new SslSocket(socket);
+
+#if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
                 sslSocket.AuthenticateAsClient(
                     address.Host,
                     null,
                     noVerification ? SslVerification.NoVerification : SslVerification.VerifyPeer,
                     SslProtocols.Default);
+#elif (NANOFRAMEWORK_V1_0)
+
+                sslSocket.SslVerification = noVerification ? SslVerification.NoVerification : SslVerification.VerifyPeer;
+
+                sslSocket.AuthenticateAsClient(
+                    address.Host,
+                    null,
+                    SslProtocols.TLSv11);
+#endif
+
                 this.socketTransport = sslSocket;
             }
             else
