@@ -19,7 +19,7 @@ using System;
 using System.Threading;
 using Amqp;
 using Amqp.Types;
-
+using nanoFramework.Networking;
 
 namespace Device.SmallMemory
 {
@@ -42,6 +42,13 @@ namespace Device.SmallMemory
 
         public static void Main()
         {
+            // setup and connect network
+            NetworkHelpers.SetupAndConnectNetwork(true);
+
+            // wait for network and valid system date time
+            NetworkHelpers.IpAddressAvailable.WaitOne();
+            NetworkHelpers.DateTimeAvailable.WaitOne();
+
             Send();
         }
 

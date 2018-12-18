@@ -18,6 +18,7 @@
 using System;
 using System.Threading;
 using Amqp;
+using nanoFramework.Networking;
 using Windows.Devices.Gpio;
 using AmqpTrace = Amqp.Trace;
 
@@ -45,6 +46,9 @@ namespace Device.Thermometer
 
         public static void Main()
         {
+            // setup and connect network
+            NetworkHelpers.SetupAndConnectNetwork(true);
+
             // setup user button
             // F769I-DISCO -> USER_BUTTON is @ PA0 -> (0 * 16) + 0 = 0
             _userButton = GpioController.GetDefault().OpenPin(0);
@@ -57,6 +61,10 @@ namespace Device.Thermometer
 
             temperature = 68;
             changed = new AutoResetEvent(true);
+
+            // wait for network and valid system date time
+            NetworkHelpers.IpAddressAvailable.WaitOne();
+            NetworkHelpers.DateTimeAvailable.WaitOne();
 
             new Thread(Listen).Start();
 
