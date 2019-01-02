@@ -18,14 +18,14 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="..\Examples\Device\Device.SmallMemory.nanoFramework\NetworkHelpers.cs" Link="NetworkHelpers.cs" />
-    <Compile Include="..\Examples\ServiceBus\Scenarios\EventHubsExample.cs" Link="EventHubsExample.cs" />
-    <Compile Include="..\Examples\ServiceBus\Scenarios\Example.cs" Link="Example.cs" />
+    <Compile Include="..\..\Device\Device.SmallMemory.nanoFramework\NetworkHelpers.cs" Link="NetworkHelpers.cs" />
+    <Compile Include="..\..\ServiceBus\Scenarios\EventHubsExample.cs" Link="EventHubsExample.cs" />
+    <Compile Include="..\..\ServiceBus\Scenarios\Example.cs" Link="Example.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nanoFramework\Amqp.nanoFramework.nfproj" />
+    <ProjectReference Include="..\..\..\nanoFramework\Amqp.nanoFramework.nfproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.1.0.4, Culture=neutral, PublicKeyToken=c07d481e9758c731">
