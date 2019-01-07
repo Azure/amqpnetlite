@@ -8,8 +8,8 @@
       "type": "platform",
       "version": "1.0.0"
     },
-    "Amqp": "2.1.5",
-    "Amqp.Serialization": "2.1.5"
+    "Amqp": "2.1.6",
+    "Amqp.Serialization": "2.1.6"
   },
   "frameworks": {
     "netcoreapp1.0": {
