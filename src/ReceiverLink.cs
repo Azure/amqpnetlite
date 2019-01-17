@@ -129,32 +129,36 @@ namespace Amqp
                     this.totalCredit = 0;
                 }
 
+                var sendFlow = false;
                 if (autoRestore)
                 {
+                    // Only change remaining credit if total credit was increased, to allow
+                    // accepting incoming messages. If total credit is reduced, only update 
+                    // total so credit will be later auto-restored to the new limit.
                     if (credit > this.totalCredit)
                     {
-                        this.credit += credit - this.totalCredit;
-                    }
-                    else
-                    {
-                        // if total credit is reduced, do not change pending credit to allow
-                        // accepting incoming messages. Update total so credit will be resored
-                        // to the new limit.
-                        this.totalCredit = credit;
-                        return;
+                        this.credit += credit - this.totalCredit + this.restored;
+                        this.restored = 0;
+                        sendFlow = true;
                     }
                 }
                 else
                 {
-                    this.credit = credit;
                     this.pending = 0;
                     this.restored = 0;
+                    if (credit != this.credit)
+                    {
+                        this.credit = credit;
+                        sendFlow = true;
+                    }
                 }
 
                 this.totalCredit = credit;
                 this.autoRestore = autoRestore;
-                this.SendFlow(this.deliveryCount, (uint)this.credit, false);
-                this.restored = 0;
+                if (sendFlow)
+                {
+                    this.SendFlow(this.deliveryCount, (uint)this.credit, false);
+                }
             }
         }
 
