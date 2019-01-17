@@ -404,7 +404,7 @@ namespace Amqp
             {
                 DeliveryState state = outcome;
                 bool settled = true;
-#if NETFX || NETFX40
+#if NETFX || NETFX40 || NETSTANDARD2_0
                 var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
                 if (txnState != null)
                 {

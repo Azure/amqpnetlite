@@ -138,7 +138,7 @@ namespace Amqp
         public void Send(Message message, OutcomeCallback callback, object state)
         {
             DeliveryState deliveryState = null;
-#if NETFX || NETFX40
+#if NETFX || NETFX40 || NETSTANDARD2_0
             deliveryState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
 #endif
             this.Send(message, deliveryState, callback, state);

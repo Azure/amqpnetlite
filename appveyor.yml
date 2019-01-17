@@ -106,9 +106,9 @@ build_script:
     {
       Write-Output "Invoking build.cmd script ..."
 
-      & c:\projects\amqpnetlite\build.2017.cmd | Write-Output
+      & c:\projects\amqpnetlite\build.cmd --solution amqp-nanoFramework.sln | Write-Output
 
-      & c:\projects\amqpnetlite\build.2017.cmd release | Write-Output
+      & c:\projects\amqpnetlite\build.cmd release --solution amqp-nanoFramework.sln | Write-Output
 
     }
 

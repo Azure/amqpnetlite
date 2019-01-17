@@ -322,7 +322,7 @@ namespace Amqp
     /// </summary>
     public static class TaskExtensions
     {
-#if NETFX || NETFX40
+#if NETFX || NETFX40 || NETSTANDARD2_0
         internal static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
             return await Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(sender).ConfigureAwait(false);

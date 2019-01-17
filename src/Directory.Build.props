@@ -1,0 +1,18 @@
+<Project>
+ <PropertyGroup>
+   <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+   <AssemblyOriginatorKeyFile>amqp.snk</AssemblyOriginatorKeyFile>
+   <SignAssembly>true</SignAssembly>
+   <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+   <BaseIntermediateOutputPath>..\obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+   <GenerateDocumentationFile>true</GenerateDocumentationFile>
+   <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+   <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+   <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+   <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+   <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+   <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+   <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+   <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+ </PropertyGroup>
+</Project>

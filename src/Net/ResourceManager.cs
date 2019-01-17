@@ -17,7 +17,7 @@
 
 namespace Amqp.Transactions
 {
-#if NETFX || NETFX40
+#if NETFX || NETFX40 || NETSTANDARD2_0
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
