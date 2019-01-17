@@ -50,14 +50,13 @@ namespace Amqp
         public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)
         {
             var tcs = (TaskCompletionSource<T>)args.UserToken;
-            args.UserToken = null;
             if (args.SocketError != SocketError.Success && throwOnError)
             {
-                tcs.SetException(new SocketException((int)args.SocketError));
+                tcs.TrySetException(new SocketException((int)args.SocketError));
             }
             else
             {
-                tcs.SetResult(result);
+                tcs.TrySetResult(result);
             }
         }
 
