@@ -34,11 +34,12 @@ namespace Amqp
 #endif
         // flow control
         SequenceNumber deliveryCount;
-        int totalCredit;    // total credit set by app or the default
-        bool autoRestore;   // auto flow credit
-        int pending;        // queued or being processed by application
-        int credit;         // remaining credit
-        int restored;       // processed by the application
+        int totalCredit;			// total credit set by app or the default
+        bool autoRestore;			// auto flow credit
+        int autoRestoreThreshold;	// the number of messages processed before credit is auto-restored
+        int pending;				// queued or being processed by application
+        int credit;					// remaining credit
+        int restored;				// processed by the application
 
         // received messages queue
         LinkedList receivedMessages;
@@ -117,6 +118,37 @@ namespace Amqp
         /// </remarks>
         public void SetCredit(int credit, bool autoRestore = true)
         {
+           if (credit < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(credit));
+            }
+
+            SetCredit(credit, autoRestore, autoRestore ? credit / 2 : 0); 
+        }
+
+        /// <summary>
+        /// Sets a credit on the link. It is the total number of unacknowledged messages the remote peer can send.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="autoRestoreThreshold">The number of messages accepted or rejected by the caller,
+        /// after which link credit is auto-restored.</param>
+        public void SetCredit(int credit, int autoRestoreThreshold)
+        {
+            if (credit < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(credit));
+            }
+
+            if (autoRestoreThreshold < 0 || autoRestoreThreshold > this.credit)
+            {
+                throw new ArgumentOutOfRangeException(nameof(autoRestoreThreshold));
+            }
+
+            SetCredit(credit, true, autoRestoreThreshold);
+        }
+
+        void SetCredit(int credit, bool autoRestore, int autoRestoreThreshold)
+        {
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -155,6 +187,7 @@ namespace Amqp
 
                 this.totalCredit = credit;
                 this.autoRestore = autoRestore;
+                this.autoRestoreThreshold = autoRestoreThreshold;
                 if (sendFlow)
                 {
                     this.SendFlow(this.deliveryCount, (uint)this.credit, false);
@@ -426,7 +459,7 @@ namespace Amqp
                 {
                     this.restored++;
                     this.pending--;
-                    if (this.restored >= this.totalCredit / 2)
+                    if (this.restored >= this.autoRestoreThreshold)
                     {
                         // total credit may be reduced. restore to what is allowed
                         int delta = Math.Min(this.restored, this.totalCredit - this.credit - this.pending);
