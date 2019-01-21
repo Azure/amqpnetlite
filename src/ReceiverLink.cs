@@ -34,12 +34,12 @@ namespace Amqp
 #endif
         // flow control
         SequenceNumber deliveryCount;
-        int totalCredit;			// total credit set by app or the default
-        bool autoRestore;			// auto flow credit
-        int autoRestoreThreshold;	// the number of messages processed before credit is auto-restored
-        int pending;				// queued or being processed by application
-        int credit;					// remaining credit
-        int restored;				// processed by the application
+        int totalCredit;          // total credit set by app or the default
+        bool autoRestore;         // auto flow credit
+        int autoRestoreThreshold; // the number of messages processed before credit is auto-restored
+        int pending;              // queued or being processed by application
+        int credit;               // remaining credit
+        int restored;             // processed by the application
 
         // received messages queue
         LinkedList receivedMessages;
