@@ -123,7 +123,7 @@ namespace Amqp
                 throw new ArgumentOutOfRangeException(nameof(credit));
             }
 
-            SetCredit(credit, autoRestore, autoRestore ? credit / 2 : 0); 
+            this.SetCredit(credit, autoRestore, autoRestore ? credit / 2 : 0); 
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace Amqp
                 throw new ArgumentOutOfRangeException(nameof(autoRestoreThreshold));
             }
 
-            SetCredit(credit, true, autoRestoreThreshold);
+            this.SetCredit(credit, true, autoRestoreThreshold);
         }
 
         void SetCredit(int credit, bool autoRestore, int autoRestoreThreshold)
