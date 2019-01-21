@@ -118,7 +118,7 @@ namespace Amqp
         /// </remarks>
         public void SetCredit(int credit, bool autoRestore = true)
         {
-           if (credit < 0)
+            if (credit < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(credit));
             }
