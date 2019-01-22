@@ -139,7 +139,7 @@ namespace Amqp
                 throw new ArgumentOutOfRangeException(nameof(credit));
             }
 
-            if (autoRestoreThreshold < 0 || autoRestoreThreshold > this.credit)
+            if (autoRestoreThreshold < 0 || autoRestoreThreshold > credit)
             {
                 throw new ArgumentOutOfRangeException(nameof(autoRestoreThreshold));
             }
