@@ -235,6 +235,14 @@ namespace Amqp
         /// or rejected by the caller. If false, caller is responsible for manage link credits.</param>
         void SetCredit(int credit, bool autoRestore);
 
+		/// <summary>
+        /// Sets a credit on the link. It is the total number of unacknowledged messages the remote peer can send.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="autoRestoreThreshold">The number of messages accepted or rejected by the caller,
+        /// after which link credit is auto-restored.</param>
+        void SetCredit(int credit, int autoRestoreThreshold);
+
         /// <summary>
         /// Receives a message. The call is blocked until a message is available or after a default wait time.
         /// </summary>
