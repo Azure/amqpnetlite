@@ -426,7 +426,12 @@ namespace Amqp
                 {
                     this.restored++;
                     this.pending--;
-                    if (this.restored >= this.totalCredit / 2)
+                    // 1. Threshold reached
+                    // 2. App received all without updating before this one.
+                    //    Send flow to avoid receiver starvation. This should
+                    //    never happen in normal cases.
+                    if (this.restored >= this.totalCredit / 2 ||
+                        (this.credit == 0 && this.receivedMessages.First == null))
                     {
                         // total credit may be reduced. restore to what is allowed
                         int delta = Math.Min(this.restored, this.totalCredit - this.credit - this.pending);
