@@ -161,7 +161,7 @@ namespace Amqp.Listener
             }
 
             Delivery delivery = message.Delivery;
-            if (delivery == null || delivery.Settled)
+            if (delivery == null || delivery.Settled || delivery.Link != this)
             {
                 return;
             }

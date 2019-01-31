@@ -201,41 +201,31 @@ namespace Amqp
 
         internal void DisposeDelivery(bool role, Delivery delivery, DeliveryState state, bool settled)
         {
-            Delivery current = null;
-            lock (this.ThisLock)
+            if (delivery.Settled)
             {
-                LinkedList deliveryList = role ? this.incomingList : this.outgoingList;
-                current = (Delivery)deliveryList.First;
-                while (current != null)
+                return;
+            }
+
+            delivery.Settled = settled;
+            delivery.State = state;
+            if (settled)
+            {
+                lock (this.ThisLock)
                 {
-                    if (current == delivery)
-                    {
-                        if (settled)
-                        {
-                            deliveryList.Remove(current);
-                        }
-
-                        break;
-                    }
-
-                    current = (Delivery)current.Next;
+                    LinkedList deliveryList = role ? this.incomingList : this.outgoingList;
+                    deliveryList.Remove(delivery);
                 }
             }
 
-            if (current != null)
+            Dispose dispose = new Dispose()
             {
-                current.Settled = settled;
-                current.State = state;
-                Dispose dispose = new Dispose()
-                {
-                    Role = role,
-                    First = current.DeliveryId,
-                    Settled = settled,
-                    State = state
-                };
+                Role = role,
+                First = delivery.DeliveryId,
+                Settled = settled,
+                State = state
+            };
 
-                this.SendCommand(dispose);
-            }
+            this.SendCommand(dispose);
         }
 
         internal void SendFlow(Flow flow)

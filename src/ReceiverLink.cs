@@ -404,7 +404,12 @@ namespace Amqp
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;
-            if (delivery != null && !delivery.Settled)
+            if (delivery == null || delivery.Link != null)
+            {
+                throw new InvalidOperationException("Message was not received by this link.");
+            }
+
+            if (!delivery.Settled)
             {
                 DeliveryState state = outcome;
                 bool settled = true;
