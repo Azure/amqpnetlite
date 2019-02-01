@@ -34,11 +34,12 @@ namespace Amqp
 #endif
         // flow control
         SequenceNumber deliveryCount;
-        int totalCredit;    // total credit set by app or the default
-        bool autoRestore;   // auto flow credit
-        int pending;        // queued or being processed by application
-        int credit;         // remaining credit
-        int restored;       // processed by the application
+        int totalCredit;          // total credit set by app or the default
+        bool autoRestore;         // auto flow credit
+        int autoRestoreThreshold; // the number of messages processed before credit is auto-restored
+        int pending;              // queued or being processed by application
+        int credit;               // remaining credit
+        int restored;             // processed by the application
 
         // received messages queue
         LinkedList receivedMessages;
@@ -103,20 +104,49 @@ namespace Amqp
         /// Sets a credit on the link. It is the total number of unacknowledged messages the remote peer can send.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted
-        /// or rejected by the caller. If false, caller is responsible for managing link credits and
-        /// in-flight transfers.</param>
+        /// <param name="autoRestore">If true, enables credit auto-restore mode.</param>
         /// <remarks>
         /// By default the credit is set to 200 (20 for netmf). If the default value is not optimal,
-        /// application should call this method once after the receiver link is created. Calling this
-        /// method multiple times with different credits is allowed but not recommended. Application may
-        /// do this if, for example, it needs to control local queue depth based on resource usage.
+        /// application should call this method once after the receiver link is created.
+        /// In credit auto-restore mode, the link keeps track of acknowledged messages and triggers a flow
+        /// when a threshold is reached. The default threshold is half of <see cref="credit"/>. Application
+        /// acknowledges a message by calling <see cref="Accept(Message)"/> or <see cref="Reject(Message, Error)"/>
+        /// method. When autoRestore is false, caller is responsible for managing link credits and in-flight transfers.
+        /// Calling this method multiple times with different credits is allowed but not recommended.
+        /// Application may do this if, for example, it needs to control local queue depth based on resource usage.
         /// The <paramref name="autoRestore"/> parameter should not be changed after it is initially set.
         /// To stop a receiver link, set <paramref name="credit"/> to 0. However application should expect
         /// in-flight messages to come as a result of the previous credit.
         /// </remarks>
         public void SetCredit(int credit, bool autoRestore = true)
         {
+            this.SetCredit(credit, autoRestore, autoRestore ? credit / 2 : 0); 
+        }
+
+        /// <summary>
+        /// Sets a credit on the link and enables credit auto-restore with a threshold.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="autoRestoreThreshold">The threshold of restored credits to trigger
+        /// a flow command to increase delivery limit.</param>
+        /// <remarks>See <see cref="SetCredit(int, bool)"/> for more details about credit auto-restore mode.</remarks>
+        public void SetCredit(int credit, int autoRestoreThreshold)
+        {
+            this.SetCredit(credit, true, autoRestoreThreshold);
+        }
+
+        void SetCredit(int credit, bool autoRestore, int autoRestoreThreshold)
+        {
+            if (credit < 0)
+            {
+                throw new ArgumentOutOfRangeException("credit");
+            }
+
+            if (autoRestore && (autoRestoreThreshold < 0 || autoRestoreThreshold > credit))
+            {
+                throw new ArgumentOutOfRangeException("autoRestoreThreshold");
+            }
+
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -155,6 +185,7 @@ namespace Amqp
 
                 this.totalCredit = credit;
                 this.autoRestore = autoRestore;
+                this.autoRestoreThreshold = autoRestoreThreshold;
                 if (sendFlow)
                 {
                     this.SendFlow(this.deliveryCount, (uint)this.credit, false);
@@ -435,7 +466,7 @@ namespace Amqp
                     // 2. App received all without updating before this one.
                     //    Send flow to avoid receiver starvation. This should
                     //    never happen in normal cases.
-                    if (this.restored >= this.totalCredit / 2 ||
+                    if (this.restored >= autoRestoreThreshold ||
                         (this.credit == 0 && this.receivedMessages.First == null))
                     {
                         // total credit may be reduced. restore to what is allowed

@@ -228,12 +228,19 @@ namespace Amqp
         void Start(int credit, MessageCallback onMessage);
 
         /// <summary>
-        /// Sets a credit on the link. A flow is sent to the peer to update link flow control state.
+        /// Sets a credit on the link. It is the total number of unacknowledged messages the remote peer can send.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="autoRestore">If true, link credit is auto-restored when a message is accepted
-        /// or rejected by the caller. If false, caller is responsible for manage link credits.</param>
+        /// <param name="autoRestore">If true, enables credit auto-restore mode.</param>
         void SetCredit(int credit, bool autoRestore);
+
+        /// <summary>
+        /// Sets a credit on the link and enables credit auto-restore with a threshold.
+        /// </summary>
+        /// <param name="credit">The new link credit.</param>
+        /// <param name="autoRestoreThreshold">The threshold of restored credits to trigger
+        /// a flow command to increase delivery limit.</param>
+        void SetCredit(int credit, int autoRestoreThreshold);
 
         /// <summary>
         /// Receives a message. The call is blocked until a message is available or after a default wait time.
