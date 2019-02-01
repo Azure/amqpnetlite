@@ -1480,6 +1480,56 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ReceiverLinkManualCreditTest()
+        {
+            uint id = 0;
+            uint available = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint dc = (uint)fields[5];
+                uint credit = (uint)fields[6];
+                for (uint i = 0; i < available; i++)
+                {
+                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], id, BitConverter.GetBytes(id), 0u, false, false);  // transfer
+                    id++;
+                }
+
+                if (available < credit)
+                {
+                    TestListener.FRM(stream, 0x13UL, 0, channel, 0u, 100u, id, 100u, fields[4], id + credit - available, 0u, 0u, false);  // flow
+                }
+
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ReceiverLinkManualCreditTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+
+            available = 10;
+            receiver.SetCredit(10, false);
+            for (int i = 0; i < 10; i++)
+            {
+                receiver.Accept(receiver.Receive());
+            }
+
+            available = 6;
+            receiver.SetCredit(10, false);
+            for (int i = 0; i < 6; i++)
+            {
+                receiver.Accept(receiver.Receive());
+            }
+
+            Message message = receiver.Receive(TimeSpan.FromMilliseconds(100));
+            Assert.IsTrue(message == null, "should not get messages.");
+
+            connection.Close();
+        }
+
+        [TestMethod]
         public void AcceptMessageOnWrongLinkTest()
         {
             uint id = 0;

@@ -35,8 +35,8 @@ namespace Amqp
         // flow control
         SequenceNumber deliveryCount;
         int totalCredit;          // total credit set by app or the default
-        bool autoRestore;         // auto flow credit
-        int autoRestoreThreshold; // the number of messages processed before credit is auto-restored
+        bool drain;               // draining in manual flow control
+        int autoRestoreThreshold; // restored credits that triggers a flow. -1 for manual flow
         int pending;              // queued or being processed by application
         int credit;               // remaining credit
         int restored;             // processed by the application
@@ -111,16 +111,20 @@ namespace Amqp
         /// In credit auto-restore mode, the link keeps track of acknowledged messages and triggers a flow
         /// when a threshold is reached. The default threshold is half of <see cref="credit"/>. Application
         /// acknowledges a message by calling <see cref="Accept(Message)"/> or <see cref="Reject(Message, Error)"/>
-        /// method. When autoRestore is false, caller is responsible for managing link credits and in-flight transfers.
-        /// Calling this method multiple times with different credits is allowed but not recommended.
-        /// Application may do this if, for example, it needs to control local queue depth based on resource usage.
-        /// The <paramref name="autoRestore"/> parameter should not be changed after it is initially set.
-        /// To stop a receiver link, set <paramref name="credit"/> to 0. However application should expect
-        /// in-flight messages to come as a result of the previous credit.
+        /// method. Please note the following.
+        /// 1. Calling this method multiple times with different credits is allowed but not recommended.
+        ///    Application may do this if, for example, it needs to control local queue depth based on resource usage.
+        /// 2. The <paramref name="autoRestore"/> parameter should not be changed after it is initially set.
+        /// 3. To stop a receiver link, set <paramref name="credit"/> to 0. However application should expect
+        ///    in-flight messages to come as a result of the previous credit.
+        /// When autoRestore is false, the link starts a drain cycle to request for messages allowed by credit.
+        /// If a drain cycle is still in progress, the call simply returns without sending a flow. When a credit
+        /// is set, application is expected to drain the messages by calling <see cref="Receive()"/> in a loop
+        /// until all messages are received or a null message is returned.
         /// </remarks>
         public void SetCredit(int credit, bool autoRestore = true)
         {
-            this.SetCredit(credit, autoRestore, autoRestore ? credit / 2 : 0); 
+            this.SetCredit(credit, autoRestore, autoRestore ? credit / 2 : -1); 
         }
 
         /// <summary>
@@ -162,6 +166,7 @@ namespace Amqp
                 var sendFlow = false;
                 if (autoRestore)
                 {
+                    this.drain = false;
                     // Only change remaining credit if total credit was increased, to allow
                     // accepting incoming messages. If total credit is reduced, only update 
                     // total so credit will be later auto-restored to the new limit.
@@ -172,23 +177,21 @@ namespace Amqp
                         sendFlow = true;
                     }
                 }
-                else
+                else if (!this.drain)
                 {
+                    // start a drain cycle.
                     this.pending = 0;
                     this.restored = 0;
-                    if (credit != this.credit)
-                    {
-                        this.credit = credit;
-                        sendFlow = true;
-                    }
+                    this.drain = true;
+                    this.credit = credit;
+                    sendFlow = true;
                 }
 
                 this.totalCredit = credit;
-                this.autoRestore = autoRestore;
                 this.autoRestoreThreshold = autoRestoreThreshold;
                 if (sendFlow)
                 {
-                    this.SendFlow(this.deliveryCount, (uint)this.credit, false);
+                    this.SendFlow(this.deliveryCount, (uint)this.credit, this.drain);
                 }
             }
         }
@@ -274,6 +277,15 @@ namespace Amqp
 
         internal override void OnFlow(Flow flow)
         {
+            lock (this.ThisLock)
+            {
+                if (this.drain)
+                {
+                    this.drain = flow.Drain;
+                    this.deliveryCount = flow.DeliveryCount;
+                    this.credit = Math.Min(0, (int)flow.LinkCredit);
+                }
+            }
         }
 
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
@@ -456,7 +468,7 @@ namespace Amqp
                 this.Session.DisposeDelivery(true, delivery, state, settled);
             }
 
-            if (this.autoRestore)
+            if (this.autoRestoreThreshold >= 0)
             {
                 lock (this.ThisLock)
                 {
@@ -495,6 +507,10 @@ namespace Amqp
             this.deliveryCount++;
             this.pending++;
             this.credit--;
+            if (this.drain && this.credit == 0)
+            {
+                this.drain = false;
+            }
         }
 
         sealed class MessageNode : INode
