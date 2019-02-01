@@ -1480,6 +1480,38 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void AcceptMessageOnWrongLinkTest()
+        {
+            uint id = 0;
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], id, BitConverter.GetBytes(id), 0u, false, false);  // transfer
+                id++;
+                return TestOutcome.Stop;
+            });
+
+            string testName = "AcceptMessageOnWrongLinkTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver1 = new ReceiverLink(session, "receiver1-" + testName, "any");
+            Message msg1 = receiver1.Receive();
+            Assert.IsTrue(msg1 != null);
+            ReceiverLink receiver2 = new ReceiverLink(session, "receiver2-" + testName, "any");
+            Message msg2 = receiver2.Receive();
+            Assert.IsTrue(msg2 != null);
+
+            try
+            {
+                receiver2.Accept(msg1);
+                Assert.IsTrue(false, "Expect failure");
+            }
+            catch (InvalidOperationException) { }
+
+            connection.Close();
+        }
+
+        [TestMethod]
         public void ConnectionEventsOnProtocolError()
         {
             ManualResetEvent closeReceived = null;

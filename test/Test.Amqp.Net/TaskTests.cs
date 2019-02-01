@@ -216,7 +216,7 @@ namespace Test.Amqp
             ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
             Message message2 = await receiver.ReceiveAsync();
             Trace.WriteLine(TraceLevel.Information, "receive: {0}", message2.Properties);
-            receiver.Accept(message);
+            receiver.Accept(message2);
 
             await sender.CloseAsync();
             await receiver.CloseAsync();

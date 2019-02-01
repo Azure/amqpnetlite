@@ -404,7 +404,7 @@ namespace Amqp
         void DisposeMessage(Message message, Outcome outcome)
         {
             Delivery delivery = message.Delivery;
-            if (delivery == null || delivery.Link != null)
+            if (delivery == null || delivery.Link != this)
             {
                 throw new InvalidOperationException("Message was not received by this link.");
             }
