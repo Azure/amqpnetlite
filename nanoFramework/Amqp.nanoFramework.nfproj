@@ -54,6 +54,7 @@
     <Compile Include="..\src\Connection.cs">
       <Link>Connection.cs</Link>
     </Compile>
+    <Compile Include="..\src\CreditMode.cs" Link="CreditMode.cs" />
     <Compile Include="..\src\Delivery.cs">
       <Link>Delivery.cs</Link>
     </Compile>

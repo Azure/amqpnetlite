@@ -42,6 +42,9 @@
     <Compile Include="..\src\AmqpObject.cs" />
     <Compile Include="..\src\ByteBuffer.cs" />
     <Compile Include="..\src\Connection.cs" />
+    <Compile Include="..\src\CreditMode.cs">
+      <Link>CreditMode.cs</Link>
+    </Compile>
     <Compile Include="..\src\Delivery.cs" />
     <Compile Include="..\src\Framing\Accepted.cs">
       <Link>Framing\Accepted.cs</Link>

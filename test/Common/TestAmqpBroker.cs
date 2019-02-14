@@ -477,6 +477,7 @@ namespace Listener.IContainer
                             else
                             {
                                 current.Value.LockedBy = consumer;
+                                current = current.Next;
                             }
 
                             consumer.Credit--;
