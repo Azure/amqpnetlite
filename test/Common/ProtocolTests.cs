@@ -1473,44 +1473,10 @@ namespace Test.Amqp
             }
 
             receiver.Accept(messages[9]);
+            receiver.SetCredit(10);
             Message msg = receiver.Receive();
             Assert.IsTrue(msg != null);
-
-            connection.Close();
-        }
-
-        [TestMethod]
-        public void ReceiverLinkRestoreCreditOnReceiveTest()
-        {
-            uint total = 0;
-            uint id = 0;
-
-            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
-            {
-                uint current = total;
-                total = Math.Max(total, (uint)fields[5] + (uint)fields[6]);
-                for (uint i = current; i < total; i++)
-                {
-                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], id, BitConverter.GetBytes(id), 0u, false, false);  // transfer
-                    id++;
-                }
-                return TestOutcome.Stop;
-            });
-
-            string testName = "ReceiverLinkRestoreCreditOnReceiveTest";
-
-            Connection connection = new Connection(this.address);
-            Session session = new Session(connection);
-            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
-            receiver.SetCredit(10, CreditMode.RestoreOnReceive);
-            for (int i = 0; i < 19; i++)
-            {
-                Message msg = receiver.Receive();
-                Assert.IsTrue(msg != null);
-            }
-
-            Assert.IsTrue(total >= 20u, "total: " + total);
-            Assert.IsTrue(total <= 25u, "total: " + total);
+            Assert.AreEqual(11u, total);
 
             connection.Close();
         }

@@ -35,12 +35,11 @@ namespace Amqp
         // flow control
         SequenceNumber deliveryCount;
         int totalCredit;          // total credit set by app or the default
-        CreditMode creditMode;    // credit management mode
         bool drain;               // a drain cycle is in progress
         int pending;              // queued or being processed by application
         int credit;               // remaining credit
         int restored;             // processed by the application
-        int flowThreshold;        // restored threshold for a flow
+        int flowThreshold;        // auto restore threshold for a flow
 
         // received messages queue
         LinkedList receivedMessages;
@@ -84,7 +83,6 @@ namespace Amqp
             : base(session, name, onAttached)
         {
             this.totalCredit = -1;
-            this.creditMode = CreditMode.RestoreOnAcknowledge;
             this.receivedMessages = new LinkedList();
             this.waiterList = new LinkedList();
             this.SendAttach(true, 0, attach);
@@ -106,51 +104,47 @@ namespace Amqp
         /// Sets a credit on the link. The credit controls how many messages the peer can send.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="autoRestore">If true, this method is the same as SetCredit(credit, CreditMode.RestoreOnAcknowledge);
+        /// <param name="autoRestore">If true, this method is the same as SetCredit(credit, CreditMode.Auto);
         /// if false, it is the same as SetCredit(credit, CreditMode.Manual).</param>
         public void SetCredit(int credit, bool autoRestore = true)
         {
-            this.SetCredit(credit, autoRestore ? CreditMode.RestoreOnAcknowledge : CreditMode.Manual); 
+            this.SetCredit(credit, autoRestore ? CreditMode.Auto : CreditMode.Manual); 
         }
 
         /// <summary>
         /// Sets a credit on the link and the credit management mode.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="creditMode">The credit management mode, see <see cref="CreditMode"/> for details.</param>
+        /// <param name="creditMode">The credit management mode.</param>
+        /// <param name="flowThreshold">If credit mode is Auto, it is the threshold of restored
+        /// credits that trigers a flow; ignored otherwise.</param>
         /// <remarks>
         /// The receiver link has a default link credit (200). If the default value is not optimal,
         /// application should call this method once after the receiver link is created.
-        /// In credit auto-restore modes, the link keeps track of acknowledged messages and triggers a flow
+        /// In Auto credit mode, the <paramref name="credit"/> parameter defines the total credits
+        /// of the link which is also the total number messages the remote peer can send. 
+        /// The link keeps track of acknowledged messages and triggers a flow
         /// when a threshold is reached. The default threshold is half of <see cref="credit"/>. Application
         /// acknowledges a message by calling <see cref="Accept(Message)"/>, <see cref="Reject(Message, Error)"/>,
         /// <see cref="Release(Message)"/> or <see cref="Modify(Message, bool, bool, Fields)"/> method.
+        /// In Manual credit mode, the <paramref name="credit"/> parameter defines the extra credits
+        /// of the link which is the additional messages the remote peer can send.
         /// Please note the following.
-        /// 1. Calling this method multiple times with different credits is allowed but not recommended.
+        /// 1. In Auto mode, calling this method multiple times with different credits is allowed but not recommended.
         ///    Application may do this if, for example, it needs to control local queue depth based on resource usage.
+        ///    If credit is reduced, the link maintains a buffer so incoming messages are still allowed.
         /// 2. The creditMode should not be changed after it is initially set.
         /// 3. To stop a receiver link, set <paramref name="credit"/> to 0. However application should expect
-        ///    in-flight messages to come as a result of the previous credit.
+        ///    in-flight messages to come as a result of the previous credit. It is recommended to use the
+        ///    Drain mode if the application wishes to stop the messages after a given credit is used.
         /// 4. In drain credit mode, if a drain cycle is still in progress, the call simply returns without
         ///    sending a flow. Application is expected to keep calling <see cref="Receive()"/> in a loop
         ///    until all messages are received or a null message is returned.
-        /// 5. In manual credit mode, application is responsible for keeping track of messages. The link
-        ///    simply sends the flow with the supplied link credit.
+        /// 5. In manual credit mode, application is responsible for keeping track of processed messages
+        ///    and issue more credits when certain conditions are met. 
         /// </remarks>
-        public void SetCredit(int credit, CreditMode creditMode)
+        public void SetCredit(int credit, CreditMode creditMode, int flowThreshold = -1)
         {
-            if (credit < 0)
-            {
-                throw new ArgumentOutOfRangeException("credit");
-            }
-
-            if ((creditMode.Condition == RestoreCondition.OnReceive || creditMode.Condition == RestoreCondition.OnAck) &&
-                creditMode.Threshold >= 0 &&
-                (creditMode.Threshold < credit || creditMode.Threshold > credit))
-            {
-                throw new ArgumentOutOfRangeException("threshold");
-            }
-
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -164,45 +158,45 @@ namespace Amqp
                 }
 
                 var sendFlow = false;
-                if (creditMode.IsDrain)
+                if (creditMode == CreditMode.Drain)
                 {
                     if (!this.drain)
                     {
                         // start a drain cycle.
                         this.pending = 0;
                         this.restored = 0;
-                        this.flowThreshold = int.MaxValue;
                         this.drain = true;
                         this.credit = credit;
+                        this.flowThreshold = -1;
                         sendFlow = true;
                     }
                 }
-                else if (creditMode.Condition == RestoreCondition.None)
+                else if (creditMode == CreditMode.Manual)
                 {
                     this.drain = false;
                     this.pending = 0;
                     this.restored = 0;
-                    this.flowThreshold = int.MaxValue;
-                    this.credit = credit;
+                    this.flowThreshold = -1;
+                    this.credit += credit;
                     sendFlow = true;
                 }
                 else
                 {
                     this.drain = false;
-                    this.flowThreshold = creditMode.Threshold >= 0 ? creditMode.Threshold : credit / 2;
+                    this.flowThreshold = flowThreshold >= 0 ? flowThreshold : credit / 2;
                     // Only change remaining credit if total credit was increased, to allow
                     // accepting incoming messages. If total credit is reduced, only update 
                     // total so credit will be later auto-restored to the new limit.
-                    if (credit > this.totalCredit)
+                    int delta = credit - this.totalCredit + this.restored;
+                    if (delta > 0)
                     {
-                        this.credit += credit - this.totalCredit + this.restored;
+                        this.credit += delta;
                         this.restored = 0;
                         sendFlow = true;
                     }
                 }
 
                 this.totalCredit = credit;
-                this.creditMode = creditMode;
                 if (sendFlow)
                 {
                     this.SendFlow(this.deliveryCount, (uint)this.credit, this.drain);
@@ -344,7 +338,6 @@ namespace Amqp
                 {
                     if (waiter.Signal(delivery.Message))
                     {
-                        this.OnRestoreCredit(RestoreCondition.OnReceive);
                         return;
                     }
 
@@ -366,7 +359,6 @@ namespace Amqp
                 Fx.Assert(waiter == null, "waiter must be null now");
                 Fx.Assert(callback != null, "callback must not be null now");
                 callback(this, delivery.Message);
-                this.OnRestoreCredit(RestoreCondition.OnReceive);
             }
             else
             {
@@ -425,7 +417,6 @@ namespace Amqp
                 if (first != null)
                 {
                     this.receivedMessages.Remove(first);
-                    this.OnRestoreCredit(RestoreCondition.OnReceive);
                     return first.Message;
                 }
 
@@ -485,7 +476,23 @@ namespace Amqp
                 this.Session.DisposeDelivery(true, delivery, state, settled);
             }
 
-            this.OnRestoreCredit(RestoreCondition.OnAck);
+            lock (this.ThisLock)
+            {
+                this.restored++;
+                this.pending--;
+                if (this.flowThreshold >= 0 && this.restored >= this.flowThreshold)
+                {
+                    // total credit may be reduced. restore to what is allowed
+                    int delta = Math.Min(this.restored, this.totalCredit - this.credit - this.pending);
+                    if (delta > 0)
+                    {
+                        this.credit += delta;
+                        this.SendFlow(this.deliveryCount, (uint)this.credit, false);
+                    }
+
+                    this.restored = 0;
+                }
+            }
         }
 
         void OnDelivery(SequenceNumber deliveryId)
@@ -503,36 +510,6 @@ namespace Amqp
             if (this.drain && this.credit == 0)
             {
                 this.drain = false;
-            }
-        }
-
-        void OnRestoreCredit(RestoreCondition condition)
-        {
-            if (this.creditMode.Condition == condition)
-            {
-                lock (this.ThisLock)
-                {
-                    this.restored++;
-                    this.pending--;
-
-                    // 1. Threshold reached
-                    // 2. App received all without acking before this one.
-                    //    Send flow to avoid receiver starvation. This should
-                    //    never happen in normal cases.
-                    if (this.restored >= this.flowThreshold ||
-                        (this.creditMode.Condition == RestoreCondition.OnAck && this.credit == 0 && this.receivedMessages.First == null))
-                    {
-                        // total credit may be reduced. restore to what is allowed
-                        int delta = Math.Min(this.restored, this.totalCredit - this.credit - this.pending);
-                        if (delta > 0)
-                        {
-                            this.credit += delta;
-                            this.SendFlow(this.deliveryCount, (uint)this.credit, false);
-                        }
-
-                        this.restored = 0;
-                    }
-                }
             }
         }
 

@@ -231,7 +231,7 @@ namespace Amqp
         /// Sets a credit on the link. The credit controls how many messages the peer can send.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="autoRestore">If true, this method is the same as SetCredit(credit, CreditMode.RestoreOnAcknowledge);
+        /// <param name="autoRestore">If true, this method is the same as SetCredit(credit, CreditMode.Auto);
         /// if false, it is the same as SetCredit(credit, CreditMode.Manual).</param>
         void SetCredit(int credit, bool autoRestore);
 
@@ -239,8 +239,10 @@ namespace Amqp
         /// Sets a credit on the link and the credit management mode.
         /// </summary>
         /// <param name="credit">The new link credit.</param>
-        /// <param name="creditMode">The credit management mode, see <see cref="CreditMode"/> for details.</param>
-        void SetCredit(int credit, CreditMode creditMode);
+        /// <param name="creditMode">The credit management mode.</param>
+        /// <param name="flowThreshold">If credit mode is Auto, it is the threshold of restored
+        /// credits that trigers a flow; ignored otherwise.</param>
+        void SetCredit(int credit, CreditMode creditMode, int flowThreshold = -1);
 
         /// <summary>
         /// Receives a message. The call is blocked until a message is available or after a default wait time.
