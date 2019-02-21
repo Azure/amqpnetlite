@@ -6,8 +6,7 @@ ECHO.
 
 SET return-code=0
 
-SET build-sln=amqp.sln
-SET build-dotnet2=false
+SET build-sln=amqp.sln amqp-dotnet.sln amqp-netmf.sln
 SET build-target=build
 SET build-config=Debug
 SET build-platform=Any CPU
@@ -33,8 +32,8 @@ IF /I "%1" EQU "test" (
   SHIFT
 )
 
-IF /I "%1" EQU "package" (
-  SET build-target=package
+IF /I "%1" EQU "pack" (
+  SET build-target=pack
   set build-config=Release
   set build-test=false
   set build-nuget=true
@@ -82,7 +81,6 @@ GOTO :exit
 
 IF /I "%build-sln%" EQU "amqp-nanoFramework.sln" SET build-test=false
 IF /I "%build-sln%" EQU "amqp-netmf.sln" SET build-test=false
-IF /I "%build-sln%" EQU "amqp-dotnet.sln" SET build-dotnet2=true
 
 FOR /F "tokens=1-3* delims=() " %%A in (.\src\Properties\Version.cs) do (
   IF "%%B" == "AssemblyInformationalVersion" SET build-version=%%C
@@ -98,7 +96,6 @@ ECHO Build target: %build-target%
 ECHO Build version: %build-version%
 ECHO Build configuration: %build-config%
 ECHO Build platform: %build-platform%
-ECHO Build dotnet2: %build-dotnet2%
 ECHO Build run tests: %build-test%
 ECHO Build NuGet package: %build-nuget%
 ECHO.
@@ -119,50 +116,30 @@ ECHO dotnet: "%dotnetPath%"
 CALL :findfile MSTest exe
 ECHO MSTest: %MSTestPath%
 
-IF /I "%build-dotnet2%" EQU "false" (
-  IF "%NuGetPath%" == "" (
-    ECHO NuGet.exe does not exist or is not under PATH.
-    CALL :handle-error 2
-    GOTO :exit
-  )
-  IF "%MSBuildPath%" == "" (
-    ECHO MSBuild.exe does not exist or is not under PATH.
-    ECHO This can be resolved by building from a VS developer command prompt.
-    CALL :handle-error 2
-    GOTO :exit
-  )
-) ELSE (
-  IF "%dotnetPath%" == "" (
-    ECHO .Net Core SDK is not installed. If you unzipped the package, make sure the location is in PATH.
-    EXIT /b 1
-  )
-)
-
 IF /I "%build-target%" == "test" GOTO :build-done
-IF /I "%build-target%" == "package" GOTO :build-done
+IF /I "%build-target%" == "pack" GOTO :build-done
 
 :build-start
 TASKKILL /F /IM TestAmqpBroker.exe >nul 2>&1
 
-IF /I "%build-target%" == "clean" GOTO :build-clean
+IF /I "%build-target%" == "clean" GOTO :build-target
 IF /I "%build-target%" == "build" GOTO :build-target
 ECHO Unknown build target "%build-target%"
 GOTO :args-error
 
-:build-clean
-SET return-code=0
-CALL :run-build Clean
-IF ERRORLEVEL 1 SET return-code=1
-GOTO :exit
-
 :build-target
-CALL :run-build build
-IF ERRORLEVEL 1 (
-  SET return-code=1
-  GOTO :exit
+SET return-code=0
+FOR %%G in (%build-sln%) DO (
+  CALL :run-build %build-target% %%G
+  IF ERRORLEVEL 1 (
+    SET return-code=1
+    GOTO :exit
+  )
 )
 
 :build-done
+
+IF /I "%build-target%" == "clean" GOTO :exit
 
 IF /I "%build-test%" EQU "false" GOTO :nuget-package
 
@@ -180,7 +157,7 @@ rem Delay to allow broker to start up
 PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
 
 :run-test
-IF /I "%build-dotnet2%" EQU "true" GOTO :run-dotnet2-test
+IF /I "%build-sln%" EQU "amqp-dotnet.sln" GOTO :run-dotnet2-test
 
 IF "%MSTestPath%" == "" (
   ECHO MSTest.exe does not exist or is not under PATH. Will not run tests.
@@ -227,7 +204,7 @@ IF ERRORLEVEL 1 (
   GOTO :exit
 )
 
-GOTO :done-test
+IF "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" GOTO :done-test
 
 :run-dotnet2-test
 ECHO Running DOTNET (.Net Core 2.0) tests...
@@ -255,26 +232,25 @@ IF /I "%build-config%" NEQ "Release" (
   GOTO :exit
 )
 
-rem Build NuGet package
-ECHO.
-IF "%NuGetPath%" == "" (
-  ECHO NuGet.exe does not exist or is not under PATH.
-  ECHO If you want to build NuGet package, install NuGet.CommandLine
-  ECHO package, or download NuGet.exe and place it under .\Build\tools
-  ECHO directory.
-  SET return-code=1
-  GOTO :exit
-)
 IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
 ECHO Building NuGet package with version %build-version%
-IF /I "%build-sln%" NEQ "amqp-nanoFramework.sln" (
-  FOR %%G IN (AMQPNetLite AMQPNetLite.NetMF AMQPNetMicro) DO (
+IF NOT "%build-sln:amqp.sln=%" == "%build-sln%" (
+  "%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+  IF ERRORLEVEL 1 (
+    SET return-code=1
+    GOTO :exit
+  )
+)
+IF NOT "%build-sln:amqp-netmf.sln=%" == "%build-sln%" (
+  FOR %%G IN (AMQPNetLite.NetMF AMQPNetMicro) DO (
     "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
     IF ERRORLEVEL 1 (
       SET return-code=1
       GOTO :exit
     )
   )
+)
+IF NOT "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" (
   FOR %%G IN (AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) DO (
     "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages" -Symbols -SymbolPackageFormat snupkg
     IF ERRORLEVEL 1 (
@@ -282,7 +258,8 @@ IF /I "%build-sln%" NEQ "amqp-nanoFramework.sln" (
       GOTO :exit
     )
   )
-) ELSE (  
+)
+IF NOT "%build-sln:amqp-nanoFramework.sln=%" == "%build-sln%" (
   FOR %%G IN (AMQPNetLite.nanoFramework AMQPNetMicro.nanoFramework) DO (
     "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
     IF ERRORLEVEL 1 (
@@ -298,11 +275,11 @@ GOTO :exit
 EXIT /b %return-code%
 
 :usage
-  ECHO build.cmd [clean^|release^|test^|package] [options]
+  ECHO build.cmd [clean^|release^|test^|pack] [options]
   ECHO   clean: clean intermediate files
   ECHO   release: a shortcut for "--config Release --nuget"
   ECHO   test: run tests only from existing build
-  ECHO   package: create NuGet packages only from Release build
+  ECHO   pack: create NuGet packages only from Release build
   ECHO options:
   ECHO  --solution ^<value^>    [amqp.sln]   solution to build
   ECHO  --config ^<value^>      [Debug]   build configuration (e.g. Debug, Release)
@@ -318,13 +295,14 @@ EXIT /b %return-code%
   GOTO :eof
 
 :run-build
-  ECHO Build solution %build-sln%
-  IF /I "%build-sln%" EQU "amqp.sln" set build-micro=true
-  IF /I "%build-sln%" EQU "amqp-netmf.sln" set build-micro=true
-  IF /I "%build-dotnet2%" EQU "false" (
-    "%NuGetPath%" restore %build-sln%
+  ECHO Build solution %2
+  IF /I "%2" EQU "amqp-dotnet.sln" (
+    "%dotnetPath%" %1 -c %build-config% -v %build-verbosity% %2
     IF ERRORLEVEL 1 EXIT /b 1
-    "%MSBuildPath%" %build-sln% /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
+  ) ELSE (
+    "%NuGetPath%" restore %2
+    IF ERRORLEVEL 1 EXIT /b 1
+    "%MSBuildPath%" %2 /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
     IF ERRORLEVEL 1 EXIT /b 1
 	IF /I "%build-micro%" EQU "true" (
       ECHO Build other versions of the micro NETMF projects
@@ -333,9 +311,6 @@ EXIT /b %return-code%
         IF ERRORLEVEL 1 EXIT /b 1
       )
     )
-  ) ELSE (
-    "%dotnetPath%" %1 -c %build-config% -v %build-verbosity% %build-sln%
-    IF ERRORLEVEL 1 EXIT /b 1
   )
 
   EXIT /b 0
