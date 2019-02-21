@@ -304,7 +304,7 @@ EXIT /b %return-code%
     IF ERRORLEVEL 1 EXIT /b 1
     "%MSBuildPath%" %2 /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
     IF ERRORLEVEL 1 EXIT /b 1
-	IF /I "%build-micro%" EQU "true" (
+	IF /I "%2" EQU "amqp-netmf.sln" (
       ECHO Build other versions of the micro NETMF projects
       FOR /L %%I IN (2,1,3) DO (
         "%MSBuildPath%" .\netmf\Amqp.Micro.NetMF.csproj /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform: =%";FrameworkVersionMajor=4;FrameworkVersionMinor=%%I /verbosity:%build-verbosity%
