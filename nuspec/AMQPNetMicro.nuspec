@@ -6,7 +6,7 @@
     <version>0.0.0</version>
     <authors>xinchen</authors>
     <owners>Microsoft</owners>
-    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is a compact version of AMQP.Net Lite for .Net Micro Framework on memory/space constrained devices.</description>

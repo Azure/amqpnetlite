@@ -6,6 +6,7 @@
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <EnableDefaultItems>false</EnableDefaultItems>
     <DefineConstants>$(DefineConstants);DOTNET;DOTNET_SERIALIZATION</DefineConstants>
+    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
   </PropertyGroup>
 
@@ -27,4 +28,7 @@
     <ProjectReference Include="Amqp.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All"/>
+  </ItemGroup>
 </Project>

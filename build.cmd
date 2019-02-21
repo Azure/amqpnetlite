@@ -262,24 +262,32 @@ IF "%NuGetPath%" == "" (
   ECHO If you want to build NuGet package, install NuGet.CommandLine
   ECHO package, or download NuGet.exe and place it under .\Build\tools
   ECHO directory.
-) ELSE (
-  IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
-  ECHO Building NuGet package with version %build-version%
-  IF /I "%build-sln%" NEQ "amqp-nanoFramework.sln" (
-    FOR %%G IN (AMQPNetLite AMQPNetLite.NetMF AMQPNetMicro AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) DO (
-      "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-      IF ERRORLEVEL 1 (
-        SET return-code=1
-        GOTO :exit
-      )
+  SET return-code=1
+  GOTO :exit
+)
+IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
+ECHO Building NuGet package with version %build-version%
+IF /I "%build-sln%" NEQ "amqp-nanoFramework.sln" (
+  FOR %%G IN (AMQPNetLite AMQPNetLite.NetMF AMQPNetMicro) DO (
+    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+    IF ERRORLEVEL 1 (
+      SET return-code=1
+      GOTO :exit
     )
-  ) ELSE (  
-    FOR %%G IN (AMQPNetLite.nanoFramework AMQPNetMicro.nanoFramework) DO (
-      "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-      IF ERRORLEVEL 1 (
-        SET return-code=1
-        GOTO :exit
-      )
+  )
+  FOR %%G IN (AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) DO (
+    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages" -Symbols -SymbolPackageFormat snupkg
+    IF ERRORLEVEL 1 (
+      SET return-code=1
+      GOTO :exit
+    )
+  )
+) ELSE (  
+  FOR %%G IN (AMQPNetLite.nanoFramework AMQPNetMicro.nanoFramework) DO (
+    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+    IF ERRORLEVEL 1 (
+      SET return-code=1
+      GOTO :exit
     )
   )
 )

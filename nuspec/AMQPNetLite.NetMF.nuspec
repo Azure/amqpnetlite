@@ -5,7 +5,7 @@
     <title>AMQP.Net Lite for NetMF</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>
-    <licenseUrl>https://github.com/Azure/amqpnetlite/blob/master/license.txt</licenseUrl>
+    <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <summary>AMQP 1.0 library for .Net Micro Framework</summary>
