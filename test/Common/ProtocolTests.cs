@@ -102,7 +102,7 @@ namespace Test.Amqp
         [TestMethod]
         public void ConnectionRemoteIdleTimeoutTest()
         {
-            bool received = false;
+            ManualResetEvent received = new ManualResetEvent(false);
 
             this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
             {
@@ -112,7 +112,7 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Empty, (stream, channel, fields) =>
             {
-                received = true;
+                received.Set();
                 return TestOutcome.Continue;
             });
 
@@ -124,14 +124,13 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                Thread.Sleep(1000);
                 var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
-                Assert.IsTrue(received, "Heartbeat not received");
+                Assert.IsTrue(received.WaitOne(5000), "Heartbeat not received");
                 connection.Close();
             }
 #if !NETFX40
-            received = false;
+            received = new ManualResetEvent(false);
             Trace.WriteLine(TraceLevel.Information, "async test");
             Task.Factory.StartNew(async () =>
             {
@@ -140,10 +139,10 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                await Task.Delay(1000);
                 var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
-                Assert.IsTrue(received, "Heartbeat not received");
+                await Task.Yield();
+                Assert.IsTrue(received.WaitOne(5000), "Heartbeat not received");
                 await connection.CloseAsync();
             }).Unwrap().GetAwaiter().GetResult();
 #endif
