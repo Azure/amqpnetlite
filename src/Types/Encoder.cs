@@ -63,8 +63,9 @@ namespace Amqp.Types
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
 #endif
         internal const long TicksPerMillisecond = 10000;
+#if !NETMF
         private const int MaxBytesForStackalloc = 512;
-
+#endif
         static Serializer[] serializers;
         static Map codecByType;
         static byte[][] codecIndexTable;
@@ -696,6 +697,21 @@ namespace Amqp.Types
             }
             else
             {
+#if NETMF
+                byte[] data = Encoding.UTF8.GetBytes(value);
+                if (smallEncoding && data.Length <= byte.MaxValue)
+                {
+                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
+                    AmqpBitConverter.WriteUByte(buffer, (byte)data.Length);
+                    AmqpBitConverter.WriteBytes(buffer, data, 0, data.Length);
+                }
+                else
+                {
+                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
+                    AmqpBitConverter.WriteUInt(buffer, (uint)data.Length);
+                    AmqpBitConverter.WriteBytes(buffer, data, 0, data.Length);
+                }    
+#else
                 fixed (char* chars = value)
                 {
                     int byteCount = Encoding.UTF8.GetByteCount(chars, value.Length);
@@ -712,12 +728,14 @@ namespace Amqp.Types
                     }
 
                     buffer.ValidateWrite(byteCount);
-                    fixed(byte* bytes = buffer.Buffer)
+                    fixed (byte* bytes = buffer.Buffer)
                     {
                         Encoding.UTF8.GetBytes(chars, value.Length, bytes + buffer.Offset, byteCount);
                         buffer.Append(byteCount);
                     }
                 }
+#endif
+
             }
         }
 
@@ -1495,6 +1513,10 @@ namespace Amqp.Types
             }
                        
             buffer.ValidateRead(count);
+
+#if NETMF
+            string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
+#else
             string value;
             if (count <= MaxBytesForStackalloc)
             {
@@ -1517,7 +1539,7 @@ namespace Amqp.Types
             {
                 value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
             }
-            
+#endif            
             buffer.Complete(count);
 
             return value;
