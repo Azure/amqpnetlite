@@ -63,6 +63,7 @@ namespace Amqp.Types
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
 #endif
         internal const long TicksPerMillisecond = 10000;
+        private const int MaxBytesForStackalloc = 512;
 
         static Serializer[] serializers;
         static Map codecByType;
@@ -687,7 +688,7 @@ namespace Amqp.Types
         /// <param name="buffer">The buffer to write.</param>
         /// <param name="value">The string value.</param>
         /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
-        public static void WriteString(ByteBuffer buffer, string value, bool smallEncoding)
+        public static unsafe void WriteString(ByteBuffer buffer, string value, bool smallEncoding)
         {
             if (value == null)
             {
@@ -695,18 +696,27 @@ namespace Amqp.Types
             }
             else
             {
-                byte[] data = Encoding.UTF8.GetBytes(value);
-                if (smallEncoding && data.Length <= byte.MaxValue)
+                fixed (char* chars = value)
                 {
-                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
-                    AmqpBitConverter.WriteUByte(buffer, (byte)data.Length);
-                    AmqpBitConverter.WriteBytes(buffer, data, 0, data.Length);
-                }
-                else
-                {
-                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
-                    AmqpBitConverter.WriteUInt(buffer, (uint)data.Length);
-                    AmqpBitConverter.WriteBytes(buffer, data, 0, data.Length);
+                    int byteCount = Encoding.UTF8.GetByteCount(chars, value.Length);
+
+                    if (smallEncoding && byteCount <= byte.MaxValue)
+                    {
+                        AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
+                        AmqpBitConverter.WriteUByte(buffer, (byte)byteCount);
+                    }
+                    else
+                    {
+                        AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
+                        AmqpBitConverter.WriteUInt(buffer, (uint)byteCount);
+                    }
+
+                    buffer.ValidateWrite(byteCount);
+                    fixed(byte* bytes = buffer.Buffer)
+                    {
+                        Encoding.UTF8.GetBytes(chars, value.Length, bytes + buffer.Offset, byteCount);
+                        buffer.Append(byteCount);
+                    }
                 }
             }
         }
@@ -1463,7 +1473,7 @@ namespace Amqp.Types
             return null;
         }
 
-        static string ReadString(ByteBuffer buffer, byte formatCode, byte code8, byte code32, string type)
+        static unsafe string ReadString(ByteBuffer buffer, byte formatCode, byte code8, byte code32, string type)
         {
             if (formatCode == FormatCode.Null)
             {
@@ -1483,14 +1493,36 @@ namespace Amqp.Types
             {
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
-
-            buffer.Validate(false, count);
-            string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
+                       
+            buffer.ValidateRead(count);
+            string value;
+            if (count <= MaxBytesForStackalloc)
+            {
+                int charCount = Encoding.UTF8.GetCharCount(buffer.Buffer, buffer.Offset, count);
+                if (charCount == 0)
+                {
+                    value = "";
+                }
+                else
+                {
+                    char* chars = stackalloc char[charCount];
+                    fixed (byte* bytes = buffer.Buffer)
+                    {
+                        Encoding.UTF8.GetChars(bytes + buffer.Offset, count, chars, charCount);
+                        value = new string(chars);
+                    }
+                }
+            }
+            else
+            {
+                value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
+            }
+            
             buffer.Complete(count);
 
             return value;
         }
-
+        
 #if NETMF_LITE
         static Exception InvalidFormatCodeException(byte formatCode, int offset)
         {
