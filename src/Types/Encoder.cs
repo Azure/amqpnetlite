@@ -63,9 +63,6 @@ namespace Amqp.Types
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
 #endif
         internal const long TicksPerMillisecond = 10000;
-#if !NETMF && !NETFX_CORE
-        private const int MaxBytesForStackalloc = 512;
-#endif
         static Serializer[] serializers;
         static Map codecByType;
         static byte[][] codecIndexTable;
@@ -1334,7 +1331,7 @@ namespace Amqp.Types
         {
             return ReadString(buffer, formatCode, FormatCode.String8Utf8, FormatCode.String32Utf8, "string");
         }
-
+                     
         /// <summary>
         /// Reads a symbol value from a buffer.
         /// </summary>
@@ -1491,7 +1488,7 @@ namespace Amqp.Types
             return null;
         }
 
-        static unsafe string ReadString(ByteBuffer buffer, byte formatCode, byte code8, byte code32, string type)
+        static string ReadString(ByteBuffer buffer, byte formatCode, byte code8, byte code32, string type)
         {
             if (formatCode == FormatCode.Null)
             {
@@ -1511,40 +1508,19 @@ namespace Amqp.Types
             {
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
-                       
+
             buffer.ValidateRead(count);
 
 #if NETMF || NETFX_CORE
             string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
 #else
-            string value;
-            if (count <= MaxBytesForStackalloc)
-            {
-                int charCount = Encoding.UTF8.GetCharCount(buffer.Buffer, buffer.Offset, count);
-                if (charCount == 0)
-                {
-                    value = "";
-                }
-                else
-                {
-                    char* chars = stackalloc char[charCount];
-                    fixed (byte* bytes = buffer.Buffer)
-                    {
-                        Encoding.UTF8.GetChars(bytes + buffer.Offset, count, chars, charCount);
-                        value = new string(chars, 0, charCount);
-                    }
-                }
-            }
-            else
-            {
-                value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
-            }
+            string value = Encoding.UTF8.GetString(buffer.Buffer, buffer.Offset, count);
 #endif            
             buffer.Complete(count);
 
             return value;
         }
-        
+
 #if NETMF_LITE
         static Exception InvalidFormatCodeException(byte formatCode, int offset)
         {
