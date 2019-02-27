@@ -730,7 +730,7 @@ namespace Amqp.Types
                     buffer.ValidateWrite(byteCount);
                     fixed (byte* bytes = buffer.Buffer)
                     {
-                        Encoding.UTF8.GetBytes(chars, value.Length, bytes + buffer.Offset, byteCount);
+                        Encoding.UTF8.GetBytes(chars, value.Length, bytes + buffer.WritePos, byteCount);
                         buffer.Append(byteCount);
                     }
                 }
@@ -1531,7 +1531,7 @@ namespace Amqp.Types
                     fixed (byte* bytes = buffer.Buffer)
                     {
                         Encoding.UTF8.GetChars(bytes + buffer.Offset, count, chars, charCount);
-                        value = new string(chars);
+                        value = new string(chars, 0, charCount);
                     }
                 }
             }
