@@ -686,7 +686,7 @@ namespace Amqp.Types
         /// <param name="buffer">The buffer to write.</param>
         /// <param name="value">The string value.</param>
         /// <param name="smallEncoding">if true, try using small encoding if possible.</param>
-        public static unsafe void WriteString(ByteBuffer buffer, string value, bool smallEncoding)
+        public static void WriteString(ByteBuffer buffer, string value, bool smallEncoding)
         {
             if (value == null)
             {
@@ -709,28 +709,22 @@ namespace Amqp.Types
                     AmqpBitConverter.WriteBytes(buffer, data, 0, data.Length);
                 }    
 #else
-                fixed (char* chars = value)
+                int byteCount = Encoding.UTF8.GetByteCount(value);
+
+                if (smallEncoding && byteCount <= byte.MaxValue)
                 {
-                    int byteCount = Encoding.UTF8.GetByteCount(chars, value.Length);
-
-                    if (smallEncoding && byteCount <= byte.MaxValue)
-                    {
-                        AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
-                        AmqpBitConverter.WriteUByte(buffer, (byte)byteCount);
-                    }
-                    else
-                    {
-                        AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
-                        AmqpBitConverter.WriteUInt(buffer, (uint)byteCount);
-                    }
-
-                    buffer.ValidateWrite(byteCount);
-                    fixed (byte* bytes = buffer.Buffer)
-                    {
-                        Encoding.UTF8.GetBytes(chars, value.Length, bytes + buffer.WritePos, byteCount);
-                        buffer.Append(byteCount);
-                    }
+                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
+                    AmqpBitConverter.WriteUByte(buffer, (byte)byteCount);
                 }
+                else
+                {
+                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
+                    AmqpBitConverter.WriteUInt(buffer, (uint)byteCount);
+                }
+
+                buffer.ValidateWrite(byteCount);
+                Encoding.UTF8.GetBytes(value, 0, value.Length, buffer.Buffer, buffer.WritePos);
+                buffer.Append(byteCount);
 #endif
 
             }
