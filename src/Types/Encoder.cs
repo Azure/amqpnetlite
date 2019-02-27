@@ -63,7 +63,7 @@ namespace Amqp.Types
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
 #endif
         internal const long TicksPerMillisecond = 10000;
-#if !NETMF
+#if !NETMF && !NETFX_CORE
         private const int MaxBytesForStackalloc = 512;
 #endif
         static Serializer[] serializers;
@@ -697,7 +697,7 @@ namespace Amqp.Types
             }
             else
             {
-#if NETMF
+#if NETMF || NETFX_CORE
                 byte[] data = Encoding.UTF8.GetBytes(value);
                 if (smallEncoding && data.Length <= byte.MaxValue)
                 {
@@ -1514,7 +1514,7 @@ namespace Amqp.Types
                        
             buffer.ValidateRead(count);
 
-#if NETMF
+#if NETMF || NETFX_CORE
             string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
 #else
             string value;
