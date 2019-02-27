@@ -63,7 +63,6 @@ namespace Amqp.Types
         const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
 #endif
         internal const long TicksPerMillisecond = 10000;
-
         static Serializer[] serializers;
         static Map codecByType;
         static byte[][] codecIndexTable;
@@ -695,6 +694,7 @@ namespace Amqp.Types
             }
             else
             {
+#if NETMF || NETFX_CORE
                 byte[] data = Encoding.UTF8.GetBytes(value);
                 if (smallEncoding && data.Length <= byte.MaxValue)
                 {
@@ -707,7 +707,26 @@ namespace Amqp.Types
                     AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
                     AmqpBitConverter.WriteUInt(buffer, (uint)data.Length);
                     AmqpBitConverter.WriteBytes(buffer, data, 0, data.Length);
+                }    
+#else
+                int byteCount = Encoding.UTF8.GetByteCount(value);
+
+                if (smallEncoding && byteCount <= byte.MaxValue)
+                {
+                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String8Utf8);
+                    AmqpBitConverter.WriteUByte(buffer, (byte)byteCount);
                 }
+                else
+                {
+                    AmqpBitConverter.WriteUByte(buffer, FormatCode.String32Utf8);
+                    AmqpBitConverter.WriteUInt(buffer, (uint)byteCount);
+                }
+
+                buffer.ValidateWrite(byteCount);
+                Encoding.UTF8.GetBytes(value, 0, value.Length, buffer.Buffer, buffer.WritePos);
+                buffer.Append(byteCount);
+#endif
+
             }
         }
 
@@ -1306,7 +1325,7 @@ namespace Amqp.Types
         {
             return ReadString(buffer, formatCode, FormatCode.String8Utf8, FormatCode.String32Utf8, "string");
         }
-
+                     
         /// <summary>
         /// Reads a symbol value from a buffer.
         /// </summary>
@@ -1484,8 +1503,13 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
 
-            buffer.Validate(false, count);
+            buffer.ValidateRead(count);
+
+#if NETMF || NETFX_CORE
             string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
+#else
+            string value = Encoding.UTF8.GetString(buffer.Buffer, buffer.Offset, count);
+#endif            
             buffer.Complete(count);
 
             return value;
