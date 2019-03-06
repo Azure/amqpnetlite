@@ -157,7 +157,7 @@ rem Delay to allow broker to start up
 PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
 
 :run-test
-IF /I "%build-sln%" EQU "amqp-dotnet.sln" GOTO :run-dotnet2-test
+IF /I "%build-sln%" EQU "amqp-dotnet.sln" GOTO :run-dotnet-test
 
 IF "%MSTestPath%" == "" (
   ECHO MSTest.exe does not exist or is not under PATH. Will not run tests.
@@ -195,18 +195,9 @@ IF ERRORLEVEL 1 (
   GOTO :exit
 )
 
-ECHO.
-ECHO Running DOTNET (.Net Core 1.0) tests...
-"%dotnetPath%" bin\Test.Amqp\bin\%build-config%\netcoreapp1.0\Test.Amqp.dll -- no-broker
-IF ERRORLEVEL 1 (
-  SET return-code=1
-  ECHO .Net Core Test failed!
-  GOTO :exit
-)
-
 IF "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" GOTO :done-test
 
-:run-dotnet2-test
+:run-dotnet-test
 ECHO Running DOTNET (.Net Core 2.0) tests...
 "%dotnetPath%" test -c %build-config% --no-build test\Test.Amqp\Test.Amqp.csproj -- no-broker
 IF ERRORLEVEL 1 (

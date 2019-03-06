@@ -33,7 +33,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="dotnet\Empty\" target="lib\netstandard1.3" />
+    <file src="dotnet\" target="lib\netstandard1.3" />
     
     <file src="bin\Release\Amqp.Net\Amqp.Net.dll" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.pdb" target="lib\net45" />
