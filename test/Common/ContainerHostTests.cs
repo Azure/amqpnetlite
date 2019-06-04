@@ -765,7 +765,7 @@ namespace Test.Amqp
         public void ContainerHostSaslUnknownTest()
         {
             Address a = new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme);
-            SaslProfile u = new SaslUnknownProfile("UNKNOWN");
+            SaslProfile u = new CustomSaslProfile("UNKNOWN");
             try
             {
                 var c = new Connection(a, u, null, null);
@@ -808,6 +808,22 @@ namespace Test.Amqp
             var listenerConnection = (ListenerConnection)link.Session.Connection;
             Assert.IsTrue(listenerConnection.Principal != null, "principal is null");
             Assert.IsTrue(listenerConnection.Principal.Identity.AuthenticationType == "PLAIN", "wrong auth type");
+        }
+
+        [TestMethod]
+        public void ContainerHostCustomSaslMechanismTest()
+        {
+            string name = "ContainerHostCustomSaslMechanismTest";
+            this.host.Listeners[0].SASL.EnableMechanism(name, SaslProfile.Anonymous);
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = new CustomSaslProfile(name);
+            var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).Result;
+            var session = new Session(connection);
+            var sender = new SenderLink(session, name, name);
+            sender.Send(new Message("msg1"), Timeout);
+            connection.Close();
         }
 
         [TestMethod]
@@ -925,7 +941,7 @@ namespace Test.Amqp
         }
 
         [TestMethod]
-        public void InvalidAddresses()
+        public void InvalidAddressesTest()
         {
             var connection = new Connection(Address);
             var session = new Session(connection);
@@ -1265,9 +1281,9 @@ namespace Test.Amqp
         }
     }
 
-    sealed class SaslUnknownProfile : SaslProfile
+    sealed class CustomSaslProfile : SaslProfile
     {
-        public SaslUnknownProfile(string name)
+        public CustomSaslProfile(string name)
             : base(name)
         {
         }
@@ -1279,7 +1295,11 @@ namespace Test.Amqp
 
         protected override DescribedList GetStartCommand(string hostname)
         {
-            return null;
+            return new SaslInit()
+            {
+                Mechanism = this.Mechanism,
+                InitialResponse = Encoding.UTF8.GetBytes($"{this.Mechanism}@contoso.com")
+            };
         }
 
         protected override DescribedList OnCommand(DescribedList command)

@@ -405,9 +405,42 @@ namespace Amqp.Listener
                 this.mechanisms[SaslProfile.PlainName] = new SaslPlainMechanism(userName, password);
             }
 
+            /// <summary>
+            /// Enables a custom mechanism.
+            /// </summary>
+            /// <typeparam name="T">The type of <paramref name="profile"/>.</typeparam>
+            /// <param name="mechanism">The mechanism.</param>
+            /// <param name="profile">The <see cref="SaslProfile"/> that handles the negotiation for this mechanism.</param>
+            public void EnableMechanism<T>(Symbol mechanism, T profile) where T : SaslProfile
+            {
+                this.mechanisms.Add(mechanism, new CustomSaslMechanism<T>(mechanism, profile));
+            }
+
             internal bool TryGetMechanism(Symbol name, out SaslMechanism mechanism)
             {
                 return this.mechanisms.TryGetValue(name, out mechanism);
+            }
+        }
+
+        class CustomSaslMechanism<T> : SaslMechanism where T : SaslProfile
+        {
+            readonly Symbol mechanism;
+            readonly T profile;
+
+            public CustomSaslMechanism(Symbol mechanism, T profile)
+            {
+                this.mechanism = mechanism;
+                this.profile = profile;
+            }
+
+            public override string Name
+            {
+                get { return this.mechanism; }
+            }
+
+            public override SaslProfile CreateProfile()
+            {
+                return this.profile;
             }
         }
 
