@@ -44,6 +44,8 @@ namespace Amqp
 
         public bool Settled;
 
+        public bool Batchable;
+
         public Link Link;
 
         public INode Previous { get; set; }

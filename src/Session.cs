@@ -667,7 +667,7 @@ namespace Amqp
                     transfer.State = delivery.State;
                     transfer.MessageFormat = 0;
                     transfer.Settled = delivery.Settled;
-                    transfer.Batchable = true;
+                    transfer.Batchable = delivery.Batchable;
                 }
 
                 int len = this.connection.SendCommand(this.channel, transfer, first,

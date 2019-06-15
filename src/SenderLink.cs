@@ -80,7 +80,7 @@ namespace Amqp
         /// <param name="message">The message to send.</param>
         public void Send(Message message)
         {
-            this.SendInternal(message, AmqpObject.DefaultTimeout);
+            this.SendSync(message, AmqpObject.DefaultTimeout);
         }
 
         /// <summary>
@@ -91,10 +91,10 @@ namespace Amqp
         /// <param name="timeout">The time to wait for the acknowledgement.</param>
         public void Send(Message message, TimeSpan timeout)
         {
-            this.SendInternal(message, (int)(timeout.Ticks / 10000));
+            this.SendSync(message, (int)(timeout.Ticks / 10000));
         }
 
-        void SendInternal(Message message, int waitMilliseconds)
+        void SendSync(Message message, int waitMilliseconds)
         {
             ManualResetEvent acked = new ManualResetEvent(false);
             Outcome outcome = null;
@@ -104,7 +104,7 @@ namespace Amqp
                 acked.Set();
             };
 
-            this.Send(message, callback, acked);
+            this.SendInternal(message, this.GetTxnState(), callback, acked, true);
 
             bool signaled = acked.WaitOne(waitMilliseconds);
             if (!signaled)
@@ -137,11 +137,8 @@ namespace Amqp
         /// <param name="state">The object that is passed back to the outcome callback.</param>
         public void Send(Message message, OutcomeCallback callback, object state)
         {
-            DeliveryState deliveryState = null;
-#if NETFX || NETFX40 || NETSTANDARD2_0
-            deliveryState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
-#endif
-            this.Send(message, deliveryState, callback, state);
+            DeliveryState deliveryState = this.GetTxnState();
+            this.SendInternal(message, deliveryState, callback, state, false);
         }
 
         /// <summary>
@@ -154,6 +151,20 @@ namespace Amqp
         /// <param name="callback">The callback to invoke when acknowledgement is received.</param>
         /// <param name="state">The object that is passed back to the outcome callback.</param>
         public void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
+        {
+            this.SendInternal(message, deliveryState, callback, state, false);
+        }
+
+        DeliveryState GetTxnState()
+        {
+#if NETFX || NETFX40 || NETSTANDARD2_0
+            return Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
+#else
+            return null;
+#endif
+        }
+
+        void SendInternal(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state, bool sync)
         {
             const int reservedBytes = 40;
 #if NETFX || NETFX40 || DOTNET
@@ -175,7 +186,8 @@ namespace Amqp
                 Link = this,
                 OnOutcome = callback,
                 UserToken = state,
-                Settled = this.settleMode == SenderSettleMode.Settled || callback == null
+                Settled = this.settleMode == SenderSettleMode.Settled || callback == null,
+                Batchable = !sync
             };
 
             lock (this.ThisLock)
