@@ -63,16 +63,34 @@ before_build:
     }
     Else
     {
-      
-      $vsixPath = "$($env:USERPROFILE)\nanoFramework.Tools.VS2017.Extension.vsix"
-      
-      (New-Object Net.WebClient).DownloadFile('https://marketplace.visualstudio.com/_apis/public/gallery/publishers/vs-publisher-1470366/vsextensions/nanoFrameworkVS2017Extension/0/vspackage', $vsixPath)
-      
-      "`"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VSIXInstaller.exe`" /q /a $vsixPath" | out-file ".\install-vsix.cmd" -Encoding ASCII
-
       'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
 
-      &.\install-vsix.cmd --quiet --no-verbose > $null
+      [System.Net.WebClient]$webClient = New-Object System.Net.WebClient
+      $webClient.UseDefaultCredentials = $true
+
+      # get extension information from MyGet VSIX feed
+      $vsixFeedXml = Join-Path  $($env:USERPROFILE) "vs-extension-feed.xml"
+      $webClient.DownloadFile("https://www.myget.org/F/nanoframework-dev/vsix", $vsixFeedXml)
+      [xml]$feedDetails = Get-Content $vsixFeedXml
+
+      # assuming this is building on VS2017 only
+      $extensionUrl = $feedDetails.feed.entry[0].content.src
+      $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2017.Extension.zip"
+
+      # download VS extension
+      Write-Debug "Download VSIX file from $extensionUrl to $vsixPath"
+      $webClient.DownloadFile($extensionUrl,$vsixPath)
+
+      $outputPath = "$($env:USERPROFILE)\nf-extension"
+
+      # unzip extension
+      Write-Debug "Unzip extension content"
+      Expand-Archive $vsixPath -DestinationPath $outputPath
+
+      # copy build files to msbuild location
+      Write-Debug "Copy build files to msbuild location"
+      $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild"
+      Copy-Item -Path "$($env:USERPROFILE)\nf-extension\`$MSBuild\nanoFramework" -Destination $msbuildPath -Recurse
 
       'OK' | Write-Host -ForegroundColor Green
 
