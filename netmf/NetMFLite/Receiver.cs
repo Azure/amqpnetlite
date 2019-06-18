@@ -20,8 +20,16 @@ namespace Amqp
     using System;
     using Amqp.Types;
 
+    /// <summary>
+    /// The delegate to be invoked when a message is received.
+    /// </summary>
+    /// <param name="receiver">The receiver.</param>
+    /// <param name="message">The received message.</param>
     public delegate void OnMessage(Receiver receiver, Message message);
 
+    /// <summary>
+    /// A receiver link.
+    /// </summary>
     public class Receiver : Link
     {
         Client client;
@@ -42,6 +50,11 @@ namespace Amqp
             this.lastDeliveryId = uint.MaxValue;
         }
 
+        /// <summary>
+        /// Starts the receiver link.
+        /// </summary>
+        /// <param name="credit">The link credit.</param>
+        /// <param name="onMessage">The message callback.</param>
         public void Start(uint credit, OnMessage onMessage)
         {
             Fx.AssertAndThrow(ErrorCode.ReceiverStartInvalidState, this.State < 0xff);
@@ -51,6 +64,10 @@ namespace Amqp
             this.client.SendFlow(this.Handle, this.deliveryCount, credit);
         }
 
+        /// <summary>
+        /// Accepts a received message.
+        /// </summary>
+        /// <param name="message">The received message.</param>
         public void Accept(Message message)
         {
             Fx.AssertAndThrow(ErrorCode.ReceiverAcceptInvalidState, this.State < 0xff);
@@ -73,6 +90,9 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Closes the receiver.
+        /// </summary>
         public void Close()
         {
             if (this.State < 0xff)

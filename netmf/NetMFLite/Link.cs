@@ -19,8 +19,14 @@ namespace Amqp
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// Defines an AMQP link.
+    /// </summary>
     public abstract class Link
     {
+        /// <summary>
+        /// The link name.
+        /// </summary>
         public string Name;
 
         internal bool Role;

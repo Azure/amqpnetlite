@@ -19,6 +19,9 @@ namespace Amqp
 {
     using Amqp.Types;
 
+    /// <summary>
+    /// Defines an AMQP message.
+    /// </summary>
     public class Message
     {
         // List of the fields defined in Properties
@@ -26,36 +29,54 @@ namespace Amqp
         // To access others, user can access the Properties list
         List properties;
 
+        /// <summary>
+        /// Gets or sets the message-id field.
+        /// </summary>
         public string MessageId
         {
             get { return (string)this.Properties[0]; }
             set { this.Properties[0] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the to field.
+        /// </summary>
         public string To
         {
             get { return (string)this.Properties[2]; }
             set { this.Properties[2] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the subject field.
+        /// </summary>
         public string Subject
         {
             get { return (string)this.Properties[3]; }
             set { this.Properties[3] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the correlation-id field.
+        /// </summary>
         public string CorrelationId
         {
             get { return (string)this.Properties[5]; }
             set { this.Properties[5] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the message-annotations section.
+        /// </summary>
         public Map MessageAnnotations
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets the properties.
+        /// </summary>
         public List Properties
         {
             get
@@ -69,12 +90,18 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Gets or sets the application-properties section.
+        /// </summary>
         public Map ApplicationProperties
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the body.
+        /// </summary>
         public object Body { get; set; }
 
         internal uint deliveryId;

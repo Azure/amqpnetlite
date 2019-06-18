@@ -20,6 +20,9 @@ namespace Amqp
     using System;
     using Amqp.Types;
 
+    /// <summary>
+    /// A sender link.
+    /// </summary>
     public class Sender : Link
     {
         const int defaultTimeout = 60000;
@@ -37,11 +40,20 @@ namespace Amqp
             this.client = client;
         }
 
+        /// <summary>
+        /// Sends a message.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public void Send(Message message)
         {
             this.Send(message, defaultTimeout);
         }
 
+        /// <summary>
+        /// Sends a message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="timeout">The timeout in seconds.</param>
         public void Send(Message message, int timeout)
         {
             Fx.AssertAndThrow(ErrorCode.SenderSendInvalidState, this.State < 0xff);
@@ -66,6 +78,9 @@ namespace Amqp
             }
         }
 
+        /// <summary>
+        /// Closes the sender.
+        /// </summary>
         public void Close()
         {
             this.client.CloseLink(this);
