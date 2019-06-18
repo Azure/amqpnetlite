@@ -1,6 +1,6 @@
 using System;
 using System.Threading;
-#if NETMF && !NANOFRAMEWORK_V1_0
+#if NETMF && !NANOFRAMEWORK_1_0
 using Microsoft.SPOT;
 #endif
 

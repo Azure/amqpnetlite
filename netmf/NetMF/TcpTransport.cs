@@ -19,7 +19,7 @@ namespace Amqp
 {
 #if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
     using Microsoft.SPOT.Net.Security;
-#elif (NANOFRAMEWORK_V1_0)
+#elif (NANOFRAMEWORK_1_0)
     using System.Net.Security;
 #endif
     using System;
@@ -77,14 +77,14 @@ namespace Amqp
                     null,
                     noVerification ? SslVerification.NoVerification : SslVerification.VerifyPeer,
                     SslProtocols.Default);
-#elif (NANOFRAMEWORK_V1_0)
+#elif (NANOFRAMEWORK_1_0)
 
                 sslSocket.SslVerification = noVerification ? SslVerification.NoVerification : SslVerification.VerifyPeer;
 
                 sslSocket.AuthenticateAsClient(
                     address.Host,
                     null,
-                    SslProtocols.TLSv11);
+                    SslProtocols.Tls11);
 #endif
 
                 this.socketTransport = sslSocket;
