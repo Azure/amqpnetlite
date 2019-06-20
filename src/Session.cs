@@ -382,11 +382,7 @@ namespace Amqp
 
         internal virtual void OnAttach(Attach attach)
         {
-            if (attach.Handle > this.handleMax)
-            {
-                throw new AmqpException(ErrorCode.NotAllowed,
-                    Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
-            }
+            this.ValidateHandle(attach.Handle);
 
             Link link = null;
             lock (this.ThisLock)
@@ -419,7 +415,12 @@ namespace Amqp
                 int count = this.remoteLinks.Length;
                 if (count - 1 < remoteHandle)
                 {
-                    int size = (int)Math.Min(count * 2 - 1, this.handleMax) + 1;
+                    int size = count * 2;
+                    while (size - 1 < remoteHandle)
+                    {
+                        size *= 2;
+                    }
+
                     Link[] expanded = new Link[size];
                     Array.Copy(this.remoteLinks, expanded, count);
                     this.remoteLinks = expanded;
@@ -445,6 +446,15 @@ namespace Amqp
                 HandleMax = (uint)(connection.MaxLinksPerSession - 1),
                 NextOutgoingId = uint.MaxValue - 2u
             };
+        }
+
+        internal void ValidateHandle(uint handle)
+        {
+            if (handle > this.handleMax)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed,
+                    Fx.Format(SRAmqp.AmqpHandleExceeded, this.handleMax + 1));
+            }
         }
 
         internal Delivery RemoveDeliveries(Link link)

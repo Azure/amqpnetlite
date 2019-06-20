@@ -100,6 +100,59 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void RemoteSessionChannelTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
+            {
+                // send a large channel number to test if client can grow the table correctly
+                TestListener.FRM(stream, 0x11UL, 0, (ushort)(channel + 100), channel, 0u, 100u, 100u, 8u);
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ConnectionChannelTest";
+
+            Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 2048 };
+            Connection connection = new Connection(this.address, null, open, null);
+            for (int i = 0; i < 10; i++)
+            {
+                Session session = new Session(connection);
+            }
+
+            connection.Close();
+            Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
+        }
+
+        [TestMethod]
+        public void RemoteLinkHandleTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, 100u, 100u, 8000u);
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Attach, (stream, channel, fields) =>
+            {
+                uint handle = (uint)fields[1];
+                fields[1] = handle + 100u;
+                return TestOutcome.Continue;
+            });
+
+            string testName = "RemoteLinkHandleTest";
+
+            Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 2048 };
+            Connection connection = new Connection(this.address, null, open, null);
+            Session session = new Session(connection);
+            for (int i = 0; i < 10; i++)
+            {
+                SenderLink sender = new SenderLink(session, "sender-" + i, "any");
+            }
+
+            connection.Close();
+            Assert.IsTrue(connection.Error == null, "connection has error!" + connection.Error);
+        }
+
+        [TestMethod]
         public void ConnectionRemoteIdleTimeoutTest()
         {
             ManualResetEvent received = new ManualResetEvent(false);

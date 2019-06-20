@@ -33,6 +33,8 @@ namespace Amqp.Listener
 
         internal override void OnAttach(Attach attach)
         {
+            this.ValidateHandle(attach.Handle);
+
             var connection = (ListenerConnection)this.Connection;
             Link link = connection.Listener.Container.CreateLink(connection, this, attach);
             this.AddRemoteLink(attach.Handle, link);

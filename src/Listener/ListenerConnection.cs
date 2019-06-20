@@ -59,6 +59,8 @@ namespace Amqp.Listener
 
         internal override void OnBegin(ushort remoteChannel, Begin begin)
         {
+            this.ValidateChannel(remoteChannel);
+
             // this sends a begin to the remote peer
             Begin local = new Begin()
             {
@@ -68,11 +70,6 @@ namespace Amqp.Listener
                 NextOutgoingId = 0,
                 HandleMax = (uint)(this.listener.AMQP.MaxLinksPerSession - 1)
             };
-
-            if (begin.HandleMax < local.HandleMax)
-            {
-                local.HandleMax = begin.HandleMax;
-            }
 
             var session = new ListenerSession(this, local);
 

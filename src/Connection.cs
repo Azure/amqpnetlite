@@ -488,21 +488,22 @@ namespace Amqp
 
         internal virtual void OnBegin(ushort remoteChannel, Begin begin)
         {
+            this.ValidateChannel(remoteChannel);
+
             lock (this.ThisLock)
             {
-                if (remoteChannel > this.channelMax)
-                {
-                    throw new AmqpException(ErrorCode.NotAllowed,
-                        Fx.Format(SRAmqp.AmqpHandleExceeded, this.channelMax + 1));
-                }
-
                 Session session = this.GetSession(this.localSessions, begin.RemoteChannel);
                 session.OnBegin(remoteChannel, begin);
 
                 int count = this.remoteSessions.Length;
                 if (count - 1 < remoteChannel)
                 {
-                    int size = Math.Min(count * 2, this.channelMax + 1);
+                    int size = count * 2;
+                    while (size - 1 < remoteChannel)
+                    {
+                        size *= 2;
+                    }
+
                     Session[] expanded = new Session[size];
                     Array.Copy(this.remoteSessions, expanded, count);
                     this.remoteSessions = expanded;
@@ -516,6 +517,15 @@ namespace Amqp
                 }
 
                 this.remoteSessions[remoteChannel] = session;
+            }
+        }
+
+        internal void ValidateChannel(ushort channel)
+        {
+            if (channel > this.channelMax)
+            {
+                throw new AmqpException(ErrorCode.NotAllowed,
+                    Fx.Format(SRAmqp.AmqpHandleExceeded, this.channelMax + 1));
             }
         }
 
