@@ -39,6 +39,7 @@ namespace Amqp
     {
         readonly Session session;
         readonly string name;
+        private readonly bool role;
         readonly uint handle;
         readonly OnAttached onAttached;
         LinkState state;
@@ -49,8 +50,9 @@ namespace Amqp
         /// </summary>
         /// <param name="session">The session.</param>
         /// <param name="name">The link name.</param>
+        /// <param name="role">Role. Receiver (true) or Sender (false)</param>
         /// <param name="onAttached">The callback to handle received attach.</param>
-        protected Link(Session session, string name, OnAttached onAttached)
+        protected Link(Session session, string name, bool role, OnAttached onAttached)
         {
             if (session == null)
             {
@@ -64,6 +66,7 @@ namespace Amqp
 
             this.session = session;
             this.name = name;
+            this.role = role;
             this.onAttached = onAttached;
             this.handle = session.AddLink(this);
             this.state = LinkState.Start;
@@ -83,6 +86,14 @@ namespace Amqp
         public uint Handle
         {
             get { return this.handle; }
+        }
+
+        /// <summary>
+        /// Gets the role flag.
+        /// </summary>
+        public bool Role
+        {
+            get { return this.role; }
         }
 
         /// <summary>

@@ -66,7 +66,7 @@ namespace Amqp
         /// <param name="attach">The attach frame to send for this link.</param>
         /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
         public SenderLink(Session session, string name, Attach attach, OnAttached onAttached)
-            : base(session, name, onAttached)
+            : base(session, name, false, onAttached)
         {
             this.settleMode = attach.SndSettleMode;
             this.outgoingList = new LinkedList();

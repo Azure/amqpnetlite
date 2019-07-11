@@ -15,6 +15,8 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
+using Amqp.Types;
+
 namespace Amqp
 {
     /// <summary>
@@ -71,6 +73,15 @@ namespace Amqp
         /// Gets or sets the open.idle-time-out field.
         /// </summary>
         public int IdleTimeout
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the offered capabilities of this connection
+        /// </summary>
+        public Symbol[] OfferedCapabilities
         {
             get;
             set;

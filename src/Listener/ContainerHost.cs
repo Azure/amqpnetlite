@@ -15,6 +15,9 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
+using System.Threading;
+using Amqp.Types;
+
 namespace Amqp.Listener
 {
     using System;
@@ -82,6 +85,8 @@ namespace Amqp.Listener
         readonly Dictionary<string, RequestProcessor> requestProcessors;
         readonly Dictionary<string, MessageSource> messageSources;
         ILinkProcessor linkProcessor;
+        readonly Dictionary<string, PairedLinkProcessor> pairedLinkProcessors;
+        private static readonly Symbol PairedKey = new Symbol("paired");
 
         /// <summary>
         /// Initializes a container host object with multiple address.
@@ -99,12 +104,14 @@ namespace Amqp.Listener
             this.onLinkClosed = this.OnLinkClosed;
             this.messageProcessors = new Dictionary<string, MessageProcessor>(StringComparer.OrdinalIgnoreCase);
             this.requestProcessors = new Dictionary<string, RequestProcessor>(StringComparer.OrdinalIgnoreCase);
+            this.pairedLinkProcessors = new Dictionary<string, PairedLinkProcessor>(StringComparer.OrdinalIgnoreCase);
             this.messageSources = new Dictionary<string, MessageSource>(StringComparer.OrdinalIgnoreCase);
             this.listeners = new ConnectionListener[addressList.Count];
             for (int i = 0; i < addressList.Count; i++)
             {
                 this.listeners[i] = new ConnectionListener(addressList[i], this);
                 this.listeners[i].AMQP.ContainerId = this.containerId;
+                this.listeners[i].AMQP.OfferedCapabilities = new Symbol[] { "LINK_PAIR_V1_0" };
             }
         }
 
@@ -188,7 +195,8 @@ namespace Amqp.Listener
         {
             if (this.linkProcessor != null)
             {
-                throw new AmqpException(ErrorCode.NotAllowed, this.linkProcessor.GetType().Name + " already registered");
+                throw new AmqpException(ErrorCode.NotAllowed,
+                    this.linkProcessor.GetType().Name + " already registered");
             }
 
             this.linkProcessor = linkProcessor;
@@ -222,18 +230,44 @@ namespace Amqp.Listener
         /// Registers a request processor from the specified address.
         /// </summary>
         /// <param name="address">The address.</param>
-        /// <param name="requestProcessor">The request processor to be registered.</param>
+        /// <param name="listenerPairedLinkProcessor">The request processor to be registered.</param>
         /// <remarks>
         /// Client must create a pair of links (sending and receiving) at the address. The
         /// source.address on the sending link should contain an unique address in the client
         /// and it should be specified in target.address on the receiving link.
         /// </remarks>
-        public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor)
+        public void RegisterPairedLinkProcessor(string address, IListenerPairedLinkProcessor listenerPairedLinkProcessor)
         {
             ThrowIfExists(address, this.messageProcessors);
             ThrowIfExists(address, this.messageSources);
-            AddProcessor(this.requestProcessors, address, new RequestProcessor(requestProcessor));
+            ThrowIfExists(address, this.requestProcessors);
+            AddProcessor(this.pairedLinkProcessors, address, new PairedLinkProcessor(listenerPairedLinkProcessor));
         }
+
+        /// <summary>
+        /// Registers a request processor from the specified address.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        /// <param name="requestProcessor">The request processor to be registered.</param>
+        /// <param name="enablePairedLinks"></param>
+        /// <remarks>
+        /// Client must create a pair of links (sending and receiving) at the address. The
+        /// source.address on the sending link should contain an unique address in the client
+        /// and it should be specified in target.address on the receiving link.
+        /// </remarks>
+        public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor, bool enablePairedLinks)
+        {
+            ThrowIfExists(address, this.messageProcessors);
+            ThrowIfExists(address, this.messageSources);
+            if (enablePairedLinks)
+            {
+                AddProcessor(this.pairedLinkProcessors, address,
+                    new PairedLinkRequestProcessor(requestProcessor));
+            }
+            AddProcessor(this.requestProcessors, address,
+                new RequestProcessor(requestProcessor));
+        }
+
 
         /// <summary>
         /// Unregisters a message processor at the specified address.
@@ -251,6 +285,15 @@ namespace Amqp.Listener
         public void UnregisterMessageSource(string address)
         {
             RemoveProcessor(this.messageSources, address);
+        }
+
+        /// <summary>
+        /// Unregisters a request processor at the specified address.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        public void UnregisterPairedLinkProcessor(string address)
+        {
+            RemoveProcessor(this.pairedLinkProcessors, address);
         }
 
         /// <summary>
@@ -293,7 +336,8 @@ namespace Amqp.Listener
         {
             if (processors.ContainsKey(address))
             {
-                throw new AmqpException(ErrorCode.NotAllowed, typeof(T).Name + " processor has been registered at address " + address);
+                throw new AmqpException(ErrorCode.NotAllowed,
+                    typeof(T).Name + " processor has been registered at address " + address);
             }
         }
 
@@ -357,13 +401,27 @@ namespace Amqp.Listener
             var listenerLink = (ListenerLink)link;
             if (!this.linkCollection.TryAdd(listenerLink))
             {
-                throw new AmqpException(ErrorCode.Stolen, string.Format("Link '{0}' has been attached already.", attach.LinkName));
+                throw new AmqpException(ErrorCode.Stolen,
+                    string.Format("Link '{0}' has been attached already.", attach.LinkName));
             }
 
             string address = attach.Role ? ((Source)attach.Source).Address : ((Target)attach.Target).Address;
             if (string.IsNullOrWhiteSpace(address))
             {
                 throw new AmqpException(ErrorCode.InvalidField, "The address field cannot be empty");
+            }
+
+            if (attach.Properties != null && 
+                attach.Properties.ContainsKey(PairedKey) &&
+                (bool)attach.Properties[PairedKey] == true)
+            {
+                PairedLinkProcessor pairedLinkProcessor;
+                if (TryGetProcessor(this.pairedLinkProcessors, address, out pairedLinkProcessor))
+                {
+                    pairedLinkProcessor.AddLink(listenerLink, address, attach);
+                    return true;
+                }
+                throw new AmqpException(ErrorCode.ErrantLink, "Paired links not supported at this address");
             }
 
             if (listenerLink.Role)
@@ -384,6 +442,8 @@ namespace Amqp.Listener
                     return true;
                 }
             }
+
+
 
             RequestProcessor requestProcessor;
             if (TryGetProcessor(this.requestProcessors, address, out requestProcessor))
@@ -488,7 +548,7 @@ namespace Amqp.Listener
                 this.Add(link, endpoint);
             }
         }
-        
+
         class RequestProcessor : IDisposable
         {
             static readonly Action<ListenerLink, Message, DeliveryState, object> dispatchRequest = DispatchRequest;
@@ -569,7 +629,8 @@ namespace Amqp.Listener
                     {
                         Error = new Error(ErrorCode.NotFound)
                         {
-                            Description = "Not response link was found. Ensure the link is attached or reply-to is set on the request."
+                            Description =
+                                "Not response link was found. Ensure the link is attached or reply-to is set on the request."
                         }
                     };
                 }
@@ -608,5 +669,177 @@ namespace Amqp.Listener
                 }
             }
         }
+
+        class PairedLinkProcessor : IDisposable
+        {
+            private IListenerPairedLinkProcessor processor;
+            readonly Dictionary<string, ListenerPairedLinkAttachContext> pairedLinks;
+
+            protected PairedLinkProcessor()
+            {
+                this.pairedLinks = new Dictionary<string, ListenerPairedLinkAttachContext>(StringComparer.OrdinalIgnoreCase);
+            }
+
+            public PairedLinkProcessor(IListenerPairedLinkProcessor processor) : this()
+            {
+                this.processor = processor;
+            }
+
+            public IListenerPairedLinkProcessor Processor
+            {
+                get { return this.processor; }
+                protected set => this.processor = value;
+            }
+
+
+            public void AddLink(ListenerLink link, string address, Attach attach)
+            {
+                ListenerPairedLinkAttachContext listenerPairedLinkAttachContext;
+                bool found;
+
+                found = pairedLinks.TryGetValue(attach.LinkName, out listenerPairedLinkAttachContext);
+                if (!found)
+                {
+                    listenerPairedLinkAttachContext = new ListenerPairedLinkAttachContext(attach.LinkName);
+                    pairedLinks.Add(attach.LinkName, listenerPairedLinkAttachContext);
+                }
+
+                if (!link.Role) // sender
+                {
+                    if (listenerPairedLinkAttachContext.Sender != null)
+                    {
+                        // error, since the second link is also a sender. Tear both links down.
+                        pairedLinks.Remove(attach.LinkName);
+                        listenerPairedLinkAttachContext.Sender.Abort(new Error(ErrorCode.ErrantLink), String.Empty);
+                        throw new AmqpException(new Error(ErrorCode.ErrantLink));
+                    }
+                    listenerPairedLinkAttachContext.Sender = link;
+                    listenerPairedLinkAttachContext.SenderAttach = attach;
+                    link.SettleOnSend = true;
+                    link.SafeAddClosed((s, e) => OnLinkClosed(s, e));
+
+                }
+                else
+                {
+                    if (listenerPairedLinkAttachContext.Receiver != null)
+                    {
+                        // error, since the second link is also a sender. Tear both links down.
+                        pairedLinks.Remove(attach.LinkName);
+                        listenerPairedLinkAttachContext.Receiver.Abort(new Error(ErrorCode.ErrantLink), String.Empty);
+                        throw new AmqpException(new Error(ErrorCode.ErrantLink));
+                    }
+                    listenerPairedLinkAttachContext.Receiver = link;
+                    listenerPairedLinkAttachContext.ReceiverAttach = attach;
+                    link.SafeAddClosed((s, e) => OnLinkClosed(s, e));
+                }
+
+                if (listenerPairedLinkAttachContext.Sender != null && listenerPairedLinkAttachContext.Receiver != null)
+                {
+                    this.Processor.Process(listenerPairedLinkAttachContext);
+                }
+            }
+
+            static void OnLinkClosed(IAmqpObject sender, Error error)
+            {
+                ListenerLink link = (ListenerLink)sender;
+                PairedLinkProcessor that = link.State as PairedLinkProcessor;
+                if (that != null)
+                {
+                    RemoveProcessor(that.pairedLinks, link.Name);
+                    lock (that.pairedLinks)
+                    {
+                        if (that.pairedLinks.TryGetValue(link.Name, out var pairedLink))
+                        {
+                            if (pairedLink.Receiver == link)
+                            {
+                                pairedLink.Receiver = null;
+                            }
+
+                            if (pairedLink.Sender == link)
+                            {
+                                pairedLink.Sender = null;
+                            }
+
+                            if (pairedLink.Sender == null && pairedLink.Receiver == null)
+                            {
+                                that.pairedLinks.Remove(link.Name);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+            void IDisposable.Dispose()
+            {
+                lock (this.pairedLinks)
+                {
+                    foreach (var link in pairedLinks.Values)
+                    {
+                        link.Dispose();
+                    }
+                }
+            }
+        }
+
+        class PairedLinkRequestProcessor : PairedLinkProcessor, IListenerPairedLinkProcessor
+        {
+            class ReceiverState
+            {
+                public ListenerPairedLink ListenerPairedLink { get; set; }
+                public PairedLinkRequestProcessor PairedLinkRequestProcessor { get; set; }
+            }
+
+            static readonly Action<ListenerLink, Message, DeliveryState, object> dispatchRequest = DispatchRequest;
+
+            public IRequestProcessor RequestProcessor { get; }
+
+            public PairedLinkRequestProcessor(IRequestProcessor requestProcessor) : base()
+            {
+                RequestProcessor = requestProcessor;
+                this.Processor = this;
+            }
+
+            public void Process(ListenerPairedLinkAttachContext listenerPairedLinkAttachContext)
+            {
+                listenerPairedLinkAttachContext.Sender.SettleOnSend = true;
+                var receiverState = new ReceiverState { ListenerPairedLink = listenerPairedLinkAttachContext, PairedLinkRequestProcessor = this };
+                listenerPairedLinkAttachContext.Sender.InitializeSender((c, p, s) => { }, null, receiverState);
+                listenerPairedLinkAttachContext.Receiver.InitializeReceiver(0, dispatchRequest, receiverState);
+                listenerPairedLinkAttachContext.Receiver.SetCredit(this.RequestProcessor.Credit, false);
+            }
+
+            static void DispatchRequest(ListenerLink link, Message message, DeliveryState deliveryState, object state)
+            {
+                ReceiverState receiverState = (ReceiverState)state;
+
+                ListenerLink responseLink = receiverState.ListenerPairedLink.Sender;
+
+                Outcome outcome;
+                if (responseLink == null)
+                {
+                    outcome = new Rejected()
+                    {
+                        Error = new Error(ErrorCode.NotFound)
+                        {
+                            Description =
+                                "Not response link was found. Ensure the link is attached or reply-to is set on the request."
+                        }
+                    };
+                }
+                else
+                {
+                    outcome = new Accepted();
+                }
+
+                receiverState.ListenerPairedLink.Receiver.DisposeMessage(message, outcome, true);
+
+                RequestContext context = new RequestContext(receiverState.ListenerPairedLink.Receiver, responseLink, message);
+                receiverState.PairedLinkRequestProcessor.RequestProcessor.Process(context);
+            }
+        }
     }
+
+
 }

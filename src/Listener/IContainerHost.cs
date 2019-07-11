@@ -59,12 +59,13 @@ namespace Amqp.Listener
         /// </summary>
         /// <param name="address">The address.</param>
         /// <param name="requestProcessor">The request processor to be registered.</param>
+        /// <param name="enablePairedLinks"></param>
         /// <remarks>
         /// Client must create a pair of links (sending and receiving) at the address. The
         /// source.address on the sending link should contain an unique address in the client
         /// and it should be specified in target.address on the receiving link.
         /// </remarks>
-        void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor);
+        void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor, bool enablePairedLinks);
 
         /// <summary>
         /// Unregisters a message processor at the specified address.

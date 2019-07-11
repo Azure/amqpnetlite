@@ -186,7 +186,7 @@ namespace Test.Amqp
         {
             string name = "ContainerHostRequestProcessorTest";
             var processor = new TestRequestProcessor();
-            this.host.RegisterRequestProcessor(name, processor);
+            this.host.RegisterRequestProcessor(name, processor, false);
 
             int count = 500;
             var connection = new Connection(Address);
@@ -414,7 +414,7 @@ namespace Test.Amqp
         {
             string name = "ContainerHostUnknownProcessorTest";
             this.host.RegisterMessageProcessor("message" + name, new TestMessageProcessor());
-            this.host.RegisterRequestProcessor("request" + name, new TestRequestProcessor());
+            this.host.RegisterRequestProcessor("request" + name, new TestRequestProcessor(), false);
 
             var connection = new Connection(Address);
             var session = new Session(connection);
