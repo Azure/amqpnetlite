@@ -189,7 +189,7 @@ namespace Amqp.Listener
             }
             else
             {
-                if (this.Role)
+                if (this.Role && this.credit > 0)
                 {
                     this.SendFlow(this.deliveryCount, this.credit, false);
                 }
