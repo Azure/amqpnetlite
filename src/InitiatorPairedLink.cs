@@ -16,6 +16,7 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
+using System.Threading.Tasks;
 using Amqp.Framing;
 using Amqp.Types;
 
@@ -83,9 +84,29 @@ namespace Amqp
         /// 
         /// </summary>
         /// <param name="credit"></param>
-        public void Start(int credit)
+        /// <param name="onMessage"></param>
+        public void Start(int credit, MessageCallback onMessage = null)
+
         {
-            this.Receiver.Start(credit);
+            this.Receiver.Start(credit, onMessage);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Close()
+        {
+            this.Receiver.Close();
+            this.Sender.Close();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Task CloseAsync()
+        {
+            return Task.WhenAll(this.Receiver.CloseAsync(), this.Sender.CloseAsync());
         }
     }
 }
