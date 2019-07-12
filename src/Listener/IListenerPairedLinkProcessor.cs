@@ -19,14 +19,14 @@
 namespace Amqp.Listener
 {
     /// <summary>
-    /// 
+    /// Interface to implement a processor that receives newly accepted paired links
     /// </summary>
     public interface IListenerPairedLinkProcessor
     {
         /// <summary>
-        /// Processes a received request.
+        /// Processes a received paired link.
         /// </summary>
-        /// <param name="listenerPairedLinkAttachContext">Context of the received request.</param>
+        /// <param name="listenerPairedLinkAttachContext">Context of the received paired link.</param>
         void Process(ListenerPairedLinkAttachContext listenerPairedLinkAttachContext);
     }
 }

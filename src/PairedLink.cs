@@ -18,32 +18,32 @@
 namespace Amqp
 {
     /// <summary>
-    /// 
+    /// Client side paired link holder
     /// </summary>
-    public class PairedLink
+    public abstract class PairedLink
     {
         /// <summary>
-        /// 
+        /// AMQP Session
         /// </summary>
         public Session Session { get; }
         /// <summary>
-        /// 
+        /// Name of the links
         /// </summary>
         public string LinkName { get; }
         /// <summary>
-        /// 
+        /// Receiving link
         /// </summary>
         public ReceiverLink Receiver { get; protected set; }
         /// <summary>
-        /// 
+        /// Sending link
         /// </summary>
         public SenderLink Sender { get; protected set; }
 
         /// <summary>
-        /// 
+        /// Creates a new paired link
         /// </summary>
-        /// <param name="session"></param>
-        /// <param name="linkName"></param>
+        /// <param name="session">Session</param>
+        /// <param name="linkName">Link name</param>
         public PairedLink(Session session, string linkName)
         {
             Session = session;
