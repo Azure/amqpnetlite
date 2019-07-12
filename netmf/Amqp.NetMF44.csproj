@@ -231,6 +231,7 @@
     <Compile Include="..\src\Types\Symbol.cs">
       <Link>Types\Symbol.cs</Link>
     </Compile>
+    <Compile Include="InitiatorPairedLink.cs" />
     <Compile Include="NetMF\Fx.cs" />
     <Compile Include="NetMF\List.cs" />
     <Compile Include="NetMF\Map.cs" />
@@ -240,6 +241,7 @@
     </Compile>
     <Compile Include="NetMF\TcpTransport.cs" />
     <Compile Include="NetMF\TimeoutException.cs" />
+    <Compile Include="PairedLink.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">
