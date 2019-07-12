@@ -53,6 +53,13 @@
     <Compile Include="..\src\CreditMode.cs">
       <Link>CreditMode.cs</Link>
     </Compile>
+    <Compile Include="..\src\PairedLink.cs">
+      <Link>PairedLink.cs</Link>
+    </Compile>
+    <Compile Include="..\src\InitiatorPairedLink.cs">
+      <Link>InitiatorPairedLink.cs</Link>
+    </Compile>
+    
     <Compile Include="..\src\IAmqpObject.cs" />
     <Compile Include="..\src\Net35\TcpTransport.cs">
       <Link>Internal\TcpTransport.cs</Link>

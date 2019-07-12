@@ -255,7 +255,7 @@ namespace Amqp.Listener
         /// source.address on the sending link should contain an unique address in the client
         /// and it should be specified in target.address on the receiving link.
         /// </remarks>
-        public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor, bool enablePairedLinks)
+        public void RegisterRequestProcessor(string address, IRequestProcessor requestProcessor, bool enablePairedLinks = false)
         {
             ThrowIfExists(address, this.messageProcessors);
             ThrowIfExists(address, this.messageSources);
@@ -688,7 +688,7 @@ namespace Amqp.Listener
             public IListenerPairedLinkProcessor Processor
             {
                 get { return this.processor; }
-                protected set => this.processor = value;
+                protected set { this.processor = value; }
             }
 
 
@@ -748,7 +748,8 @@ namespace Amqp.Listener
                     RemoveProcessor(that.pairedLinks, link.Name);
                     lock (that.pairedLinks)
                     {
-                        if (that.pairedLinks.TryGetValue(link.Name, out var pairedLink))
+                        ListenerPairedLinkAttachContext pairedLink;
+                        if (that.pairedLinks.TryGetValue(link.Name, out pairedLink))
                         {
                             if (pairedLink.Receiver == link)
                             {

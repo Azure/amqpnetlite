@@ -16,7 +16,6 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
-using System.Threading.Tasks;
 using Amqp.Framing;
 using Amqp.Types;
 
@@ -97,15 +96,6 @@ namespace Amqp
         {
             this.Receiver.Close();
             this.Sender.Close();
-        }
-
-        /// <summary>
-        /// Closes both paired links asynchronously
-        /// </summary>
-        /// <returns>Task</returns>
-        public Task CloseAsync()
-        {
-            return Task.WhenAll(this.Receiver.CloseAsync(), this.Sender.CloseAsync());
         }
     }
 }

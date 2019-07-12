@@ -2,7 +2,7 @@
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{35F64888-3446-444D-8E44-128378434AB3}</ProjectGuid>
@@ -13,9 +13,8 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Profile32</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DocumentationFile>..\bin\$(Configuration)\$(MSBuildProjectName)\$(AssemblyName).XML</DocumentationFile>
   </PropertyGroup>
@@ -43,8 +42,8 @@
     <AssemblyOriginatorKeyFile>..\src\amqp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <None Include="project.json" />
+    <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
+    <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\src\SRAmqp.resx">
@@ -61,6 +60,12 @@
     <Compile Include="..\src\Connection.cs" />
     <Compile Include="..\src\CreditMode.cs">
       <Link>CreditMode.cs</Link>
+    </Compile>
+    <Compile Include="..\src\PairedLink.cs">
+      <Link>PairedLink.cs</Link>
+    </Compile>
+    <Compile Include="..\src\InitiatorPairedLink.cs">
+      <Link>InitiatorPairedLink.cs</Link>
     </Compile>
     <Compile Include="..\src\Delivery.cs">
       <Link>Internal\Delivery.cs</Link>
