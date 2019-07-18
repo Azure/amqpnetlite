@@ -241,7 +241,7 @@ namespace Amqp
         public void Accept(Message message)
         {
             this.ThrowIfDetaching("Accept");
-            this.DisposeMessage(message, new Accepted());
+            this.DisposeMessage(message, new Accepted(), null);
         }
 
         /// <summary>
@@ -251,7 +251,7 @@ namespace Amqp
         public void Release(Message message)
         {
             this.ThrowIfDetaching("Release");
-            this.DisposeMessage(message, new Released());
+            this.DisposeMessage(message, new Released(), null);
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace Amqp
         public void Reject(Message message, Error error = null)
         {
             this.ThrowIfDetaching("Reject");
-            this.DisposeMessage(message, new Rejected() { Error = error });
+            this.DisposeMessage(message, new Rejected() { Error = error }, null);
         }
 
         /// <summary>
@@ -280,7 +280,23 @@ namespace Amqp
                     DeliveryFailed = deliveryFailed,
                     UndeliverableHere = undeliverableHere,
                     MessageAnnotations = messageAnnotations
-                });
+                },
+                null);
+        }
+
+        /// <summary>
+        /// Completes a received message. It settles the delivery and sends
+        /// a disposition with the delivery state to the remote peer.
+        /// </summary>
+        /// <param name="message">The message to complete.</param>
+        /// <param name="deliveryState">An <see cref="Outcome"/> or a TransactionalState.</param>
+        /// <remarks>This method is not transaction aware. It should be used to bypass
+        /// transaction context look up when transactions are not used at all, or
+        /// to manage AMQP transactions directly by providing a TransactionalState to
+        /// <paramref name="deliveryState"/>.</remarks>
+        public void Complete(Message message, DeliveryState deliveryState)
+        {
+            this.DisposeMessage(message, null, deliveryState);
         }
 
         internal override void OnFlow(Flow flow)
@@ -451,8 +467,9 @@ namespace Amqp
 
             return message;
         }
-        
-        void DisposeMessage(Message message, Outcome outcome)
+
+        // deliveryState overwrites outcome
+        void DisposeMessage(Message message, Outcome outcome, DeliveryState deliveryState)
         {
             Delivery delivery = message.Delivery;
             if (delivery == null || delivery.Link != this)
@@ -462,15 +479,18 @@ namespace Amqp
 
             if (!delivery.Settled)
             {
-                DeliveryState state = outcome;
+                DeliveryState state = outcome != null ? outcome : deliveryState;
                 bool settled = true;
 #if NETFX || NETFX40 || NETSTANDARD2_0
-                var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
-                if (txnState != null)
+                if (outcome != null)
                 {
-                    txnState.Outcome = outcome;
-                    state = txnState;
-                    settled = false;
+                    var txnState = Amqp.Transactions.ResourceManager.GetTransactionalStateAsync(this).Result;
+                    if (txnState != null)
+                    {
+                        txnState.Outcome = outcome;
+                        state = txnState;
+                        settled = false;
+                    }
                 }
 #endif
                 this.Session.DisposeDelivery(true, delivery, state, settled);
