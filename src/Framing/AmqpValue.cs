@@ -89,7 +89,7 @@ namespace Amqp.Framing
             }
             else
             {
-                this.WriteValue(buffer, this.value);
+                this.WriteValue(buffer, this.Value);
             }
         }
 

@@ -1075,6 +1075,26 @@ namespace Test.Amqp
         }
 #endif
 
+        [TestMethod]
+        public void EncodeDecodeMessageWithAmqpValueTest()
+        {
+            string name = "EncodeDecodeMessageWithAmqpValueTest";
+            Queue<Message> messages = new Queue<Message>();
+            messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name } });
+
+            var source = new TestMessageSource(messages);
+            this.host.RegisterMessageSource(name, source);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "receiver0", name);
+
+            Message message = receiver.Receive();
+            Message copy = Message.Decode(message.Encode());
+
+            Assert.AreEqual((message.BodySection as AmqpValue).Value, (copy.BodySection as AmqpValue).Value);
+        }
+
         public static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
         {
             X509Store store = new X509Store(storeName, storeLocation);
