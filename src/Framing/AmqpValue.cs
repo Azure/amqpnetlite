@@ -83,9 +83,13 @@ namespace Amqp.Framing
         internal override void EncodeValue(ByteBuffer buffer)
         {
             var byteBuffer = this.value as ByteBuffer;
-            if (byteBuffer != null)
+            if (this.value is ByteBuffer)
             {
                 Encoder.WriteBinaryBuffer(buffer, byteBuffer);
+            }
+            else if (this.valueBuffer != null && !this.valueDecoded)
+            {
+                AmqpBitConverter.WriteBytes(buffer, this.valueBuffer.Buffer, this.valueBuffer.Offset, this.valueBuffer.Length);
             }
             else
             {
