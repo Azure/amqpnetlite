@@ -82,7 +82,8 @@ namespace Amqp.Framing
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            if (this.value is ByteBuffer byteBuffer)
+            var byteBuffer = this.value as ByteBuffer;
+            if (this.value is ByteBuffer)
             {
                 Encoder.WriteBinaryBuffer(buffer, byteBuffer);
             }
