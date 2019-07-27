@@ -19,49 +19,76 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Dispose : DescribedList
+    /// <summary>
+    /// The Dispose class defines a disposition frame to inform remote peer of delivery state changes.
+    /// </summary>
+    public sealed class Dispose : DescribedList
     {
+        /// <summary>
+        /// Initializes a dispose object.
+        /// </summary>
         public Dispose()
             : base(Codec.Dispose, 6)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the role field.
+        /// </summary>
         public bool Role
         {
             get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the first field.
+        /// </summary>
         public uint First
         {
             get { return this.Fields[1] == null ? uint.MinValue : (uint)this.Fields[1]; }
             set { this.Fields[1] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the last field.
+        /// </summary>
         public uint Last
         {
             get { return this.Fields[2] == null ? this.First : (uint)this.Fields[2]; }
             set { this.Fields[2] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the settled field. 
+        /// </summary>
         public bool Settled
         {
             get { return this.Fields[3] == null ? false : (bool)this.Fields[3]; }
             set { this.Fields[3] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the state field.
+        /// </summary>
         public DeliveryState State
         {
             get { return (DeliveryState)this.Fields[4]; }
             set { this.Fields[4] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the batchable field 
+        /// </summary>
         public bool Batchable
         {
             get { return this.Fields[5] == null ? false : (bool)this.Fields[5]; }
             set { this.Fields[5] = value; }
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
         public override string ToString()
         {
 #if TRACE
