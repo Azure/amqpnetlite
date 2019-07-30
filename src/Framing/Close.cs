@@ -19,19 +19,31 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Close : DescribedList
+    /// <summary>
+    /// The Close class contains parameters to signal a connection close. 
+    /// </summary>
+    public sealed class Close : DescribedList
     {
+        /// <summary>
+        /// Initializes a Close object.
+        /// </summary>
         public Close()
             : base(Codec.Close, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the error field.
+        /// </summary>
         public Error Error
         {
             get { return (Error)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+        /// <summary>
+        /// Returns a string that represents the current begin object.
+        /// </summary>
         public override string ToString()
         {
 #if TRACE

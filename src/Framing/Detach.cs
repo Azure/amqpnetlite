@@ -19,31 +19,49 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class Detach : DescribedList
+    /// <summary>
+    /// The Detach class contains parameters to detach the link endpoint from the session.
+    /// </summary>
+    public sealed class Detach : DescribedList
     {
+        /// <summary>
+        /// Initializes a Detach object.
+        /// </summary>
         public Detach()
             : base(Codec.Detach, 3)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the handle field.
+        /// </summary>
         public uint Handle
         {
             get { return this.Fields[0] == null ? uint.MinValue : (uint)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the closed field.
+        /// </summary>
         public bool Closed
         {
             get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
             set { this.Fields[1] = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the error field.
+        /// </summary>
         public Error Error
         {
             get { return (Error)this.Fields[2]; }
             set { this.Fields[2] = value; }
         }
 
+        /// <summary>
+        /// Returns a string that represents the current begin object.
+        /// </summary>
         public override string ToString()
         {
 #if TRACE

@@ -19,19 +19,31 @@ namespace Amqp.Framing
 {
     using Amqp.Types;
 
-    sealed class End : DescribedList
+    /// <summary>
+    /// The End class defines an end frame that indicates that the session has ended.
+    /// </summary>
+    public sealed class End : DescribedList
     {
+        /// <summary>
+        /// Initializes an end object.
+        /// </summary>
         public End()
             : base(Codec.End, 1)
         {
         }
 
+        /// <summary>
+        /// Gets or sets the error field.
+        /// </summary>
         public Error Error
         {
             get { return (Error)this.Fields[0]; }
             set { this.Fields[0] = value; }
         }
 
+        /// <summary>
+        /// Returns a string that represents the current begin object. 
+        /// </summary>
         public override string ToString()
         {
 #if TRACE
