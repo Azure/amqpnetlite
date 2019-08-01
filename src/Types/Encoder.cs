@@ -19,6 +19,7 @@ namespace Amqp.Types
 {
     using System;
     using System.Collections;
+    using System.Collections.Generic;
     using System.Text;
     using System.Globalization;
 
@@ -66,7 +67,8 @@ namespace Amqp.Types
         static Serializer[] serializers;
         static Map codecByType;
         static byte[][] codecIndexTable;
-        static Map knownDescrided;
+        static Map knownDescribed;
+        static Dictionary<ulong, CreateDescribed> knownDescribedByCode;
 
         static Encoder()
         {
@@ -78,7 +80,8 @@ namespace Amqp.Types
 
         internal static void Initialize()
         {
-            knownDescrided = new Map();
+            knownDescribed = new Map();
+            knownDescribedByCode = new Dictionary<ulong, CreateDescribed>();
 
             serializers = new Serializer[]
             {
@@ -348,10 +351,11 @@ namespace Amqp.Types
         /// <param name="ctor">The delegate to invoke to create the object.</param>
         public static void AddKnownDescribed(Descriptor descriptor, CreateDescribed ctor)
         {
-            lock (knownDescrided)
+            lock (knownDescribed)
             {
-                knownDescrided.Add(descriptor.Name, ctor);
-                knownDescrided.Add(descriptor.Code, ctor);
+                knownDescribed.Add(descriptor.Name, ctor);
+                knownDescribed.Add(descriptor.Code, ctor);
+                knownDescribedByCode.Add(descriptor.Code, ctor);
             }
         }
 
@@ -1043,7 +1047,7 @@ namespace Amqp.Types
 
             throw InvalidFormatCodeException(formatCode, buffer.Offset);
         }
-
+        
         /// <summary>
         /// Reads a described value from a buffer.
         /// </summary>
@@ -1053,9 +1057,23 @@ namespace Amqp.Types
         {
             Fx.Assert(formatCode == FormatCode.Described, "Format code must be described (0)");
             Described described;
-            object descriptor = Encoder.ReadObject(buffer);
+
             CreateDescribed create = null;
-            if ((create = (CreateDescribed)knownDescrided[descriptor]) == null)
+            object descriptor = null;
+            byte descriptorFormatCode = ReadFormatCode(buffer);
+            if (descriptorFormatCode == FormatCode.ULong || descriptorFormatCode == FormatCode.ULong0 || descriptorFormatCode == FormatCode.SmallULong)
+            {
+                ulong ulongDescriptor = ReadULong(buffer, descriptorFormatCode);
+                if (!knownDescribedByCode.TryGetValue(ulongDescriptor, out create))
+                    descriptor = ulongDescriptor;
+            }
+            else
+            {
+                descriptor = Encoder.ReadObject(buffer, descriptorFormatCode);
+                create = (CreateDescribed) knownDescribed[descriptor];
+            }
+            
+            if (create == null)
             {
                 object value = Encoder.ReadObject(buffer);
                 described = new DescribedValue(descriptor, value);
