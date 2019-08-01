@@ -118,18 +118,18 @@ namespace Amqp.Framing
         /// <summary>
         /// Gets or sets the absolute-expiry-time field.
         /// </summary>
-        public DateTime AbsoluteExpiryTime
+        public DateTime? AbsoluteExpiryTime
         {
-            get { return this.Fields[8] == null ? DateTime.MinValue : (DateTime)this.Fields[8]; }
+            get { return (DateTime?)this.Fields[8]; }
             set { this.Fields[8] = value; }
         }
 
         /// <summary>
         /// Gets or sets the creation-time field.
         /// </summary>
-        public DateTime CreationTime
+        public DateTime? CreationTime
         {
-            get { return this.Fields[9] == null ? DateTime.MinValue : (DateTime)this.Fields[9]; }
+            get { return (DateTime?)this.Fields[9]; }
             set { this.Fields[9] = value; }
         }
 

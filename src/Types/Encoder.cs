@@ -637,10 +637,17 @@ namespace Amqp.Types
         /// </summary>
         /// <param name="buffer">The buffer to write.</param>
         /// <param name="value">The timestamp value which is the milliseconds since UNIX epoch.</param>
-        public static void WriteTimestamp(ByteBuffer buffer, DateTime value)
+        public static void WriteTimestamp(ByteBuffer buffer, DateTime? value)
         {
-            AmqpBitConverter.WriteUByte(buffer, FormatCode.TimeStamp);
-            AmqpBitConverter.WriteLong(buffer, DateTimeToTimestamp(value));
+            if (value.HasValue)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.TimeStamp);
+                AmqpBitConverter.WriteLong(buffer, DateTimeToTimestamp(value.Value));
+            }
+            else
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
+            }
         }
 
         /// <summary>
@@ -1253,11 +1260,15 @@ namespace Amqp.Types
         /// </summary>
         /// <param name="buffer">The buffer to read.</param>
         /// <param name="formatCode">The format code of the value.</param>
-        public static DateTime ReadTimestamp(ByteBuffer buffer, byte formatCode)
+        public static DateTime? ReadTimestamp(ByteBuffer buffer, byte formatCode)
         {
             if (formatCode == FormatCode.TimeStamp)
             {
                 return TimestampToDateTime(AmqpBitConverter.ReadLong(buffer));
+            }
+            else if (formatCode == FormatCode.Null)
+            {
+                return null;
             }
             else
             {
