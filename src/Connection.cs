@@ -261,7 +261,10 @@ namespace Amqp
                     this.heartBeat.OnSend();
                 }
 
-                Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
+                if (Trace.TraceLevel >= TraceLevel.Frame)
+                {
+                    Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
+                }
             }
         }
 
@@ -300,7 +303,10 @@ namespace Amqp
 
             payload.Complete(payloadSize);
             this.writer.Send(frameBuffer);
-            Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
+            if (Trace.TraceLevel >= TraceLevel.Frame)
+            {
+                Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
+            }
 
             return payloadSize;
         }
@@ -604,13 +610,16 @@ namespace Amqp
                 ushort channel;
                 DescribedList command;
                 Frame.Decode(buffer, out channel, out command);
-                if (buffer.Length > 0)
+                if (Trace.TraceLevel >= TraceLevel.Frame)
                 {
-                    Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1} payload {2}", channel, command, buffer.Length);
-                }
-                else
-                {
-                    Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
+                    if (buffer.Length > 0)
+                    {
+                        Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1} payload {2}", channel, command, buffer.Length);
+                    }
+                    else
+                    {
+                        Trace.WriteLine(TraceLevel.Frame, "RECV (ch={0}) {1}", channel, command);
+                    }
                 }
 
                 if (this.heartBeat != null)
