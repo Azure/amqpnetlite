@@ -33,31 +33,59 @@ namespace Amqp.Sasl
         {
         }
 
+        private Symbol mechanism;
         /// <summary>
         /// Gets or sets the selected security mechanism.
         /// </summary>
         public Symbol Mechanism
         {
-            get { return (Symbol)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.mechanism; }
+            set { this.mechanism = value; }
         }
 
+        private byte[] initialResponse;
         /// <summary>
         /// Gets or sets the initial security response data.
         /// </summary>
         public byte[] InitialResponse
         {
-            get { return (byte[])this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.initialResponse; }
+            set { this.initialResponse = value; }
         }
 
+        private string hostName;
         /// <summary>
         /// Gets or sets the name of the target host.
         /// </summary>
         public string HostName
         {
-            get { return (string)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.hostName; }
+            set { this.hostName = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.mechanism = Encoder.ReadSymbol(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.initialResponse = Encoder.ReadBinary(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.hostName = Encoder.ReadString(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteSymbol(buffer, mechanism, true);
+            Encoder.WriteBinary(buffer, initialResponse, true);
+            Encoder.WriteString(buffer, hostName, true);
         }
 
 #if TRACE
@@ -69,7 +97,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-init",
                 new object[] { "mechanism", "initial-response", "hostname" },
-                new object[] { this.Fields[0], "...", this.Fields[2] });
+                new object[] { mechanism, "...", hostName });
         }
 #endif
     }

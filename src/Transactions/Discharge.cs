@@ -33,22 +33,43 @@ namespace Amqp.Transactions
         {
         }
 
+        private byte[] txnId;
         /// <summary>
         /// Gets or sets the txn-id field.
         /// </summary>
         public byte[] TxnId
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.txnId; }
+            set { this.txnId = value; }
         }
 
+        private bool? fail;
         /// <summary>
         /// Gets or sets the fail field.
         /// </summary>
         public bool Fail
         {
-            get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.fail == null ? false : this.fail.Value; }
+            set { this.fail = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.txnId = Encoder.ReadBinary(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.fail = Encoder.ReadBoolean(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(buffer, txnId, true);
+            Encoder.WriteBoolean(buffer, fail, true);
         }
 
 #if TRACE
@@ -61,7 +82,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "discharge",
                 new object[] { "txn-id", "fail" },
-                this.Fields);
+                new object[] { txnId, fail });
         }
 #endif
     }

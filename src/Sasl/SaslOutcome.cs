@@ -33,22 +33,43 @@ namespace Amqp.Sasl
         {
         }
 
+        private SaslCode code;
         /// <summary>
         /// Gets or sets the outcome of the sasl dialog.
         /// </summary>
         public SaslCode Code
         {
-            get { return (SaslCode)this.Fields[0]; }
-            set { this.Fields[0] = (byte)value; }
+            get { return this.code; }
+            set { this.code = value; }
         }
 
+        private byte[] additionalData;
         /// <summary>
         /// Gets or sets the additional data as specified in RFC-4422.
         /// </summary>
         public byte[] AdditionalData
         {
-            get { return (byte[])this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.additionalData; }
+            set { this.additionalData = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.code = (SaslCode)Encoder.ReadUByte(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.additionalData = Encoder.ReadBinary(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteUByte(buffer, (byte?)code);
+            Encoder.WriteBinary(buffer, additionalData, true);
         }
 
 #if TRACE
@@ -60,7 +81,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-outcome",
                 new object[] { "code", "additional-data" },
-                this.Fields);
+                new object[] { code, additionalData });
         }
 #endif
     }

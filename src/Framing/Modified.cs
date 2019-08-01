@@ -32,31 +32,59 @@ namespace Amqp.Framing
         {
         }
 
+        private bool? deliveryFailed;
         /// <summary>
         /// Gets or sets the delivery-failed field.
         /// </summary>
         public bool DeliveryFailed
         {
-            get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.deliveryFailed == null ? false : this.deliveryFailed.Value; }
+            set { this.deliveryFailed = value; }
         }
 
+        private bool? undeliverableHere;
         /// <summary>
         /// Gets or sets the undeliverable-here field.
         /// </summary>
         public bool UndeliverableHere
         {
-            get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.undeliverableHere == null ? false : this.undeliverableHere.Value; }
+            set { this.undeliverableHere = value; }
         }
 
+        private Fields messageAnnotations;
         /// <summary>
         /// Gets or sets the message-annotations field.
         /// </summary>
         public Fields MessageAnnotations
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 2); }
-            set { this.Fields[2] = value; }
+            get { return this.messageAnnotations; }
+            set { this.messageAnnotations = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.deliveryFailed = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.undeliverableHere = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.messageAnnotations = Encoder.ReadFields(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBoolean(buffer, deliveryFailed, true);
+            Encoder.WriteBoolean(buffer, undeliverableHere, true);
+            Encoder.WriteMap(buffer, messageAnnotations, true);
         }
 
 #if TRACE
@@ -69,7 +97,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "modified",
                 new object[] { "delivery-failed", "undeliverable-here", "message-annotations" },
-                this.Fields);
+                new object[] { deliveryFailed, undeliverableHere, messageAnnotations });
         }
 #endif
     }

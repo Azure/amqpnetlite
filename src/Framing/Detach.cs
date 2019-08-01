@@ -32,31 +32,59 @@ namespace Amqp.Framing
         {
         }
 
+        private uint? handle;
         /// <summary>
         /// Gets or sets the handle field.
         /// </summary>
         public uint Handle
         {
-            get { return this.Fields[0] == null ? uint.MinValue : (uint)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.handle == null ? uint.MinValue : this.handle.Value; }
+            set { this.handle = value; }
         }
 
+        private bool? closed;
         /// <summary>
         /// Gets or sets the closed field.
         /// </summary>
         public bool Closed
         {
-            get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.closed == null ? false : this.closed.Value; }
+            set { this.closed = value; }
         }
 
+        private Error error;
         /// <summary>
         /// Gets or sets the error field.
         /// </summary>
         public Error Error
         {
-            get { return (Error)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.error; }
+            set { this.error = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.handle = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.closed = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.error = (Error)Encoder.ReadObject(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteUInt(buffer, handle, true);
+            Encoder.WriteBoolean(buffer, closed, true);
+            Encoder.WriteObject(buffer, error, true);
         }
 
         /// <summary>
@@ -68,7 +96,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "detach",
                 new object[] { "handle", "closed", "error" },
-                this.Fields);
+                new object[] { handle, closed, error });
 #else
             return base.ToString();
 #endif

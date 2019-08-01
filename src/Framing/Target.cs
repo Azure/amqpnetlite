@@ -33,67 +33,123 @@ namespace Amqp.Framing
         {
         }
 
+        private string address;
         /// <summary>
         /// Gets or sets the address field.
         /// </summary>
         public string Address
         {
-            get { return (string)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.address; }
+            set { this.address = value; }
         }
 
+        private uint? durable;
         /// <summary>
         /// Gets or sets the durable field.
         /// </summary>
         public uint Durable
         {
-            get { return this.Fields[1] == null ? 0u : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.durable == null ? 0u : this.durable.Value; }
+            set { this.durable = value; }
         }
 
+        private Symbol expiryPolicy;
         /// <summary>
         /// Gets or sets the expiry-policy field.
         /// </summary>
         public Symbol ExpiryPolicy
         {
-            get { return (Symbol)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.expiryPolicy; }
+            set { this.expiryPolicy = value; }
         }
 
+        private uint? timeout;
         /// <summary>
         /// Gets or sets the timeout field.
         /// </summary>
         public uint Timeout
         {
-            get { return this.Fields[3] == null ? 0u : (uint)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.timeout == null ? 0u : this.timeout.Value; }
+            set { this.timeout = value; }
         }
 
+        private bool? dynamic;
         /// <summary>
         /// Gets or sets the dynamic field.
         /// </summary>
         public bool Dynamic
         {
-            get { return this.Fields[4] == null ? false : (bool)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.dynamic == null ? false : this.dynamic.Value; }
+            set { this.dynamic = value; }
         }
 
+        private Fields dynamicNodeProperties;
         /// <summary>
         /// Gets or sets the dynamic-node-properties field.
         /// </summary>
         public Fields DynamicNodeProperties
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 5); }
-            set { this.Fields[5] = value; }
+            get { return this.dynamicNodeProperties; }
+            set { this.dynamicNodeProperties = value; }
         }
 
+        private object capabilities;
         /// <summary>
         /// Gets or sets the capabilities field.
         /// </summary>
         public Symbol[] Capabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 6); }
-            set { this.Fields[6] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.capabilities); }
+            set { this.capabilities = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.address = Encoder.ReadString(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.durable = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.expiryPolicy = Encoder.ReadSymbol(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.timeout = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.dynamic = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.dynamicNodeProperties = Encoder.ReadFields(buffer);
+            }
+            
+            if (count-- > 0)
+            {
+                this.capabilities = Encoder.ReadObject(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteString(buffer, address, true);
+            Encoder.WriteUInt(buffer, durable, true);
+            Encoder.WriteSymbol(buffer, expiryPolicy, true);
+            Encoder.WriteUInt(buffer, timeout, true);
+            Encoder.WriteBoolean(buffer, dynamic, true);
+            Encoder.WriteMap(buffer, dynamicNodeProperties, true);
+            Encoder.WriteObject(buffer, capabilities, true);
         }
 
 #if TRACE
@@ -106,7 +162,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "target",
                 new object[] { "address", "durable", "expiry-policy", "timeout", "dynamic", "dynamic-node-properties", "capabilities" },
-                this.Fields);
+                new object[] { address, durable, expiryPolicy, timeout, dynamic, dynamicNodeProperties, capabilities });
         }
 #endif
     }

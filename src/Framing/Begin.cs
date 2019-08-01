@@ -32,76 +32,139 @@ namespace Amqp.Framing
         {
         }
 
+        private ushort? remoteChannel;
         /// <summary>
         /// Gets or sets the remote-channel field.
         /// </summary>
         public ushort RemoteChannel
         {
-            get { return this.Fields[0] == null ? ushort.MaxValue : (ushort)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.remoteChannel == null ? ushort.MaxValue : this.remoteChannel.Value; }
+            set { this.remoteChannel = value; }
         }
 
+        private uint? nextOutgoingId;
         /// <summary>
         /// Gets or sets the next-outgoing-id field.
         /// </summary>
         public uint NextOutgoingId
         {
-            get { return this.Fields[1] == null ? uint.MinValue : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.nextOutgoingId == null ? uint.MinValue : this.nextOutgoingId.Value; }
+            set { this.nextOutgoingId = value; }
         }
 
+        private uint? incomingWindow;
         /// <summary>
         /// Gets or sets the incoming-window field.
         /// </summary>
         public uint IncomingWindow
         {
-            get { return this.Fields[2] == null ? uint.MaxValue : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.incomingWindow == null ? uint.MaxValue : this.incomingWindow.Value; }
+            set { this.incomingWindow = value; }
         }
 
+        private uint? outgoingWindow;
         /// <summary>
         /// Gets or sets the outgoing-window field.
         /// </summary>
         public uint OutgoingWindow
         {
-            get { return this.Fields[3] == null ? uint.MaxValue : (uint)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.outgoingWindow == null ? uint.MaxValue : this.outgoingWindow.Value; }
+            set { this.outgoingWindow = value; }
         }
 
+        private uint? handleMax;
         /// <summary>
         /// Gets or sets the handle-max field.
         /// </summary>
         public uint HandleMax
         {
-            get { return this.Fields[4] == null ? uint.MaxValue : (uint)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.handleMax == null ? uint.MaxValue : this.handleMax.Value; }
+            set { this.handleMax = value; }
         }
 
+        private object offeredCapabilities;
         /// <summary>
         /// Gets or sets the offered-capabilities field.
         /// </summary>
         public Symbol[] OfferedCapabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 5); }
-            set { this.Fields[5] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.offeredCapabilities); }
+            set { this.offeredCapabilities = value; }
         }
 
+        private object desiredCapabilities;
         /// <summary>
         /// Gets or sets the desired-capabilities field.
         /// </summary>
         public Symbol[] DesiredCapabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 6); }
-            set { this.Fields[6] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.desiredCapabilities); }
+            set { this.desiredCapabilities = value; }
         }
 
+        private Fields properties;
         /// <summary>
         /// Gets or sets the properties field.
         /// </summary>
         public Fields Properties
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 7); }
-            set { this.Fields[7] = value; }
+            get { return this.properties; }
+            set { this.properties = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.remoteChannel = Encoder.ReadUShort(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.nextOutgoingId = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.incomingWindow = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.outgoingWindow = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.handleMax = Encoder.ReadUInt(buffer);
+            }
+            
+            if (count-- > 0)
+            {
+                this.offeredCapabilities = Encoder.ReadObject(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.desiredCapabilities = Encoder.ReadObject(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.properties = Encoder.ReadFields(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteUShort(buffer, remoteChannel);
+            Encoder.WriteUInt(buffer, nextOutgoingId, true);
+            Encoder.WriteUInt(buffer, incomingWindow, true);
+            Encoder.WriteUInt(buffer, outgoingWindow, true);
+            Encoder.WriteUInt(buffer, handleMax, true);
+            Encoder.WriteObject(buffer, offeredCapabilities, true);
+            Encoder.WriteObject(buffer, desiredCapabilities, true);
+            Encoder.WriteMap(buffer, properties, true);
         }
 
         /// <summary>
@@ -113,7 +176,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "begin",
                 new object[] { "remote-channel", "next-outgoing-id", "incoming-window", "outgoing-window", "handle-max", "offered-capabilities", "desired-capabilities", "properties" },
-                this.Fields);
+                new object[] {remoteChannel, nextOutgoingId, incomingWindow, outgoingWindow, handleMax, offeredCapabilities, desiredCapabilities, properties});
 #else
             return base.ToString();
 #endif

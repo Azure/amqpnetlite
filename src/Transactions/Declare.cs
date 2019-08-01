@@ -33,13 +33,27 @@ namespace Amqp.Transactions
         {
         }
 
+        private object globalId;
         /// <summary>
         /// Gets or sets the global-id field.
         /// </summary>
         public object GlobalId
         {
-            get { return this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.globalId; }
+            set { this.globalId = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.globalId = Encoder.ReadObject(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteObject(buffer, globalId, true);
         }
 
 #if TRACE
@@ -52,7 +66,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "declare",
                 new object[] { "global-id" },
-                this.Fields);
+                new object[] { globalId });
         }
 #endif
     }

@@ -32,13 +32,27 @@ namespace Amqp.Framing
         {
         }
 
+        private Error error;
         /// <summary>
         /// Gets or sets the error field.
         /// </summary>
         public Error Error
         {
-            get { return (Error)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.error; }
+            set { this.error = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.error = (Error)Encoder.ReadObject(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteObject(buffer, error, true);
         }
 
         /// <summary>
@@ -50,7 +64,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "close",
                 new object[] { "error" },
-                this.Fields);
+                new object[] { error});
 #else
             return base.ToString();
 #endif

@@ -32,94 +32,171 @@ namespace Amqp.Framing
         {
         }
 
+        private string containerId;
         /// <summary>
         /// Gets or sets the container-id field.
         /// </summary>
         public string ContainerId
         {
-            get { return (string)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.containerId; }
+            set { this.containerId = value; }
         }
 
+        private string hostName;
         /// <summary>
         /// Gets or sets the hostname field.
         /// </summary>
         public string HostName
         {
-            get { return (string)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.hostName; }
+            set { this.hostName = value; }
         }
 
+        private uint? maxFrameSize;
         /// <summary>
         /// Gets or sets the max-frame-size field.
         /// </summary>
         public uint MaxFrameSize
         {
-            get { return this.Fields[2] == null ? uint.MaxValue : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.maxFrameSize == null ? uint.MaxValue : this.maxFrameSize.Value; }
+            set { this.maxFrameSize = value; }
         }
 
+        private ushort? channelMax;
         /// <summary>
         /// Gets or sets the channel-max field.
         /// </summary>
         public ushort ChannelMax
         {
-            get { return this.Fields[3] == null ? ushort.MaxValue : (ushort)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.channelMax == null ? ushort.MaxValue : this.channelMax.Value; }
+            set { this.channelMax = value; }
         }
 
+        private uint? idleTimeOut;
         /// <summary>
         /// Gets or sets the idle-time-out field.
         /// </summary>
         public uint IdleTimeOut
         {
-            get { return this.Fields[4] == null ? 0 : (uint)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.idleTimeOut == null ? 0 : this.idleTimeOut.Value; }
+            set { this.idleTimeOut = value; }
         }
 
+        private object outgoingLocales;
         /// <summary>
         /// Gets or sets the outgoing-locales field.
         /// </summary>
         public Symbol[] OutgoingLocales
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 5); }
-            set { this.Fields[5] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.outgoingLocales); }
+            set { this.outgoingLocales = value; }
         }
 
+        private object incomingLocales;
         /// <summary>
         /// Gets or sets the incoming-locales field.
         /// </summary>
         public Symbol[] IncomingLocales
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 6); }
-            set { this.Fields[6] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.incomingLocales); }
+            set { this.incomingLocales = value; }
         }
 
+        private object offeredCapabilities;
         /// <summary>
         /// Gets or sets the offered-capabilities field.
         /// </summary>
         public Symbol[] OfferedCapabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 7); }
-            set { this.Fields[7] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.offeredCapabilities); }
+            set { this.offeredCapabilities = value; }
         }
 
+        private object desiredCapabilities;
         /// <summary>
         /// Gets or sets the desired-capabilities field.
         /// </summary>
         public Symbol[] DesiredCapabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 8); }
-            set { this.Fields[8] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.desiredCapabilities); }
+            set { this.desiredCapabilities = value; }
         }
 
+        private Fields properties;
         /// <summary>
         /// Gets or sets the properties field.
         /// </summary>
         public Fields Properties
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 9); }
-            set { this.Fields[9] = value; }
+            get { return this.properties; }
+            set { this.properties = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.containerId = Encoder.ReadString(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.hostName = Encoder.ReadString(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.maxFrameSize = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.channelMax = Encoder.ReadUShort(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.idleTimeOut = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.outgoingLocales = Encoder.ReadObject(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.incomingLocales = Encoder.ReadObject(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.offeredCapabilities = Encoder.ReadObject(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.desiredCapabilities = Encoder.ReadObject(buffer);
+            }
+            
+            if (count-- > 0)
+            {
+                this.properties = Encoder.ReadFields(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteString(buffer, containerId, true);
+            Encoder.WriteString(buffer, hostName, true);
+            Encoder.WriteUInt(buffer, maxFrameSize, true);
+            Encoder.WriteUShort(buffer, channelMax);
+            Encoder.WriteUInt(buffer, idleTimeOut, true);
+            Encoder.WriteObject(buffer, outgoingLocales, true);
+            Encoder.WriteObject(buffer, incomingLocales, true);
+            Encoder.WriteObject(buffer, offeredCapabilities, true);
+            Encoder.WriteObject(buffer, desiredCapabilities, true);
+            Encoder.WriteMap(buffer, properties, true);
         }
 
 #if TRACE
@@ -132,7 +209,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "open",
                 new object[] { "container-id", "host-name", "max-frame-size", "channel-max", "idle-time-out", "outgoing-locales", "incoming-locales", "offered-capabilities", "desired-capabilities", "properties" },
-                this.Fields);
+                new object[] {containerId, hostName, maxFrameSize, channelMax, idleTimeOut, outgoingLocales, incomingLocales, offeredCapabilities, desiredCapabilities, properties});
         }
 #endif
     }

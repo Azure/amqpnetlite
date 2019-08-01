@@ -37,106 +37,190 @@ namespace Amqp.Framing
         /// </summary>
         public bool HasHandle
         {
-            get { return this.Fields[4] != null; }
+            get { return this.handle != null; }
         }
 
+        private uint? nextIncomingId;
         /// <summary>
         /// Gets or sets the next-incoming-id field. 
         /// </summary>
         public uint NextIncomingId
         {
-            get { return this.Fields[0] == null ? uint.MinValue : (uint)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.nextIncomingId == null ? uint.MinValue : this.nextIncomingId.Value; }
+            set { this.nextIncomingId = value; }
         }
 
+        private uint? incomingWindow;
         /// <summary>
         /// Gets or sets the incoming-window field. 
         /// </summary>
         public uint IncomingWindow
         {
-            get { return this.Fields[1] == null ? uint.MaxValue : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.incomingWindow == null ? uint.MaxValue : this.incomingWindow.Value; }
+            set { this.incomingWindow = value; }
         }
 
+        private uint? nextOutgoingId;
         /// <summary>
         /// Gets or sets the next-outgoing-id field. 
         /// </summary>
         public uint NextOutgoingId
         {
-            get { return this.Fields[2] == null ? uint.MinValue : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.nextOutgoingId == null ? uint.MinValue : this.nextOutgoingId.Value; }
+            set { this.nextOutgoingId = value; }
         }
 
+        private uint? outgoingWindow;
         /// <summary>
         /// Gets or sets the outgoing-window field.
         /// </summary>
         public uint OutgoingWindow
         {
-            get { return this.Fields[3] == null ? uint.MaxValue : (uint)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.outgoingWindow == null ? uint.MaxValue : this.outgoingWindow.Value; }
+            set { this.outgoingWindow = value; }
         }
 
+        private uint? handle;
         /// <summary>
         /// Gets or sets the handle field.
         /// </summary>
         public uint Handle
         {
-            get { return this.Fields[4] == null ? uint.MaxValue : (uint)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.handle == null ? uint.MaxValue : this.handle.Value; }
+            set { this.handle = value; }
         }
 
+        private uint? deliveryCount;
         /// <summary>
         /// Gets or sets the delivery-count field.
         /// </summary>
         public uint DeliveryCount
         {
-            get { return this.Fields[5] == null ? uint.MinValue : (uint)this.Fields[5]; }
-            set { this.Fields[5] = value; }
+            get { return this.deliveryCount == null ? uint.MinValue : this.deliveryCount.Value; }
+            set { this.deliveryCount = value; }
         }
 
+        private uint? linkCredit;
         /// <summary>
         /// Gets or sets the link-credit field. 
         /// </summary>
         public uint LinkCredit
         {
-            get { return this.Fields[6] == null ? uint.MinValue : (uint)this.Fields[6]; }
-            set { this.Fields[6] = value; }
+            get { return this.linkCredit == null ? uint.MinValue : this.linkCredit.Value; }
+            set { this.linkCredit = value; }
         }
 
+        private uint? available;
         /// <summary>
         /// Gets or sets the available field.
         /// </summary>
         public uint Available
         {
-            get { return this.Fields[7] == null ? uint.MinValue : (uint)this.Fields[7]; }
-            set { this.Fields[7] = value; }
+            get { return this.available == null ? uint.MinValue : this.available.Value; }
+            set { this.available = value; }
         }
 
+        private bool? drain;
         /// <summary>
         /// Gets or sets the drain field.
         /// </summary>
         public bool Drain
         {
-            get { return this.Fields[8] == null ? false : (bool)this.Fields[8]; }
-            set { this.Fields[8] = value; }
+            get { return this.drain == null ? false : this.drain.Value; }
+            set { this.drain = value; }
         }
 
+        private bool? echo;
         /// <summary>
         /// Gets or sets the echo field.
         /// </summary>
         public bool Echo
         {
-            get { return this.Fields[9] == null ? false : (bool)this.Fields[9]; }
-            set { this.Fields[9] = value; }
+            get { return this.echo == null ? false : this.echo.Value; }
+            set { this.echo = value; }
         }
 
+        private Fields properties;
         /// <summary>
         /// Gets or sets the properties field.
         /// </summary>
         public Fields Properties
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 10); }
-            set { this.Fields[10] = value; }
+            get { return this.properties; }
+            set { this.properties = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.nextIncomingId = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.incomingWindow = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.nextOutgoingId = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.outgoingWindow = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.handle = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.deliveryCount = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.linkCredit = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.available = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.drain = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.echo = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.properties = Encoder.ReadFields(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteUInt(buffer, nextIncomingId, true);
+            Encoder.WriteUInt(buffer, incomingWindow, true);
+            Encoder.WriteUInt(buffer, nextOutgoingId, true);
+            Encoder.WriteUInt(buffer, outgoingWindow, true);
+            Encoder.WriteUInt(buffer, handle, true);
+            Encoder.WriteUInt(buffer, deliveryCount, true);
+            Encoder.WriteUInt(buffer, linkCredit, true);
+            Encoder.WriteUInt(buffer, available, true);
+            Encoder.WriteBoolean(buffer, drain, true);
+            Encoder.WriteBoolean(buffer, echo, true);
+            Encoder.WriteMap(buffer, properties, true);
         }
 
         /// <summary>
@@ -148,7 +232,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "flow",
                 new object[] { "next-in-id", "in-window", "next-out-id", "out-window", "handle", "delivery-count", "link-credit", "available", "drain", "echo", "properties" },
-                this.Fields);
+                new object[] { nextIncomingId, incomingWindow, nextOutgoingId, outgoingWindow, handle, deliveryCount, linkCredit, available, drain, echo, properties});
 #else
             return base.ToString();
 #endif

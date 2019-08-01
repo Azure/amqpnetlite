@@ -33,13 +33,27 @@ namespace Amqp.Transactions
         {
         }
 
+        private object capabilities;
         /// <summary>
         /// Gets or sets the capabilities field.
         /// </summary>
         public Symbol[] Capabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 0); }
-            set { this.Fields[0] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.capabilities); }
+            set { this.capabilities = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.capabilities = Encoder.ReadObject(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteObject(buffer, capabilities, true);
         }
 
 #if TRACE
@@ -52,7 +66,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "coordinator",
                 new object[] { "capabilities" },
-                this.Fields);
+                new object[] { capabilities });
         }
 #endif
     }

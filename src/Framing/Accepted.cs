@@ -42,7 +42,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "accepted",
                 new object[0],
-                this.Fields);
+                new object[0]);
 #else
             return base.ToString();
 #endif

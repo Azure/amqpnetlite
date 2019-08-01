@@ -33,13 +33,27 @@ namespace Amqp.Sasl
         {
         }
 
+        private object saslServerMechanisms;
         /// <summary>
         /// Gets or sets the available SASL mechanisms.
         /// </summary>
         public Symbol[] SaslServerMechanisms
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 0); }
-            set { this.Fields[0] = value; }
+            get { return Codec.GetSymbolMultiple(ref this.saslServerMechanisms); }
+            set { this.saslServerMechanisms = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.saslServerMechanisms = Encoder.ReadObject(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteObject(buffer, saslServerMechanisms, true);
         }
 
 #if TRACE
@@ -51,7 +65,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-mechanisms",
                 new object[] { "sasl-server-mechanisms" },
-                this.Fields);
+                new object[] { saslServerMechanisms });
         }
 #endif
     }

@@ -44,31 +44,59 @@ namespace Amqp.Framing
             this.Condition = condition;
         }
 
+        private Symbol condition;
         /// <summary>
         /// Gets or sets a symbolic value indicating the error condition.
         /// </summary>
         public Symbol Condition
         {
-            get { return (Symbol)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.condition; }
+            set { this.condition = value; }
         }
 
+        private string description;
         /// <summary>
         /// Gets or sets the descriptive text about the error condition.
         /// </summary>
         public string Description
         {
-            get { return (string)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.description; }
+            set { this.description = value; }
         }
 
+        private Fields info;
         /// <summary>
         /// Gets or sets the map carrying information about the error condition.
         /// </summary>
         public Fields Info
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 2); }
-            set { this.Fields[2] = value; }
+            get { return this.info; }
+            set { this.info = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.condition = Encoder.ReadSymbol(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.description = Encoder.ReadString(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.info = Encoder.ReadFields(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteSymbol(buffer, condition, true);
+            Encoder.WriteString(buffer, description, true);
+            Encoder.WriteMap(buffer, info, true);
         }
 
 #if TRACE
@@ -81,7 +109,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "error",
                 new object[] { "condition", "description", "fields" },
-                this.Fields);
+                new object[] { condition, description, info });
         }
 #endif
     }

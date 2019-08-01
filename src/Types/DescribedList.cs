@@ -24,7 +24,7 @@ namespace Amqp.Types
     /// </summary>
     public abstract class DescribedList : RestrictedDescribed
     {
-        readonly object[] fields;
+        private readonly int fieldCount;
 
         /// <summary>
         /// Initializes the described list object.
@@ -34,32 +34,87 @@ namespace Amqp.Types
         protected DescribedList(Descriptor descriptor, int fieldCount)
             : base(descriptor)
         {
-            this.fields = new object[fieldCount];
+            this.fieldCount = fieldCount;
+        }
+        
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            byte formatCode = Encoder.ReadFormatCode(buffer);
+            if (formatCode == FormatCode.Null)
+            {
+                return;
+            }
+
+            int size;
+            int count;
+            if (formatCode == FormatCode.List0)
+            {
+                size = count = 0;
+                return;
+            }
+
+            if (formatCode == FormatCode.List8)
+            {
+                size = AmqpBitConverter.ReadUByte(buffer);
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.List32)
+            {
+                size = (int)AmqpBitConverter.ReadUInt(buffer);
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw Encoder.InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+
+            OnDecode(buffer, count);
         }
 
         /// <summary>
-        /// Gets the array of all fields.
+        /// Decodes all properties from a ByteBuffer
         /// </summary>
-        protected object[] Fields
+        /// <param name="buffer">the ByteBuffer to read from</param>
+        /// <param name="count">the number of fields that are available for read</param>
+        internal virtual void OnDecode(ByteBuffer buffer, int count)
         {
-            get { return this.fields; }
         }
 
-        internal override void DecodeValue(ByteBuffer buffer)
+        /// <summary>
+        /// Encodes all properties into a ByteBuffer
+        /// </summary>
+        /// <param name="buffer">the ByteBuffer to write to</param>
+        internal virtual void OnEncode(ByteBuffer buffer)
         {
-            var list = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
-            int count = list.Count < this.fields.Length ? list.Count : this.fields.Length;
-            for (int i = 0; i < count; i++)
-            {
-                this.fields[i] = list[i];
-            }
         }
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            Encoder.WriteList(buffer, this.fields, true);
-        }
+            int pos = buffer.WritePos;
+            AmqpBitConverter.WriteUByte(buffer, 0);
+            AmqpBitConverter.WriteUInt(buffer, 0);
+            AmqpBitConverter.WriteUInt(buffer, 0);
 
+            OnEncode(buffer);
+
+            int size = buffer.WritePos - pos - 9;
+
+            if (size < byte.MaxValue && this.fieldCount <= byte.MaxValue)
+            {
+                buffer.Buffer[pos] = FormatCode.List8;
+                buffer.Buffer[pos + 1] = (byte)(size + 1);
+                buffer.Buffer[pos + 2] = (byte)this.fieldCount;
+                Array.Copy(buffer.Buffer, pos + 9, buffer.Buffer, pos + 3, size);
+                buffer.Shrink(6);
+            }
+            else
+            {
+                buffer.Buffer[pos] = FormatCode.List32;
+                AmqpBitConverter.WriteInt(buffer.Buffer, pos + 1, size + 4);
+                AmqpBitConverter.WriteInt(buffer.Buffer, pos + 5, this.fieldCount);
+            }
+        }
+        
 #if TRACE
         /// <summary>
         /// Returns a string representing the current object for tracing purpose.

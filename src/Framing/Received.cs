@@ -26,16 +26,37 @@ namespace Amqp.Framing
         {
         }
 
+        private uint? sectionNumber;
         public uint SectionNumber
         {
-            get { return this.Fields[0] == null ? uint.MinValue : (uint)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.sectionNumber == null ? uint.MinValue : this.sectionNumber.Value; }
+            set { this.sectionNumber = value; }
         }
 
+        private ulong? sectionOffset;
         public ulong SectionOffset
         {
-            get { return this.Fields[1] == null ? ulong.MinValue : (ulong)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.sectionOffset == null ? ulong.MinValue : this.sectionOffset.Value; }
+            set { this.sectionOffset = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.sectionNumber = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.sectionOffset = Encoder.ReadULong(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteUInt(buffer, sectionNumber, true);
+            Encoder.WriteULong(buffer, sectionOffset, true);
         }
 
         public override string ToString()
@@ -44,7 +65,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "received",
                 new object[] { "section-number", "section-offset" },
-                this.Fields);
+                new object[] { sectionNumber, sectionOffset });
 #else
             return base.ToString();
 #endif

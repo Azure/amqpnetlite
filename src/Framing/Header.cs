@@ -33,49 +33,91 @@ namespace Amqp.Framing
         {
         }
 
+        private bool? durable;
         /// <summary>
         /// Gets or sets the durable field.
         /// </summary>
         public bool Durable
         {
-            get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.durable == null ? false : this.durable.Value; }
+            set { this.durable = value; }
         }
 
+        private byte? priority;
         /// <summary>
         /// Gets or sets the priority field.
         /// </summary>
         public byte Priority
         {
-            get { return this.Fields[1] == null ? (byte)4 : (byte)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.priority == null ? (byte)4 : this.priority.Value; }
+            set { this.priority = value; }
         }
 
+        private uint? ttl;
         /// <summary>
         /// Gets or sets the ttl field.
         /// </summary>
         public uint Ttl
         {
-            get { return this.Fields[2] == null ? uint.MaxValue : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.ttl == null ? uint.MaxValue : this.ttl.Value; }
+            set { this.ttl = value; }
         }
 
+        private bool? firstAcquirer;
         /// <summary>
         /// Gets or sets the first-acquirer field.
         /// </summary>
         public bool FirstAcquirer
         {
-            get { return this.Fields[3] == null ? false : (bool)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.firstAcquirer == null ? false : this.firstAcquirer.Value; }
+            set { this.firstAcquirer = value; }
         }
 
+        private uint? deliveryCount;
         /// <summary>
         /// Gets or sets the delivery-count field.
         /// </summary>
         public uint DeliveryCount
         {
-            get { return this.Fields[4] == null ? uint.MinValue : (uint)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.deliveryCount == null ? uint.MinValue : this.deliveryCount.Value; }
+            set { this.deliveryCount = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.durable = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.priority = Encoder.ReadUByte(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.ttl = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.firstAcquirer = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.deliveryCount = Encoder.ReadUInt(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBoolean(buffer, durable, true);
+            Encoder.WriteUByte(buffer, priority);
+            Encoder.WriteUInt(buffer, ttl, true);
+            Encoder.WriteBoolean(buffer, firstAcquirer, true);
+            Encoder.WriteUInt(buffer, deliveryCount, true);
         }
 
 #if TRACE
@@ -88,7 +130,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "header",
                 new object[] { "durable", "priority", "ttl", "first-acquirer", "delivery-count" },
-                this.Fields);
+                new object[] {this.durable, this.priority, this.ttl, this.firstAcquirer, this.deliveryCount});
         }
 #endif
     }

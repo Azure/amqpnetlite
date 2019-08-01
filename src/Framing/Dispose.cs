@@ -32,58 +32,107 @@ namespace Amqp.Framing
         {
         }
 
+        private bool? role;
         /// <summary>
         /// Gets or sets the role field.
         /// </summary>
         public bool Role
         {
-            get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.role == null ? false : this.role.Value; }
+            set { this.role = value; }
         }
 
+        private uint? first;
         /// <summary>
         /// Gets or sets the first field.
         /// </summary>
         public uint First
         {
-            get { return this.Fields[1] == null ? uint.MinValue : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.first == null ? uint.MinValue : this.first.Value; }
+            set { this.first = value; }
         }
 
+        private uint? last;
         /// <summary>
         /// Gets or sets the last field.
         /// </summary>
         public uint Last
         {
-            get { return this.Fields[2] == null ? this.First : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.last == null ? this.First : this.last.Value; }
+            set { this.last = value; }
         }
 
+        private bool? settled;
         /// <summary>
         /// Gets or sets the settled field. 
         /// </summary>
         public bool Settled
         {
-            get { return this.Fields[3] == null ? false : (bool)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.settled == null ? false : this.settled.Value; }
+            set { this.settled = value; }
         }
 
+        private DeliveryState state;
         /// <summary>
         /// Gets or sets the state field.
         /// </summary>
         public DeliveryState State
         {
-            get { return (DeliveryState)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.state; }
+            set { this.state = value; }
         }
 
+        private bool? batchable;
         /// <summary>
         /// Gets or sets the batchable field 
         /// </summary>
         public bool Batchable
         {
-            get { return this.Fields[5] == null ? false : (bool)this.Fields[5]; }
-            set { this.Fields[5] = value; }
+            get { return this.batchable == null ? false : this.batchable.Value; }
+            set { this.batchable = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.role = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.first = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.last = Encoder.ReadUInt(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.settled = Encoder.ReadBoolean(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.state = (DeliveryState)Encoder.ReadObject(buffer);
+            }
+
+            if (count-- > 0)
+            {
+                this.batchable = Encoder.ReadBoolean(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBoolean(buffer, role, true);
+            Encoder.WriteUInt(buffer, first, true);
+            Encoder.WriteUInt(buffer, last, true);
+            Encoder.WriteBoolean(buffer, settled, true);
+            Encoder.WriteObject(buffer, state, true);
+            Encoder.WriteBoolean(buffer, batchable, true);
         }
 
         /// <summary>
@@ -95,7 +144,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "disposition",
                 new object[] { "role", "first", "last", "settled", "state", "batchable" },
-                this.Fields);
+                new object[] { role, first, last, settled, state, batchable });
 #else
             return base.ToString();
 #endif

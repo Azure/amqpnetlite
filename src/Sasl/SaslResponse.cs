@@ -33,13 +33,27 @@ namespace Amqp.Sasl
         {
         }
 
+        private byte[] response;
         /// <summary>
         /// Gets or sets the security response data.
         /// </summary>
         public byte[] Response
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.response; }
+            set { this.response = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.response = Encoder.ReadBinary(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(buffer, response, true);
         }
 
 #if TRACE
@@ -51,7 +65,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-response",
                 new object[] { "response" },
-                this.Fields);
+                new object[] { response });
         }
 #endif
     }

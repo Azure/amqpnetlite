@@ -33,13 +33,27 @@ namespace Amqp.Sasl
         {
         }
 
+        private byte[] challenge;
         /// <summary>
         /// Gets or sets the security challenge data.
         /// </summary>
         public byte[] Challenge
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.challenge; }
+            set { this.challenge = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.challenge = Encoder.ReadBinary(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(buffer, challenge, true);
         }
 
 #if TRACE
@@ -51,7 +65,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-challenge",
                 new object[] { "challenge" },
-                this.Fields);
+                new object[] { challenge });
         }
 #endif
     }

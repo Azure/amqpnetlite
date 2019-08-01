@@ -33,13 +33,27 @@ namespace Amqp.Transactions
         {
         }
 
+        private byte[] txnId;
         /// <summary>
         /// Gets or sets the txn-id field.
         /// </summary>
         public byte[] TxnId
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.txnId; }
+            set { this.txnId = value; }
+        }
+
+        internal override void OnDecode(ByteBuffer buffer, int count)
+        {
+            if (count-- > 0)
+            {
+                this.txnId = Encoder.ReadBinary(buffer);
+            }
+        }
+
+        internal override void OnEncode(ByteBuffer buffer)
+        {
+            Encoder.WriteBinary(buffer, txnId, true);
         }
 
 #if TRACE
@@ -52,7 +66,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "declared",
                 new object[] { "txn-id" },
-                this.Fields);
+                new object[] { txnId });
         }
 #endif
     }
