@@ -104,7 +104,7 @@ namespace Amqp
                 acked.Set();
             };
 
-            this.SendInternal(message, this.GetTxnState(), callback, acked, true);
+            this.SendInternal(message, this.GetTxnState(), callback, acked, false);
 
             bool signaled = acked.WaitOne(waitMilliseconds);
             if (!signaled)
@@ -138,7 +138,7 @@ namespace Amqp
         public void Send(Message message, OutcomeCallback callback, object state)
         {
             DeliveryState deliveryState = this.GetTxnState();
-            this.SendInternal(message, deliveryState, callback, state, false);
+            this.SendInternal(message, deliveryState, callback, state, true);
         }
 
         /// <summary>
@@ -152,7 +152,22 @@ namespace Amqp
         /// <param name="state">The object that is passed back to the outcome callback.</param>
         public void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)
         {
-            this.SendInternal(message, deliveryState, callback, state, false);
+            this.SendInternal(message, deliveryState, callback, state, true);
+        }
+
+        /// <summary>
+        /// Sends a message asynchronously. If callback is null, the message is sent without
+        /// requesting for an acknowledgement (best effort). This method is not transaction aware. If you need transaction support,
+        /// use <see cref="Send(Amqp.Message,Amqp.OutcomeCallback,object)"/>.
+        /// </summary>
+        /// <param name="message">The message to send.</param>
+        /// <param name="deliveryState">The transactional state of the message. If null, no transaction is used.</param>
+        /// <param name="callback">The callback to invoke when acknowledgement is received.</param>
+        /// <param name="state">The object that is passed back to the outcome callback.</param>
+        /// <param name="batchable">If true, then the issuer is hinting that there is no need for the peer to urgently communicate the impact of the updated delivery states.</param>
+        public void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state, bool batchable)
+        {
+            this.SendInternal(message, deliveryState, callback, state, batchable);
         }
 
         DeliveryState GetTxnState()
@@ -164,7 +179,7 @@ namespace Amqp
 #endif
         }
 
-        void SendInternal(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state, bool sync)
+        void SendInternal(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state, bool batchable)
         {
             const int reservedBytes = 40;
 #if NETFX || NETFX40 || DOTNET
@@ -187,7 +202,7 @@ namespace Amqp
                 OnOutcome = callback,
                 UserToken = state,
                 Settled = this.settleMode == SenderSettleMode.Settled || callback == null,
-                Batchable = !sync
+                Batchable = batchable
             };
 
             lock (this.ThisLock)
