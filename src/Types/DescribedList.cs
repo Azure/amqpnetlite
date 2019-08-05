@@ -72,6 +72,27 @@ namespace Amqp.Types
         }
 
         /// <summary>
+        /// Examines the list to check if a field is set.
+        /// </summary>
+        /// <param name="index">Zero-based offset of the field in the list.</param>
+        /// <returns>True if a value is set; otherwise false.</returns>
+        public bool HasField(int index)
+        {
+            this.CheckFieldIndex(index);
+            return this.fields[index] != null;
+        }
+
+        /// <summary>
+        /// Resets the value of a field to null.
+        /// </summary>
+        /// <param name="index">Zero-based offset of the field in the list.</param>
+        public void ResetField(int index)
+        {
+            this.CheckFieldIndex(index);
+            this.fields[index] = null;
+        }
+
+        /// <summary>
         /// Decodes all properties from a ByteBuffer
         /// </summary>
         /// <param name="buffer">the ByteBuffer to read from</param>
@@ -150,5 +171,14 @@ namespace Amqp.Types
             return sb.ToString();
         }
 #endif
+
+        void CheckFieldIndex(int index)
+        {
+            if (index < 0 || index >= this.fields.Length)
+            {
+                throw new ArgumentOutOfRangeException(Fx.Format("Field index is invalid. {0} has {1} fields.",
+                    this.GetType().Name, this.fields.Length));
+            }
+        }
     }
 }
