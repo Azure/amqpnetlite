@@ -1658,7 +1658,7 @@ namespace Amqp.Types
         }
 
 #if NETMF_LITE
-        static Exception InvalidFormatCodeException(byte formatCode, int offset)
+        internal static Exception InvalidFormatCodeException(byte formatCode, int offset)
         {
             return new Exception("Format code " + formatCode + " at offset " + offset + " is invalid");
         }
