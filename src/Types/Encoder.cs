@@ -19,7 +19,9 @@ namespace Amqp.Types
 {
     using System;
     using System.Collections;
+#if !NETMF
     using System.Collections.Generic;
+#endif
     using System.Text;
     using System.Globalization;
 
@@ -1475,7 +1477,9 @@ namespace Amqp.Types
 
             return value;
         }
-#else
+#endif
+
+#if NETMF
         /// <summary>
         /// Reads a map value from a buffer.
         /// </summary>
@@ -1518,7 +1522,9 @@ namespace Amqp.Types
 
             return value;
         }
+#endif
 
+#if NETMF && !NETMF_LITE
         /// <summary>
         /// Reads a Fields map value from a buffer.
         /// </summary>
