@@ -68,7 +68,9 @@ namespace Amqp.Types
         static Map codecByType;
         static byte[][] codecIndexTable;
         static Map knownDescribed;
+#if !NETMF
         static Dictionary<ulong, CreateDescribed> knownDescribedByCode;
+#endif
 
         static Encoder()
         {
@@ -81,8 +83,9 @@ namespace Amqp.Types
         internal static void Initialize()
         {
             knownDescribed = new Map();
+#if !NETMF
             knownDescribedByCode = new Dictionary<ulong, CreateDescribed>();
-
+#endif
             serializers = new Serializer[]
             {
                 // 0: null
@@ -355,7 +358,9 @@ namespace Amqp.Types
             {
                 knownDescribed.Add(descriptor.Name, ctor);
                 knownDescribed.Add(descriptor.Code, ctor);
+#if !NETMF
                 knownDescribedByCode.Add(descriptor.Code, ctor);
+#endif
             }
         }
 
@@ -953,6 +958,7 @@ namespace Amqp.Types
             CreateDescribed create = null;
             object descriptor = null;
             byte descriptorFormatCode = ReadFormatCode(buffer);
+#if !NETMF
             if (descriptorFormatCode == FormatCode.ULong || descriptorFormatCode == FormatCode.ULong0 || descriptorFormatCode == FormatCode.SmallULong)
             {
                 ulong ulongDescriptor = ReadULong(buffer, descriptorFormatCode);
@@ -960,6 +966,7 @@ namespace Amqp.Types
                     descriptor = ulongDescriptor;
             }
             else
+#endif
             {
                 descriptor = Encoder.ReadObject(buffer, descriptorFormatCode);
                 create = (CreateDescribed) knownDescribed[descriptor];
@@ -1410,6 +1417,7 @@ namespace Amqp.Types
             return value;
         }
 
+#if !NETMF
         /// <summary>
         /// Reads a map value from a buffer.
         /// </summary>
@@ -1467,7 +1475,93 @@ namespace Amqp.Types
 
             return value;
         }
+#else
+        /// <summary>
+        /// Reads a map value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        public static Map ReadMap(ByteBuffer buffer, byte formatCode)
+        {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
 
+            int size;
+            int count;
+            if (formatCode == FormatCode.Map8)
+            {
+                size = AmqpBitConverter.ReadUByte(buffer);
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.Map32)
+            {
+                size = (int)AmqpBitConverter.ReadUInt(buffer);
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+
+            if (count % 2 > 0)
+            {
+                throw InvalidMapCountException(count);
+            }
+
+            Map value = new Map();
+            for (int i = 0; i < count; i += 2)
+            {
+                value.Add(ReadObject(buffer), ReadObject(buffer));
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Reads a Fields map value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        public static Fields ReadFields(ByteBuffer buffer, byte formatCode)
+        {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
+            int size;
+            int count;
+            if (formatCode == FormatCode.Map8)
+            {
+                size = AmqpBitConverter.ReadUByte(buffer);
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.Map32)
+            {
+                size = (int)AmqpBitConverter.ReadUInt(buffer);
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+
+            if (count % 2 > 0)
+            {
+                throw InvalidMapCountException(count);
+            }
+
+            Fields value = new Fields();
+            for (int i = 0; i < count; i += 2)
+            {
+                value.Add(ReadObject(buffer), ReadObject(buffer));
+            }
+
+            return value;
+        }
+#endif
         static Serializer GetSerializer(byte formatCode)
         {
             int type = ((formatCode & 0xF0) >> 4) - 4;
@@ -1551,7 +1645,7 @@ namespace Amqp.Types
             string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
 #else
             string value = Encoding.UTF8.GetString(buffer.Buffer, buffer.Offset, count);
-#endif            
+#endif
             buffer.Complete(count);
 
             return value;
