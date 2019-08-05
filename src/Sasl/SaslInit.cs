@@ -25,6 +25,10 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslInit : DescribedList
     {
+        Symbol mechanism;
+        byte[] initialResponse;
+        string hostName;
+
         /// <summary>
         /// Initializes a SaslInit object.
         /// </summary>
@@ -33,59 +37,69 @@ namespace Amqp.Sasl
         {
         }
 
-        private Symbol mechanism;
         /// <summary>
         /// Gets or sets the selected security mechanism.
         /// </summary>
         public Symbol Mechanism
         {
-            get { return this.mechanism; }
-            set { this.mechanism = value; }
+            get { return this.GetField(0, this.mechanism); }
+            set { this.SetField(0, ref this.mechanism, value); }
         }
 
-        private byte[] initialResponse;
         /// <summary>
         /// Gets or sets the initial security response data.
         /// </summary>
         public byte[] InitialResponse
         {
-            get { return this.initialResponse; }
-            set { this.initialResponse = value; }
+            get { return this.GetField(1, this.initialResponse); }
+            set { this.SetField(1, ref this.initialResponse, value); }
         }
 
-        private string hostName;
         /// <summary>
         /// Gets or sets the name of the target host.
         /// </summary>
         public string HostName
         {
-            get { return this.hostName; }
-            set { this.hostName = value; }
+            get { return this.GetField(2, this.hostName); }
+            set { this.SetField(2, ref this.hostName, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.mechanism = Encoder.ReadSymbol(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.initialResponse = Encoder.ReadBinary(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.hostName = Encoder.ReadString(buffer);
+                case 0:
+                    Encoder.WriteSymbol(buffer, this.mechanism, true);
+                    break;
+                case 1:
+                    Encoder.WriteBinary(buffer, this.initialResponse, true);
+                    break;
+                case 2:
+                    Encoder.WriteString(buffer, this.hostName, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteSymbol(buffer, mechanism, true);
-            Encoder.WriteBinary(buffer, initialResponse, true);
-            Encoder.WriteString(buffer, hostName, true);
+            switch (index)
+            {
+                case 0:
+                    this.mechanism = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 1:
+                    this.initialResponse = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 2:
+                    this.hostName = Encoder.ReadString(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE

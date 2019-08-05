@@ -25,6 +25,9 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class TransactionalState : DeliveryState
     {
+        byte[] txnId;
+        Outcome outcome;
+
         /// <summary>
         /// Initializes a transactional state object.
         /// </summary>
@@ -33,43 +36,54 @@ namespace Amqp.Transactions
         {
         }
 
-        private byte[] txnId;
         /// <summary>
         /// Gets or sets the txn-id field.
         /// </summary>
         public byte[] TxnId
         {
-            get { return this.txnId; }
-            set { this.txnId = value; }
+            get { return this.GetField(0, this.txnId); }
+            set { this.SetField(0, ref this.txnId, value); }
         }
 
-        private Outcome outcome;
         /// <summary>
         /// Gets or sets the outcome field.
         /// </summary>
         public Outcome Outcome
         {
-            get { return this.outcome; }
-            set { this.outcome = value; }
+            get { return this.GetField(1, this.outcome); }
+            set { this.SetField(1, ref this.outcome, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.txnId = Encoder.ReadBinary(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.outcome = (Outcome)Encoder.ReadObject(buffer);
+                case 0:
+                    Encoder.WriteBinary(buffer, this.txnId, true);
+                    break;
+                case 1:
+                    Encoder.WriteObject(buffer, this.outcome);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteBinary(buffer, txnId, true);
-            Encoder.WriteObject(buffer, outcome, true);
+            switch (index)
+            {
+                case 0:
+                    this.txnId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 1:
+                    this.outcome = (Outcome)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE

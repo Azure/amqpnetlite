@@ -25,6 +25,8 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class Coordinator : DescribedList
     {
+        object capabilities;
+
         /// <summary>
         /// Initializes a coordinator object.
         /// </summary>
@@ -33,29 +35,41 @@ namespace Amqp.Transactions
         {
         }
 
-        private object capabilities;
         /// <summary>
         /// Gets or sets the capabilities field.
         /// </summary>
         public Symbol[] Capabilities
         {
-            get { return Codec.GetSymbolMultiple(ref this.capabilities); }
-            set { this.capabilities = value; }
+            get { return HasField(0) ? Codec.GetSymbolMultiple(ref this.capabilities) : null; }
+            set { this.SetField(0, ref this.capabilities, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.capabilities = Encoder.ReadObject(buffer);
+                case 0:
+                    Encoder.WriteObject(buffer, this.capabilities);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteObject(buffer, capabilities, true);
+            switch (index)
+            {
+                case 0:
+                    this.capabilities = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current object.

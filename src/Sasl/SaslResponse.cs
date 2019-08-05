@@ -25,6 +25,8 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslResponse : DescribedList
     {
+        byte[] response;
+
         /// <summary>
         /// Initializes a SaslResponse object.
         /// </summary>
@@ -33,29 +35,41 @@ namespace Amqp.Sasl
         {
         }
 
-        private byte[] response;
         /// <summary>
         /// Gets or sets the security response data.
         /// </summary>
         public byte[] Response
         {
-            get { return this.response; }
-            set { this.response = value; }
+            get { return this.GetField(0, this.response); }
+            set { this.SetField(0, ref this.response, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.response = Encoder.ReadBinary(buffer);
+                case 0:
+                    Encoder.WriteBinary(buffer, this.response, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteBinary(buffer, response, true);
+            switch (index)
+            {
+                case 0:
+                    this.response = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current SASL response object.

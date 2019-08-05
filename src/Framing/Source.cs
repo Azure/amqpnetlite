@@ -25,6 +25,18 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Source : DescribedList
     {
+        string address;
+        uint durable;
+        Symbol expiryPolicy;
+        uint timeout;
+        bool dynamic;
+        Fields dynamicNodeProperties;
+        Symbol distributionMode;
+        Map filterSet;
+        Outcome defaultOutcome;
+        object outcomes;
+        object capabilities;
+
         /// <summary>
         /// Initializes a source object.
         /// </summary>
@@ -33,187 +45,189 @@ namespace Amqp.Framing
         {
         }
 
-        private string address;
         /// <summary>
         /// Gets or sets the address field.
         /// </summary>
         public string Address
         {
-            get { return this.address; }
-            set { this.address = value; }
+            get { return this.GetField(0, this.address); }
+            set { this.SetField(0, ref this.address, value); }
         }
 
-        private uint? durable;
         /// <summary>
         /// Gets or sets the durable field.
         /// </summary>
         public uint Durable
         {
-            get { return this.durable == null ? 0u : this.durable.Value; }
-            set { this.durable = value; }
+            get { return this.GetField(1, this.durable, 0u); }
+            set { this.SetField(1, ref this.durable, value); }
         }
 
-        private Symbol expiryPolicy;
         /// <summary>
         /// Gets or sets the expiry-policy field.
         /// </summary>
         public Symbol ExpiryPolicy
         {
-            get { return this.expiryPolicy; }
-            set { this.expiryPolicy = value; }
+            get { return this.GetField(2, this.expiryPolicy); }
+            set { this.SetField(2, ref this.expiryPolicy, value); }
         }
 
-        private uint? timeout;
         /// <summary>
         /// Gets or sets the timeout field.
         /// </summary>
         public uint Timeout
         {
-            get { return this.timeout == null ? 0u : this.timeout.Value; }
-            set { this.timeout = value; }
+            get { return this.GetField(3, this.timeout, 0u); }
+            set { this.SetField(3, ref this.timeout, value); }
         }
 
-        private bool? dynamic;
         /// <summary>
         /// Gets or sets the dynamic field.
         /// </summary>
         public bool Dynamic
         {
-            get { return this.dynamic == null ? false : this.dynamic.Value; }
-            set { this.dynamic = value; }
+            get { return this.GetField(4, this.dynamic, false); }
+            set { this.SetField(4, ref this.dynamic, value); }
         }
 
-        private Fields dynamicNodeProperties;
         /// <summary>
         /// Gets or sets the dynamic-node-properties field.
         /// </summary>
         public Fields DynamicNodeProperties
         {
-            get { return this.dynamicNodeProperties; }
-            set { this.dynamicNodeProperties = value; }
+            get { return this.GetField(5, this.dynamicNodeProperties); }
+            set { this.SetField(5, ref this.dynamicNodeProperties, value); }
         }
 
-        private Symbol distributionMode;
         /// <summary>
         /// Gets or sets the distribution-mode field.
         /// </summary>
         public Symbol DistributionMode
         {
-            get { return this.distributionMode; }
-            set { this.distributionMode = value; }
+            get { return this.GetField(6, this.distributionMode); }
+            set { this.SetField(6, ref this.distributionMode, value); }
         }
 
-        private Map filterSet;
         /// <summary>
         /// Gets or sets the filter field.
         /// </summary>
         public Map FilterSet
         {
-            get { return this.filterSet; }
-            set { this.filterSet = value; }
+            get { return this.GetField(7, this.filterSet); }
+            set { this.SetField(7, ref this.filterSet, value); }
         }
 
-        private Outcome defaultOutcome;
         /// <summary>
         /// Gets or sets the default-outcome field.
         /// </summary>
         public Outcome DefaultOutcome
         {
-            get { return this.defaultOutcome; }
-            set { this.defaultOutcome = value; }
+            get { return this.GetField(8, this.defaultOutcome); }
+            set { this.SetField(8, ref this.defaultOutcome, value); }
         }
 
-        private object outcomes;
         /// <summary>
         /// Gets or sets the outcomes field.
         /// </summary>
         public Symbol[] Outcomes
         {
-            get { return Codec.GetSymbolMultiple(ref this.outcomes); }
-            set { this.outcomes = value; }
+            get { return HasField(9) ? Codec.GetSymbolMultiple(ref this.outcomes) : null; }
+            set { this.SetField(9, ref this.outcomes, value); }
         }
 
-        private object capabilities;
         /// <summary>
         /// Gets or sets the capabilities field.
         /// </summary>
         public Symbol[] Capabilities
         {
-            get { return Codec.GetSymbolMultiple(ref this.capabilities); }
-            set { this.capabilities = value; }
+            get { return HasField(10) ? Codec.GetSymbolMultiple(ref this.capabilities) : null; }
+            set { this.SetField(10, ref this.capabilities, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.address = Encoder.ReadString(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.durable = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.expiryPolicy = Encoder.ReadSymbol(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.timeout = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.dynamic = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.dynamicNodeProperties = Encoder.ReadFields(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.distributionMode = Encoder.ReadSymbol(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.filterSet = Encoder.ReadMap(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.defaultOutcome = (Outcome)Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.outcomes = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.capabilities = Encoder.ReadObject(buffer);
+                case 0:
+                    Encoder.WriteString(buffer, this.address, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.durable, true);
+                    break;
+                case 2:
+                    Encoder.WriteSymbol(buffer, this.expiryPolicy, true);
+                    break;
+                case 3:
+                    Encoder.WriteUInt(buffer, this.timeout, true);
+                    break;
+                case 4:
+                    Encoder.WriteBoolean(buffer, this.dynamic, true);
+                    break;
+                case 5:
+                    Encoder.WriteMap(buffer, this.dynamicNodeProperties, true);
+                    break;
+                case 6:
+                    Encoder.WriteSymbol(buffer, this.distributionMode, true);
+                    break;
+                case 7:
+                    Encoder.WriteMap(buffer, this.filterSet, true);
+                    break;
+                case 8:
+                    Encoder.WriteObject(buffer, this.defaultOutcome, true);
+                    break;
+                case 9:
+                    Encoder.WriteObject(buffer, this.outcomes, true);
+                    break;
+                case 10:
+                    Encoder.WriteObject(buffer, this.capabilities, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteString(buffer, address, true);
-            Encoder.WriteUInt(buffer, durable, true);
-            Encoder.WriteSymbol(buffer, expiryPolicy, true);
-            Encoder.WriteUInt(buffer, timeout, true);
-            Encoder.WriteBoolean(buffer, dynamic, true);
-            Encoder.WriteMap(buffer, dynamicNodeProperties, true);
-            Encoder.WriteSymbol(buffer, distributionMode, true);
-            Encoder.WriteMap(buffer, filterSet, true);
-            Encoder.WriteObject(buffer, defaultOutcome, true);
-            Encoder.WriteObject(buffer, outcomes, true);
-            Encoder.WriteObject(buffer, capabilities, true);
+            switch (index)
+            {
+                case 0:
+                    this.address = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 1:
+                    this.durable = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.expiryPolicy = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 3:
+                    this.timeout = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 4:
+                    this.dynamic = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 5:
+                    this.dynamicNodeProperties = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                case 6:
+                    this.distributionMode = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 7:
+                    this.filterSet = Encoder.ReadMap(buffer, formatCode);
+                    break;
+                case 8:
+                    this.defaultOutcome = (Outcome)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 9:
+                    this.outcomes = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 10:
+                    this.capabilities = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE

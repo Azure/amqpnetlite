@@ -24,6 +24,8 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Rejected : Outcome
     {
+        Error error;
+
         /// <summary>
         /// Initializes a rejected object.
         /// </summary>
@@ -32,27 +34,39 @@ namespace Amqp.Framing
         {
         }
 
-        private Error error;
         /// <summary>
         /// Gets or sets the error field.
         /// </summary>
         public Error Error
         {
-            get { return this.error; }
-            set { this.error = value; }
+            get { return this.GetField(0, this.error); }
+            set { this.SetField(0, ref this.error, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.error = (Error)Encoder.ReadObject(buffer);
+                case 0:
+                    Encoder.WriteObject(buffer, this.error);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteObject(buffer, Error, true);
+            switch (index)
+            {
+                case 0:
+                    this.error = (Error)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE

@@ -24,7 +24,8 @@ namespace Amqp.Types
     /// </summary>
     public abstract class DescribedList : RestrictedDescribed
     {
-        private readonly int fieldCount;
+        readonly int fieldCount;
+        int fields;
 
         /// <summary>
         /// Initializes the described list object.
@@ -34,43 +35,14 @@ namespace Amqp.Types
         protected DescribedList(Descriptor descriptor, int fieldCount)
             : base(descriptor)
         {
+            if (fieldCount > 32)
+            {
+                throw new NotSupportedException("Maximum number of fields allowed is 32.");
+            }
+
             this.fieldCount = fieldCount;
         }
         
-        internal override void DecodeValue(ByteBuffer buffer)
-        {
-            byte formatCode = Encoder.ReadFormatCode(buffer);
-            if (formatCode == FormatCode.Null)
-            {
-                return;
-            }
-
-            int size;
-            int count;
-            if (formatCode == FormatCode.List0)
-            {
-                size = count = 0;
-                return;
-            }
-
-            if (formatCode == FormatCode.List8)
-            {
-                size = AmqpBitConverter.ReadUByte(buffer);
-                count = AmqpBitConverter.ReadUByte(buffer);
-            }
-            else if (formatCode == FormatCode.List32)
-            {
-                size = (int)AmqpBitConverter.ReadUInt(buffer);
-                count = (int)AmqpBitConverter.ReadUInt(buffer);
-            }
-            else
-            {
-                throw Encoder.InvalidFormatCodeException(formatCode, buffer.Offset);
-            }
-
-            OnDecode(buffer, count);
-        }
-
         /// <summary>
         /// Examines the list to check if a field is set.
         /// </summary>
@@ -79,7 +51,7 @@ namespace Amqp.Types
         public bool HasField(int index)
         {
             this.CheckFieldIndex(index);
-            return this.fields[index] != null;
+            return (this.fields & (1 << index)) > 0;
         }
 
         /// <summary>
@@ -89,50 +61,81 @@ namespace Amqp.Types
         public void ResetField(int index)
         {
             this.CheckFieldIndex(index);
-            this.fields[index] = null;
+            this.fields &= ~(1 << index);
         }
 
-        /// <summary>
-        /// Decodes all properties from a ByteBuffer
-        /// </summary>
-        /// <param name="buffer">the ByteBuffer to read from</param>
-        /// <param name="count">the number of fields that are available for read</param>
-        internal virtual void OnDecode(ByteBuffer buffer, int count)
+        internal void SetField<T>(int index, ref T field, T value)
         {
+            this.fields |= (1 << index);
+            field = value;
         }
 
-        /// <summary>
-        /// Encodes all properties into a ByteBuffer
-        /// </summary>
-        /// <param name="buffer">the ByteBuffer to write to</param>
-        internal virtual void OnEncode(ByteBuffer buffer)
+        internal T GetField<T>(int index, T field, T defaultValue = default(T))
         {
+            if ((this.fields & (1 << index)) == 0)
+            {
+                return defaultValue;
+            }
+
+            return field;
         }
+
+
+        internal override void DecodeValue(ByteBuffer buffer)
+        {
+            byte formatCode = Encoder.ReadFormatCode(buffer);
+            int size;
+            int count;
+            Encoder.ReadListCount(buffer, formatCode, out size, out count);
+            for (int i = 0; i < count; i++)
+            {
+                formatCode = Encoder.ReadFormatCode(buffer);
+                if (formatCode != FormatCode.Null)
+                {
+                    this.ReadField(buffer, i, formatCode);
+                    this.fields |= (1 << i);
+                }
+            }
+        }
+
+        internal abstract void WriteField(ByteBuffer buffer, int index);
+
+        internal abstract void ReadField(ByteBuffer buffer, int index, byte formatCode);
+        
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            int pos = buffer.WritePos;
-            AmqpBitConverter.WriteUByte(buffer, 0);
-            AmqpBitConverter.WriteUInt(buffer, 0);
-            AmqpBitConverter.WriteUInt(buffer, 0);
-
-            OnEncode(buffer);
-
-            int size = buffer.WritePos - pos - 9;
-
-            if (size < byte.MaxValue && this.fieldCount <= byte.MaxValue)
+            int count = 0;
+            int temp = this.fields;
+            while (temp > 0)
             {
-                buffer.Buffer[pos] = FormatCode.List8;
-                buffer.Buffer[pos + 1] = (byte)(size + 1);
-                buffer.Buffer[pos + 2] = (byte)this.fieldCount;
-                Array.Copy(buffer.Buffer, pos + 9, buffer.Buffer, pos + 3, size);
-                buffer.Shrink(6);
+                count++;
+                temp <<= 1;
+            }
+
+            count = 32 - count;
+            if (count == 0)
+            {
+                AmqpBitConverter.WriteUByte(buffer, FormatCode.List0);
             }
             else
             {
-                buffer.Buffer[pos] = FormatCode.List32;
-                AmqpBitConverter.WriteInt(buffer.Buffer, pos + 1, size + 4);
-                AmqpBitConverter.WriteInt(buffer.Buffer, pos + 5, this.fieldCount);
+                int pos = buffer.WritePos;
+                AmqpBitConverter.WriteUByte(buffer, 0);
+                AmqpBitConverter.WriteULong(buffer, 0);
+                for (int i = 0; i < count; i++)
+                {
+                    if ((this.fields & (1 << i)) > 0)
+                    {
+                        this.WriteField(buffer, i);
+                    }
+                    else
+                    {
+                        AmqpBitConverter.WriteUByte(buffer, FormatCode.Null);
+                    }
+                }
+
+                Encoder.WriteListCount(buffer, pos, count, true);
             }
         }
         
@@ -174,10 +177,10 @@ namespace Amqp.Types
 
         void CheckFieldIndex(int index)
         {
-            if (index < 0 || index >= this.fields.Length)
+            if (index < 0 || index >= this.fieldCount)
             {
                 throw new ArgumentOutOfRangeException(Fx.Format("Field index is invalid. {0} has {1} fields.",
-                    this.GetType().Name, this.fields.Length));
+                    this.GetType().Name, this.fieldCount));
             }
         }
     }

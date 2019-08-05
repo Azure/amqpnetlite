@@ -25,6 +25,8 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslMechanisms : DescribedList
     {
+        object saslServerMechanisms;
+
         /// <summary>
         /// Initializes a SaslMechanisms object.
         /// </summary>
@@ -33,29 +35,41 @@ namespace Amqp.Sasl
         {
         }
 
-        private object saslServerMechanisms;
         /// <summary>
         /// Gets or sets the available SASL mechanisms.
         /// </summary>
         public Symbol[] SaslServerMechanisms
         {
-            get { return Codec.GetSymbolMultiple(ref this.saslServerMechanisms); }
-            set { this.saslServerMechanisms = value; }
+            get { return HasField(0) ? Codec.GetSymbolMultiple(ref this.saslServerMechanisms) : null; }
+            set { this.SetField(0, ref this.saslServerMechanisms, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.saslServerMechanisms = Encoder.ReadObject(buffer);
+                case 0:
+                    Encoder.WriteObject(buffer, this.saslServerMechanisms, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteObject(buffer, saslServerMechanisms, true);
+            switch (index)
+            {
+                case 0:
+                    this.saslServerMechanisms = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current SASL mechanisms object.

@@ -24,6 +24,18 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Transfer : DescribedList
     {
+        uint handle;
+        uint deliveryId;
+        byte[] deliveryTag;
+        uint messageFormat;
+        bool settled;
+        bool more;
+        ReceiverSettleMode rcvSettleMode;
+        DeliveryState state;
+        bool resume;
+        bool aborted;
+        bool batchable;
+
         /// <summary>
         /// Initializes an transfer object.
         /// </summary>
@@ -37,190 +49,192 @@ namespace Amqp.Framing
         /// </summary>
         public bool HasDeliveryId
         {
-            get { return this.deliveryId != null; }
+            get { return this.HasField(1); }
         }
 
-        private uint? handle;
         /// <summary>
         /// Gets or sets the handle field.
         /// </summary>
         public uint Handle
         {
-            get { return this.handle == null ? uint.MaxValue : this.handle.Value; }
-            set { this.handle = value; }
+            get { return this.GetField(0, this.handle, uint.MaxValue); }
+            set { this.SetField(0, ref this.handle, value); }
         }
 
-        private uint? deliveryId;
         /// <summary>
         /// Gets or sets the delivery-id field. 
         /// </summary>
         public uint DeliveryId
         {
-            get { return this.deliveryId == null ? uint.MinValue : this.deliveryId.Value; }
-            set { this.deliveryId = value; }
+            get { return this.GetField(1, this.deliveryId, uint.MinValue); }
+            set { this.SetField(1, ref this.deliveryId, value); }
         }
 
-        private byte[] deliveryTag;
         /// <summary>
         /// Gets or sets the delivery-tag field.
         /// </summary>
         public byte[] DeliveryTag
         {
-            get { return this.deliveryTag; }
-            set { this.deliveryTag = value; }
+            get { return this.GetField(2, this.deliveryTag); }
+            set { this.SetField(2, ref this.deliveryTag, value); }
         }
 
-        private uint? messageFormat;
         /// <summary>
         /// Gets or sets the message-format field.
         /// </summary>
         public uint MessageFormat
         {
-            get { return this.messageFormat == null ? uint.MinValue : this.messageFormat.Value; }
-            set { this.messageFormat = value; }
+            get { return this.GetField(3, this.messageFormat, uint.MinValue); }
+            set { this.SetField(3, ref this.messageFormat, value); }
         }
 
-        private bool? settled;
         /// <summary>
         /// Gets or sets the settled field.
         /// </summary>
         public bool Settled
         {
-            get { return this.settled == null ? false : this.settled.Value; }
-            set { this.settled = value; }
+            get { return this.GetField(4, this.settled, false); }
+            set { this.SetField(4, ref this.settled, value); }
         }
 
-        private bool? more;
         /// <summary>
         /// Gets or sets the more field.
         /// </summary>
         public bool More
         {
-            get { return this.more == null ? false : this.more.Value; }
-            set { this.more = value; }
+            get { return this.GetField(5, this.more, false); }
+            set { this.SetField(5, ref this.more, value); }
         }
 
-        private ReceiverSettleMode? rcvSettleMode;
         /// <summary>
         /// Gets or sets the rcv-settle-mode field.
         /// </summary>
         public ReceiverSettleMode RcvSettleMode
         {
-            get { return this.rcvSettleMode == null ? ReceiverSettleMode.First : this.rcvSettleMode.Value; }
-            set { this.rcvSettleMode = value; }
+            get { return this.GetField(6, this.rcvSettleMode, ReceiverSettleMode.First); }
+            set { this.SetField(6, ref this.rcvSettleMode, value); }
         }
 
-        private DeliveryState state;
         /// <summary>
         /// Gets or sets the state field.
         /// </summary>
         public DeliveryState State
         {
-            get { return this.state; }
-            set { this.state = value; }
+            get { return this.GetField(7, this.state); }
+            set { this.SetField(7, ref this.state, value); }
         }
 
-        private bool? resume;
         /// <summary>
         /// Gets or sets the resume field.
         /// </summary>
         public bool Resume
         {
-            get { return this.resume == null ? false : this.resume.Value; }
-            set { this.resume = value; }
+            get { return this.GetField(8, this.resume, false); }
+            set { this.SetField(8, ref this.resume, value); }
         }
 
-        private bool? aborted;
         /// <summary>
         /// Gets or sets the aborted field.
         /// </summary>
         public bool Aborted
         {
-            get { return this.aborted == null ? false : this.aborted.Value; }
-            set { this.aborted = value; }
+            get { return this.GetField(9, this.aborted, false); }
+            set { this.SetField(9, ref this.aborted, value); }
         }
 
-        private bool? batchable;
         /// <summary>
         /// Gets or sets the batchable field.
         /// </summary>
         public bool Batchable
         {
-            get { return this.batchable == null ? false : this.batchable.Value; }
-            set { this.batchable = value; }
+            get { return this.GetField(10, this.batchable, false); }
+            set { this.SetField(10, ref this.batchable, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.handle = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.deliveryId = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.deliveryTag = Encoder.ReadBinary(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.messageFormat = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.settled = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.more = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.rcvSettleMode = (ReceiverSettleMode)Encoder.ReadUByte(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.state = (DeliveryState)Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.resume = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.aborted = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.batchable = Encoder.ReadBoolean(buffer);
+                case 0:
+                    Encoder.WriteUInt(buffer, this.handle, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.deliveryId, true);
+                    break;
+                case 2:
+                    Encoder.WriteBinary(buffer, this.deliveryTag, true);
+                    break;
+                case 3:
+                    Encoder.WriteUInt(buffer, this.messageFormat, true);
+                    break;
+                case 4:
+                    Encoder.WriteBoolean(buffer, this.settled, true);
+                    break;
+                case 5:
+                    Encoder.WriteBoolean(buffer, this.more, true);
+                    break;
+                case 6:
+                    Encoder.WriteUByte(buffer, (byte)this.rcvSettleMode);
+                    break;
+                case 7:
+                    Encoder.WriteObject(buffer, this.state, true);
+                    break;
+                case 8:
+                    Encoder.WriteBoolean(buffer, this.resume, true);
+                    break;
+                case 9:
+                    Encoder.WriteBoolean(buffer, this.aborted, true);
+                    break;
+                case 10:
+                    Encoder.WriteBoolean(buffer, this.batchable, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteUInt(buffer, handle, true);
-            Encoder.WriteUInt(buffer, deliveryId, true);
-            Encoder.WriteBinary(buffer, deliveryTag, true);
-            Encoder.WriteUInt(buffer, messageFormat, true);
-            Encoder.WriteBoolean(buffer, settled, true);
-            Encoder.WriteBoolean(buffer, more, true);
-            Encoder.WriteUByte(buffer, (byte?)rcvSettleMode);
-            Encoder.WriteObject(buffer, state, true);
-            Encoder.WriteBoolean(buffer, resume, true);
-            Encoder.WriteBoolean(buffer, aborted, true);
-            Encoder.WriteBoolean(buffer, batchable, true);
+            switch (index)
+            {
+                case 0:
+                    this.handle = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.deliveryId = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.deliveryTag = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 3:
+                    this.messageFormat = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 4:
+                    this.settled = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 5:
+                    this.more = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 6:
+                    this.rcvSettleMode = (ReceiverSettleMode)Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 7:
+                    this.state = (DeliveryState)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 8:
+                    this.resume = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 9:
+                    this.aborted = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 10:
+                    this.batchable = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         /// <summary>

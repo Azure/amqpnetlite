@@ -25,6 +25,8 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class Declared : Outcome
     {
+        byte[] txnId;
+
         /// <summary>
         /// Initializes a declared object.
         /// </summary>
@@ -33,29 +35,41 @@ namespace Amqp.Transactions
         {
         }
 
-        private byte[] txnId;
         /// <summary>
         /// Gets or sets the txn-id field.
         /// </summary>
         public byte[] TxnId
         {
-            get { return this.txnId; }
-            set { this.txnId = value; }
+            get { return this.GetField(0, this.txnId); }
+            set { this.SetField(0, ref this.txnId, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.txnId = Encoder.ReadBinary(buffer);
+                case 0:
+                    Encoder.WriteBinary(buffer, this.txnId, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteBinary(buffer, txnId, true);
+            switch (index)
+            {
+                case 0:
+                    this.txnId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current object.

@@ -24,6 +24,10 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Detach : DescribedList
     {
+        uint handle;
+        bool closed;
+        Error error;
+
         /// <summary>
         /// Initializes a Detach object.
         /// </summary>
@@ -32,59 +36,69 @@ namespace Amqp.Framing
         {
         }
 
-        private uint? handle;
         /// <summary>
         /// Gets or sets the handle field.
         /// </summary>
         public uint Handle
         {
-            get { return this.handle == null ? uint.MinValue : this.handle.Value; }
-            set { this.handle = value; }
+            get { return this.GetField(0, this.handle, uint.MinValue); }
+            set { this.SetField(0, ref this.handle, value); }
         }
 
-        private bool? closed;
         /// <summary>
         /// Gets or sets the closed field.
         /// </summary>
         public bool Closed
         {
-            get { return this.closed == null ? false : this.closed.Value; }
-            set { this.closed = value; }
+            get { return this.GetField(1, this.closed, false); }
+            set { this.SetField(1, ref this.closed, value); }
         }
 
-        private Error error;
         /// <summary>
         /// Gets or sets the error field.
         /// </summary>
         public Error Error
         {
-            get { return this.error; }
-            set { this.error = value; }
+            get { return this.GetField(2, this.error); }
+            set { this.SetField(2, ref this.error, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.handle = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.closed = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.error = (Error)Encoder.ReadObject(buffer);
+                case 0:
+                    Encoder.WriteUInt(buffer, this.handle, true);
+                    break;
+                case 1:
+                    Encoder.WriteBoolean(buffer, this.closed, true);
+                    break;
+                case 2:
+                    Encoder.WriteObject(buffer, this.error, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteUInt(buffer, handle, true);
-            Encoder.WriteBoolean(buffer, closed, true);
-            Encoder.WriteObject(buffer, error, true);
+            switch (index)
+            {
+                case 0:
+                    this.handle = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.closed = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 2:
+                    this.error = (Error)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         /// <summary>

@@ -25,6 +25,12 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Header : DescribedList
     {
+        bool durable;
+        byte priority;
+        uint ttl;
+        bool firstAcquirer;
+        uint deliveryCount;
+
         /// <summary>
         /// Initializes a header object.
         /// </summary>
@@ -33,93 +39,101 @@ namespace Amqp.Framing
         {
         }
 
-        private bool? durable;
         /// <summary>
         /// Gets or sets the durable field.
         /// </summary>
         public bool Durable
         {
-            get { return this.durable == null ? false : this.durable.Value; }
-            set { this.durable = value; }
+            get { return this.GetField(0, this.durable, false); }
+            set { this.SetField(0, ref this.durable, value); }
         }
 
-        private byte? priority;
         /// <summary>
         /// Gets or sets the priority field.
         /// </summary>
         public byte Priority
         {
-            get { return this.priority == null ? (byte)4 : this.priority.Value; }
-            set { this.priority = value; }
+            get { return this.GetField(1, this.priority, (byte)4); }
+            set { this.SetField(1, ref this.priority, value); }
         }
 
-        private uint? ttl;
         /// <summary>
         /// Gets or sets the ttl field.
         /// </summary>
         public uint Ttl
         {
-            get { return this.ttl == null ? uint.MaxValue : this.ttl.Value; }
-            set { this.ttl = value; }
+            get { return this.GetField(2, this.ttl, uint.MaxValue); }
+            set { this.SetField(2, ref this.ttl, value); }
         }
 
-        private bool? firstAcquirer;
         /// <summary>
         /// Gets or sets the first-acquirer field.
         /// </summary>
         public bool FirstAcquirer
         {
-            get { return this.firstAcquirer == null ? false : this.firstAcquirer.Value; }
-            set { this.firstAcquirer = value; }
+            get { return this.GetField(3, this.firstAcquirer, false); }
+            set { this.SetField(3, ref this.firstAcquirer, value); }
         }
 
-        private uint? deliveryCount;
         /// <summary>
         /// Gets or sets the delivery-count field.
         /// </summary>
         public uint DeliveryCount
         {
-            get { return this.deliveryCount == null ? uint.MinValue : this.deliveryCount.Value; }
-            set { this.deliveryCount = value; }
+            get { return this.GetField(4, this.deliveryCount, uint.MinValue); }
+            set { this.SetField(4, ref this.deliveryCount, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.durable = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.priority = Encoder.ReadUByte(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.ttl = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.firstAcquirer = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.deliveryCount = Encoder.ReadUInt(buffer);
+                case 0:
+                    Encoder.WriteBoolean(buffer, this.durable, true);
+                    break;
+                case 1:
+                    Encoder.WriteUByte(buffer, this.priority);
+                    break;
+                case 2:
+                    Encoder.WriteUInt(buffer, this.ttl, true);
+                    break;
+                case 3:
+                    Encoder.WriteBoolean(buffer, this.firstAcquirer, true);
+                    break;
+                case 4:
+                    Encoder.WriteUInt(buffer, this.deliveryCount, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteBoolean(buffer, durable, true);
-            Encoder.WriteUByte(buffer, priority);
-            Encoder.WriteUInt(buffer, ttl, true);
-            Encoder.WriteBoolean(buffer, firstAcquirer, true);
-            Encoder.WriteUInt(buffer, deliveryCount, true);
+            switch (index)
+            {
+                case 0:
+                    this.durable = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 1:
+                    this.priority = Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 2:
+                    this.ttl = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 3:
+                    this.firstAcquirer = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 4:
+                    this.deliveryCount = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current header object.

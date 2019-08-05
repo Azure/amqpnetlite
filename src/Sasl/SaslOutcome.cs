@@ -25,6 +25,9 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslOutcome : DescribedList
     {
+        SaslCode code;
+        byte[] additionalData;
+
         /// <summary>
         /// Initializes a SaslOutcome object.
         /// </summary>
@@ -33,45 +36,56 @@ namespace Amqp.Sasl
         {
         }
 
-        private SaslCode code;
         /// <summary>
         /// Gets or sets the outcome of the sasl dialog.
         /// </summary>
         public SaslCode Code
         {
-            get { return this.code; }
-            set { this.code = value; }
+            get { return this.GetField(0, this.code); }
+            set { this.SetField(0, ref this.code, value); }
         }
 
-        private byte[] additionalData;
         /// <summary>
         /// Gets or sets the additional data as specified in RFC-4422.
         /// </summary>
         public byte[] AdditionalData
         {
-            get { return this.additionalData; }
-            set { this.additionalData = value; }
+            get { return this.GetField(1, this.additionalData); }
+            set { this.SetField(1, ref this.additionalData, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.code = (SaslCode)Encoder.ReadUByte(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.additionalData = Encoder.ReadBinary(buffer);
+                case 0:
+                    Encoder.WriteUByte(buffer, (byte)this.code);
+                    break;
+                case 1:
+                    Encoder.WriteBinary(buffer, this.additionalData, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteUByte(buffer, (byte?)code);
-            Encoder.WriteBinary(buffer, additionalData, true);
+            switch (index)
+            {
+                case 0:
+                    this.code = (SaslCode)Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 1:
+                    this.additionalData = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current SASL outcome object.

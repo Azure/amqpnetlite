@@ -24,6 +24,18 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Flow : DescribedList
     {
+        uint nextIncomingId;
+        uint incomingWindow;
+        uint nextOutgoingId;
+        uint outgoingWindow;
+        uint handle;
+        uint deliveryCount;
+        uint linkCredit;
+        uint available;
+        bool drain;
+        bool echo;
+        Fields properties;
+
         /// <summary>
         /// Initializes a flow object.
         /// </summary>
@@ -37,192 +49,194 @@ namespace Amqp.Framing
         /// </summary>
         public bool HasHandle
         {
-            get { return this.handle != null; }
+            get { return this.HasField(4); }
         }
 
-        private uint? nextIncomingId;
         /// <summary>
         /// Gets or sets the next-incoming-id field. 
         /// </summary>
         public uint NextIncomingId
         {
-            get { return this.nextIncomingId == null ? uint.MinValue : this.nextIncomingId.Value; }
-            set { this.nextIncomingId = value; }
+            get { return this.GetField(0, this.nextIncomingId, uint.MinValue); }
+            set { this.SetField(0, ref this.nextIncomingId, value); }
         }
 
-        private uint? incomingWindow;
         /// <summary>
         /// Gets or sets the incoming-window field. 
         /// </summary>
         public uint IncomingWindow
         {
-            get { return this.incomingWindow == null ? uint.MaxValue : this.incomingWindow.Value; }
-            set { this.incomingWindow = value; }
+            get { return this.GetField(1, this.incomingWindow, uint.MaxValue); }
+            set { this.SetField(1, ref this.incomingWindow, value); }
         }
 
-        private uint? nextOutgoingId;
         /// <summary>
         /// Gets or sets the next-outgoing-id field. 
         /// </summary>
         public uint NextOutgoingId
         {
-            get { return this.nextOutgoingId == null ? uint.MinValue : this.nextOutgoingId.Value; }
-            set { this.nextOutgoingId = value; }
+            get { return this.GetField(2, this.nextOutgoingId, uint.MinValue); }
+            set { this.SetField(2, ref this.nextOutgoingId, value); }
         }
 
-        private uint? outgoingWindow;
         /// <summary>
         /// Gets or sets the outgoing-window field.
         /// </summary>
         public uint OutgoingWindow
         {
-            get { return this.outgoingWindow == null ? uint.MaxValue : this.outgoingWindow.Value; }
-            set { this.outgoingWindow = value; }
+            get { return this.GetField(3, this.outgoingWindow, uint.MaxValue); }
+            set { this.SetField(3, ref this.outgoingWindow, value); }
         }
 
-        private uint? handle;
         /// <summary>
         /// Gets or sets the handle field.
         /// </summary>
         public uint Handle
         {
-            get { return this.handle == null ? uint.MaxValue : this.handle.Value; }
-            set { this.handle = value; }
+            get { return this.GetField(4, this.handle, uint.MaxValue); }
+            set { this.SetField(4, ref this.handle, value); }
         }
 
-        private uint? deliveryCount;
         /// <summary>
         /// Gets or sets the delivery-count field.
         /// </summary>
         public uint DeliveryCount
         {
-            get { return this.deliveryCount == null ? uint.MinValue : this.deliveryCount.Value; }
-            set { this.deliveryCount = value; }
+            get { return this.GetField(5, this.deliveryCount, uint.MinValue); }
+            set { this.SetField(5, ref this.deliveryCount, value); }
         }
 
-        private uint? linkCredit;
         /// <summary>
         /// Gets or sets the link-credit field. 
         /// </summary>
         public uint LinkCredit
         {
-            get { return this.linkCredit == null ? uint.MinValue : this.linkCredit.Value; }
-            set { this.linkCredit = value; }
+            get { return this.GetField(6, this.linkCredit, uint.MinValue); }
+            set { this.SetField(6, ref this.linkCredit, value); }
         }
 
-        private uint? available;
         /// <summary>
         /// Gets or sets the available field.
         /// </summary>
         public uint Available
         {
-            get { return this.available == null ? uint.MinValue : this.available.Value; }
-            set { this.available = value; }
+            get { return this.GetField(7, this.available, uint.MinValue); }
+            set { this.SetField(7, ref this.available, value); }
         }
 
-        private bool? drain;
         /// <summary>
         /// Gets or sets the drain field.
         /// </summary>
         public bool Drain
         {
-            get { return this.drain == null ? false : this.drain.Value; }
-            set { this.drain = value; }
+            get { return this.GetField(8, this.drain, false); }
+            set { this.SetField(8, ref this.drain, value); }
         }
 
-        private bool? echo;
         /// <summary>
         /// Gets or sets the echo field.
         /// </summary>
         public bool Echo
         {
-            get { return this.echo == null ? false : this.echo.Value; }
-            set { this.echo = value; }
+            get { return this.GetField(9, this.echo, false); }
+            set { this.SetField(9, ref this.echo, value); }
         }
 
-        private Fields properties;
         /// <summary>
         /// Gets or sets the properties field.
         /// </summary>
         public Fields Properties
         {
-            get { return this.properties; }
-            set { this.properties = value; }
+            get { return this.GetField(10, this.properties); }
+            set { this.SetField(10, ref this.properties, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.nextIncomingId = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.incomingWindow = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.nextOutgoingId = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.outgoingWindow = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.handle = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.deliveryCount = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.linkCredit = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.available = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.drain = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.echo = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.properties = Encoder.ReadFields(buffer);
+                case 0:
+                    Encoder.WriteUInt(buffer, this.nextIncomingId, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.incomingWindow, true);
+                    break;
+                case 2:
+                    Encoder.WriteUInt(buffer, this.nextOutgoingId, true);
+                    break;
+                case 3:
+                    Encoder.WriteUInt(buffer, this.outgoingWindow, true);
+                    break;
+                case 4:
+                    Encoder.WriteUInt(buffer, this.handle, true);
+                    break;
+                case 5:
+                    Encoder.WriteUInt(buffer, this.deliveryCount, true);
+                    break;
+                case 6:
+                    Encoder.WriteUInt(buffer, this.linkCredit, true);
+                    break;
+                case 7:
+                    Encoder.WriteUInt(buffer, this.available, true);
+                    break;
+                case 8:
+                    Encoder.WriteBoolean(buffer, this.drain, true);
+                    break;
+                case 9:
+                    Encoder.WriteBoolean(buffer, this.echo, true);
+                    break;
+                case 10:
+                    Encoder.WriteMap(buffer, this.properties, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteUInt(buffer, nextIncomingId, true);
-            Encoder.WriteUInt(buffer, incomingWindow, true);
-            Encoder.WriteUInt(buffer, nextOutgoingId, true);
-            Encoder.WriteUInt(buffer, outgoingWindow, true);
-            Encoder.WriteUInt(buffer, handle, true);
-            Encoder.WriteUInt(buffer, deliveryCount, true);
-            Encoder.WriteUInt(buffer, linkCredit, true);
-            Encoder.WriteUInt(buffer, available, true);
-            Encoder.WriteBoolean(buffer, drain, true);
-            Encoder.WriteBoolean(buffer, echo, true);
-            Encoder.WriteMap(buffer, properties, true);
+            switch (index)
+            {
+                case 0:
+                    this.nextIncomingId = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.incomingWindow = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.nextOutgoingId = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 3:
+                    this.outgoingWindow = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 4:
+                    this.handle = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 5:
+                    this.deliveryCount = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 6:
+                    this.linkCredit = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 7:
+                    this.available = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 8:
+                    this.drain = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 9:
+                    this.echo = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 10:
+                    this.properties = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

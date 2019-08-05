@@ -24,6 +24,13 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Dispose : DescribedList
     {
+        bool role;
+        uint first;
+        uint last;
+        bool settled;
+        DeliveryState state;
+        bool batchable;
+
         /// <summary>
         /// Initializes a dispose object.
         /// </summary>
@@ -32,109 +39,116 @@ namespace Amqp.Framing
         {
         }
 
-        private bool? role;
         /// <summary>
         /// Gets or sets the role field.
         /// </summary>
         public bool Role
         {
-            get { return this.role == null ? false : this.role.Value; }
-            set { this.role = value; }
+            get { return this.GetField(0, this.role, false); }
+            set { this.SetField(0, ref this.role, value); }
         }
 
-        private uint? first;
         /// <summary>
         /// Gets or sets the first field.
         /// </summary>
         public uint First
         {
-            get { return this.first == null ? uint.MinValue : this.first.Value; }
-            set { this.first = value; }
+            get { return this.GetField(1, this.first, uint.MinValue); }
+            set { this.SetField(1, ref this.first, value); }
         }
 
-        private uint? last;
         /// <summary>
         /// Gets or sets the last field.
         /// </summary>
         public uint Last
         {
-            get { return this.last == null ? this.First : this.last.Value; }
-            set { this.last = value; }
+            get { return this.GetField(2, this.last, this.First); }
+            set { this.SetField(2, ref this.last, value); }
         }
 
-        private bool? settled;
         /// <summary>
         /// Gets or sets the settled field. 
         /// </summary>
         public bool Settled
         {
-            get { return this.settled == null ? false : this.settled.Value; }
-            set { this.settled = value; }
+            get { return this.GetField(3, this.settled, false); }
+            set { this.SetField(3, ref this.settled, value); }
         }
 
-        private DeliveryState state;
         /// <summary>
         /// Gets or sets the state field.
         /// </summary>
         public DeliveryState State
         {
-            get { return this.state; }
-            set { this.state = value; }
+            get { return this.GetField(4, this.state); }
+            set { this.SetField(4, ref this.state, value); }
         }
 
-        private bool? batchable;
         /// <summary>
         /// Gets or sets the batchable field 
         /// </summary>
         public bool Batchable
         {
-            get { return this.batchable == null ? false : this.batchable.Value; }
-            set { this.batchable = value; }
+            get { return this.GetField(5, this.batchable, false); }
+            set { this.SetField(5, ref this.batchable, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.role = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.first = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.last = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.settled = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.state = (DeliveryState)Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.batchable = Encoder.ReadBoolean(buffer);
+                case 0:
+                    Encoder.WriteBoolean(buffer, this.role, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.first, true);
+                    break;
+                case 2:
+                    Encoder.WriteUInt(buffer, this.last, true);
+                    break;
+                case 3:
+                    Encoder.WriteBoolean(buffer, this.settled, true);
+                    break;
+                case 4:
+                    Encoder.WriteObject(buffer, this.state);
+                    break;
+                case 5:
+                    Encoder.WriteBoolean(buffer, this.batchable, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteBoolean(buffer, role, true);
-            Encoder.WriteUInt(buffer, first, true);
-            Encoder.WriteUInt(buffer, last, true);
-            Encoder.WriteBoolean(buffer, settled, true);
-            Encoder.WriteObject(buffer, state, true);
-            Encoder.WriteBoolean(buffer, batchable, true);
+            switch (index)
+            {
+                case 0:
+                    this.role = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 1:
+                    this.first = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.last = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 3:
+                    this.settled = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 4:
+                    this.state = (DeliveryState)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 5:
+                    this.batchable = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
-
+        
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

@@ -24,6 +24,21 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Attach : DescribedList
     {
+        string linkName;
+        uint handle;
+        bool role;
+        SenderSettleMode sndSettleMode;
+        ReceiverSettleMode rcvSettleMode;
+        object source;
+        object target;
+        Map unsettled;
+        bool incompleteUnsettled;
+        uint initialDeliveryCount;
+        ulong maxMessageSize;
+        object offeredCapabilities;
+        object desiredCapabilities;
+        Fields properties;
+
         /// <summary>
         /// Initializes an attach object.
         /// </summary>
@@ -32,235 +47,234 @@ namespace Amqp.Framing
         {
         }
 
-        private string linkName;
         /// <summary>
         /// Gets or sets the name field.
         /// </summary>
         public string LinkName
         {
-            get { return this.linkName; }
-            set { this.linkName = value; }
+            get { return this.GetField(0, this.linkName); }
+            set { this.SetField(0, ref this.linkName, value); }
         }
 
-        private uint? handle;
         /// <summary>
         /// Gets or sets the handle field.
         /// </summary>
         public uint Handle
         {
-            get { return this.handle == null ? uint.MinValue : this.handle.Value; }
-            set { this.handle = value; }
+            get { return this.GetField(1, this.handle, uint.MinValue); }
+            set { this.SetField(1, ref this.handle, value); }
         }
 
-        private bool? role;
         /// <summary>
         /// Gets or sets the role field.
         /// </summary>
         public bool Role
         {
-            get { return this.role == null ? false : this.role.Value; }
-            set { this.role = value; }
+            get { return this.GetField(2, this.role, false); }
+            set { this.SetField(2, ref this.role, value); }
         }
 
-        private SenderSettleMode? sndSettleMode;
         /// <summary>
         /// Gets or sets the snd-settle-mode field.
         /// </summary>
         public SenderSettleMode SndSettleMode
         {
-            get { return this.sndSettleMode == null ? SenderSettleMode.Unsettled : this.sndSettleMode.Value; }
-            set { this.sndSettleMode = value; }
+            get { return this.GetField(3, this.sndSettleMode, SenderSettleMode.Unsettled); }
+            set { this.SetField(3, ref this.sndSettleMode, value); }
         }
 
-        private ReceiverSettleMode? rcvSettleMode;
         /// <summary>
         /// Gets or sets the rcv-settle-mode field.
         /// </summary>
         public ReceiverSettleMode RcvSettleMode
         {
-            get { return this.rcvSettleMode == null ? ReceiverSettleMode.First : this.rcvSettleMode.Value; }
-            set { this.rcvSettleMode = value; }
+            get { return this.GetField(4, this.rcvSettleMode, ReceiverSettleMode.First); }
+            set { this.SetField(4, ref this.rcvSettleMode, value); }
         }
 
-        private object source;
         /// <summary>
         /// Gets or sets the source field.
         /// </summary>
         public object Source
         {
-            get { return this.source; }
-            set { this.source = value; }
+            get { return this.GetField(5, this.source); }
+            set { this.SetField(5, ref this.source, value); }
         }
 
-        private object target;
         /// <summary>
         /// Gets or sets the target field.
         /// </summary>
         public object Target
         {
-            get { return this.target; }
-            set { this.target = value; }
+            get { return this.GetField(6, this.target); }
+            set { this.SetField(6, ref this.target, value); }
         }
 
-        private Map unsettled;
         /// <summary>
         /// Gets or sets the unsettled field.
         /// </summary>
         public Map Unsettled
         {
-            get { return this.unsettled; }
-            set { this.unsettled = value; }
+            get { return this.GetField(7, this.unsettled); }
+            set { this.SetField(7, ref this.unsettled, value); }
         }
 
-        private bool? incompleteUnsettled;
         /// <summary>
         /// Gets or sets the incomplete-unsettled field.
         /// </summary>
         public bool IncompleteUnsettled
         {
-            get { return this.incompleteUnsettled == null ? false : this.incompleteUnsettled.Value; }
-            set { this.incompleteUnsettled = value; }
+            get { return this.GetField(8, this.incompleteUnsettled, false); }
+            set { this.SetField(8, ref this.incompleteUnsettled, value); }
         }
 
-        private uint? initialDeliveryCount;
         /// <summary>
         /// Gets or sets the initial-delivery-count field.
         /// </summary>
         public uint InitialDeliveryCount
         {
-            get { return this.initialDeliveryCount == null ? uint.MinValue : this.initialDeliveryCount.Value; }
-            set { this.initialDeliveryCount = value; }
+            get { return this.GetField(9, this.initialDeliveryCount, uint.MinValue); }
+            set { this.SetField(9, ref this.initialDeliveryCount, value); }
         }
 
-        private ulong? maxMessageSize;
         /// <summary>
         /// Gets or sets the max-message-size field.
         /// </summary>
         public ulong MaxMessageSize
         {
-            get { return this.maxMessageSize == null ? ulong.MaxValue : (ulong)this.maxMessageSize; }
-            set { this.maxMessageSize = value; }
+            get { return this.GetField(10, this.maxMessageSize, ulong.MaxValue); }
+            set { this.SetField(10, ref this.maxMessageSize, value); }
         }
 
-        private object offeredCapabilities;
         /// <summary>
         /// Gets or sets the offered-capabilities field.
         /// </summary>
         public Symbol[] OfferedCapabilities
         {
-            get { return Codec.GetSymbolMultiple(ref this.offeredCapabilities); }
-            set { this.offeredCapabilities = value; }
+            get { return HasField(11) ? Codec.GetSymbolMultiple(ref this.offeredCapabilities) : null; }
+            set { this.SetField(11, ref this.offeredCapabilities, value); }
         }
 
-        private object desiredCapabilities;
         /// <summary>
         /// Gets or sets the desired-capabilities field.
         /// </summary>
         public Symbol[] DesiredCapabilities
         {
-            get { return Codec.GetSymbolMultiple(ref this.desiredCapabilities); }
-            set { this.desiredCapabilities = value; }
+            get { return HasField(12) ? Codec.GetSymbolMultiple(ref this.desiredCapabilities) : null; }
+            set { this.SetField(12, ref this.desiredCapabilities, value); }
         }
 
-        private Fields properties;
         /// <summary>
         /// Gets or sets the properties field.
         /// </summary>
         public Fields Properties
         {
-            get { return properties; }
-            set { this.properties = value; }
+            get { return this.GetField(13, this.properties); }
+            set { this.SetField(13, ref this.properties, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.linkName = Encoder.ReadString(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.handle = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.role = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.sndSettleMode = (SenderSettleMode)Encoder.ReadUByte(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.rcvSettleMode = (ReceiverSettleMode)Encoder.ReadUByte(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.source = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.target = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.unsettled = Encoder.ReadMap(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.incompleteUnsettled = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.initialDeliveryCount = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.maxMessageSize = Encoder.ReadULong(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.offeredCapabilities = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.desiredCapabilities = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.properties = Encoder.ReadFields(buffer);
+                case 0:
+                    Encoder.WriteString(buffer, this.linkName, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.handle, true);
+                    break;
+                case 2:
+                    Encoder.WriteBoolean(buffer, this.role, true);
+                    break;
+                case 3:
+                    Encoder.WriteUByte(buffer, (byte)this.sndSettleMode);
+                    break;
+                case 4:
+                    Encoder.WriteUByte(buffer, (byte)this.rcvSettleMode);
+                    break;
+                case 5:
+                    Encoder.WriteObject(buffer, this.source);
+                    break;
+                case 6:
+                    Encoder.WriteObject(buffer, this.target);
+                    break;
+                case 7:
+                    Encoder.WriteMap(buffer, this.unsettled, true);
+                    break;
+                case 8:
+                    Encoder.WriteBoolean(buffer, this.incompleteUnsettled, true);
+                    break;
+                case 9:
+                    Encoder.WriteUInt(buffer, this.initialDeliveryCount, true);
+                    break;
+                case 10:
+                    Encoder.WriteULong(buffer, this.maxMessageSize, true);
+                    break;
+                case 11:
+                    Encoder.WriteObject(buffer, this.offeredCapabilities);
+                    break;
+                case 12:
+                    Encoder.WriteObject(buffer, this.desiredCapabilities);
+                    break;
+                case 13:
+                    Encoder.WriteMap(buffer, this.properties, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteString(buffer, linkName, true);
-            Encoder.WriteUInt(buffer, handle, true);
-            Encoder.WriteBoolean(buffer, role, true);
-            Encoder.WriteUByte(buffer, (byte?)sndSettleMode);
-            Encoder.WriteUByte(buffer, (byte?)rcvSettleMode);
-            Encoder.WriteObject(buffer, source, true);
-            Encoder.WriteObject(buffer, target, true);
-            Encoder.WriteMap(buffer, unsettled, true);
-            Encoder.WriteBoolean(buffer, incompleteUnsettled, true);
-            Encoder.WriteUInt(buffer, initialDeliveryCount, true);
-            Encoder.WriteULong(buffer, maxMessageSize, true);
-            Encoder.WriteObject(buffer, offeredCapabilities, true);
-            Encoder.WriteObject(buffer, desiredCapabilities, true);
-            Encoder.WriteMap(buffer, properties, true);
+            switch (index)
+            {
+                case 0:
+                    this.linkName = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 1:
+                    this.handle = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.role = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 3:
+                    this.sndSettleMode = (SenderSettleMode)Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 4:
+                    this.rcvSettleMode = (ReceiverSettleMode)Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 5:
+                    this.source = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 6:
+                    this.target = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 7:
+                    this.unsettled = Encoder.ReadMap(buffer, formatCode);
+                    break;
+                case 8:
+                    this.incompleteUnsettled = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 9:
+                    this.initialDeliveryCount = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 10:
+                    this.maxMessageSize = Encoder.ReadULong(buffer, formatCode);
+                    break;
+                case 11:
+                    this.offeredCapabilities = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 12:
+                    this.desiredCapabilities = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 13:
+                    this.properties = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE

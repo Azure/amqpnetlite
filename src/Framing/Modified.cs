@@ -24,6 +24,10 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Modified : Outcome
     {
+        bool deliveryFailed;
+        bool undeliverableHere;
+        Fields messageAnnotations;
+
         /// <summary>
         /// Initializes a modified outcome.
         /// </summary>
@@ -32,59 +36,69 @@ namespace Amqp.Framing
         {
         }
 
-        private bool? deliveryFailed;
         /// <summary>
         /// Gets or sets the delivery-failed field.
         /// </summary>
         public bool DeliveryFailed
         {
-            get { return this.deliveryFailed == null ? false : this.deliveryFailed.Value; }
-            set { this.deliveryFailed = value; }
+            get { return this.GetField(0, this.deliveryFailed, false); }
+            set { this.SetField(0, ref this.deliveryFailed, value); }
         }
 
-        private bool? undeliverableHere;
         /// <summary>
         /// Gets or sets the undeliverable-here field.
         /// </summary>
         public bool UndeliverableHere
         {
-            get { return this.undeliverableHere == null ? false : this.undeliverableHere.Value; }
-            set { this.undeliverableHere = value; }
+            get { return this.GetField(1, this.undeliverableHere, false); }
+            set { this.SetField(1, ref this.undeliverableHere, value); }
         }
 
-        private Fields messageAnnotations;
         /// <summary>
         /// Gets or sets the message-annotations field.
         /// </summary>
         public Fields MessageAnnotations
         {
-            get { return this.messageAnnotations; }
-            set { this.messageAnnotations = value; }
+            get { return this.GetField(2, this.messageAnnotations); }
+            set { this.SetField(2, ref this.messageAnnotations, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.deliveryFailed = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.undeliverableHere = Encoder.ReadBoolean(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.messageAnnotations = Encoder.ReadFields(buffer);
+                case 0:
+                    Encoder.WriteBoolean(buffer, this.deliveryFailed, true);
+                    break;
+                case 1:
+                    Encoder.WriteBoolean(buffer, this.undeliverableHere, true);
+                    break;
+                case 2:
+                    Encoder.WriteMap(buffer, this.messageAnnotations, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteBoolean(buffer, deliveryFailed, true);
-            Encoder.WriteBoolean(buffer, undeliverableHere, true);
-            Encoder.WriteMap(buffer, messageAnnotations, true);
+            switch (index)
+            {
+                case 0:
+                    this.deliveryFailed = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 1:
+                    this.undeliverableHere = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 2:
+                    this.messageAnnotations = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE

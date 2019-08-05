@@ -25,6 +25,20 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Properties : DescribedList
     {
+        object messageId;
+        byte[] userId;
+        string to;
+        string subject;
+        string replyTo;
+        object correlationId;
+        Symbol contentType;
+        Symbol contentEncoding;
+        DateTime absoluteExpiryTime;
+        DateTime creationTime;
+        string groupId;
+        uint groupSequence;
+        string replyToGroupId;
+
         /// <summary>
         /// Initializes a properties section.
         /// </summary>
@@ -33,7 +47,6 @@ namespace Amqp.Framing
         {
         }
 
-        private object messageId;
         /// <summary>
         /// Gets or sets the message-id field.
         /// </summary>
@@ -44,51 +57,46 @@ namespace Amqp.Framing
         /// </remarks>
         public string MessageId
         {
-            get { return (string)this.messageId; }
-            set { this.messageId = value; }
+            get { return (string)this.GetField(0, this.messageId); }
+            set { this.SetField(0, ref this.messageId, value); }
         }
 
-        private byte[] userId;
         /// <summary>
         /// Gets or sets the user-id field.
         /// </summary>
         public byte[] UserId
         {
-            get { return this.userId; }
-            set { this.userId = value; }
+            get { return this.GetField(1, this.userId); }
+            set { this.SetField(1, ref this.userId, value); }
         }
 
-        private string to;
         /// <summary>
         /// Gets or sets the to field.
         /// </summary>
         public string To
         {
-            get { return this.to; }
-            set { this.to = value; }
+            get { return this.GetField(2, this.to); }
+            set { this.SetField(2, ref this.to, value); }
         }
 
-        private string subject;
         /// <summary>
         /// Gets or sets the subject field.
         /// </summary>
         public string Subject
         {
-            get { return this.subject; }
-            set { this.subject = value; }
+            get { return this.GetField(3, this.subject); }
+            set { this.SetField(3, ref this.subject, value); }
         }
 
-        private string replyTo;
         /// <summary>
         /// Gets or sets the reply-to field.
         /// </summary>
         public string ReplyTo
         {
-            get { return this.replyTo; }
-            set { this.replyTo = value; }
+            get { return this.GetField(4, this.replyTo); }
+            set { this.SetField(4, ref this.replyTo, value); }
         }
 
-        private object correlationId;
         /// <summary>
         /// Gets or sets the correlation-id field.
         /// </summary>
@@ -99,163 +107,169 @@ namespace Amqp.Framing
         /// </remarks>
         public string CorrelationId
         {
-            get { return (string)this.correlationId; }
-            set { this.correlationId = value; }
+            get { return (string)this.GetField(5, this.correlationId); }
+            set { this.SetField(5, ref this.correlationId, value); }
         }
 
-        private Symbol contentType;
         /// <summary>
         /// Gets or sets the content-type field.
         /// </summary>
         public Symbol ContentType
         {
-            get { return this.contentType; }
-            set { this.contentType = value; }
+            get { return this.GetField(6, this.contentType); }
+            set { this.SetField(6, ref this.contentType, value); }
         }
 
-        private Symbol contentEncoding;
         /// <summary>
         /// Gets or sets the content-encoding field.
         /// </summary>
         public Symbol ContentEncoding
         {
-            get { return this.contentEncoding; }
-            set { this.contentEncoding = value; }
+            get { return this.GetField(7, this.contentEncoding); }
+            set { this.SetField(7, ref this.contentEncoding, value); }
         }
 
-        private DateTime? absoluteExpiryTime;
         /// <summary>
         /// Gets or sets the absolute-expiry-time field.
         /// </summary>
         public DateTime AbsoluteExpiryTime
         {
-            get { return this.absoluteExpiryTime == null ? DateTime.MinValue : this.absoluteExpiryTime.Value; }
-            set { this.absoluteExpiryTime = value; }
+            get { return this.GetField(8, this.absoluteExpiryTime, DateTime.MinValue); }
+            set { this.SetField(8, ref this.absoluteExpiryTime, value); }
         }
 
-        private DateTime? creationTime;
         /// <summary>
         /// Gets or sets the creation-time field.
         /// </summary>
         public DateTime CreationTime
         {
-            get { return this.creationTime == null ? DateTime.MinValue : this.creationTime.Value; }
-            set { this.creationTime = value; }
+            get { return this.GetField(9, this.creationTime, DateTime.MinValue); }
+            set { this.SetField(9, ref this.creationTime, value); }
         }
 
-        private string groupId;
         /// <summary>
         /// Gets or sets the group-id field.
         /// </summary>
         public string GroupId
         {
-            get { return this.groupId; }
-            set { this.groupId = value; }
+            get { return this.GetField(10, this.GetField(1, this.groupId)); }
+            set { this.SetField(10, ref this.groupId, value); }
         }
 
-        private uint? groupSequence;
         /// <summary>
         /// Gets or sets the group-sequence field.
         /// </summary>
         public uint GroupSequence
         {
-            get { return this.groupSequence == null ? uint.MinValue : this.groupSequence.Value; }
-            set { this.groupSequence = value; }
+            get { return this.GetField(11, this.groupSequence, uint.MinValue); }
+            set { this.SetField(11, ref this.groupSequence, value); }
         }
 
-        private string replyToGroupId;
         /// <summary>
         /// Gets or sets the reply-to-group-id field.
         /// </summary>
         public string ReplyToGroupId
         {
-            get { return this.replyToGroupId; }
-            set { this.replyToGroupId = value; }
+            get { return this.GetField(12, this.replyToGroupId); }
+            set { this.SetField(12, ref this.replyToGroupId, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.messageId = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.userId = Encoder.ReadBinary(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.to = Encoder.ReadString(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.subject = Encoder.ReadString(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.replyTo = Encoder.ReadString(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.correlationId = Encoder.ReadObject(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.contentType = Encoder.ReadSymbol(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.contentEncoding = Encoder.ReadSymbol(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.absoluteExpiryTime = Encoder.ReadTimestamp(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.creationTime = Encoder.ReadTimestamp(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.groupId = Encoder.ReadString(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.groupSequence = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.replyToGroupId = Encoder.ReadString(buffer);
+                case 0:
+                    Encoder.WriteObject(buffer, this.messageId);
+                    break;
+                case 1:
+                    Encoder.WriteBinary(buffer, this.userId, true);
+                    break;
+                case 2:
+                    Encoder.WriteString(buffer, this.to, true);
+                    break;
+                case 3:
+                    Encoder.WriteString(buffer, this.subject, true);
+                    break;
+                case 4:
+                    Encoder.WriteString(buffer, this.replyTo, true);
+                    break;
+                case 5:
+                    Encoder.WriteObject(buffer, this.correlationId);
+                    break;
+                case 6:
+                    Encoder.WriteSymbol(buffer, this.contentType, true);
+                    break;
+                case 7:
+                    Encoder.WriteSymbol(buffer, this.contentEncoding, true);
+                    break;
+                case 8:
+                    Encoder.WriteTimestamp(buffer, this.absoluteExpiryTime);
+                    break;
+                case 9:
+                    Encoder.WriteTimestamp(buffer, this.creationTime);
+                    break;
+                case 10:
+                    Encoder.WriteString(buffer, this.groupId, true);
+                    break;
+                case 11:
+                    Encoder.WriteUInt(buffer, this.groupSequence, true);
+                    break;
+                case 12:
+                    Encoder.WriteString(buffer, this.replyToGroupId, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteObject(buffer, messageId, true);
-            Encoder.WriteBinary(buffer, userId, true);
-            Encoder.WriteString(buffer, to, true);
-            Encoder.WriteString(buffer, subject, true);
-            Encoder.WriteString(buffer, replyTo, true);
-            Encoder.WriteObject(buffer, correlationId, true);
-            Encoder.WriteSymbol(buffer, contentType, true);
-            Encoder.WriteSymbol(buffer, contentEncoding, true);
-            Encoder.WriteTimestamp(buffer, absoluteExpiryTime);
-            Encoder.WriteTimestamp(buffer, creationTime);
-            Encoder.WriteString(buffer, groupId, true);
-            Encoder.WriteUInt(buffer, groupSequence, true);
-            Encoder.WriteString(buffer, replyToGroupId, true);
+            switch (index)
+            {
+                case 0:
+                    this.messageId = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 1:
+                    this.userId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 2:
+                    this.to = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 3:
+                    this.subject = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 4:
+                    this.replyTo = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 5:
+                    this.correlationId = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 6:
+                    this.contentType = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 7:
+                    this.contentEncoding = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 8:
+                    this.absoluteExpiryTime = Encoder.ReadTimestamp(buffer, formatCode);
+                    break;
+                case 9:
+                    this.creationTime = Encoder.ReadTimestamp(buffer, formatCode);
+                    break;
+                case 10:
+                    this.groupId = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 11:
+                    this.groupSequence = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 12:
+                    this.replyToGroupId = Encoder.ReadString(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         /// <summary>

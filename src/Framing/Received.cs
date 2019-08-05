@@ -21,42 +21,56 @@ namespace Amqp.Framing
 
     sealed class Received : DeliveryState
     {
+        uint sectionNumber;
+        ulong sectionOffset;
+
         public Received()
             : base(Codec.Received, 2)
         {
         }
 
-        private uint? sectionNumber;
         public uint SectionNumber
         {
-            get { return this.sectionNumber == null ? uint.MinValue : this.sectionNumber.Value; }
-            set { this.sectionNumber = value; }
+            get { return this.GetField(0, this.sectionNumber, uint.MinValue); }
+            set { this.SetField(0, ref this.sectionNumber, value); }
         }
 
-        private ulong? sectionOffset;
         public ulong SectionOffset
         {
-            get { return this.sectionOffset == null ? ulong.MinValue : this.sectionOffset.Value; }
-            set { this.sectionOffset = value; }
+            get { return this.GetField(1, this.sectionOffset, ulong.MinValue); }
+            set { this.SetField(1, ref this.sectionOffset, value); }
         }
 
-        internal override void OnDecode(ByteBuffer buffer, int count)
+        internal override void WriteField(ByteBuffer buffer, int index)
         {
-            if (count-- > 0)
+            switch (index)
             {
-                this.sectionNumber = Encoder.ReadUInt(buffer);
-            }
-
-            if (count-- > 0)
-            {
-                this.sectionOffset = Encoder.ReadULong(buffer);
+                case 0:
+                    Encoder.WriteUInt(buffer, this.sectionNumber, true);
+                    break;
+                case 1:
+                    Encoder.WriteULong(buffer, this.sectionOffset, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
             }
         }
 
-        internal override void OnEncode(ByteBuffer buffer)
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
         {
-            Encoder.WriteUInt(buffer, sectionNumber, true);
-            Encoder.WriteULong(buffer, sectionOffset, true);
+            switch (index)
+            {
+                case 0:
+                    this.sectionNumber = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.sectionOffset = Encoder.ReadULong(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         public override string ToString()
