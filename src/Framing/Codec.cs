@@ -163,5 +163,29 @@ namespace Amqp.Framing
 
             throw new AmqpException(ErrorCode.InvalidField, Fx.Format("{0} {1}", index, fields[index].GetType().Name));
         }
+
+        public static Symbol[] GetSymbolMultiple(ref object obj)
+        {
+            if (obj == null)
+            {
+                return null;
+            }
+
+            Symbol[] symbols = obj as Symbol[];
+            if (symbols != null)
+            {
+                return symbols;
+            }
+
+            Symbol symbol = obj as Symbol;
+            if (symbol != null)
+            {
+                symbols = new Symbol[] { symbol };
+                obj = symbols;
+                return symbols;
+            }
+
+            throw new AmqpException(ErrorCode.InvalidField, obj.GetType().Name);
+        }
     }
 }

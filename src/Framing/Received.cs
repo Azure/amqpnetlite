@@ -21,6 +21,9 @@ namespace Amqp.Framing
 
     sealed class Received : DeliveryState
     {
+        uint sectionNumber;
+        ulong sectionOffset;
+
         public Received()
             : base(Codec.Received, 2)
         {
@@ -28,14 +31,46 @@ namespace Amqp.Framing
 
         public uint SectionNumber
         {
-            get { return this.Fields[0] == null ? uint.MinValue : (uint)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.sectionNumber, uint.MinValue); }
+            set { this.SetField(0, ref this.sectionNumber, value); }
         }
 
         public ulong SectionOffset
         {
-            get { return this.Fields[1] == null ? ulong.MinValue : (ulong)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.sectionOffset, ulong.MinValue); }
+            set { this.SetField(1, ref this.sectionOffset, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteUInt(buffer, this.sectionNumber, true);
+                    break;
+                case 1:
+                    Encoder.WriteULong(buffer, this.sectionOffset, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.sectionNumber = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.sectionOffset = Encoder.ReadULong(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         public override string ToString()
@@ -44,7 +79,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "received",
                 new object[] { "section-number", "section-offset" },
-                this.Fields);
+                new object[] { sectionNumber, sectionOffset });
 #else
             return base.ToString();
 #endif

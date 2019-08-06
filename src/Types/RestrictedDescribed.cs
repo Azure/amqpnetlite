@@ -49,7 +49,27 @@ namespace Amqp.Types
 
         internal override void DecodeDescriptor(ByteBuffer buffer)
         {
-            Encoder.ReadObject(buffer);
+            var formatCode = Encoder.ReadFormatCode(buffer);
+            if (formatCode == FormatCode.Described)
+            {
+                formatCode = Encoder.ReadFormatCode(buffer);
+            }
+
+            if (formatCode == FormatCode.Symbol8 ||
+                formatCode == FormatCode.Symbol32)
+            {
+                Encoder.ReadSymbol(buffer, formatCode);
+            }
+            else if (formatCode == FormatCode.ULong ||
+                     formatCode == FormatCode.ULong0 ||
+                     formatCode == FormatCode.SmallULong)
+            {
+                Encoder.ReadULong(buffer, formatCode);
+            }
+            else
+            {
+                throw Encoder.InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
         }
     }
 }

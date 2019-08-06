@@ -25,6 +25,8 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class Declared : Outcome
     {
+        byte[] txnId;
+
         /// <summary>
         /// Initializes a declared object.
         /// </summary>
@@ -38,10 +40,36 @@ namespace Amqp.Transactions
         /// </summary>
         public byte[] TxnId
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.txnId); }
+            set { this.SetField(0, ref this.txnId, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBinary(buffer, this.txnId, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.txnId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current object.
@@ -52,7 +80,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "declared",
                 new object[] { "txn-id" },
-                this.Fields);
+                new object[] { txnId });
         }
 #endif
     }

@@ -25,6 +25,9 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class TransactionalState : DeliveryState
     {
+        byte[] txnId;
+        Outcome outcome;
+
         /// <summary>
         /// Initializes a transactional state object.
         /// </summary>
@@ -38,8 +41,8 @@ namespace Amqp.Transactions
         /// </summary>
         public byte[] TxnId
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.txnId); }
+            set { this.SetField(0, ref this.txnId, value); }
         }
 
         /// <summary>
@@ -47,8 +50,40 @@ namespace Amqp.Transactions
         /// </summary>
         public Outcome Outcome
         {
-            get { return (Outcome)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.outcome); }
+            set { this.SetField(1, ref this.outcome, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBinary(buffer, this.txnId, true);
+                    break;
+                case 1:
+                    Encoder.WriteObject(buffer, this.outcome);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.txnId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 1:
+                    this.outcome = (Outcome)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -61,7 +96,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "txn-state",
                 new object[] { "txn-id", "outcome" },
-                this.Fields);
+                new object[] { txnId, outcome });
         }
 #endif
     }

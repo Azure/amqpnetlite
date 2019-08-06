@@ -25,6 +25,8 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class Declare : DescribedList
     {
+        object globalId;
+
         /// <summary>
         /// Initializes a declare object.
         /// </summary>
@@ -38,8 +40,34 @@ namespace Amqp.Transactions
         /// </summary>
         public object GlobalId
         {
-            get { return this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.globalId); }
+            set { this.SetField(0, ref this.globalId, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteObject(buffer, this.globalId);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.globalId = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -52,7 +80,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "declare",
                 new object[] { "global-id" },
-                this.Fields);
+                new object[] { globalId });
         }
 #endif
     }

@@ -25,6 +25,18 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Source : DescribedList
     {
+        string address;
+        uint durable;
+        Symbol expiryPolicy;
+        uint timeout;
+        bool dynamic;
+        Fields dynamicNodeProperties;
+        Symbol distributionMode;
+        Map filterSet;
+        Outcome defaultOutcome;
+        object outcomes;
+        object capabilities;
+
         /// <summary>
         /// Initializes a source object.
         /// </summary>
@@ -38,8 +50,8 @@ namespace Amqp.Framing
         /// </summary>
         public string Address
         {
-            get { return (string)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.address); }
+            set { this.SetField(0, ref this.address, value); }
         }
 
         /// <summary>
@@ -47,8 +59,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Durable
         {
-            get { return this.Fields[1] == null ? 0u : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.durable, 0u); }
+            set { this.SetField(1, ref this.durable, value); }
         }
 
         /// <summary>
@@ -56,8 +68,8 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol ExpiryPolicy
         {
-            get { return (Symbol)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.expiryPolicy); }
+            set { this.SetField(2, ref this.expiryPolicy, value); }
         }
 
         /// <summary>
@@ -65,8 +77,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Timeout
         {
-            get { return this.Fields[3] == null ? 0u : (uint)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.GetField(3, this.timeout, 0u); }
+            set { this.SetField(3, ref this.timeout, value); }
         }
 
         /// <summary>
@@ -74,8 +86,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Dynamic
         {
-            get { return this.Fields[4] == null ? false : (bool)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.GetField(4, this.dynamic, false); }
+            set { this.SetField(4, ref this.dynamic, value); }
         }
 
         /// <summary>
@@ -83,8 +95,8 @@ namespace Amqp.Framing
         /// </summary>
         public Fields DynamicNodeProperties
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 5); }
-            set { this.Fields[5] = value; }
+            get { return this.GetField(5, this.dynamicNodeProperties); }
+            set { this.SetField(5, ref this.dynamicNodeProperties, value); }
         }
 
         /// <summary>
@@ -92,8 +104,8 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol DistributionMode
         {
-            get { return (Symbol)this.Fields[6]; }
-            set { this.Fields[6] = value; }
+            get { return this.GetField(6, this.distributionMode); }
+            set { this.SetField(6, ref this.distributionMode, value); }
         }
 
         /// <summary>
@@ -101,8 +113,8 @@ namespace Amqp.Framing
         /// </summary>
         public Map FilterSet
         {
-            get { return (Map)this.Fields[7]; }
-            set { this.Fields[7] = value; }
+            get { return this.GetField(7, this.filterSet); }
+            set { this.SetField(7, ref this.filterSet, value); }
         }
 
         /// <summary>
@@ -110,8 +122,8 @@ namespace Amqp.Framing
         /// </summary>
         public Outcome DefaultOutcome
         {
-            get { return (Outcome)this.Fields[8]; }
-            set { this.Fields[8] = value; }
+            get { return this.GetField(8, this.defaultOutcome); }
+            set { this.SetField(8, ref this.defaultOutcome, value); }
         }
 
         /// <summary>
@@ -119,8 +131,8 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol[] Outcomes
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 9); }
-            set { this.Fields[9] = value; }
+            get { return HasField(9) ? Codec.GetSymbolMultiple(ref this.outcomes) : null; }
+            set { this.SetField(9, ref this.outcomes, value); }
         }
 
         /// <summary>
@@ -128,8 +140,94 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol[] Capabilities
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 10); }
-            set { this.Fields[10] = value; }
+            get { return HasField(10) ? Codec.GetSymbolMultiple(ref this.capabilities) : null; }
+            set { this.SetField(10, ref this.capabilities, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteString(buffer, this.address, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.durable, true);
+                    break;
+                case 2:
+                    Encoder.WriteSymbol(buffer, this.expiryPolicy, true);
+                    break;
+                case 3:
+                    Encoder.WriteUInt(buffer, this.timeout, true);
+                    break;
+                case 4:
+                    Encoder.WriteBoolean(buffer, this.dynamic, true);
+                    break;
+                case 5:
+                    Encoder.WriteMap(buffer, this.dynamicNodeProperties, true);
+                    break;
+                case 6:
+                    Encoder.WriteSymbol(buffer, this.distributionMode, true);
+                    break;
+                case 7:
+                    Encoder.WriteMap(buffer, this.filterSet, true);
+                    break;
+                case 8:
+                    Encoder.WriteObject(buffer, this.defaultOutcome, true);
+                    break;
+                case 9:
+                    Encoder.WriteObject(buffer, this.outcomes, true);
+                    break;
+                case 10:
+                    Encoder.WriteObject(buffer, this.capabilities, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.address = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 1:
+                    this.durable = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.expiryPolicy = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 3:
+                    this.timeout = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 4:
+                    this.dynamic = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 5:
+                    this.dynamicNodeProperties = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                case 6:
+                    this.distributionMode = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 7:
+                    this.filterSet = Encoder.ReadMap(buffer, formatCode);
+                    break;
+                case 8:
+                    this.defaultOutcome = (Outcome)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 9:
+                    this.outcomes = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 10:
+                    this.capabilities = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -141,7 +239,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "source",
                 new object[] { "address", "durable", "expiry-policy", "timeout", "dynamic", "dynamic-node-properties", "distribution-mode", "filter", "default-outcome", "outcomes", "capabilities" },
-                this.Fields);
+                new object[] { address, durable, expiryPolicy, timeout, dynamic, dynamicNodeProperties, distributionMode, filterSet, defaultOutcome, outcomes, capabilities });
         }
 #endif
     }

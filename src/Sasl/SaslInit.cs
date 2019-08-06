@@ -25,6 +25,10 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslInit : DescribedList
     {
+        Symbol mechanism;
+        byte[] initialResponse;
+        string hostName;
+
         /// <summary>
         /// Initializes a SaslInit object.
         /// </summary>
@@ -38,8 +42,8 @@ namespace Amqp.Sasl
         /// </summary>
         public Symbol Mechanism
         {
-            get { return (Symbol)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.mechanism); }
+            set { this.SetField(0, ref this.mechanism, value); }
         }
 
         /// <summary>
@@ -47,8 +51,8 @@ namespace Amqp.Sasl
         /// </summary>
         public byte[] InitialResponse
         {
-            get { return (byte[])this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.initialResponse); }
+            set { this.SetField(1, ref this.initialResponse, value); }
         }
 
         /// <summary>
@@ -56,8 +60,46 @@ namespace Amqp.Sasl
         /// </summary>
         public string HostName
         {
-            get { return (string)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.hostName); }
+            set { this.SetField(2, ref this.hostName, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteSymbol(buffer, this.mechanism, true);
+                    break;
+                case 1:
+                    Encoder.WriteBinary(buffer, this.initialResponse, true);
+                    break;
+                case 2:
+                    Encoder.WriteString(buffer, this.hostName, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.mechanism = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 1:
+                    this.initialResponse = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 2:
+                    this.hostName = Encoder.ReadString(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -69,7 +111,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-init",
                 new object[] { "mechanism", "initial-response", "hostname" },
-                new object[] { this.Fields[0], "...", this.Fields[2] });
+                new object[] { mechanism, "...", hostName });
         }
 #endif
     }

@@ -25,6 +25,10 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Error : DescribedList
     {
+        Symbol condition;
+        string description;
+        Fields info;
+
         /// <summary>
         /// Initializes an error object.
         /// </summary>
@@ -49,8 +53,8 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol Condition
         {
-            get { return (Symbol)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.condition); }
+            set { this.SetField(0, ref this.condition, value); }
         }
 
         /// <summary>
@@ -58,8 +62,8 @@ namespace Amqp.Framing
         /// </summary>
         public string Description
         {
-            get { return (string)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.description); }
+            set { this.SetField(1, ref this.description, value); }
         }
 
         /// <summary>
@@ -67,8 +71,46 @@ namespace Amqp.Framing
         /// </summary>
         public Fields Info
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 2); }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.info); }
+            set { this.SetField(2, ref this.info, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteSymbol(buffer, this.condition, true);
+                    break;
+                case 1:
+                    Encoder.WriteString(buffer, this.description, true);
+                    break;
+                case 2:
+                    Encoder.WriteMap(buffer, this.info, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.condition = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 1:
+                    this.description = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 2:
+                    this.info = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -81,7 +123,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "error",
                 new object[] { "condition", "description", "fields" },
-                this.Fields);
+                new object[] { condition, description, info });
         }
 #endif
     }

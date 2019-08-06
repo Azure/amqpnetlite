@@ -24,6 +24,18 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Transfer : DescribedList
     {
+        uint handle;
+        uint deliveryId;
+        byte[] deliveryTag;
+        uint messageFormat;
+        bool settled;
+        bool more;
+        ReceiverSettleMode rcvSettleMode;
+        DeliveryState state;
+        bool resume;
+        bool aborted;
+        bool batchable;
+
         /// <summary>
         /// Initializes an transfer object.
         /// </summary>
@@ -37,7 +49,7 @@ namespace Amqp.Framing
         /// </summary>
         public bool HasDeliveryId
         {
-            get { return this.Fields[1] != null; }
+            get { return this.HasField(1); }
         }
 
         /// <summary>
@@ -45,8 +57,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Handle
         {
-            get { return this.Fields[0] == null ? uint.MaxValue : (uint)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.handle, uint.MaxValue); }
+            set { this.SetField(0, ref this.handle, value); }
         }
 
         /// <summary>
@@ -54,8 +66,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint DeliveryId
         {
-            get { return this.Fields[1] == null ? uint.MinValue : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.deliveryId, uint.MinValue); }
+            set { this.SetField(1, ref this.deliveryId, value); }
         }
 
         /// <summary>
@@ -63,8 +75,8 @@ namespace Amqp.Framing
         /// </summary>
         public byte[] DeliveryTag
         {
-            get { return (byte[])this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.deliveryTag); }
+            set { this.SetField(2, ref this.deliveryTag, value); }
         }
 
         /// <summary>
@@ -72,8 +84,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint MessageFormat
         {
-            get { return this.Fields[3] == null ? uint.MinValue : (uint)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.GetField(3, this.messageFormat, uint.MinValue); }
+            set { this.SetField(3, ref this.messageFormat, value); }
         }
 
         /// <summary>
@@ -81,8 +93,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Settled
         {
-            get { return this.Fields[4] == null ? false : (bool)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.GetField(4, this.settled, false); }
+            set { this.SetField(4, ref this.settled, value); }
         }
 
         /// <summary>
@@ -90,8 +102,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool More
         {
-            get { return this.Fields[5] == null ? false : (bool)this.Fields[5]; }
-            set { this.Fields[5] = value; }
+            get { return this.GetField(5, this.more, false); }
+            set { this.SetField(5, ref this.more, value); }
         }
 
         /// <summary>
@@ -99,8 +111,8 @@ namespace Amqp.Framing
         /// </summary>
         public ReceiverSettleMode RcvSettleMode
         {
-            get { return this.Fields[6] == null ? ReceiverSettleMode.First : (ReceiverSettleMode)this.Fields[6]; }
-            set { this.Fields[6] = (byte)value; }
+            get { return this.GetField(6, this.rcvSettleMode, ReceiverSettleMode.First); }
+            set { this.SetField(6, ref this.rcvSettleMode, value); }
         }
 
         /// <summary>
@@ -108,8 +120,8 @@ namespace Amqp.Framing
         /// </summary>
         public DeliveryState State
         {
-            get { return (DeliveryState)this.Fields[7]; }
-            set { this.Fields[7] = value; }
+            get { return this.GetField(7, this.state); }
+            set { this.SetField(7, ref this.state, value); }
         }
 
         /// <summary>
@@ -117,8 +129,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Resume
         {
-            get { return this.Fields[8] == null ? false : (bool)this.Fields[8]; }
-            set { this.Fields[8] = value; }
+            get { return this.GetField(8, this.resume, false); }
+            set { this.SetField(8, ref this.resume, value); }
         }
 
         /// <summary>
@@ -126,8 +138,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Aborted
         {
-            get { return this.Fields[9] == null ? false : (bool)this.Fields[9]; }
-            set { this.Fields[9] = value; }
+            get { return this.GetField(9, this.aborted, false); }
+            set { this.SetField(9, ref this.aborted, value); }
         }
 
         /// <summary>
@@ -135,8 +147,94 @@ namespace Amqp.Framing
         /// </summary>
         public bool Batchable
         {
-            get { return this.Fields[10] == null ? false : (bool)this.Fields[10]; }
-            set { this.Fields[10] = value; }
+            get { return this.GetField(10, this.batchable, false); }
+            set { this.SetField(10, ref this.batchable, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteUInt(buffer, this.handle, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.deliveryId, true);
+                    break;
+                case 2:
+                    Encoder.WriteBinary(buffer, this.deliveryTag, true);
+                    break;
+                case 3:
+                    Encoder.WriteUInt(buffer, this.messageFormat, true);
+                    break;
+                case 4:
+                    Encoder.WriteBoolean(buffer, this.settled, true);
+                    break;
+                case 5:
+                    Encoder.WriteBoolean(buffer, this.more, true);
+                    break;
+                case 6:
+                    Encoder.WriteUByte(buffer, (byte)this.rcvSettleMode);
+                    break;
+                case 7:
+                    Encoder.WriteObject(buffer, this.state, true);
+                    break;
+                case 8:
+                    Encoder.WriteBoolean(buffer, this.resume, true);
+                    break;
+                case 9:
+                    Encoder.WriteBoolean(buffer, this.aborted, true);
+                    break;
+                case 10:
+                    Encoder.WriteBoolean(buffer, this.batchable, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.handle = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.deliveryId = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.deliveryTag = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 3:
+                    this.messageFormat = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 4:
+                    this.settled = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 5:
+                    this.more = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 6:
+                    this.rcvSettleMode = (ReceiverSettleMode)Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 7:
+                    this.state = (DeliveryState)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 8:
+                    this.resume = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 9:
+                    this.aborted = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 10:
+                    this.batchable = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         /// <summary>
@@ -149,7 +247,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "transfer",
                 new object[] { "handle", "delivery-id", "delivery-tag", "message-format", "settled", "more", "rcv-settle-mode", "state", "resume", "aborted", "batchable" },
-                this.Fields);
+                new object[] { handle, deliveryId, deliveryTag, messageFormat, settled, more, rcvSettleMode, state, resume, aborted, batchable });
 #else
             return base.ToString();
 #endif

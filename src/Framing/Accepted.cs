@@ -32,6 +32,16 @@ namespace Amqp.Framing
         {
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            Fx.Assert(false, "Invalid field index");
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            Fx.Assert(false, "Invalid field index");
+        }
+
         /// <summary>
         /// Returns a string that represents the current accepted outcome.
         /// </summary>
@@ -42,7 +52,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "accepted",
                 new object[0],
-                this.Fields);
+                new object[0]);
 #else
             return base.ToString();
 #endif

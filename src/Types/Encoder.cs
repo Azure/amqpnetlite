@@ -19,6 +19,9 @@ namespace Amqp.Types
 {
     using System;
     using System.Collections;
+#if !NETMF
+    using System.Collections.Generic;
+#endif
     using System.Text;
     using System.Globalization;
 
@@ -66,7 +69,10 @@ namespace Amqp.Types
         static Serializer[] serializers;
         static Map codecByType;
         static byte[][] codecIndexTable;
-        static Map knownDescrided;
+        static Map knownDescribed;
+#if !NETMF
+        static Dictionary<ulong, CreateDescribed> knownDescribedByCode;
+#endif
 
         static Encoder()
         {
@@ -78,8 +84,10 @@ namespace Amqp.Types
 
         internal static void Initialize()
         {
-            knownDescrided = new Map();
-
+            knownDescribed = new Map();
+#if !NETMF
+            knownDescribedByCode = new Dictionary<ulong, CreateDescribed>();
+#endif
             serializers = new Serializer[]
             {
                 // 0: null
@@ -348,10 +356,13 @@ namespace Amqp.Types
         /// <param name="ctor">The delegate to invoke to create the object.</param>
         public static void AddKnownDescribed(Descriptor descriptor, CreateDescribed ctor)
         {
-            lock (knownDescrided)
+            lock (knownDescribed)
             {
-                knownDescrided.Add(descriptor.Name, ctor);
-                knownDescrided.Add(descriptor.Code, ctor);
+                knownDescribed.Add(descriptor.Name, ctor);
+                knownDescribed.Add(descriptor.Code, ctor);
+#if !NETMF
+                knownDescribedByCode.Add(descriptor.Code, ctor);
+#endif
             }
         }
 
@@ -419,7 +430,7 @@ namespace Amqp.Types
                 }
             }
         }
-
+        
         /// <summary>
         /// Writes a boolean value to a buffer.
         /// </summary>
@@ -438,7 +449,7 @@ namespace Amqp.Types
                 AmqpBitConverter.WriteUByte(buffer, (byte)(value ? 1 : 0));
             }
         }
-
+        
         /// <summary>
         /// Writes an unsigned byte value to a buffer.
         /// </summary>
@@ -449,7 +460,7 @@ namespace Amqp.Types
             AmqpBitConverter.WriteUByte(buffer, FormatCode.UByte);
             AmqpBitConverter.WriteUByte(buffer, value);
         }
-
+        
         /// <summary>
         /// Writes an unsigned 16-bit integer value to a buffer.
         /// </summary>
@@ -484,7 +495,7 @@ namespace Amqp.Types
                 AmqpBitConverter.WriteUByte(buffer, (byte)value);
             }
         }
-
+        
         /// <summary>
         /// Writes an unsigned 64-bit integer value to a buffer.
         /// </summary>
@@ -631,7 +642,7 @@ namespace Amqp.Types
                 AmqpBitConverter.WriteBytes(buffer, value.Bytes, 0, value.Bytes.Length);
             }
         }
-
+        
         /// <summary>
         /// Writes a timestamp value to a buffer.
         /// </summary>
@@ -797,23 +808,8 @@ namespace Amqp.Types
                         Encoder.WriteObject(buffer, value[i], smallEncoding);
                     }
 
-                    int size = buffer.WritePos - pos - 9;
                     int count = last + 1;
-
-                    if (smallEncoding && size < byte.MaxValue && count <= byte.MaxValue)
-                    {
-                        buffer.Buffer[pos] = FormatCode.List8;
-                        buffer.Buffer[pos + 1] = (byte)(size + 1);
-                        buffer.Buffer[pos + 2] = (byte)count;
-                        Array.Copy(buffer.Buffer, pos + 9, buffer.Buffer, pos + 3, size);
-                        buffer.Shrink(6);
-                    }
-                    else
-                    {
-                        buffer.Buffer[pos] = FormatCode.List32;
-                        AmqpBitConverter.WriteInt(buffer.Buffer, pos + 1, size + 4);
-                        AmqpBitConverter.WriteInt(buffer.Buffer, pos + 5, count);
-                    }
+                    WriteListCount(buffer, pos, count, smallEncoding);
                 }
             }
         }
@@ -950,7 +946,7 @@ namespace Amqp.Types
 
             throw InvalidFormatCodeException(formatCode, buffer.Offset);
         }
-
+        
         /// <summary>
         /// Reads a described value from a buffer.
         /// </summary>
@@ -960,9 +956,25 @@ namespace Amqp.Types
         {
             Fx.Assert(formatCode == FormatCode.Described, "Format code must be described (0)");
             Described described;
-            object descriptor = Encoder.ReadObject(buffer);
+
             CreateDescribed create = null;
-            if ((create = (CreateDescribed)knownDescrided[descriptor]) == null)
+            object descriptor = null;
+            byte descriptorFormatCode = ReadFormatCode(buffer);
+#if !NETMF
+            if (descriptorFormatCode == FormatCode.ULong || descriptorFormatCode == FormatCode.ULong0 || descriptorFormatCode == FormatCode.SmallULong)
+            {
+                ulong ulongDescriptor = ReadULong(buffer, descriptorFormatCode);
+                if (!knownDescribedByCode.TryGetValue(ulongDescriptor, out create))
+                    descriptor = ulongDescriptor;
+            }
+            else
+#endif
+            {
+                descriptor = Encoder.ReadObject(buffer, descriptorFormatCode);
+                create = (CreateDescribed) knownDescribed[descriptor];
+            }
+            
+            if (create == null)
             {
                 object value = Encoder.ReadObject(buffer);
                 described = new DescribedValue(descriptor, value);
@@ -975,7 +987,7 @@ namespace Amqp.Types
 
             return described;
         }
-
+        
         /// <summary>
         /// Reads a boolean value from a buffer.
         /// </summary>
@@ -1001,7 +1013,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
-
+        
         /// <summary>
         /// Reads an unsigned byte value from a buffer.
         /// </summary>
@@ -1018,7 +1030,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
-
+        
         /// <summary>
         /// Reads an unsigned 16-bit integer from a buffer.
         /// </summary>
@@ -1035,7 +1047,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
-
+        
         /// <summary>
         /// Reads an unsigned 32-bit integer from a buffer.
         /// </summary>
@@ -1060,7 +1072,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
-
+        
         /// <summary>
         /// Reads an unsigned 64-bit integer from a buffer.
         /// </summary>
@@ -1085,7 +1097,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
-
+        
         /// <summary>
         /// Reads a signed byte from a buffer.
         /// </summary>
@@ -1247,7 +1259,7 @@ namespace Amqp.Types
             AmqpBitConverter.ReadBytes(buffer, bytes, 0, width);
             return new Decimal(bytes);
         }
-
+        
         /// <summary>
         /// Reads a timestamp value from a buffer.
         /// </summary>
@@ -1281,7 +1293,7 @@ namespace Amqp.Types
                 throw InvalidFormatCodeException(formatCode, buffer.Offset);
             }
         }
-
+        
         /// <summary>
         /// Reads a binary value from a buffer.
         /// </summary>
@@ -1315,7 +1327,7 @@ namespace Amqp.Types
 
             return value;
         }
-
+        
         /// <summary>
         /// Reads a string value from a buffer.
         /// </summary>
@@ -1325,7 +1337,7 @@ namespace Amqp.Types
         {
             return ReadString(buffer, formatCode, FormatCode.String8Utf8, FormatCode.String32Utf8, "string");
         }
-                     
+        
         /// <summary>
         /// Reads a symbol value from a buffer.
         /// </summary>
@@ -1347,27 +1359,10 @@ namespace Amqp.Types
             {
                 return null;
             }
-            
+
             int size;
             int count;
-            if (formatCode == FormatCode.List0)
-            {
-                size = count = 0;
-            }
-            else if (formatCode == FormatCode.List8)
-            {
-                size = AmqpBitConverter.ReadUByte(buffer);
-                count = AmqpBitConverter.ReadUByte(buffer);
-            }
-            else if (formatCode == FormatCode.List32)
-            {
-                size = (int)AmqpBitConverter.ReadUInt(buffer);
-                count = (int)AmqpBitConverter.ReadUInt(buffer);
-            }
-            else
-            {
-                throw InvalidFormatCodeException(formatCode, buffer.Offset);
-            }
+            ReadListCount(buffer, formatCode, out size, out count);
 
             List value = new List(count);
             for (int i = 0; i < count; ++i)
@@ -1424,6 +1419,67 @@ namespace Amqp.Types
             return value;
         }
 
+#if !NETMF
+        /// <summary>
+        /// Reads a map value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        public static Map ReadMap(ByteBuffer buffer, byte formatCode)
+        {
+            return ReadMap<Map>(buffer, formatCode);
+        }
+
+        /// <summary>
+        /// Reads a Fields map value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        public static Fields ReadFields(ByteBuffer buffer, byte formatCode)
+        {
+            return ReadMap<Fields>(buffer, formatCode);
+        }
+
+        private static T ReadMap<T>(ByteBuffer buffer, byte formatCode) where T : Map, new()
+        {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
+            int size;
+            int count;
+            if (formatCode == FormatCode.Map8)
+            {
+                size = AmqpBitConverter.ReadUByte(buffer);
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.Map32)
+            {
+                size = (int)AmqpBitConverter.ReadUInt(buffer);
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+
+            if (count % 2 > 0)
+            {
+                throw InvalidMapCountException(count);
+            }
+
+            T value = new T();
+            for (int i = 0; i < count; i += 2)
+            {
+                value.Add(ReadObject(buffer), ReadObject(buffer));
+            }
+
+            return value;
+        }
+#endif
+
+#if NETMF
         /// <summary>
         /// Reads a map value from a buffer.
         /// </summary>
@@ -1466,7 +1522,52 @@ namespace Amqp.Types
 
             return value;
         }
+#endif
 
+#if NETMF && !NETMF_LITE
+        /// <summary>
+        /// Reads a Fields map value from a buffer.
+        /// </summary>
+        /// <param name="buffer">The buffer to read.</param>
+        /// <param name="formatCode">The format code of the value.</param>
+        public static Fields ReadFields(ByteBuffer buffer, byte formatCode)
+        {
+            if (formatCode == FormatCode.Null)
+            {
+                return null;
+            }
+
+            int size;
+            int count;
+            if (formatCode == FormatCode.Map8)
+            {
+                size = AmqpBitConverter.ReadUByte(buffer);
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.Map32)
+            {
+                size = (int)AmqpBitConverter.ReadUInt(buffer);
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+
+            if (count % 2 > 0)
+            {
+                throw InvalidMapCountException(count);
+            }
+
+            Fields value = new Fields();
+            for (int i = 0; i < count; i += 2)
+            {
+                value.Add(ReadObject(buffer), ReadObject(buffer));
+            }
+
+            return value;
+        }
+#endif
         static Serializer GetSerializer(byte formatCode)
         {
             int type = ((formatCode & 0xF0) >> 4) - 4;
@@ -1480,6 +1581,47 @@ namespace Amqp.Types
             }
 
             return null;
+        }
+
+        internal static void ReadListCount(ByteBuffer buffer, byte formatCode, out int size, out int count)
+        {
+            if (formatCode == FormatCode.List0)
+            {
+                size = count = 0;
+            }
+            else if (formatCode == FormatCode.List8)
+            {
+                size = AmqpBitConverter.ReadUByte(buffer);
+                count = AmqpBitConverter.ReadUByte(buffer);
+            }
+            else if (formatCode == FormatCode.List32)
+            {
+                size = (int)AmqpBitConverter.ReadUInt(buffer);
+                count = (int)AmqpBitConverter.ReadUInt(buffer);
+            }
+            else
+            {
+                throw InvalidFormatCodeException(formatCode, buffer.Offset);
+            }
+        }
+
+        internal static void WriteListCount(ByteBuffer buffer, int pos, int count, bool smallEncoding)
+        {
+            int size = buffer.WritePos - pos - 9;
+            if (smallEncoding && size < byte.MaxValue && count <= byte.MaxValue)
+            {
+                buffer.Buffer[pos] = FormatCode.List8;
+                buffer.Buffer[pos + 1] = (byte) (size + 1);
+                buffer.Buffer[pos + 2] = (byte) count;
+                Array.Copy(buffer.Buffer, pos + 9, buffer.Buffer, pos + 3, size);
+                buffer.Shrink(6);
+            }
+            else
+            {
+                buffer.Buffer[pos] = FormatCode.List32;
+                AmqpBitConverter.WriteInt(buffer.Buffer, pos + 1, size + 4);
+                AmqpBitConverter.WriteInt(buffer.Buffer, pos + 5, count);
+            }
         }
 
         static string ReadString(ByteBuffer buffer, byte formatCode, byte code8, byte code32, string type)
@@ -1509,14 +1651,14 @@ namespace Amqp.Types
             string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
 #else
             string value = Encoding.UTF8.GetString(buffer.Buffer, buffer.Offset, count);
-#endif            
+#endif
             buffer.Complete(count);
 
             return value;
         }
 
 #if NETMF_LITE
-        static Exception InvalidFormatCodeException(byte formatCode, int offset)
+        internal static Exception InvalidFormatCodeException(byte formatCode, int offset)
         {
             return new Exception("Format code " + formatCode + " at offset " + offset + " is invalid");
         }
@@ -1531,7 +1673,7 @@ namespace Amqp.Types
             return new Exception(type.Name + " not supported");
         }
 #else
-        static AmqpException InvalidFormatCodeException(byte formatCode, int offset)
+        internal static AmqpException InvalidFormatCodeException(byte formatCode, int offset)
         {
             return new AmqpException(ErrorCode.DecodeError,
                 Fx.Format(SRAmqp.AmqpInvalidFormatCode, formatCode, offset));

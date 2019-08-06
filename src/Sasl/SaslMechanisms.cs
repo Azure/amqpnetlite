@@ -25,6 +25,8 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslMechanisms : DescribedList
     {
+        object saslServerMechanisms;
+
         /// <summary>
         /// Initializes a SaslMechanisms object.
         /// </summary>
@@ -38,10 +40,36 @@ namespace Amqp.Sasl
         /// </summary>
         public Symbol[] SaslServerMechanisms
         {
-            get { return Codec.GetSymbolMultiple(this.Fields, 0); }
-            set { this.Fields[0] = value; }
+            get { return HasField(0) ? Codec.GetSymbolMultiple(ref this.saslServerMechanisms) : null; }
+            set { this.SetField(0, ref this.saslServerMechanisms, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteObject(buffer, this.saslServerMechanisms, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.saslServerMechanisms = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current SASL mechanisms object.
@@ -51,7 +79,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-mechanisms",
                 new object[] { "sasl-server-mechanisms" },
-                this.Fields);
+                new object[] { saslServerMechanisms });
         }
 #endif
     }

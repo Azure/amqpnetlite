@@ -24,6 +24,10 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Modified : Outcome
     {
+        bool deliveryFailed;
+        bool undeliverableHere;
+        Fields messageAnnotations;
+
         /// <summary>
         /// Initializes a modified outcome.
         /// </summary>
@@ -37,8 +41,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool DeliveryFailed
         {
-            get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.deliveryFailed, false); }
+            set { this.SetField(0, ref this.deliveryFailed, value); }
         }
 
         /// <summary>
@@ -46,8 +50,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool UndeliverableHere
         {
-            get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.undeliverableHere, false); }
+            set { this.SetField(1, ref this.undeliverableHere, value); }
         }
 
         /// <summary>
@@ -55,8 +59,46 @@ namespace Amqp.Framing
         /// </summary>
         public Fields MessageAnnotations
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 2); }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.messageAnnotations); }
+            set { this.SetField(2, ref this.messageAnnotations, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBoolean(buffer, this.deliveryFailed, true);
+                    break;
+                case 1:
+                    Encoder.WriteBoolean(buffer, this.undeliverableHere, true);
+                    break;
+                case 2:
+                    Encoder.WriteMap(buffer, this.messageAnnotations, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.deliveryFailed = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 1:
+                    this.undeliverableHere = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 2:
+                    this.messageAnnotations = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -69,7 +111,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "modified",
                 new object[] { "delivery-failed", "undeliverable-here", "message-annotations" },
-                this.Fields);
+                new object[] { deliveryFailed, undeliverableHere, messageAnnotations });
         }
 #endif
     }

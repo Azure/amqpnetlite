@@ -25,6 +25,8 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslChallenge : DescribedList
     {
+        byte[] challenge;
+
         /// <summary>
         /// Initializes the SASL challenge object.
         /// </summary>
@@ -38,8 +40,34 @@ namespace Amqp.Sasl
         /// </summary>
         public byte[] Challenge
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.challenge); }
+            set { this.SetField(0, ref this.challenge, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBinary(buffer, this.challenge, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.challenge = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -51,7 +79,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-challenge",
                 new object[] { "challenge" },
-                this.Fields);
+                new object[] { challenge });
         }
 #endif
     }

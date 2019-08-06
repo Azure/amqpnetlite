@@ -25,6 +25,9 @@ namespace Amqp.Transactions
     /// </summary>
     public sealed class Discharge : DescribedList
     {
+        byte[] txnId;
+        bool fail;
+
         /// <summary>
         /// Initializes a discharge object.
         /// </summary>
@@ -38,8 +41,8 @@ namespace Amqp.Transactions
         /// </summary>
         public byte[] TxnId
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.txnId); }
+            set { this.SetField(0, ref this.txnId, value); }
         }
 
         /// <summary>
@@ -47,8 +50,40 @@ namespace Amqp.Transactions
         /// </summary>
         public bool Fail
         {
-            get { return this.Fields[1] == null ? false : (bool)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.fail, false); }
+            set { this.SetField(1, ref this.fail, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBinary(buffer, this.txnId, true);
+                    break;
+                case 1:
+                    Encoder.WriteBoolean(buffer, this.fail, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.txnId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 1:
+                    this.fail = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
 #if TRACE
@@ -61,7 +96,7 @@ namespace Amqp.Transactions
             return this.GetDebugString(
                 "discharge",
                 new object[] { "txn-id", "fail" },
-                this.Fields);
+                new object[] { txnId, fail });
         }
 #endif
     }

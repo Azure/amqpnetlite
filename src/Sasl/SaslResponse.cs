@@ -25,6 +25,8 @@ namespace Amqp.Sasl
     /// </summary>
     public class SaslResponse : DescribedList
     {
+        byte[] response;
+
         /// <summary>
         /// Initializes a SaslResponse object.
         /// </summary>
@@ -38,10 +40,36 @@ namespace Amqp.Sasl
         /// </summary>
         public byte[] Response
         {
-            get { return (byte[])this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.response); }
+            set { this.SetField(0, ref this.response, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBinary(buffer, this.response, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.response = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current SASL response object.
@@ -51,7 +79,7 @@ namespace Amqp.Sasl
             return this.GetDebugString(
                 "sasl-response",
                 new object[] { "response" },
-                this.Fields);
+                new object[] { response });
         }
 #endif
     }

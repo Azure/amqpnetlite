@@ -25,6 +25,12 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Header : DescribedList
     {
+        bool durable;
+        byte priority;
+        uint ttl;
+        bool firstAcquirer;
+        uint deliveryCount;
+
         /// <summary>
         /// Initializes a header object.
         /// </summary>
@@ -38,8 +44,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Durable
         {
-            get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.durable, false); }
+            set { this.SetField(0, ref this.durable, value); }
         }
 
         /// <summary>
@@ -47,8 +53,8 @@ namespace Amqp.Framing
         /// </summary>
         public byte Priority
         {
-            get { return this.Fields[1] == null ? (byte)4 : (byte)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.priority, (byte)4); }
+            set { this.SetField(1, ref this.priority, value); }
         }
 
         /// <summary>
@@ -56,8 +62,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Ttl
         {
-            get { return this.Fields[2] == null ? uint.MaxValue : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.ttl, uint.MaxValue); }
+            set { this.SetField(2, ref this.ttl, value); }
         }
 
         /// <summary>
@@ -65,8 +71,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool FirstAcquirer
         {
-            get { return this.Fields[3] == null ? false : (bool)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.GetField(3, this.firstAcquirer, false); }
+            set { this.SetField(3, ref this.firstAcquirer, value); }
         }
 
         /// <summary>
@@ -74,10 +80,60 @@ namespace Amqp.Framing
         /// </summary>
         public uint DeliveryCount
         {
-            get { return this.Fields[4] == null ? uint.MinValue : (uint)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.GetField(4, this.deliveryCount, uint.MinValue); }
+            set { this.SetField(4, ref this.deliveryCount, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBoolean(buffer, this.durable, true);
+                    break;
+                case 1:
+                    Encoder.WriteUByte(buffer, this.priority);
+                    break;
+                case 2:
+                    Encoder.WriteUInt(buffer, this.ttl, true);
+                    break;
+                case 3:
+                    Encoder.WriteBoolean(buffer, this.firstAcquirer, true);
+                    break;
+                case 4:
+                    Encoder.WriteUInt(buffer, this.deliveryCount, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.durable = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 1:
+                    this.priority = Encoder.ReadUByte(buffer, formatCode);
+                    break;
+                case 2:
+                    this.ttl = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 3:
+                    this.firstAcquirer = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 4:
+                    this.deliveryCount = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
 #if TRACE
         /// <summary>
         /// Returns a string that represents the current header object.
@@ -88,7 +144,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "header",
                 new object[] { "durable", "priority", "ttl", "first-acquirer", "delivery-count" },
-                this.Fields);
+                new object[] {this.durable, this.priority, this.ttl, this.firstAcquirer, this.deliveryCount});
         }
 #endif
     }

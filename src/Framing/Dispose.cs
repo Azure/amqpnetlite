@@ -24,6 +24,13 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Dispose : DescribedList
     {
+        bool role;
+        uint first;
+        uint last;
+        bool settled;
+        DeliveryState state;
+        bool batchable;
+
         /// <summary>
         /// Initializes a dispose object.
         /// </summary>
@@ -37,8 +44,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Role
         {
-            get { return this.Fields[0] == null ? false : (bool)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.role, false); }
+            set { this.SetField(0, ref this.role, value); }
         }
 
         /// <summary>
@@ -46,8 +53,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint First
         {
-            get { return this.Fields[1] == null ? uint.MinValue : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.first, uint.MinValue); }
+            set { this.SetField(1, ref this.first, value); }
         }
 
         /// <summary>
@@ -55,8 +62,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Last
         {
-            get { return this.Fields[2] == null ? this.First : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.last, this.First); }
+            set { this.SetField(2, ref this.last, value); }
         }
 
         /// <summary>
@@ -64,8 +71,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Settled
         {
-            get { return this.Fields[3] == null ? false : (bool)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.GetField(3, this.settled, false); }
+            set { this.SetField(3, ref this.settled, value); }
         }
 
         /// <summary>
@@ -73,8 +80,8 @@ namespace Amqp.Framing
         /// </summary>
         public DeliveryState State
         {
-            get { return (DeliveryState)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.GetField(4, this.state); }
+            set { this.SetField(4, ref this.state, value); }
         }
 
         /// <summary>
@@ -82,10 +89,66 @@ namespace Amqp.Framing
         /// </summary>
         public bool Batchable
         {
-            get { return this.Fields[5] == null ? false : (bool)this.Fields[5]; }
-            set { this.Fields[5] = value; }
+            get { return this.GetField(5, this.batchable, false); }
+            set { this.SetField(5, ref this.batchable, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteBoolean(buffer, this.role, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.first, true);
+                    break;
+                case 2:
+                    Encoder.WriteUInt(buffer, this.last, true);
+                    break;
+                case 3:
+                    Encoder.WriteBoolean(buffer, this.settled, true);
+                    break;
+                case 4:
+                    Encoder.WriteObject(buffer, this.state);
+                    break;
+                case 5:
+                    Encoder.WriteBoolean(buffer, this.batchable, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.role = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 1:
+                    this.first = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.last = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 3:
+                    this.settled = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 4:
+                    this.state = (DeliveryState)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 5:
+                    this.batchable = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
@@ -95,7 +158,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "disposition",
                 new object[] { "role", "first", "last", "settled", "state", "batchable" },
-                this.Fields);
+                new object[] { role, first, last, settled, state, batchable });
 #else
             return base.ToString();
 #endif

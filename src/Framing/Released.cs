@@ -31,6 +31,16 @@ namespace Amqp.Framing
             : base(Codec.Released, 0)
         {
         }
+        
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            Fx.Assert(false, "Invalid field index");
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            Fx.Assert(false, "Invalid field index");
+        }
 
 #if TRACE
         /// <summary>
@@ -42,7 +52,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "released",
                 new object[0],
-                this.Fields);
+                new object[0]);
         }
 #endif
     }

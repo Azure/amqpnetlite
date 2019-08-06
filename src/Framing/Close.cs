@@ -24,6 +24,8 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Close : DescribedList
     {
+        Error error;
+
         /// <summary>
         /// Initializes a Close object.
         /// </summary>
@@ -37,10 +39,36 @@ namespace Amqp.Framing
         /// </summary>
         public Error Error
         {
-            get { return (Error)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.error); }
+            set { this.SetField(0, ref this.error, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteObject(buffer, this.error);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.error = (Error)Encoder.ReadObject(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
         /// <summary>
         /// Returns a string that represents the current begin object.
         /// </summary>
@@ -50,7 +78,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "close",
                 new object[] { "error" },
-                this.Fields);
+                new object[] { error});
 #else
             return base.ToString();
 #endif

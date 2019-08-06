@@ -25,6 +25,20 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Properties : DescribedList
     {
+        object messageId;
+        byte[] userId;
+        string to;
+        string subject;
+        string replyTo;
+        object correlationId;
+        Symbol contentType;
+        Symbol contentEncoding;
+        DateTime absoluteExpiryTime;
+        DateTime creationTime;
+        string groupId;
+        uint groupSequence;
+        string replyToGroupId;
+
         /// <summary>
         /// Initializes a properties section.
         /// </summary>
@@ -43,8 +57,8 @@ namespace Amqp.Framing
         /// </remarks>
         public string MessageId
         {
-            get { return (string)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return (string)this.GetField(0, this.messageId); }
+            set { this.SetField(0, ref this.messageId, value); }
         }
 
         /// <summary>
@@ -52,8 +66,8 @@ namespace Amqp.Framing
         /// </summary>
         public byte[] UserId
         {
-            get { return (byte[])this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.userId); }
+            set { this.SetField(1, ref this.userId, value); }
         }
 
         /// <summary>
@@ -61,8 +75,8 @@ namespace Amqp.Framing
         /// </summary>
         public string To
         {
-            get { return (string)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.to); }
+            set { this.SetField(2, ref this.to, value); }
         }
 
         /// <summary>
@@ -70,8 +84,8 @@ namespace Amqp.Framing
         /// </summary>
         public string Subject
         {
-            get { return (string)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.GetField(3, this.subject); }
+            set { this.SetField(3, ref this.subject, value); }
         }
 
         /// <summary>
@@ -79,8 +93,8 @@ namespace Amqp.Framing
         /// </summary>
         public string ReplyTo
         {
-            get { return (string)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.GetField(4, this.replyTo); }
+            set { this.SetField(4, ref this.replyTo, value); }
         }
 
         /// <summary>
@@ -93,8 +107,8 @@ namespace Amqp.Framing
         /// </remarks>
         public string CorrelationId
         {
-            get { return (string)this.Fields[5]; }
-            set { this.Fields[5] = value; }
+            get { return (string)this.GetField(5, this.correlationId); }
+            set { this.SetField(5, ref this.correlationId, value); }
         }
 
         /// <summary>
@@ -102,8 +116,8 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol ContentType
         {
-            get { return (Symbol)this.Fields[6]; }
-            set { this.Fields[6] = value; }
+            get { return this.GetField(6, this.contentType); }
+            set { this.SetField(6, ref this.contentType, value); }
         }
 
         /// <summary>
@@ -111,8 +125,8 @@ namespace Amqp.Framing
         /// </summary>
         public Symbol ContentEncoding
         {
-            get { return (Symbol)this.Fields[7]; }
-            set { this.Fields[7] = value; }
+            get { return this.GetField(7, this.contentEncoding); }
+            set { this.SetField(7, ref this.contentEncoding, value); }
         }
 
         /// <summary>
@@ -120,8 +134,8 @@ namespace Amqp.Framing
         /// </summary>
         public DateTime AbsoluteExpiryTime
         {
-            get { return this.Fields[8] == null ? DateTime.MinValue : (DateTime)this.Fields[8]; }
-            set { this.Fields[8] = value; }
+            get { return this.GetField(8, this.absoluteExpiryTime, DateTime.MinValue); }
+            set { this.SetField(8, ref this.absoluteExpiryTime, value); }
         }
 
         /// <summary>
@@ -129,8 +143,8 @@ namespace Amqp.Framing
         /// </summary>
         public DateTime CreationTime
         {
-            get { return this.Fields[9] == null ? DateTime.MinValue : (DateTime)this.Fields[9]; }
-            set { this.Fields[9] = value; }
+            get { return this.GetField(9, this.creationTime, DateTime.MinValue); }
+            set { this.SetField(9, ref this.creationTime, value); }
         }
 
         /// <summary>
@@ -138,8 +152,8 @@ namespace Amqp.Framing
         /// </summary>
         public string GroupId
         {
-            get { return (string)this.Fields[10]; }
-            set { this.Fields[10] = value; }
+            get { return this.GetField(10, this.groupId); }
+            set { this.SetField(10, ref this.groupId, value); }
         }
 
         /// <summary>
@@ -147,8 +161,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint GroupSequence
         {
-            get { return this.Fields[11] == null ? uint.MinValue : (uint)this.Fields[11]; }
-            set { this.Fields[11] = value; }
+            get { return this.GetField(11, this.groupSequence, uint.MinValue); }
+            set { this.SetField(11, ref this.groupSequence, value); }
         }
 
         /// <summary>
@@ -156,8 +170,106 @@ namespace Amqp.Framing
         /// </summary>
         public string ReplyToGroupId
         {
-            get { return (string)this.Fields[12]; }
-            set { this.Fields[12] = value; }
+            get { return this.GetField(12, this.replyToGroupId); }
+            set { this.SetField(12, ref this.replyToGroupId, value); }
+        }
+
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteObject(buffer, this.messageId);
+                    break;
+                case 1:
+                    Encoder.WriteBinary(buffer, this.userId, true);
+                    break;
+                case 2:
+                    Encoder.WriteString(buffer, this.to, true);
+                    break;
+                case 3:
+                    Encoder.WriteString(buffer, this.subject, true);
+                    break;
+                case 4:
+                    Encoder.WriteString(buffer, this.replyTo, true);
+                    break;
+                case 5:
+                    Encoder.WriteObject(buffer, this.correlationId);
+                    break;
+                case 6:
+                    Encoder.WriteSymbol(buffer, this.contentType, true);
+                    break;
+                case 7:
+                    Encoder.WriteSymbol(buffer, this.contentEncoding, true);
+                    break;
+                case 8:
+                    Encoder.WriteTimestamp(buffer, this.absoluteExpiryTime);
+                    break;
+                case 9:
+                    Encoder.WriteTimestamp(buffer, this.creationTime);
+                    break;
+                case 10:
+                    Encoder.WriteString(buffer, this.groupId, true);
+                    break;
+                case 11:
+                    Encoder.WriteUInt(buffer, this.groupSequence, true);
+                    break;
+                case 12:
+                    Encoder.WriteString(buffer, this.replyToGroupId, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.messageId = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 1:
+                    this.userId = Encoder.ReadBinary(buffer, formatCode);
+                    break;
+                case 2:
+                    this.to = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 3:
+                    this.subject = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 4:
+                    this.replyTo = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 5:
+                    this.correlationId = Encoder.ReadObject(buffer, formatCode);
+                    break;
+                case 6:
+                    this.contentType = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 7:
+                    this.contentEncoding = Encoder.ReadSymbol(buffer, formatCode);
+                    break;
+                case 8:
+                    this.absoluteExpiryTime = Encoder.ReadTimestamp(buffer, formatCode);
+                    break;
+                case 9:
+                    this.creationTime = Encoder.ReadTimestamp(buffer, formatCode);
+                    break;
+                case 10:
+                    this.groupId = Encoder.ReadString(buffer, formatCode);
+                    break;
+                case 11:
+                    this.groupSequence = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 12:
+                    this.replyToGroupId = Encoder.ReadString(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
         }
 
         /// <summary>
@@ -167,7 +279,7 @@ namespace Amqp.Framing
         /// it is not set.</returns>
         public object GetMessageId()
         {
-            return ValidateIdentifier(this.Fields[0]);
+            return this.GetField(0, ValidateIdentifier(this.messageId));
         }
 
         /// <summary>
@@ -177,7 +289,7 @@ namespace Amqp.Framing
         /// <param name="id">The identifier object to set.</param>
         public void SetMessageId(object id)
         {
-            this.Fields[0] = ValidateIdentifier(id);
+            this.SetField(0, ref this.messageId, ValidateIdentifier(id));
         }
 
         /// <summary>
@@ -187,7 +299,7 @@ namespace Amqp.Framing
         /// it is not set.</returns>
         public object GetCorrelationId()
         {
-            return ValidateIdentifier(this.Fields[5]);
+            return this.GetField(5, ValidateIdentifier(this.correlationId));
         }
 
         /// <summary>
@@ -197,7 +309,7 @@ namespace Amqp.Framing
         /// <param name="id">The identifier object to set.</param>
         public void SetCorrelationId(object id)
         {
-            this.Fields[5] = ValidateIdentifier(id);
+            this.SetField(5, ref this.correlationId, ValidateIdentifier(id));
         }
 
 #if TRACE
@@ -210,7 +322,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "properties",
                 new object[] { "message-id", "user-id", "to", "subject", "reply-to", "correlation-id", "content-type", "content-encoding", "absolute-expiry-time", "creation-time", "group-id", "group-sequence", "reply-to-group-id" },
-                this.Fields);
+                new object[] {messageId, userId, to, subject, replyTo, correlationId, contentType, contentEncoding, absoluteExpiryTime, creationTime, groupId, groupSequence, replyToGroupId });
         }
 #endif
 

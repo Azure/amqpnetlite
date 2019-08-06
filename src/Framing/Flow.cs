@@ -24,6 +24,18 @@ namespace Amqp.Framing
     /// </summary>
     public sealed class Flow : DescribedList
     {
+        uint nextIncomingId;
+        uint incomingWindow;
+        uint nextOutgoingId;
+        uint outgoingWindow;
+        uint handle;
+        uint deliveryCount;
+        uint linkCredit;
+        uint available;
+        bool drain;
+        bool echo;
+        Fields properties;
+
         /// <summary>
         /// Initializes a flow object.
         /// </summary>
@@ -37,7 +49,7 @@ namespace Amqp.Framing
         /// </summary>
         public bool HasHandle
         {
-            get { return this.Fields[4] != null; }
+            get { return this.HasField(4); }
         }
 
         /// <summary>
@@ -45,8 +57,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint NextIncomingId
         {
-            get { return this.Fields[0] == null ? uint.MinValue : (uint)this.Fields[0]; }
-            set { this.Fields[0] = value; }
+            get { return this.GetField(0, this.nextIncomingId, uint.MinValue); }
+            set { this.SetField(0, ref this.nextIncomingId, value); }
         }
 
         /// <summary>
@@ -54,8 +66,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint IncomingWindow
         {
-            get { return this.Fields[1] == null ? uint.MaxValue : (uint)this.Fields[1]; }
-            set { this.Fields[1] = value; }
+            get { return this.GetField(1, this.incomingWindow, uint.MaxValue); }
+            set { this.SetField(1, ref this.incomingWindow, value); }
         }
 
         /// <summary>
@@ -63,8 +75,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint NextOutgoingId
         {
-            get { return this.Fields[2] == null ? uint.MinValue : (uint)this.Fields[2]; }
-            set { this.Fields[2] = value; }
+            get { return this.GetField(2, this.nextOutgoingId, uint.MinValue); }
+            set { this.SetField(2, ref this.nextOutgoingId, value); }
         }
 
         /// <summary>
@@ -72,8 +84,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint OutgoingWindow
         {
-            get { return this.Fields[3] == null ? uint.MaxValue : (uint)this.Fields[3]; }
-            set { this.Fields[3] = value; }
+            get { return this.GetField(3, this.outgoingWindow, uint.MaxValue); }
+            set { this.SetField(3, ref this.outgoingWindow, value); }
         }
 
         /// <summary>
@@ -81,8 +93,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Handle
         {
-            get { return this.Fields[4] == null ? uint.MaxValue : (uint)this.Fields[4]; }
-            set { this.Fields[4] = value; }
+            get { return this.GetField(4, this.handle, uint.MaxValue); }
+            set { this.SetField(4, ref this.handle, value); }
         }
 
         /// <summary>
@@ -90,8 +102,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint DeliveryCount
         {
-            get { return this.Fields[5] == null ? uint.MinValue : (uint)this.Fields[5]; }
-            set { this.Fields[5] = value; }
+            get { return this.GetField(5, this.deliveryCount, uint.MinValue); }
+            set { this.SetField(5, ref this.deliveryCount, value); }
         }
 
         /// <summary>
@@ -99,8 +111,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint LinkCredit
         {
-            get { return this.Fields[6] == null ? uint.MinValue : (uint)this.Fields[6]; }
-            set { this.Fields[6] = value; }
+            get { return this.GetField(6, this.linkCredit, uint.MinValue); }
+            set { this.SetField(6, ref this.linkCredit, value); }
         }
 
         /// <summary>
@@ -108,8 +120,8 @@ namespace Amqp.Framing
         /// </summary>
         public uint Available
         {
-            get { return this.Fields[7] == null ? uint.MinValue : (uint)this.Fields[7]; }
-            set { this.Fields[7] = value; }
+            get { return this.GetField(7, this.available, uint.MinValue); }
+            set { this.SetField(7, ref this.available, value); }
         }
 
         /// <summary>
@@ -117,8 +129,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Drain
         {
-            get { return this.Fields[8] == null ? false : (bool)this.Fields[8]; }
-            set { this.Fields[8] = value; }
+            get { return this.GetField(8, this.drain, false); }
+            set { this.SetField(8, ref this.drain, value); }
         }
 
         /// <summary>
@@ -126,8 +138,8 @@ namespace Amqp.Framing
         /// </summary>
         public bool Echo
         {
-            get { return this.Fields[9] == null ? false : (bool)this.Fields[9]; }
-            set { this.Fields[9] = value; }
+            get { return this.GetField(9, this.echo, false); }
+            set { this.SetField(9, ref this.echo, value); }
         }
 
         /// <summary>
@@ -135,10 +147,96 @@ namespace Amqp.Framing
         /// </summary>
         public Fields Properties
         {
-            get { return Amqp.Types.Fields.From(this.Fields, 10); }
-            set { this.Fields[10] = value; }
+            get { return this.GetField(10, this.properties); }
+            set { this.SetField(10, ref this.properties, value); }
         }
 
+        internal override void WriteField(ByteBuffer buffer, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    Encoder.WriteUInt(buffer, this.nextIncomingId, true);
+                    break;
+                case 1:
+                    Encoder.WriteUInt(buffer, this.incomingWindow, true);
+                    break;
+                case 2:
+                    Encoder.WriteUInt(buffer, this.nextOutgoingId, true);
+                    break;
+                case 3:
+                    Encoder.WriteUInt(buffer, this.outgoingWindow, true);
+                    break;
+                case 4:
+                    Encoder.WriteUInt(buffer, this.handle, true);
+                    break;
+                case 5:
+                    Encoder.WriteUInt(buffer, this.deliveryCount, true);
+                    break;
+                case 6:
+                    Encoder.WriteUInt(buffer, this.linkCredit, true);
+                    break;
+                case 7:
+                    Encoder.WriteUInt(buffer, this.available, true);
+                    break;
+                case 8:
+                    Encoder.WriteBoolean(buffer, this.drain, true);
+                    break;
+                case 9:
+                    Encoder.WriteBoolean(buffer, this.echo, true);
+                    break;
+                case 10:
+                    Encoder.WriteMap(buffer, this.properties, true);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+
+        internal override void ReadField(ByteBuffer buffer, int index, byte formatCode)
+        {
+            switch (index)
+            {
+                case 0:
+                    this.nextIncomingId = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 1:
+                    this.incomingWindow = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 2:
+                    this.nextOutgoingId = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 3:
+                    this.outgoingWindow = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 4:
+                    this.handle = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 5:
+                    this.deliveryCount = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 6:
+                    this.linkCredit = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 7:
+                    this.available = Encoder.ReadUInt(buffer, formatCode);
+                    break;
+                case 8:
+                    this.drain = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 9:
+                    this.echo = Encoder.ReadBoolean(buffer, formatCode);
+                    break;
+                case 10:
+                    this.properties = Encoder.ReadFields(buffer, formatCode);
+                    break;
+                default:
+                    Fx.Assert(false, "Invalid field index");
+                    break;
+            }
+        }
+        
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
@@ -148,7 +246,7 @@ namespace Amqp.Framing
             return this.GetDebugString(
                 "flow",
                 new object[] { "next-in-id", "in-window", "next-out-id", "out-window", "handle", "delivery-count", "link-credit", "available", "drain", "echo", "properties" },
-                this.Fields);
+                new object[] { nextIncomingId, incomingWindow, nextOutgoingId, outgoingWindow, handle, deliveryCount, linkCredit, available, drain, echo, properties});
 #else
             return base.ToString();
 #endif
