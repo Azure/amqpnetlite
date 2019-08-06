@@ -67,7 +67,7 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
             {
-                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, 100u, 100u, 8u, null, null, null,
+                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, 100u, 100u, 8u, null, null,
                     new Fields() { { new Symbol("big-string"), new string('a', 1024) } });
                 return TestOutcome.Stop;
             });

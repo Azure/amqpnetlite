@@ -152,7 +152,7 @@ namespace Amqp.Framing
         /// </summary>
         public string GroupId
         {
-            get { return this.GetField(10, this.GetField(1, this.groupId)); }
+            get { return this.GetField(10, this.groupId); }
             set { this.SetField(10, ref this.groupId, value); }
         }
 
@@ -279,7 +279,7 @@ namespace Amqp.Framing
         /// it is not set.</returns>
         public object GetMessageId()
         {
-            return ValidateIdentifier(this.messageId);
+            return this.GetField(0, ValidateIdentifier(this.messageId));
         }
 
         /// <summary>
@@ -289,7 +289,7 @@ namespace Amqp.Framing
         /// <param name="id">The identifier object to set.</param>
         public void SetMessageId(object id)
         {
-            this.messageId = ValidateIdentifier(id);
+            this.SetField(0, ref this.messageId, ValidateIdentifier(id));
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace Amqp.Framing
         /// it is not set.</returns>
         public object GetCorrelationId()
         {
-            return ValidateIdentifier(this.correlationId);
+            return this.GetField(5, ValidateIdentifier(this.correlationId));
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace Amqp.Framing
         /// <param name="id">The identifier object to set.</param>
         public void SetCorrelationId(object id)
         {
-            this.correlationId = ValidateIdentifier(id);
+            this.SetField(5, ref this.correlationId, ValidateIdentifier(id));
         }
 
 #if TRACE

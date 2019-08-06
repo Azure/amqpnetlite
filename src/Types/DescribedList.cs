@@ -27,7 +27,7 @@ namespace Amqp.Types
     public abstract class DescribedList : RestrictedDescribed
     {
         readonly int fieldCount;
-        int fields;
+        int fields; // bitmask that stores an 'is null' flag for each field
 
         /// <summary>
         /// Initializes the described list object.
