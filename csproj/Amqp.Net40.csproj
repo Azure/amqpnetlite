@@ -141,6 +141,12 @@
       <Link>Transactions\ResourceManager.cs</Link>
     </Compile>
     <Compile Include="..\src\Net\BufferManager.cs" />
+    <Compile Include="..\src\Net\IStringDecoder.cs">
+      <Link>IStringDecoder.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Net\WellknownStringDecoder.cs">
+      <Link>WellknownStringDecoder.cs</Link>
+    </Compile>
     <Compile Include="..\src\Net\SocketExtensions.cs">
       <Link>Internal\SocketExtensions.cs</Link>
     </Compile>

@@ -125,6 +125,7 @@
       <Link>WebSocketTests.cs</Link>
     </Compile>
     <Compile Include="AmqpCodecTests.cs" />
+    <Compile Include="WellknownStringDecoderTests.cs" />
     <Compile Include="TransactionTests.cs" />
     <Compile Include="PerfTests.cs" />
     <Compile Include="TaskTests.cs" />
