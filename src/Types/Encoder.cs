@@ -72,6 +72,16 @@ namespace Amqp.Types
         static Map knownDescribed;
 #if !NETMF
         static Dictionary<ulong, CreateDescribed> knownDescribedByCode;
+        static IStringDecoder stringDecoder;
+
+        /// <summary>
+        /// Gets or sets the custom IStringDecoder that is used to read strings from a byte buffer.
+        /// </summary>
+        public static IStringDecoder StringDecoder
+        {
+            get { return stringDecoder; }
+            set { stringDecoder = value; }
+        }
 #endif
 
         static Encoder()
@@ -1650,7 +1660,16 @@ namespace Amqp.Types
 #if NETMF || NETFX_CORE
             string value = new string(Encoding.UTF8.GetChars(buffer.Buffer, buffer.Offset, count));
 #else
-            string value = Encoding.UTF8.GetString(buffer.Buffer, buffer.Offset, count);
+            string value;
+            IStringDecoder localDecoder = Encoder.stringDecoder; //store in local variable to prevent NullReferenceException if stringDecoder is changed after the null check
+            if (localDecoder == null)
+            {
+                value = Encoding.UTF8.GetString(buffer.Buffer, buffer.Offset, count);
+            }
+            else
+            {
+                value = localDecoder.DecodeString(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, count));
+            }
 #endif
             buffer.Complete(count);
 

@@ -106,6 +106,9 @@
     <Compile Include="..\Test.Amqp.Net\AmqpCodecTests.cs">
       <Link>AmqpCodecTests.cs</Link>
     </Compile>
+    <Compile Include="..\Test.Amqp.Net\WellknownStringDecoderTests.cs">
+      <Link>WellknownStringDecoderTests.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
