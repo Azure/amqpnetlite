@@ -192,6 +192,12 @@
     </Compile>
     <Compile Include="..\src\Net\IAsyncTransport.cs" />
     <Compile Include="..\src\Net\IBufferManager.cs" />
+    <Compile Include="..\src\Net\IStringDecoder.cs">
+    <Link>IStringDecoder.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Net\WellknownStringDecoder.cs">
+      <Link>WellknownStringDecoder.cs</Link>
+    </Compile>
     <Compile Include="..\src\Net\IConnectionFactory.cs" />
     <Compile Include="..\src\Net\List.cs">
       <Link>Types\List.cs</Link>
