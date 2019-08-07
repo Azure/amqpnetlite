@@ -27,7 +27,6 @@ namespace Amqp.Listener
     /// </summary>
     public class ListenerLink : Link
     {
-        bool role;
         object state;
         SequenceNumber deliveryCount;
         uint credit;
@@ -54,18 +53,9 @@ namespace Amqp.Listener
         /// <param name="session">The session.</param>
         /// <param name="attach">The received attach frame.</param>
         public ListenerLink(ListenerSession session, Attach attach)
-            : base(session, attach.LinkName, null)
+            : base(session, attach.LinkName, !attach.Role, null)
         {
-            this.role = !attach.Role;
             this.SettleOnSend = attach.SndSettleMode == SenderSettleMode.Settled;
-        }
-
-        /// <summary>
-        /// Gets the sender (false) or receiver (true) role of the link.
-        /// </summary>
-        public bool Role
-        {
-            get { return this.role; }
         }
 
         /// <summary>
@@ -166,7 +156,7 @@ namespace Amqp.Listener
                 return;
             }
 
-            this.Session.DisposeDelivery(this.role, delivery, deliveryState, settled);
+            this.Session.DisposeDelivery(this.Role, delivery, deliveryState, settled);
         }
 
         /// <summary>
@@ -179,16 +169,16 @@ namespace Amqp.Listener
         {
             if (error != null)
             {
-                this.SendAttach(this.role, attach.InitialDeliveryCount, new Attach() { Target = null, Source = null });
+                this.SendAttach(this.Role, attach.InitialDeliveryCount, new Attach() { Target = null, Source = null });
             }
             else
             {
-                if (!this.role)
+                if (!this.Role)
                 {
                     this.deliveryCount = attach.InitialDeliveryCount;
                 }
 
-                this.SendAttach(this.role, attach.InitialDeliveryCount, attach);
+                this.SendAttach(this.Role, attach.InitialDeliveryCount, attach);
             }
 
             base.OnAttach(attach.Handle, attach);
@@ -199,7 +189,7 @@ namespace Amqp.Listener
             }
             else
             {
-                if (this.role)
+                if (this.Role && this.credit > 0)
                 {
                     this.SendFlow(this.deliveryCount, this.credit, false);
                 }
@@ -256,7 +246,7 @@ namespace Amqp.Listener
             ThrowIfNotNull(this.onCredit, "sender");
             ThrowIfNotNull(this.onDispose, "sender");
             this.linkEndpoint = linkEndpoint;
-            if (this.role)
+            if (this.Role)
             {
                 this.credit = credit;
                 this.autoRestore = true;
@@ -265,7 +255,7 @@ namespace Amqp.Listener
 
         internal uint SendMessageInternal(Message message, ByteBuffer buffer, object userToken)
         {
-            if (this.role)
+            if (this.Role)
             {
                 throw new AmqpException(ErrorCode.NotAllowed, "Cannot send a message over a receiving link.");
             }
@@ -311,7 +301,7 @@ namespace Amqp.Listener
 
         internal override void OnAttach(uint remoteHandle, Attach attach)
         {
-            if (role)
+            if (Role)
             {
                 this.deliveryCount = attach.InitialDeliveryCount;
             }
@@ -346,7 +336,7 @@ namespace Amqp.Listener
             int delta = 0;
             lock (this.ThisLock)
             {
-                if (!this.role)
+                if (!this.Role)
                 {
                     var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
                     var myLimit = this.deliveryCount + (SequenceNumber)this.credit;

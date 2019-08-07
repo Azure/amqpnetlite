@@ -1,4 +1,5 @@
-﻿{
+﻿  
+{
   "dependencies": {
     "Microsoft.NETCore.UniversalWindowsPlatform": "5.1.0"
   },

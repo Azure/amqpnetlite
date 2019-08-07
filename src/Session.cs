@@ -153,7 +153,8 @@ namespace Amqp
                             index = i;
                         }
                     }
-                    else if (string.Compare(this.localLinks[i].Name, link.Name) == 0)
+                    else if (string.Compare(this.localLinks[i].Name, link.Name) == 0 &&
+                             this.localLinks[i].Role == link.Role)
                     {
                         throw new AmqpException(ErrorCode.NotAllowed, link.Name + " has been attached.");
                     }
@@ -390,7 +391,8 @@ namespace Amqp
                 for (int i = 0; i < this.localLinks.Length; ++i)
                 {
                     Link temp = this.localLinks[i];
-                    if (temp != null && string.Compare(temp.Name, attach.LinkName) == 0)
+                    if (temp != null && string.Compare(temp.Name, attach.LinkName) == 0 && 
+                                        temp.Role == !attach.Role)
                     {
                         link = temp;
                         this.AddRemoteLink(attach.Handle, link);

@@ -64,6 +64,12 @@
     <Compile Include="..\src\CreditMode.cs">
       <Link>CreditMode.cs</Link>
     </Compile>
+    <Compile Include="..\src\PairedLink.cs">
+      <Link>PairedLink.cs</Link>
+    </Compile>
+    <Compile Include="..\src\InitiatorPairedLink.cs">
+      <Link>InitiatorPairedLink.cs</Link>
+    </Compile>
     <Compile Include="..\src\Delivery.cs">
       <Link>Internal\Delivery.cs</Link>
     </Compile>

@@ -30,8 +30,8 @@ namespace Amqp.Listener
         readonly static OnOpened onOpened = OnOpen;
         readonly ConnectionListener listener;
 
-        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
-            : base(listener.BufferManager, listener.AMQP, address, transport, null, onOpened)
+        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport, Open open = null)
+            : base(listener.BufferManager, listener.AMQP, address, transport, open, onOpened)
         {
             this.listener = listener;
         }

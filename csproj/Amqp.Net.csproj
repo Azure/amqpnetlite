@@ -53,6 +53,18 @@
     <Compile Include="..\src\AmqpObject.cs" />
     <Compile Include="..\src\ByteBuffer.cs" />
     <Compile Include="..\src\Connection.cs" />
+      <Compile Include="..\src\PairedLink.cs">
+        <Link>PairedLink.cs</Link>
+      </Compile>
+      <Compile Include="..\src\InitiatorPairedLink.cs">
+        <Link>InitiatorPairedLink.cs</Link>
+      </Compile>
+      <Compile Include="..\src\ListenerPairedLink.cs">
+        <Link>ListenerPairedLink.cs</Link>
+      </Compile>
+      <Compile Include="..\src\ListenerPairedLinkAttachContext.cs">
+        <Link>ListenerPairedLinkAttachContext.cs</Link>
+      </Compile>
     <Compile Include="..\src\Listener\ContainerHost.cs">
       <Link>Listener\ContainerHost.cs</Link>
     </Compile>
@@ -91,6 +103,9 @@
     </Compile>
     <Compile Include="..\src\Listener\ILinkProcessor.cs">
       <Link>Listener\ILinkProcessor.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Listener\IListenerPairedLinkProcessor.cs">
+      <Link>Listener\IListenerPairedLinkProcessor.cs</Link>
     </Compile>
     <Compile Include="..\src\Listener\LinkEndpoint.cs">
       <Link>Listener\LinkEndpoint.cs</Link>

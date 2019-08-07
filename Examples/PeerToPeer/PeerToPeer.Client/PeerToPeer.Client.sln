@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PeerToPeer.Client", "PeerToPeer.Client.csproj", "{A20F24AF-6832-4E04-A941-E3C6F5EC8DBC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A20F24AF-6832-4E04-A941-E3C6F5EC8DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A20F24AF-6832-4E04-A941-E3C6F5EC8DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A20F24AF-6832-4E04-A941-E3C6F5EC8DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A20F24AF-6832-4E04-A941-E3C6F5EC8DBC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {745C8C15-49BB-49D2-9DCD-86B2EA7AD327}
+	EndGlobalSection
+EndGlobal

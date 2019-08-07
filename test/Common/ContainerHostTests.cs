@@ -186,7 +186,7 @@ namespace Test.Amqp
         {
             string name = "ContainerHostRequestProcessorTest";
             var processor = new TestRequestProcessor();
-            this.host.RegisterRequestProcessor(name, processor);
+            this.host.RegisterRequestProcessor(name, processor, false);
 
             int count = 500;
             var connection = new Connection(Address);
@@ -226,6 +226,55 @@ namespace Test.Amqp
 
             receiver.Close();
             sender.Close();
+            session.Close();
+            connection.Close();
+
+            Assert.AreEqual(count, processor.TotalCount);
+            Assert.AreEqual(count, responses.Count);
+            for (int i = 1; i <= count; i++)
+            {
+                Assert.AreEqual("OK" + i, responses[i - 1]);
+            }
+        }
+
+        [TestMethod]
+        public void ContainerHostPairedLinkRequestProcessorTest()
+        {
+            string name = "ContainerHostRequestProcessorTest";
+            var processor = new TestRequestProcessor();
+            this.host.RegisterRequestProcessor(name, processor, true);
+
+            int count = 500;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+
+            
+           InitiatorPairedLink pl = new InitiatorPairedLink(session, "request-client", name);
+
+            var doneEvent = new ManualResetEvent(false);
+            List<string> responses = new List<string>();
+            pl.Start(
+                20,
+                (link, message) =>
+                {
+                    responses.Add(message.GetBody<string>());
+                    link.Accept(message);
+                    if (responses.Count == count)
+                    {
+                        doneEvent.Set();
+                    }
+                });
+
+            for (int i = 0; i < count; i++)
+            {
+                Message request = new Message("Hello");
+                request.Properties = new Properties() { MessageId = "request" + i, ReplyTo = "$me" };
+                pl.Sender.Send(request, null, null);
+            }
+
+            Assert.IsTrue(doneEvent.WaitOne(10000), "Not completed in time");
+
+            pl.Close();
             session.Close();
             connection.Close();
 
@@ -414,7 +463,7 @@ namespace Test.Amqp
         {
             string name = "ContainerHostUnknownProcessorTest";
             this.host.RegisterMessageProcessor("message" + name, new TestMessageProcessor());
-            this.host.RegisterRequestProcessor("request" + name, new TestRequestProcessor());
+            this.host.RegisterRequestProcessor("request" + name, new TestRequestProcessor(), false);
 
             var connection = new Connection(Address);
             var session = new Session(connection);

@@ -15,76 +15,54 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using Amqp.Types;
-
 namespace Amqp
 {
     /// <summary>
-    /// Contains the AMQP settings for a <see cref="Connection"/>.
+    /// Client side paired link holder
     /// </summary>
-    public class AmqpSettings
+    public abstract class PairedLink
     {
+        readonly Session session;
+        readonly string linkName;
+
         /// <summary>
-        /// Gets or sets the open.max-frame-size field.
+        /// AMQP Session
         /// </summary>
-        public int MaxFrameSize
+        public Session Session
         {
-            get;
-            set;
+            get { return session; }
         }
 
         /// <summary>
-        /// Gets or sets the open.container-id field.
+        /// Name of the links
         /// </summary>
-        public string ContainerId
+        public string LinkName
         {
-            get;
-            set;
+
+            get
+            {
+               return linkName;
+            }
         }
 
         /// <summary>
-        /// Gets or sets the open.hostname field.
+        /// Receiving link
         /// </summary>
-        public string HostName
-        {
-            get;
-            set;
-        }
+        public ReceiverLink Receiver { get; protected set; }
+        /// <summary>
+        /// Sending link
+        /// </summary>
+        public SenderLink Sender { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the open.channel-max field (less by one).
+        /// Creates a new paired link
         /// </summary>
-        public ushort MaxSessionsPerConnection
+        /// <param name="session">Session</param>
+        /// <param name="linkName">Link name</param>
+        public PairedLink(Session session, string linkName)
         {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the begin.handle-max field (less by one).
-        /// </summary>
-        public int MaxLinksPerSession
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the open.idle-time-out field.
-        /// </summary>
-        public int IdleTimeout
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the offered capabilities of this connection
-        /// </summary>
-        public Symbol[] OfferedCapabilities
-        {
-            get;
-            set;
+            this.session = session;
+            this.linkName = linkName;
         }
     }
 }

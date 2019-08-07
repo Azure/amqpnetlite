@@ -161,7 +161,8 @@ namespace Amqp
                     HostName = amqpSettings.HostName ?? this.address.Host,
                     ChannelMax = this.channelMax,
                     MaxFrameSize = this.maxFrameSize,
-                    IdleTimeOut = (uint)amqpSettings.IdleTimeout
+                    IdleTimeOut = (uint)amqpSettings.IdleTimeout,
+                    OfferedCapabilities = amqpSettings.OfferedCapabilities
                 };
             }
 

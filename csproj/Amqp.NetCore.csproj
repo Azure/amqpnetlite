@@ -42,16 +42,12 @@
     <AssemblyOriginatorKeyFile>..\src\amqp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-  </ItemGroup>
-  <ItemGroup>
     <TargetPlatform Include="WindowsPhoneApp, Version=8.1" />
     <TargetPlatform Include="Windows, Version=8.1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\src\SRAmqp.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>..\src\WinRT\SRAmqp.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Amqp</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
@@ -64,6 +60,12 @@
     <Compile Include="..\src\Connection.cs" />
     <Compile Include="..\src\CreditMode.cs">
       <Link>CreditMode.cs</Link>
+    </Compile>
+    <Compile Include="..\src\PairedLink.cs">
+      <Link>PairedLink.cs</Link>
+    </Compile>
+    <Compile Include="..\src\InitiatorPairedLink.cs">
+      <Link>InitiatorPairedLink.cs</Link>
     </Compile>
     <Compile Include="..\src\Delivery.cs">
       <Link>Internal\Delivery.cs</Link>
