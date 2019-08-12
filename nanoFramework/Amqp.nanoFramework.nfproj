@@ -160,6 +160,9 @@
     <Compile Include="..\src\Framing\Transfer.cs">
       <Link>Framing\Transfer.cs</Link>
     </Compile>
+    <Compile Include="..\src\Handler\Event.cs" Link="Handler\Event.cs" />
+    <Compile Include="..\src\Handler\IDelivery.cs" Link="Handler\IDelivery.cs" />
+    <Compile Include="..\src\Handler\IHandler.cs" Link="Handler\IHandler.cs" />
     <Compile Include="..\src\IAmqpObject.cs">
       <Link>IAmqpObject.cs</Link>
     </Compile>
@@ -322,6 +325,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Handler\" />
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>

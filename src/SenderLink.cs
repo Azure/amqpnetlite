@@ -20,6 +20,7 @@ namespace Amqp
     using System;
     using System.Threading;
     using Amqp.Framing;
+    using Amqp.Handler;
 
     /// <summary>
     /// The SenderLink represents a link that sends outgoing messages.
@@ -190,6 +191,12 @@ namespace Amqp
                 Batchable = !sync
             };
 
+            IHandler handler = this.Session.Connection.Handler;
+            if (handler != null && handler.CanHandle(EventId.SendDelivery))
+            {
+                handler.Handle(Event.Create(EventId.SendDelivery, this.Session.Connection, this.Session, this, context: delivery));
+            }
+
             lock (this.ThisLock)
             {
                 this.ThrowIfDetaching("Send");
@@ -200,7 +207,6 @@ namespace Amqp
                     return;
                 }
 
-                delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
                 this.credit--;
                 this.deliveryCount++;
                 this.writing = true;
@@ -235,7 +241,6 @@ namespace Amqp
 
                 delivery = (Delivery)this.outgoingList.First;
                 this.outgoingList.Remove(delivery);
-                delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
                 this.credit--;
                 this.deliveryCount++;
                 this.writing = true;
@@ -311,6 +316,13 @@ namespace Amqp
             while (delivery != null)
             {
                 delivery.Handle = this.Handle;
+                if (delivery.Tag == null)
+                {
+                    lock (this.ThisLock)
+                    {
+                        delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
+                    }
+                }
 
                 try
                 {
@@ -344,7 +356,6 @@ namespace Amqp
                     else if (this.credit > 0)
                     {
                         this.outgoingList.Remove(delivery);
-                        delivery.Tag = Delivery.GetDeliveryTag(this.deliveryCount);
                         this.credit--;
                         this.deliveryCount++;
                     }

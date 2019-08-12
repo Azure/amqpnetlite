@@ -20,6 +20,7 @@ namespace Amqp
     using System;
     using System.Threading;
     using Amqp.Framing;
+    using Amqp.Handler;
     using Amqp.Types;
 
     /// <summary>
@@ -333,6 +334,12 @@ namespace Amqp
             {
                 this.deliveryCurrent = null;
                 delivery.Message = Message.Decode(delivery.Buffer);
+
+                IHandler handler = this.Session.Connection.Handler;
+                if (handler != null && handler.CanHandle(EventId.ReceiveDelivery))
+                {
+                    handler.Handle(Event.Create(EventId.ReceiveDelivery, this.Session.Connection, this.Session, this, context: delivery));
+                }
 
                 Waiter waiter;
                 MessageCallback callback = this.onMessage;

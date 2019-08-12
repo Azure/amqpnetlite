@@ -148,6 +148,15 @@
     <Compile Include="..\src\Framing\Transfer.cs">
       <Link>Framing\Transfer.cs</Link>
     </Compile>
+    <Compile Include="..\src\Handler\Event.cs">
+      <Link>Handler\Event.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Handler\IHandler.cs">
+      <Link>Handler\Handler.cs</Link>
+    </Compile>
+    <Compile Include="..\src\Handler\IDelivery.cs">
+      <Link>Handler\IDelivery.cs</Link>
+    </Compile>
     <Compile Include="..\src\IAmqpObject.cs" />
     <Compile Include="..\src\ITransport.cs" />
     <Compile Include="..\src\Link.cs" />

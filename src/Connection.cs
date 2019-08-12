@@ -20,6 +20,7 @@ namespace Amqp
     using System;
     using System.Threading;
     using Amqp.Framing;
+    using Amqp.Handler;
     using Amqp.Sasl;
     using Amqp.Types;
 
@@ -56,6 +57,7 @@ namespace Amqp
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         readonly Address address;
         readonly OnOpened onOpened;
+        IHandler handler;
         Session[] localSessions;
         Session[] remoteSessions;
         ushort channelMax;
@@ -66,8 +68,9 @@ namespace Amqp
         Pump reader;
         HeartBeat heartBeat;
 
-        Connection(ushort channelMax, uint maxFrameSize)
+        Connection(Address address, ushort channelMax, uint maxFrameSize)
         {
+            this.address = address;
             this.channelMax = channelMax;
             this.maxFrameSize = maxFrameSize;
             this.remoteMaxFrameSize = uint.MaxValue;
@@ -86,8 +89,20 @@ namespace Amqp
         /// method instead.
         /// </remarks>
         public Connection(Address address)
-            : this(address, null, null, null)
+            : this(address, null)
         {
+        }
+
+        /// <summary>
+        /// Initializes a connection from the address.
+        /// </summary>
+        /// <param name="address">The address.</param>
+        /// <param name="handler">The protocol handler.</param>
+        public Connection(Address address, IHandler handler)
+            : this(address, DefaultMaxSessions, DefaultMaxFrameSize)
+        {
+            this.handler = handler;
+            this.Connect(null, null);
         }
 
         /// <summary>
@@ -106,32 +121,18 @@ namespace Amqp
         /// method instead.
         /// </remarks>
         public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
-            : this(DefaultMaxSessions, DefaultMaxFrameSize)
+            : this(address, DefaultMaxSessions, DefaultMaxFrameSize)
         {
-            this.address = address;
             this.onOpened = onOpened;
-            if (open != null)
-            {
-                this.maxFrameSize = open.MaxFrameSize;
-                this.channelMax = open.ChannelMax;
-            }
-            else
-            {
-                open = new Open()
-                {
-                    ContainerId = Guid.NewGuid().ToString(),
-                    HostName = this.address.Host,
-                    MaxFrameSize = this.maxFrameSize,
-                    ChannelMax = this.channelMax
-                };
-            }
-
-            if (open.IdleTimeOut > 0)
-            {
-                this.heartBeat = new HeartBeat(this, open.IdleTimeOut);
-            }
-
             this.Connect(saslProfile, open);
+        }
+
+        /// <summary>
+        /// Gets the protocol handler on the connection if it is set.
+        /// </summary>
+        public IHandler Handler
+        {
+            get { return this.handler; }
         }
 
         object ThisLock
@@ -141,14 +142,14 @@ namespace Amqp
 
 #if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
         internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
-            IAsyncTransport transport, Open open, OnOpened onOpened)
-            : this((ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
+            IAsyncTransport transport, Open open, OnOpened onOpened, IHandler handler)
+            : this(address, (ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
         {
             transport.SetConnection(this);
 
+            this.handler = handler;
             this.BufferManager = bufferManager;
             this.MaxLinksPerSession = amqpSettings.MaxLinksPerSession;
-            this.address = address;
             this.onOpened = onOpened;
             this.writer = new TransportWriter(transport, this.OnIoException);
 
@@ -355,6 +356,27 @@ namespace Amqp
 
         void Connect(SaslProfile saslProfile, Open open)
         {
+            if (open != null)
+            {
+                this.maxFrameSize = open.MaxFrameSize;
+                this.channelMax = open.ChannelMax;
+            }
+            else
+            {
+                open = new Open()
+                {
+                    ContainerId = Guid.NewGuid().ToString(),
+                    HostName = this.address.Host,
+                    MaxFrameSize = this.maxFrameSize,
+                    ChannelMax = this.channelMax
+                };
+            }
+
+            if (open.IdleTimeOut > 0)
+            {
+                this.heartBeat = new HeartBeat(this, open.IdleTimeOut);
+            }
+
             ITransport transport;
 #if NETFX
             if (WebSocketTransport.MatchScheme(address.Scheme))
@@ -420,16 +442,35 @@ namespace Amqp
 
         void SendOpen(Open open)
         {
+            IHandler handler = this.Handler;
+            if (handler != null && handler.CanHandle(EventId.ConnectionLocalOpen))
+            {
+                handler.Handle(Event.Create(EventId.ConnectionLocalOpen, this, context: open));
+            }
+
             this.SendCommand(0, open);
         }
 
         void SendClose(Error error)
         {
-            this.SendCommand(0, new Close() { Error = error });
+            Close close = new Close() { Error = error };
+            IHandler handler = this.Handler;
+            if (handler != null && handler.CanHandle(EventId.ConnectionLocalClose))
+            {
+                handler.Handle(Event.Create(EventId.ConnectionLocalClose, this, context: close));
+            }
+
+            this.SendCommand(0, close);
         }
 
         void OnOpen(Open open)
         {
+            IHandler handler = this.Handler;
+            if (handler != null && handler.CanHandle(EventId.ConnectionRemoteOpen))
+            {
+                handler.Handle(Event.Create(EventId.ConnectionRemoteOpen, this, context: open));
+            }
+
             lock (this.ThisLock)
             {
                 if (this.state == State.OpenSent)
@@ -472,6 +513,12 @@ namespace Amqp
 
         void OnClose(Close close)
         {
+            IHandler handler = this.Handler;
+            if (handler != null && handler.CanHandle(EventId.ConnectionRemoteClose))
+            {
+                handler.Handle(Event.Create(EventId.ConnectionRemoteClose, this, context: close));
+            }
+
             lock (this.ThisLock)
             {
                 if (this.state == State.Opened)

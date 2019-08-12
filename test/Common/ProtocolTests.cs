@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
+using Amqp.Handler;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -1661,6 +1662,84 @@ namespace Test.Amqp
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
                 Assert.IsTrue(session.IsClosed);
                 Assert.IsTrue(connection.IsClosed);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        public void HandlerTest()
+        {
+            string testName = "HandlerTest";
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], 0u, BitConverter.GetBytes(0), 0u, true);  // transfer
+                return TestOutcome.Stop;
+            });
+
+            Action<Dictionary<EventId, int>> validator = dict =>
+            {
+                Assert.AreEqual(10, dict.Count);
+                Assert.AreEqual(1, dict[EventId.ConnectionLocalOpen]);
+                Assert.AreEqual(1, dict[EventId.ConnectionRemoteOpen]);
+                Assert.AreEqual(1, dict[EventId.SessionLocalOpen]);
+                Assert.AreEqual(1, dict[EventId.SessionRemoteOpen]);
+                Assert.AreEqual(2, dict[EventId.LinkLocalOpen]);
+                Assert.AreEqual(2, dict[EventId.LinkRemoteOpen]);
+                Assert.AreEqual(1, dict[EventId.SendDelivery]);
+                Assert.AreEqual(2, dict[EventId.LinkLocalOpen]);
+                Assert.AreEqual(2, dict[EventId.LinkRemoteOpen]);
+                Assert.AreEqual(1, dict[EventId.ReceiveDelivery]);
+                Assert.AreEqual(1, dict[EventId.ConnectionLocalClose]);
+                Assert.AreEqual(1, dict[EventId.ConnectionRemoteClose]);
+            };
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                var events = new Dictionary<EventId, int>();
+                var handler = new TestHandler(e =>
+                {
+                    int count = 0;
+                    lock (events)
+                    {
+                        events.TryGetValue(e.Id, out count);
+                        events[e.Id] = count + 1;
+                    }
+                });
+
+                Connection connection = new Connection(this.address, handler);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                Message message = receiver.Receive();
+                receiver.Accept(message);
+                connection.Close();
+
+                validator(events);
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                var events = new Dictionary<EventId, int>();
+                var handler = new TestHandler(e =>
+                {
+                    int count = 0;
+                    events.TryGetValue(e.Id, out count);
+                    events[e.Id] = count + 1;
+                });
+
+                var factory = new ConnectionFactory();
+                factory.AMQP.Handler = handler;
+                Connection connection = await factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                Message message = await receiver.ReceiveAsync();
+                receiver.Accept(message);
+                await connection.CloseAsync();
+
+                validator(events);
             }).Unwrap().GetAwaiter().GetResult();
         }
     }

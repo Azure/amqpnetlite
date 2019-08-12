@@ -19,8 +19,9 @@ namespace Amqp
 {
     using Amqp.Framing;
     using Amqp.Types;
+    using Amqp.Handler;
 
-    class Delivery : INode
+    class Delivery : IDelivery, INode
     {
         Message message;
 
@@ -30,21 +31,21 @@ namespace Amqp
 
         public uint Handle;
 
-        public byte[] Tag;
+        public byte[] Tag { get; set; }
 
         public SequenceNumber DeliveryId;
 
         public int BytesTransfered;
 
-        public DeliveryState State;
+        public DeliveryState State { get; set; }
 
         public OutcomeCallback OnOutcome;
 
-        public object UserToken;
+        public object UserToken { get; set; }
 
         public bool Settled;
 
-        public bool Batchable;
+        public bool Batchable { get; set; }
 
         public Link Link;
 

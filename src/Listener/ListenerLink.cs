@@ -19,6 +19,7 @@ namespace Amqp.Listener
 {
     using System;
     using Amqp.Framing;
+    using Amqp.Handler;
     using Amqp.Types;
 
     /// <summary>
@@ -288,10 +289,20 @@ namespace Amqp.Listener
                     Buffer = buffer ?? message.Encode(),
                     Link = this,
                     Settled = this.SettleOnSend,
-                    Tag = Delivery.GetDeliveryTag(tag),
                     OnOutcome = (a, b, c, d) => b.Delivery.OnStateChange(c),
                     UserToken = userToken
                 };
+
+                IHandler handler = this.Session.Connection.Handler;
+                if (handler != null && handler.CanHandle(EventId.SendDelivery))
+                {
+                    handler.Handle(Event.Create(EventId.SendDelivery, this.Session.Connection, this.Session, this, context: delivery));
+                }
+
+                if (delivery.Tag == null)
+                {
+                    delivery.Tag = Delivery.GetDeliveryTag(tag);
+                }
 
                 this.Session.SendDelivery(delivery);
 
@@ -447,6 +458,13 @@ namespace Amqp.Listener
         {
             var container = ((ListenerConnection)this.Session.Connection).Listener.Container;
             delivery.Message = container.CreateMessage(delivery.Buffer);
+
+            IHandler handler = this.Session.Connection.Handler;
+            if (handler != null && handler.CanHandle(EventId.SendDelivery))
+            {
+                handler.Handle(Event.Create(EventId.ReceiveDelivery, this.Session.Connection, this.Session, this, context: delivery));
+            }
+
             if (this.onMessage != null)
             {
                 this.onMessage(this, delivery.Message, delivery.State, this.state);

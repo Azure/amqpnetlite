@@ -148,7 +148,8 @@ namespace Amqp
             }
 
             AsyncPump pump = new AsyncPump(this.BufferManager, transport);
-            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport, open, onOpened);
+            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport,
+                open, onOpened, this.amqpSettings?.Handler);
             pump.Start(connection);
 
             return connection;

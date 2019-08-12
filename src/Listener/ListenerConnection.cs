@@ -21,6 +21,7 @@ namespace Amqp.Listener
     using System.Security.Principal;
     using System.Threading;
     using Amqp.Framing;
+    using Amqp.Handler;
 
     /// <summary>
     /// An AMQP connection used by the listener.
@@ -30,8 +31,8 @@ namespace Amqp.Listener
         readonly static OnOpened onOpened = OnOpen;
         readonly ConnectionListener listener;
 
-        internal ListenerConnection(ConnectionListener listener, Address address, IAsyncTransport transport)
-            : base(listener.BufferManager, listener.AMQP, address, transport, null, onOpened)
+        internal ListenerConnection(ConnectionListener listener, Address address, IHandler handler, IAsyncTransport transport)
+            : base(listener.BufferManager, listener.AMQP, address, transport, null, onOpened, handler)
         {
             this.listener = listener;
         }

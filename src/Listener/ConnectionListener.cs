@@ -227,7 +227,7 @@ namespace Amqp.Listener
                 principal = profile.GetPrincipal();
             }
 
-            var connection = new ListenerConnection(this, this.address, transport);
+            var connection = new ListenerConnection(this, this.address, this.amqpSettings?.Handler, transport);
             if (principal == null)
             {
                 // SASL principal preferred. If not present, check transport.
