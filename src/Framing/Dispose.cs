@@ -40,7 +40,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the role field.
+        /// Gets or sets the role field (index=0).
         /// </summary>
         public bool Role
         {
@@ -49,7 +49,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the first field.
+        /// Gets or sets the first field (index=1).
         /// </summary>
         public uint First
         {
@@ -58,7 +58,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the last field.
+        /// Gets or sets the last field (index=2).
         /// </summary>
         public uint Last
         {
@@ -67,7 +67,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the settled field. 
+        /// Gets or sets the settled field (index=3). 
         /// </summary>
         public bool Settled
         {
@@ -76,7 +76,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the state field.
+        /// Gets or sets the state field (index=4).
         /// </summary>
         public DeliveryState State
         {
@@ -85,7 +85,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the batchable field 
+        /// Gets or sets the batchable field (index=5).
         /// </summary>
         public bool Batchable
         {

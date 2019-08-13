@@ -38,7 +38,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the selected security mechanism.
+        /// Gets or sets the selected security mechanism (index=0).
         /// </summary>
         public Symbol Mechanism
         {
@@ -47,7 +47,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the initial security response data.
+        /// Gets or sets the initial security response data (index=1).
         /// </summary>
         public byte[] InitialResponse
         {
@@ -56,7 +56,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the name of the target host.
+        /// Gets or sets the name of the target host (index=2).
         /// </summary>
         public string HostName
         {

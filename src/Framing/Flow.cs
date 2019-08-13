@@ -45,7 +45,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Indicates if handle field was defined.
+        /// Indicates if handle field was defined (index=0).
         /// </summary>
         public bool HasHandle
         {
@@ -53,7 +53,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the next-incoming-id field. 
+        /// Gets or sets the next-incoming-id field (index=1).
         /// </summary>
         public uint NextIncomingId
         {
@@ -62,7 +62,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the incoming-window field. 
+        /// Gets or sets the incoming-window field (index=1).
         /// </summary>
         public uint IncomingWindow
         {
@@ -71,7 +71,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the next-outgoing-id field. 
+        /// Gets or sets the next-outgoing-id field (index=2).
         /// </summary>
         public uint NextOutgoingId
         {
@@ -80,7 +80,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the outgoing-window field.
+        /// Gets or sets the outgoing-window field (index=3).
         /// </summary>
         public uint OutgoingWindow
         {
@@ -89,7 +89,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the handle field.
+        /// Gets or sets the handle field (index=4).
         /// </summary>
         public uint Handle
         {
@@ -98,7 +98,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the delivery-count field.
+        /// Gets or sets the delivery-count field (index=5).
         /// </summary>
         public uint DeliveryCount
         {
@@ -107,7 +107,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the link-credit field. 
+        /// Gets or sets the link-credit field (index=6).
         /// </summary>
         public uint LinkCredit
         {
@@ -116,7 +116,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the available field.
+        /// Gets or sets the available field (index=7).
         /// </summary>
         public uint Available
         {
@@ -125,7 +125,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the drain field.
+        /// Gets or sets the drain field (index=8).
         /// </summary>
         public bool Drain
         {
@@ -134,7 +134,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the echo field.
+        /// Gets or sets the echo field (index=9).
         /// </summary>
         public bool Echo
         {
@@ -143,7 +143,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the properties field.
+        /// Gets or sets the properties field (index=10).
         /// </summary>
         public Fields Properties
         {

@@ -36,7 +36,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the available SASL mechanisms.
+        /// Gets or sets the available SASL mechanisms (index=0).
         /// </summary>
         public Symbol[] SaslServerMechanisms
         {

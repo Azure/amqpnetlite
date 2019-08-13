@@ -36,7 +36,7 @@ namespace Amqp.Transactions
         }
 
         /// <summary>
-        /// Gets or sets the global-id field.
+        /// Gets or sets the global-id field (index=0).
         /// </summary>
         public object GlobalId
         {

@@ -36,7 +36,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the security response data.
+        /// Gets or sets the security response data (index=0).
         /// </summary>
         public byte[] Response
         {

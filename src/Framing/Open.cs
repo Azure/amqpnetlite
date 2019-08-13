@@ -44,7 +44,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the container-id field.
+        /// Gets or sets the container-id field (index=0).
         /// </summary>
         public string ContainerId
         {
@@ -53,7 +53,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the hostname field.
+        /// Gets or sets the hostname field (index=1).
         /// </summary>
         public string HostName
         {
@@ -62,7 +62,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the max-frame-size field.
+        /// Gets or sets the max-frame-size field (index=2).
         /// </summary>
         public uint MaxFrameSize
         {
@@ -71,7 +71,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the channel-max field.
+        /// Gets or sets the channel-max field (index=3).
         /// </summary>
         public ushort ChannelMax
         {
@@ -80,7 +80,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the idle-time-out field.
+        /// Gets or sets the idle-time-out field (index=4).
         /// </summary>
         public uint IdleTimeOut
         {
@@ -89,7 +89,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the outgoing-locales field.
+        /// Gets or sets the outgoing-locales field (index=5).
         /// </summary>
         public Symbol[] OutgoingLocales
         {
@@ -98,7 +98,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the incoming-locales field.
+        /// Gets or sets the incoming-locales field (index=6).
         /// </summary>
         public Symbol[] IncomingLocales
         {
@@ -107,7 +107,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the offered-capabilities field.
+        /// Gets or sets the offered-capabilities field (index=7).
         /// </summary>
         public Symbol[] OfferedCapabilities
         {
@@ -116,7 +116,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the desired-capabilities field.
+        /// Gets or sets the desired-capabilities field (index=8).
         /// </summary>
         public Symbol[] DesiredCapabilities
         {
@@ -125,7 +125,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the properties field.
+        /// Gets or sets the properties field (index=9).
         /// </summary>
         public Fields Properties
         {

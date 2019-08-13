@@ -48,7 +48,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the name field.
+        /// Gets or sets the name field (index=0).
         /// </summary>
         public string LinkName
         {
@@ -57,7 +57,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the handle field.
+        /// Gets or sets the handle field (index=1).
         /// </summary>
         public uint Handle
         {
@@ -66,7 +66,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the role field.
+        /// Gets or sets the role field (index=2).
         /// </summary>
         public bool Role
         {
@@ -75,7 +75,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the snd-settle-mode field.
+        /// Gets or sets the snd-settle-mode field (index=3).
         /// </summary>
         public SenderSettleMode SndSettleMode
         {
@@ -84,7 +84,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the rcv-settle-mode field.
+        /// Gets or sets the rcv-settle-mode field (index=4).
         /// </summary>
         public ReceiverSettleMode RcvSettleMode
         {
@@ -93,7 +93,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the source field.
+        /// Gets or sets the source field (index=5).
         /// </summary>
         public object Source
         {
@@ -102,7 +102,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the target field.
+        /// Gets or sets the target field (index=6).
         /// </summary>
         public object Target
         {
@@ -111,7 +111,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the unsettled field.
+        /// Gets or sets the unsettled field (index=7).
         /// </summary>
         public Map Unsettled
         {
@@ -120,7 +120,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the incomplete-unsettled field.
+        /// Gets or sets the incomplete-unsettled field (index=8).
         /// </summary>
         public bool IncompleteUnsettled
         {
@@ -129,7 +129,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the initial-delivery-count field.
+        /// Gets or sets the initial-delivery-count field (index=9).
         /// </summary>
         public uint InitialDeliveryCount
         {
@@ -138,7 +138,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the max-message-size field.
+        /// Gets or sets the max-message-size field (index=10).
         /// </summary>
         public ulong MaxMessageSize
         {
@@ -147,7 +147,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the offered-capabilities field.
+        /// Gets or sets the offered-capabilities field (index=11).
         /// </summary>
         public Symbol[] OfferedCapabilities
         {
@@ -156,7 +156,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the desired-capabilities field.
+        /// Gets or sets the desired-capabilities field (index=12).
         /// </summary>
         public Symbol[] DesiredCapabilities
         {
@@ -165,7 +165,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the properties field.
+        /// Gets or sets the properties field (index=13).
         /// </summary>
         public Fields Properties
         {

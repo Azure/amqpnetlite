@@ -36,7 +36,7 @@ namespace Amqp.Transactions
         }
 
         /// <summary>
-        /// Gets or sets the capabilities field.
+        /// Gets or sets the capabilities field (index=0).
         /// </summary>
         public Symbol[] Capabilities
         {

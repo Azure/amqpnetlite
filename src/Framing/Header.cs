@@ -40,7 +40,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the durable field.
+        /// Gets or sets the durable field (index=0).
         /// </summary>
         public bool Durable
         {
@@ -49,7 +49,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the priority field.
+        /// Gets or sets the priority field (index=1).
         /// </summary>
         public byte Priority
         {
@@ -58,7 +58,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the ttl field.
+        /// Gets or sets the ttl field (index=2).
         /// </summary>
         public uint Ttl
         {
@@ -67,7 +67,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the first-acquirer field.
+        /// Gets or sets the first-acquirer field (index=3).
         /// </summary>
         public bool FirstAcquirer
         {
@@ -76,7 +76,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the delivery-count field.
+        /// Gets or sets the delivery-count field (index=4).
         /// </summary>
         public uint DeliveryCount
         {

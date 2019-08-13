@@ -49,7 +49,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets a symbolic value indicating the error condition.
+        /// Gets or sets a symbolic value indicating the error condition (index=0).
         /// </summary>
         public Symbol Condition
         {
@@ -58,7 +58,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the descriptive text about the error condition.
+        /// Gets or sets the descriptive text about the error condition (index=1).
         /// </summary>
         public string Description
         {
@@ -67,7 +67,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the map carrying information about the error condition.
+        /// Gets or sets the map carrying information about the error condition (index=2).
         /// </summary>
         public Fields Info
         {

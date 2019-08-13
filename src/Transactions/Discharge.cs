@@ -37,7 +37,7 @@ namespace Amqp.Transactions
         }
 
         /// <summary>
-        /// Gets or sets the txn-id field.
+        /// Gets or sets the txn-id field (index=0).
         /// </summary>
         public byte[] TxnId
         {
@@ -46,7 +46,7 @@ namespace Amqp.Transactions
         }
 
         /// <summary>
-        /// Gets or sets the fail field.
+        /// Gets or sets the fail field (index=1).
         /// </summary>
         public bool Fail
         {

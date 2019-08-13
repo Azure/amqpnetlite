@@ -37,7 +37,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the handle field.
+        /// Gets or sets the handle field (index=0).
         /// </summary>
         public uint Handle
         {
@@ -46,7 +46,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the closed field.
+        /// Gets or sets the closed field (index=1).
         /// </summary>
         public bool Closed
         {
@@ -55,7 +55,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the error field.
+        /// Gets or sets the error field (index=2).
         /// </summary>
         public Error Error
         {

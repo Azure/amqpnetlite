@@ -42,7 +42,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the remote-channel field.
+        /// Gets or sets the remote-channel field (index=0).
         /// </summary>
         public ushort RemoteChannel
         {
@@ -51,7 +51,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the next-outgoing-id field.
+        /// Gets or sets the next-outgoing-id field (index=1).
         /// </summary>
         public uint NextOutgoingId
         {
@@ -60,7 +60,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the incoming-window field.
+        /// Gets or sets the incoming-window field (index=2).
         /// </summary>
         public uint IncomingWindow
         {
@@ -69,7 +69,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the outgoing-window field.
+        /// Gets or sets the outgoing-window field (index=3).
         /// </summary>
         public uint OutgoingWindow
         {
@@ -78,7 +78,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the handle-max field.
+        /// Gets or sets the handle-max field (index=4).
         /// </summary>
         public uint HandleMax
         {
@@ -87,7 +87,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the offered-capabilities field.
+        /// Gets or sets the offered-capabilities field (index=5).
         /// </summary>
         public Symbol[] OfferedCapabilities
         {
@@ -96,7 +96,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the desired-capabilities field.
+        /// Gets or sets the desired-capabilities field (index=6).
         /// </summary>
         public Symbol[] DesiredCapabilities
         {
@@ -105,7 +105,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the properties field.
+        /// Gets or sets the properties field (index=7).
         /// </summary>
         public Fields Properties
         {

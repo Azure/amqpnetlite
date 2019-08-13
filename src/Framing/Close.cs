@@ -35,7 +35,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the error field.
+        /// Gets or sets the error field (index=0).
         /// </summary>
         public Error Error
         {

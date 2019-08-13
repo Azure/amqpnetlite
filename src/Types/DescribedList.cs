@@ -50,6 +50,7 @@ namespace Amqp.Types
         /// </summary>
         /// <param name="index">Zero-based offset of the field in the list.</param>
         /// <returns>True if a value is set; otherwise false.</returns>
+        /// <remarks>The field index can be found in the description of each field.</remarks>
         public bool HasField(int index)
         {
             this.CheckFieldIndex(index);
@@ -60,6 +61,7 @@ namespace Amqp.Types
         /// Resets the value of a field to null.
         /// </summary>
         /// <param name="index">Zero-based offset of the field in the list.</param>
+        /// <remarks>The field index can be found in the description of each field.</remarks>
         public void ResetField(int index)
         {
             this.CheckFieldIndex(index);

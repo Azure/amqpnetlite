@@ -45,7 +45,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the delivery-id field.
+        /// Gets if the delivery-id field (index=1) is set.
         /// </summary>
         public bool HasDeliveryId
         {
@@ -53,7 +53,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the handle field.
+        /// Gets or sets the handle field (index=0).
         /// </summary>
         public uint Handle
         {
@@ -62,7 +62,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the delivery-id field. 
+        /// Gets or sets the delivery-id field (index=1).
         /// </summary>
         public uint DeliveryId
         {
@@ -71,7 +71,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the delivery-tag field.
+        /// Gets or sets the delivery-tag field (index=2).
         /// </summary>
         public byte[] DeliveryTag
         {
@@ -80,7 +80,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the message-format field.
+        /// Gets or sets the message-format field (index=3).
         /// </summary>
         public uint MessageFormat
         {
@@ -89,7 +89,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the settled field.
+        /// Gets or sets the settled field (index=4).
         /// </summary>
         public bool Settled
         {
@@ -98,7 +98,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the more field.
+        /// Gets or sets the more field (index=5).
         /// </summary>
         public bool More
         {
@@ -107,7 +107,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the rcv-settle-mode field.
+        /// Gets or sets the rcv-settle-mode field (index=6).
         /// </summary>
         public ReceiverSettleMode RcvSettleMode
         {
@@ -116,7 +116,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the state field.
+        /// Gets or sets the state field (index=7).
         /// </summary>
         public DeliveryState State
         {
@@ -125,7 +125,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the resume field.
+        /// Gets or sets the resume field (index=8).
         /// </summary>
         public bool Resume
         {
@@ -134,7 +134,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the aborted field.
+        /// Gets or sets the aborted field (index=9).
         /// </summary>
         public bool Aborted
         {
@@ -143,7 +143,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the batchable field.
+        /// Gets or sets the batchable field (index=10).
         /// </summary>
         public bool Batchable
         {

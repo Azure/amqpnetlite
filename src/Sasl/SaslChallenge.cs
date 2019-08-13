@@ -36,7 +36,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the security challenge data.
+        /// Gets or sets the security challenge data (index=0).
         /// </summary>
         public byte[] Challenge
         {

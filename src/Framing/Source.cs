@@ -46,7 +46,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the address field.
+        /// Gets or sets the address field (index=0).
         /// </summary>
         public string Address
         {
@@ -55,7 +55,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the durable field.
+        /// Gets or sets the durable field (index=1).
         /// </summary>
         public uint Durable
         {
@@ -64,7 +64,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the expiry-policy field.
+        /// Gets or sets the expiry-policy field (index=2).
         /// </summary>
         public Symbol ExpiryPolicy
         {
@@ -73,7 +73,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the timeout field.
+        /// Gets or sets the timeout field (index=3).
         /// </summary>
         public uint Timeout
         {
@@ -82,7 +82,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the dynamic field.
+        /// Gets or sets the dynamic field (index=4).
         /// </summary>
         public bool Dynamic
         {
@@ -91,7 +91,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the dynamic-node-properties field.
+        /// Gets or sets the dynamic-node-properties field (index=5).
         /// </summary>
         public Fields DynamicNodeProperties
         {
@@ -100,7 +100,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the distribution-mode field.
+        /// Gets or sets the distribution-mode field (index=6).
         /// </summary>
         public Symbol DistributionMode
         {
@@ -109,7 +109,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the filter field.
+        /// Gets or sets the filter field (index=7).
         /// </summary>
         public Map FilterSet
         {
@@ -118,7 +118,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the default-outcome field.
+        /// Gets or sets the default-outcome field (index=8).
         /// </summary>
         public Outcome DefaultOutcome
         {
@@ -127,7 +127,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the outcomes field.
+        /// Gets or sets the outcomes field (index=9).
         /// </summary>
         public Symbol[] Outcomes
         {
@@ -136,7 +136,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the capabilities field.
+        /// Gets or sets the capabilities field (index=10).
         /// </summary>
         public Symbol[] Capabilities
         {

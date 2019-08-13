@@ -37,7 +37,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the outcome of the sasl dialog.
+        /// Gets or sets the outcome of the sasl dialog (index=0).
         /// </summary>
         public SaslCode Code
         {
@@ -46,7 +46,7 @@ namespace Amqp.Sasl
         }
 
         /// <summary>
-        /// Gets or sets the additional data as specified in RFC-4422.
+        /// Gets or sets the additional data as specified in RFC-4422 (index=1).
         /// </summary>
         public byte[] AdditionalData
         {

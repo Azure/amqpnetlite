@@ -48,7 +48,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the message-id field.
+        /// Gets or sets the message-id field (index=0).
         /// </summary>
         /// <remarks>
         /// The default message identifier type assumed by the library is string.
@@ -62,7 +62,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the user-id field.
+        /// Gets or sets the user-id field (index=1).
         /// </summary>
         public byte[] UserId
         {
@@ -71,7 +71,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the to field.
+        /// Gets or sets the to field (index=2).
         /// </summary>
         public string To
         {
@@ -80,7 +80,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the subject field.
+        /// Gets or sets the subject field (index=3).
         /// </summary>
         public string Subject
         {
@@ -89,7 +89,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the reply-to field.
+        /// Gets or sets the reply-to field (index=4).
         /// </summary>
         public string ReplyTo
         {
@@ -98,7 +98,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the correlation-id field.
+        /// Gets or sets the correlation-id field (index=5).
         /// </summary>
         /// <remarks>
         /// The default correlation identifier type assumed by the library is string.
@@ -112,7 +112,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the content-type field.
+        /// Gets or sets the content-type field (index=6).
         /// </summary>
         public Symbol ContentType
         {
@@ -121,7 +121,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the content-encoding field.
+        /// Gets or sets the content-encoding field (index=7).
         /// </summary>
         public Symbol ContentEncoding
         {
@@ -130,7 +130,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the absolute-expiry-time field.
+        /// Gets or sets the absolute-expiry-time field (index=8).
         /// </summary>
         public DateTime AbsoluteExpiryTime
         {
@@ -139,7 +139,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the creation-time field.
+        /// Gets or sets the creation-time field (index=9).
         /// </summary>
         public DateTime CreationTime
         {
@@ -148,7 +148,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the group-id field.
+        /// Gets or sets the group-id field (index=10).
         /// </summary>
         public string GroupId
         {
@@ -157,7 +157,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the group-sequence field.
+        /// Gets or sets the group-sequence field (index=11).
         /// </summary>
         public uint GroupSequence
         {
@@ -166,7 +166,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the reply-to-group-id field.
+        /// Gets or sets the reply-to-group-id field (index=12).
         /// </summary>
         public string ReplyToGroupId
         {
