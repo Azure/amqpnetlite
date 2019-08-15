@@ -401,21 +401,22 @@ namespace Amqp.Types
 
         internal override void EncodeValue(ByteBuffer buffer)
         {
-            int count = 0;
-            int temp = this.fields;
-            while (temp > 0)
-            {
-                count++;
-                temp <<= 1;
-            }
-
-            count = 32 - count;
-            if (count == 0)
+            if (this.fields == 0)
             {
                 AmqpBitConverter.WriteUByte(buffer, FormatCode.List0);
             }
             else
             {
+                // Count non-null fields by removing leading zeros
+                int count = 0;
+                int temp = this.fields;
+                while (temp > 0)
+                {
+                    count++;
+                    temp <<= 1;
+                }
+
+                count = 32 - count;
                 int pos = buffer.WritePos;
                 AmqpBitConverter.WriteUByte(buffer, 0);
                 AmqpBitConverter.WriteULong(buffer, 0);
