@@ -45,5 +45,10 @@ namespace Amqp.Handler
         /// Gets the user state object if set in the send method.
         /// </summary>
         object UserToken { get; }
+        
+        /// <summary>
+        /// Gets or sets the Settled field.
+        /// </summary>
+        bool Settled { get; set; }
     }
 }
