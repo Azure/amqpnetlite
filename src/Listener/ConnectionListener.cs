@@ -30,6 +30,7 @@ namespace Amqp.Listener
     using System.Security.Principal;
     using System.Threading.Tasks;
     using Amqp.Framing;
+    using Amqp.Handler;
     using Amqp.Sasl;
     using Amqp.Types;
 
@@ -117,6 +118,15 @@ namespace Amqp.Listener
             {
                 return this.saslSettings ?? (this.saslSettings = new SaslSettings());
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a factory that creates a <see cref="IHandler"/> for an accepted connection.
+        /// </summary>
+        public Func<ConnectionListener, IHandler> HandlerFactory
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -227,7 +237,8 @@ namespace Amqp.Listener
                 principal = profile.GetPrincipal();
             }
 
-            var connection = new ListenerConnection(this, this.address, this.amqpSettings?.Handler, transport);
+            IHandler handler = this.HandlerFactory?.Invoke(this);
+            var connection = new ListenerConnection(this, this.address, handler, transport);
             if (principal == null)
             {
                 // SASL principal preferred. If not present, check transport.

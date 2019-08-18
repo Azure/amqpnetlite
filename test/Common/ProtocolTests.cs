@@ -1729,8 +1729,7 @@ namespace Test.Amqp
                 });
 
                 var factory = new ConnectionFactory();
-                factory.AMQP.Handler = handler;
-                Connection connection = await factory.CreateAsync(this.address);
+                Connection connection = await factory.CreateAsync(this.address, handler);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });

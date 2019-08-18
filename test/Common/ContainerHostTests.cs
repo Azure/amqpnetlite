@@ -24,13 +24,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
+using Amqp.Handler;
 using Amqp.Listener;
 using Amqp.Sasl;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Sockets;
 using System.Text;
-using Amqp.Handler;
 
 namespace Test.Amqp
 {
@@ -673,7 +673,7 @@ namespace Test.Amqp
 
             List<Message> messages = new List<Message>();
             this.host.RegisterMessageProcessor(name, new TestMessageProcessor(10, messages));
-            this.host.Listeners[0].AMQP.Handler = listenerHandler;
+            this.host.Listeners[0].HandlerFactory = a => listenerHandler;
 
             var connection = new Connection(Address, clientHandler);
             var session = new Session(connection);

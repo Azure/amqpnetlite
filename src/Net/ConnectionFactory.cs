@@ -24,6 +24,7 @@ namespace Amqp
     using System.Security.Cryptography.X509Certificates;
     using System.Threading.Tasks;
     using Amqp.Framing;
+    using Amqp.Handler;
     using Amqp.Sasl;
 
     /// <summary>
@@ -95,13 +96,29 @@ namespace Amqp
         }
 
         /// <summary>
+        /// Creates a new connection with a protocol handler.
+        /// </summary>
+        /// <param name="address">The address of remote endpoint to connect to.</param>
+        /// <param name="handler">The protocol handler.</param>
+        /// <returns>A task for the connection creation operation. On success, the result is an AMQP <see cref="Connection"/></returns>
+        public Task<Connection> CreateAsync(Address address, IHandler handler)
+        {
+            return this.CreateAsync(address, null, null, handler);
+        }
+
+        /// <summary>
         /// Creates a new connection with a custom open frame and a callback to handle remote open frame.
         /// </summary>
         /// <param name="address">The address of remote endpoint to connect to.</param>
         /// <param name="open">If specified, it is sent to open the connection, otherwise an open frame created from the AMQP settings property is sent.</param>
         /// <param name="onOpened">If specified, it is invoked when an open frame is received from the remote peer.</param>
         /// <returns>A task for the connection creation operation. On success, the result is an AMQP <see cref="Connection"/></returns>
-        public async Task<Connection> CreateAsync(Address address, Open open = null, OnOpened onOpened = null)
+        public Task<Connection> CreateAsync(Address address, Open open = null, OnOpened onOpened = null)
+        {
+            return this.CreateAsync(address, open, onOpened, null);
+        }
+
+        async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened, IHandler handler)
         {
             IAsyncTransport transport;
             TransportProvider provider;
@@ -148,8 +165,7 @@ namespace Amqp
             }
 
             AsyncPump pump = new AsyncPump(this.BufferManager, transport);
-            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport,
-                open, onOpened, this.amqpSettings?.Handler);
+            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport, open, onOpened, handler);
             pump.Start(connection);
 
             return connection;

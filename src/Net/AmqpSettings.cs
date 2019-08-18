@@ -17,8 +17,6 @@
 
 namespace Amqp
 {
-    using Amqp.Handler;
-
     /// <summary>
     /// Contains the AMQP settings for a <see cref="Connection"/>.
     /// </summary>
@@ -73,15 +71,6 @@ namespace Amqp
         /// Gets or sets the open.idle-time-out field.
         /// </summary>
         public int IdleTimeout
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets a protocol handler.
-        /// </summary>
-        public IHandler Handler
         {
             get;
             set;
