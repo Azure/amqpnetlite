@@ -43,7 +43,7 @@ namespace Amqp
 
         public object UserToken { get; set; }
 
-        public bool Settled;
+        public bool Settled { get; set; }
 
         public bool Batchable { get; set; }
 
