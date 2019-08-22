@@ -9,11 +9,14 @@
     <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This package provides the WebSockets client transport of AMQP.Net Lite on .Net Core (netstandard1.3).</description>
+    <description>This package provides the WebSockets client transport of AMQP.Net Lite for netstandard.</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>AMQP coreclr .NetCore netstandard WebSockets</tags>
+    <tags>AMQP coreclr netstandard WebSockets</tags>
     <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="AMQPNetLite.Core" version="$version$" />
+      </group>
       <group targetFramework="netstandard1.3">
         <dependency id="System.Net.WebSockets.Client" version="4.0.0" />
         <dependency id="AMQPNetLite.Core" version="$version$" />
@@ -24,5 +27,8 @@
     <file src="bin\Release\Amqp.WebSockets.Client\netstandard1.3\Amqp.WebSockets.Client.dll" target="lib\netstandard1.3" />
     <file src="bin\Release\Amqp.WebSockets.Client\netstandard1.3\Amqp.WebSockets.Client.pdb" target="lib\netstandard1.3" />
     <file src="bin\Release\Amqp.WebSockets.Client\netstandard1.3\Amqp.WebSockets.Client.xml" target="lib\netstandard1.3" />
+    <file src="bin\Release\Amqp.WebSockets.Client\netstandard2.0\Amqp.WebSockets.Client.dll" target="lib\netstandard2.0" />
+    <file src="bin\Release\Amqp.WebSockets.Client\netstandard2.0\Amqp.WebSockets.Client.pdb" target="lib\netstandard2.0" />
+    <file src="bin\Release\Amqp.WebSockets.Client\netstandard2.0\Amqp.WebSockets.Client.xml" target="lib\netstandard2.0" />
   </files>
 </package>

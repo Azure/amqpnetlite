@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;netstandard2.0</TargetFrameworks>
     <AssemblyName>Amqp.WebSockets.Client</AssemblyName>
     <PackageId>AmqpNetLite.WebSockets</PackageId>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
@@ -13,6 +13,9 @@
     <Compile Include="Properties/*;Net/WebSocketTransport.cs;Net/WebSocketTransportFactory.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
     <PackageReference Include="System.Net.WebSockets.Client" Version="4.3.0" />
   </ItemGroup>

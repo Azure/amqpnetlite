@@ -9,11 +9,12 @@
     <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>This package provides the AMQP client and listener of AMQPNetLite on .Net Core (netstandard1.3).</description>
+    <description>This package provides the AMQP client and listener for netstandard.</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
     <copyright>Copyright 2014</copyright>
-    <tags>AMQP coreclr .NetCore netstandard</tags>
+    <tags>AMQP coreclr netstandard</tags>
     <dependencies>
+      <group targetFramework="netstandard2.0" />
       <group targetFramework="netstandard1.3">
         <dependency id="System.Collections" version="4.0.11" />
         <dependency id="System.Collections.Concurrent" version="4.0.12" />
