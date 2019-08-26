@@ -67,6 +67,7 @@ namespace Amqp
         ITransport writer;
         Pump reader;
         HeartBeat heartBeat;
+        private readonly object lockObject = new object();
 
         Connection(Address address, ushort channelMax, uint maxFrameSize)
         {
@@ -137,7 +138,7 @@ namespace Amqp
 
         object ThisLock
         {
-            get { return this; }
+            get { return this.lockObject; }
         }
 
 #if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
