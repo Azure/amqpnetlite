@@ -47,6 +47,8 @@ namespace Amqp
         Link[] localLinks;
         Link[] remoteLinks;
         State state;
+        private readonly object lockObject = new object();
+
 
         // incoming flow control
         SequenceNumber incomingDeliveryId;
@@ -104,7 +106,7 @@ namespace Amqp
 
         object ThisLock
         {
-            get { return this; }
+            get { return this.lockObject; }
         }
 
         internal ushort Channel

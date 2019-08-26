@@ -44,6 +44,7 @@ namespace Amqp
         readonly OnAttached onAttached;
         LinkState state;
         bool detach;
+        private readonly object lockObject = new object();
 
         /// <summary>
         /// Initializes the link.
@@ -96,7 +97,7 @@ namespace Amqp
 
         internal object ThisLock
         {
-            get { return this; }
+            get { return this.lockObject; }
         }
 
         internal bool IsDetaching
