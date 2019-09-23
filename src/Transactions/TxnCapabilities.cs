@@ -19,12 +19,38 @@ namespace Amqp.Transactions
 {
     using Amqp.Types;
 
-    static class TxnCapabilities
+    /// <summary>
+    /// Symbols indicating (desired/available) capabilities of a transaction coordinator.
+    /// </summary>
+    public static class TxnCapabilities
     {
+        /// <summary>
+        /// Support local transactions.
+        /// </summary>
         public static readonly Symbol LocalTransactions = "amqp:local-transactions";
+        
+        
+        /// <summary>
+        /// Support AMQP Distributed Transactions.
+        /// </summary>
         public static readonly Symbol DistributedTxn = "amqp:distributed-transactions";
+        
+        
+        /// <summary>
+        /// Support AMQP Promotable Transactions.
+        /// </summary>
         public static readonly Symbol PrototableTransactions = "amqp:prototable-transactions";
+        
+        
+        /// <summary>
+        /// Support multiple active transactions on a single session.
+        /// </summary>
         public static readonly Symbol MultiTxnsPerSsn = "amqp:multi-txns-per-ssn";
+        
+        
+        /// <summary>
+        /// Support transactions whose txn-id is used across sessions on one connection.
+        /// </summary>
         public static readonly Symbol MultiSsnsPerTxn = "amqp:multi-ssns-per-txn";
     }
 }
