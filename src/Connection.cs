@@ -23,29 +23,83 @@ namespace Amqp
     using Amqp.Handler;
     using Amqp.Sasl;
     using Amqp.Types;
+    
+    /// <summary>
+    /// The state of a connection.
+    /// </summary>
+    public enum ConnectionState
+    {
+        /// <summary>
+        /// The connection is started.
+        /// </summary>
+        Start,
+        
+        /// <summary>
+        /// Header frame was sent. 
+        /// </summary>
+        HeaderSent,
+        
+        /// <summary>
+        /// The connection is opening.
+        /// </summary>
+        OpenPipe,
+        
+        /// <summary>
+        /// Header frame was received.
+        /// </summary>
+        HeaderReceived,
+        
+        /// <summary>
+        /// Header frame exchanged.
+        /// </summary>
+        HeaderExchanged,
+        
+        /// <summary>
+        /// Open frame was sent.
+        /// </summary>
+        OpenSent,
+        
+        /// <summary>
+        /// Open frame was received.
+        /// </summary>
+        OpenReceived,
+        
+        /// <summary>
+        /// The connection is opened.
+        /// </summary>
+        Opened,
+        
+        /// <summary>
+        /// Close frame received.
+        /// </summary>
+        CloseReceived,
+        
+        /// <summary>
+        /// Close frame sent.
+        /// </summary>
+        CloseSent,
+        
+        /// <summary>
+        /// The connection is opening or closing. 
+        /// </summary>
+        OpenClosePipe,
+        
+        /// <summary>
+        /// The connection is closing.
+        /// </summary>
+        ClosePipe,
+        
+        /// <summary>
+        /// The connection is closed.
+        /// </summary>
+        End
+    }
 
     /// <summary>
     /// The Connection class represents an AMQP connection.
     /// </summary>
     public partial class Connection : AmqpObject
     {
-        enum State
-        {
-            Start,
-            HeaderSent,
-            OpenPipe,
-            HeaderReceived,
-            HeaderExchanged,
-            OpenSent,
-            OpenReceived,
-            Opened,
-            CloseReceived,
-            CloseSent,
-            OpenClosePipe,
-            ClosePipe,
-            End
-        }
-
         /// <summary>
         /// A flag to disable server certificate validation when TLS is used.
         /// </summary>
@@ -61,7 +115,7 @@ namespace Amqp
         Session[] localSessions;
         Session[] remoteSessions;
         ushort channelMax;
-        State state;
+        ConnectionState state;
         uint maxFrameSize;
         uint remoteMaxFrameSize;
         ITransport writer;
@@ -174,7 +228,7 @@ namespace Amqp
 
             this.SendHeader();
             this.SendOpen(open);
-            this.state = State.OpenPipe;
+            this.state = ConnectionState.OpenPipe;
         }
 
         /// <summary>
@@ -183,6 +237,14 @@ namespace Amqp
         public static ConnectionFactory Factory
         {
             get { return new ConnectionFactory(); }
+        }
+
+        /// <summary>
+        /// Gets the connection state.
+        /// </summary>
+        public ConnectionState ConnectionState
+        {
+            get { return this.state; }
         }
 
         internal IBufferManager BufferManager
@@ -253,7 +315,7 @@ namespace Amqp
 
         internal void SendCommand(ushort channel, DescribedList command)
         {
-            if (command.Descriptor.Code == Codec.Close.Code || this.state < State.CloseSent)
+            if (command.Descriptor.Code == Codec.Close.Code || this.state < ConnectionState.CloseSent)
             {
                 ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
                 Frame.Encode(buffer, FrameType.Amqp, channel, command);
@@ -322,24 +384,24 @@ namespace Amqp
         {
             lock (this.ThisLock)
             {
-                State newState = State.Start;
-                if (this.state == State.OpenPipe )
+                ConnectionState newState = ConnectionState.Start;
+                if (this.state == ConnectionState.OpenPipe )
                 {
-                    newState = State.OpenClosePipe;
+                    newState = ConnectionState.OpenClosePipe;
                 }
-                else if (state == State.OpenSent)
+                else if (state == ConnectionState.OpenSent)
                 {
-                    newState = State.ClosePipe;
+                    newState = ConnectionState.ClosePipe;
                 }
-                else if (this.state == State.Opened)
+                else if (this.state == ConnectionState.Opened)
                 {
-                    newState = State.CloseSent;
+                    newState = ConnectionState.CloseSent;
                 }
-                else if (this.state == State.CloseReceived)
+                else if (this.state == ConnectionState.CloseReceived)
                 {
-                    newState = State.End;
+                    newState = ConnectionState.End;
                 }
-                else if (this.state == State.End)
+                else if (this.state == ConnectionState.End)
                 {
                     return true;
                 }
@@ -351,7 +413,7 @@ namespace Amqp
 
                 this.SendClose(error);
                 this.state = newState;
-                return this.state == State.End;
+                return this.state == ConnectionState.End;
             }
         }
 
@@ -416,7 +478,7 @@ namespace Amqp
             // after getting the transport, move state to open pipe before starting the pump
             this.SendHeader();
             this.SendOpen(open);
-            this.state = State.OpenPipe;
+            this.state = ConnectionState.OpenPipe;
 
             this.reader = new Pump(this, transport);
             this.reader.Start();
@@ -424,7 +486,7 @@ namespace Amqp
 
         void ThrowIfClosed(string operation)
         {
-            if (this.state >= State.CloseSent)
+            if (this.state >= ConnectionState.CloseSent)
             {
                 throw new AmqpException(this.Error ??
                     new Error(ErrorCode.IllegalState)
@@ -474,13 +536,13 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                if (this.state == State.OpenSent)
+                if (this.state == ConnectionState.OpenSent)
                 {
-                    this.state = State.Opened;
+                    this.state = ConnectionState.Opened;
                 }
-                else if (this.state == State.ClosePipe)
+                else if (this.state == ConnectionState.ClosePipe)
                 {
-                    this.state = State.CloseSent;
+                    this.state = ConnectionState.CloseSent;
                 }
                 else
                 {
@@ -522,11 +584,11 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                if (this.state == State.Opened)
+                if (this.state == ConnectionState.Opened)
                 {
                     this.SendClose(null);
                 }
-                else if (this.state == State.CloseSent)
+                else if (this.state == ConnectionState.CloseSent)
                 {
                 }
                 else
@@ -535,7 +597,7 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnClose", this.state));
                 }
 
-                this.state = State.End;
+                this.state = ConnectionState.End;
                 this.OnEnded(close.Error);
             }
         }
@@ -632,13 +694,13 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                if (this.state == State.OpenPipe)
+                if (this.state == ConnectionState.OpenPipe)
                 {
-                    this.state = State.OpenSent;
+                    this.state = ConnectionState.OpenSent;
                 }
-                else if (this.state == State.OpenClosePipe)
+                else if (this.state == ConnectionState.OpenClosePipe)
                 {
-                    this.state = State.ClosePipe;
+                    this.state = ConnectionState.ClosePipe;
                 }
                 else
                 {
@@ -717,7 +779,7 @@ namespace Amqp
                 amqpException.Error :
                 new Error(ErrorCode.InternalError) { Description = exception.Message };
 
-            if (this.state < State.CloseSent)
+            if (this.state < ConnectionState.CloseSent)
             {
                 // send close and shutdown the transport.
                 try
@@ -729,16 +791,16 @@ namespace Amqp
                 }
             }
 
-            this.state = State.End;
+            this.state = ConnectionState.End;
             this.OnEnded(error);
         }
 
         internal void OnIoException(Exception exception)
         {
             Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception.ToString());
-            if (this.state != State.End)
+            if (this.state != ConnectionState.End)
             {
-                this.state = State.End;
+                this.state = ConnectionState.End;
                 this.CloseCalled = true;
                 Error error = new Error(ErrorCode.ConnectionForced) { Description = exception.Message };
                 this.OnEnded(error);
@@ -964,7 +1026,7 @@ namespace Amqp
                 }
 
                 byte[] sizeBuffer = new byte[FixedWidth.UInt];
-                while (this.connection.state != State.End)
+                while (this.connection.state != ConnectionState.End)
                 {
                     try
                     {
