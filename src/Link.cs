@@ -21,15 +21,49 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Handler;
 
-    enum LinkState
+    /// <summary>
+    /// The state of a link.
+    /// </summary>
+    public enum LinkState
     {
+        /// <summary>
+        /// The link is started.
+        /// </summary>
         Start,
+        
+        /// <summary>
+        /// Attach frame was sent.
+        /// </summary>
         AttachSent,
+        
+        /// <summary>
+        /// Attach frame was received.
+        /// </summary>
         AttachReceived,
+        
+        /// <summary>
+        /// The link is attached.
+        /// </summary>
         Attached,
+        
+        /// <summary>
+        /// The link is detaching. 
+        /// </summary>
         DetachPipe,
+        
+        /// <summary>
+        /// Detach frame was sent. 
+        /// </summary>
         DetachSent,
+        
+        /// <summary>
+        /// Detach frame was received. 
+        /// </summary>
         DetachReceived,
+        
+        /// <summary>
+        /// The link is closed.
+        /// </summary>
         End
     }
 
@@ -94,6 +128,14 @@ namespace Amqp
         {
             get { return this.session; }
         }
+        
+        /// <summary>
+        /// Gets the link state.
+        /// </summary>
+        public LinkState LinkState
+        {
+            get { return this.state; }
+        }
 
         internal object ThisLock
         {
@@ -103,11 +145,6 @@ namespace Amqp
         internal bool IsDetaching
         {
             get { return this.state >= LinkState.DetachPipe; }
-        }
-
-        internal LinkState LinkState
-        {
-            get { return this.state; }
         }
 
         /// <summary>

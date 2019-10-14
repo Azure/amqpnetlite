@@ -21,24 +21,58 @@ namespace Amqp
     using Amqp.Framing;
     using Amqp.Handler;
     using Amqp.Types;
+    
+    /// <summary>
+    /// The state of a session.
+    /// </summary>
+    public enum SessionState
+    {
+        /// <summary>
+        /// The session is started.
+        /// </summary>
+        Start,
+        
+        /// <summary>
+        /// Begin frame was sent.
+        /// </summary>
+        BeginSent,
+        
+        /// <summary>
+        /// Begin frame was received.
+        /// </summary>
+        BeginReceived,
+        
+        /// <summary>
+        /// The session is opened. 
+        /// </summary>
+        Opened,
+        
+        /// <summary>
+        /// End frame received.
+        /// </summary>
+        EndReceived,
+        
+        /// <summary>
+        /// End frame was sent.
+        /// </summary> 
+        EndSent,
+        
+        /// <summary>
+        /// The session is closing.
+        /// </summary>
+        EndPipe,
+        
+        /// <summary>
+        /// The session is closed.
+        /// </summary>
+        End
+    }
 
     /// <summary>
     /// The Session class represents an AMQP session.
     /// </summary>
     public partial class Session : AmqpObject
     {
-        enum State
-        {
-            Start,
-            BeginSent,
-            BeginReceived,
-            Opened,
-            EndReceived,
-            EndSent,
-            EndPipe,
-            End
-        }
-
         internal const uint defaultWindowSize = 2048;
         readonly Connection connection;
         readonly OnBegin onBegin;
@@ -46,7 +80,7 @@ namespace Amqp
         uint handleMax;
         Link[] localLinks;
         Link[] remoteLinks;
-        State state;
+        SessionState state;
         private readonly object lockObject = new object();
 
 
@@ -92,7 +126,7 @@ namespace Amqp
             this.outgoingList = new LinkedList();
             this.channel = connection.AddSession(this);
 
-            this.state = State.BeginSent;
+            this.state = SessionState.BeginSent;
             this.SendBegin(begin);
         }
 
@@ -102,6 +136,14 @@ namespace Amqp
         public Connection Connection
         {
             get { return this.connection; }
+        }
+
+        /// <summary>
+        /// Get the session state. 
+        /// </summary>
+        public SessionState SessionState
+        {
+            get { return state; }
         }
 
         object ThisLock
@@ -120,9 +162,9 @@ namespace Amqp
             this.Error = error;
             this.AbortLinks(error);
 
-            if (this.state != State.End)
+            if (this.state != SessionState.End)
             {
-                this.state = State.End;
+                this.state = SessionState.End;
                 this.NotifyClosed(error);
             }
         }
@@ -247,7 +289,7 @@ namespace Amqp
 
         internal void SendCommand(DescribedList command)
         {
-            if (command.Descriptor.Code == Codec.End.Code || this.state < State.EndSent)
+            if (command.Descriptor.Code == Codec.End.Code || this.state < SessionState.EndSent)
             {
                 this.connection.SendCommand(this.channel, command);
             }
@@ -263,13 +305,13 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                if (this.state == State.BeginSent)
+                if (this.state == SessionState.BeginSent)
                 {
-                    this.state = State.Opened;
+                    this.state = SessionState.Opened;
                 }
-                else if (this.state == State.EndPipe)
+                else if (this.state == SessionState.EndPipe)
                 {
-                    this.state = State.EndSent;
+                    this.state = SessionState.EndSent;
                 }
                 else
                 {
@@ -304,14 +346,14 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                if (this.state == State.EndSent)
+                if (this.state == SessionState.EndSent)
                 {
-                    this.state = State.End;
+                    this.state = SessionState.End;
                 }
-                else if (this.state == State.Opened)
+                else if (this.state == SessionState.Opened)
                 {
                     this.SendEnd();
-                    this.state = State.End;
+                    this.state = SessionState.End;
                 }
                 else
                 {
@@ -328,7 +370,7 @@ namespace Amqp
 
         internal void OnCommand(DescribedList command, ByteBuffer buffer)
         {
-            Fx.Assert(this.state != State.EndReceived && this.state != State.End,
+            Fx.Assert(this.state != SessionState.EndReceived && this.state != SessionState.End,
                 "Session is ending or ended and cannot receive commands.");
             if (command.Descriptor.Code == Codec.Attach.Code)
             {
@@ -368,21 +410,21 @@ namespace Amqp
 
             lock (this.ThisLock)
             {
-                if (this.state == State.End)
+                if (this.state == SessionState.End)
                 {
                     return true;
                 }
-                else if (this.state == State.BeginSent)
+                else if (this.state == SessionState.BeginSent)
                 {
-                    this.state = State.EndPipe;
+                    this.state = SessionState.EndPipe;
                 }
-                else if (this.state == State.Opened)
+                else if (this.state == SessionState.Opened)
                 {
-                    this.state = State.EndSent;
+                    this.state = SessionState.EndSent;
                 }
-                else if (this.state == State.EndReceived)
+                else if (this.state == SessionState.EndReceived)
                 {
-                    this.state = State.End;
+                    this.state = SessionState.End;
                 }
                 else
                 {
@@ -391,7 +433,7 @@ namespace Amqp
                 }
 
                 this.SendEnd();
-                return this.state == State.End;
+                return this.state == SessionState.End;
             }
         }
 
@@ -634,7 +676,7 @@ namespace Amqp
 
         void ThrowIfEnded(string operation)
         {
-            if (this.state >= State.EndSent)
+            if (this.state >= SessionState.EndSent)
             {
                 throw new AmqpException(this.Error ??
                     new Error(ErrorCode.IllegalState)
