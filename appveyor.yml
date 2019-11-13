@@ -70,7 +70,7 @@ before_build:
 
       # get extension information from MyGet VSIX feed
       $vsixFeedXml = Join-Path  $($env:USERPROFILE) "vs-extension-feed.xml"
-      $webClient.DownloadFile("https://www.myget.org/F/nanoframework-dev/vsix", $vsixFeedXml)
+      $webClient.DownloadFile("http://vsixgallery.com/feed/author/nanoframework", $vsixFeedXml)
       [xml]$feedDetails = Get-Content $vsixFeedXml
 
       # assuming this is building on VS2017 only
