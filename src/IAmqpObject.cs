@@ -88,7 +88,7 @@ namespace Amqp
         bool IsClosed { get; }
 
         /// <summary>
-        /// Adds a callback to be called when the object is called.
+        /// Adds a callback to be called when the object is closed.
         /// This method guarantees that the callback is invoked even if
         /// it is called after the object is closed.
         /// </summary>
