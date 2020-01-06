@@ -250,7 +250,7 @@ namespace Amqp
             }
 #endif
 
-            TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>();
+            TaskCompletionSource<Message> tcs = new TaskCompletionSource<Message>(TaskCreationOptions.RunContinuationsAsynchronously);
             var message = this.ReceiveInternal(
                 (l, m) =>
                 {

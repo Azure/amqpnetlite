@@ -1196,6 +1196,30 @@ namespace Test.Amqp
             connection.Close();
         }
         
+        [TestMethod]
+        public async Task ReceiveAsyncShouldNotCauseDeadlockTest()
+        {
+            string name = "ReceiveAsyncShouldNotCauseDeadlockTest";
+            Queue<Message> messages = new Queue<Message>();
+
+            var source = new TestMessageSource(messages);
+            this.host.RegisterMessageSource(name, source);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "recv-link", name);
+
+            Task.Run(async () => await receiver.ReceiveAsync());
+            await Task.Delay(100);
+            
+            messages.Enqueue(new Message("msg1"));
+            messages.Enqueue(new Message("msg2"));
+            
+            await receiver.ReceiveAsync();
+
+            connection.Close();
+        }
+
         public static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
         {
             X509Store store = new X509Store(storeName, storeLocation);
