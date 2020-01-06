@@ -1176,6 +1176,26 @@ namespace Test.Amqp
             Assert.AreEqual((message.BodySection as AmqpValue).Value, (copy.BodySection as AmqpValue).Value);
         }
 
+        [TestMethod]
+        public async Task SendAsyncShouldNotCauseDeadlockTest()
+        {
+            string name = "SendAsyncShouldNotCauseDeadlockTest";
+            var processor = new TestMessageProcessor();
+            this.host.RegisterMessageProcessor(name, processor);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+
+            Task.Run(async () => await sender.SendAsync(new Message("msg1")));
+            await Task.Delay(100);
+            await sender.SendAsync(new Message("msg2"));
+
+            this.host.UnregisterMessageProcessor(name);
+
+            connection.Close();
+        }
+        
         public static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
         {
             X509Store store = new X509Store(storeName, storeLocation);

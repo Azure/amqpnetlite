@@ -280,7 +280,7 @@ namespace Amqp
         readonly static TimerCallback onTimer = OnTimer;
         readonly Timer timer;
 
-        public SendTask(SenderLink link, Message message, DeliveryState state, TimeSpan timeout)
+        public SendTask(SenderLink link, Message message, DeliveryState state, TimeSpan timeout) : base(TaskCreationOptions.RunContinuationsAsynchronously)
         {
             this.timer = new Timer(onTimer, this, (int)timeout.TotalMilliseconds, -1);
             link.Send(message, state, onOutcome, this);
