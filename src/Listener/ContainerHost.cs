@@ -84,7 +84,7 @@ namespace Amqp.Listener
         ILinkProcessor linkProcessor;
 
         /// <summary>
-        /// Initializes a container host object with multiple address.
+        /// Initializes a container host object with multiple addresses.
         /// </summary>
         /// <param name="addressList">The list of listen addresses.</param>
         /// <remarks>
@@ -92,6 +92,52 @@ namespace Amqp.Listener
         /// set on the listeners of the host after it is created.
         /// </remarks>
         public ContainerHost(IList<string> addressList)
+            : this(As(addressList, address => new Address(address)))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a container host object with one address.
+        /// </summary>
+        /// <param name="addressUri">The address Uri. Only the scheme, host and port parts are used.
+        /// Supported schemes are "amqp", "amqps", "ws" and "wss".</param>
+        [Obsolete("Use ContainerHost(Address) instead.")]
+        public ContainerHost(Uri addressUri)
+            : this(new[] { new Address(addressUri.AbsoluteUri) })
+        {
+        }
+
+        /// <summary>
+        /// Initializes a container host object with multiple addresses.
+        /// </summary>
+        /// <param name="addressUriList">The list of listen addresses.</param>
+        /// <param name="certificate">The service certificate for TLS.</param>
+        /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of
+        /// form "user:password" (parts are URL encoded).</param>
+        [Obsolete("Use ContainerHost(IList<Address>, X509Certificate2) instead.")]
+        public ContainerHost(IList<Uri> addressUriList, X509Certificate2 certificate, string userInfo)
+            : this(As(addressUriList, u => u.AbsoluteUri))
+        {
+            for (int i = 0; i < this.listeners.Length; i++)
+            {
+                this.listeners[i].SSL.Certificate = certificate;
+                this.listeners[i].SetUserInfo(userInfo);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a container host object with one address.
+        /// <param name="address">The address.</param>
+        /// </summary>
+        public ContainerHost(Address address) : this(new[] { address })
+        {
+        }
+
+        /// <summary>
+        /// Initializes a container host object with multiple addresses.
+        /// <param name="addressList">The list of listen addresses.</param>
+        /// </summary>
+        public ContainerHost(IList<Address> addressList)
         {
             this.containerId = string.Join("-", this.GetType().Name, Guid.NewGuid().ToString("N"));
             this.customTransports = new Dictionary<string, TransportProvider>(StringComparer.OrdinalIgnoreCase);
@@ -109,29 +155,15 @@ namespace Amqp.Listener
         }
 
         /// <summary>
-        /// Initializes a container host object with one address.
-        /// </summary>
-        /// <param name="addressUri">The address Uri. Only the scheme, host and port parts are used.
-        /// Supported schemes are "amqp", "amqps", "ws" and "wss".</param>
-        public ContainerHost(Uri addressUri)
-            : this(new string[] { addressUri.AbsoluteUri })
-        {
-        }
-
-        /// <summary>
-        /// Initializes a container host object with multiple address.
-        /// </summary>
-        /// <param name="addressUriList">The list of listen addresses.</param>
+        /// Initializes a container host object with multiple addresses.
+        /// <param name="addressList">The list of listen addresses.</param>
         /// <param name="certificate">The service certificate for TLS.</param>
-        /// <param name="userInfo">The credentials required by SASL PLAIN authentication. It is of
-        /// form "user:password" (parts are URL encoded).</param>
-        public ContainerHost(IList<Uri> addressUriList, X509Certificate2 certificate, string userInfo)
-            : this(As(addressUriList, u => u.AbsoluteUri))
+        /// </summary>
+        public ContainerHost(IList<Address> addressList, X509Certificate2 certificate) : this(addressList)
         {
             for (int i = 0; i < this.listeners.Length; i++)
             {
                 this.listeners[i].SSL.Certificate = certificate;
-                this.listeners[i].SetUserInfo(userInfo);
             }
         }
 
