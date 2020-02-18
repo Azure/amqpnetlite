@@ -41,7 +41,7 @@ namespace Test.Amqp
         ContainerHost host;
         ILinkProcessor linkProcessor;
 
-        private Address Address
+        public Address Address
         {
             get;
             set;

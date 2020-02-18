@@ -31,20 +31,19 @@ namespace Listener.ContainerHost
     {
         static void Main(string[] args)
         {
-            string address = "amqp://guest:guest@127.0.0.1:5672";
+            Address address = new Address("amqp://guest:guest@127.0.0.1:5672");
             if (args.Length > 0)
             {
-                address = args[0];
+                address = new Address(args[0]);
             }
 
             // uncomment the following to write frame traces
             //Trace.TraceLevel = TraceLevel.Frame;
             //Trace.TraceListener = (l, f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
-            Uri addressUri = new Uri(address);
-            ContainerHost host = new ContainerHost(new Uri[] { addressUri }, null, addressUri.UserInfo);
+            ContainerHost host = new ContainerHost(address);
             host.Open();
-            Console.WriteLine("Container host is listening on {0}:{1}", addressUri.Host, addressUri.Port);
+            Console.WriteLine("Container host is listening on {0}:{1}", address.Host, address.Port);
 
             host.RegisterLinkProcessor(new LinkProcessor());
             Console.WriteLine("Link processor is registered");

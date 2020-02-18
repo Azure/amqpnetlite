@@ -58,7 +58,7 @@ namespace Test.Amqp
                     total++;
 
                     ContainerHostTests test = new ContainerHostTests();
-                    test.Uri = new System.Uri(address);
+                    test.Address = new Address(address);
                     test.ClassInitialize();
 
                     try
@@ -83,17 +83,16 @@ namespace Test.Amqp
         public async Task WebSocketSslMutalAuthTest()
         {
             string testName = "WebSocketSslMutalAuthTest";
-            string listenAddress = "wss://localhost:18081/" + testName + "/";
-            Uri uri = new Uri(listenAddress);
+            Address listenAddress = new Address("wss://localhost:18081/" + testName + "/");
 
             X509Certificate2 cert = ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
 
             string output;
-            int code = Exec("netsh.exe", string.Format("http show sslcert hostnameport={0}:{1}", uri.Host, uri.Port), out output);
+            int code = Exec("netsh.exe", string.Format("http show sslcert hostnameport={0}:{1}", listenAddress.Host, listenAddress.Port), out output);
             if (code != 0)
             {
                 string args = string.Format("http add sslcert hostnameport={0}:{1} certhash={2} certstorename=MY appid={{{3}}} clientcertnegotiation=enable",
-                    uri.Host, uri.Port, cert.Thumbprint, Guid.NewGuid());
+                    listenAddress.Host, listenAddress.Port, cert.Thumbprint, Guid.NewGuid());
                 code = Exec("netsh.exe", args, out output);
                 Assert.AreEqual(0, code, "failed to add ssl cert: " + output);
             }
@@ -104,7 +103,7 @@ namespace Test.Amqp
 
             var linkProcessor = new TestLinkProcessor();
             linkProcessor.SetHandler(a => { listenerLink = a.Link; return false; });
-            var host = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            var host = new ContainerHost(listenAddress);
             host.Listeners[0].SASL.EnableExternalMechanism = true;
             host.Listeners[0].SSL.ClientCertificateRequired = true;
             host.Listeners[0].SSL.CheckCertificateRevocation = true;
@@ -118,12 +117,12 @@ namespace Test.Amqp
                 var wssFactory = new WebSocketTransportFactory();
                 wssFactory.Options = o =>
                 {
-                    o.ClientCertificates.Add(ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, uri.Host));
+                    o.ClientCertificates.Add(ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, listenAddress.Host));
                 };
 
                 ConnectionFactory connectionFactory = new ConnectionFactory(new TransportProvider[] { wssFactory });
                 connectionFactory.SASL.Profile = SaslProfile.External;
-                Connection connection = await connectionFactory.CreateAsync(new Address(listenAddress));
+                Connection connection = await connectionFactory.CreateAsync(listenAddress);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "q1");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });                
