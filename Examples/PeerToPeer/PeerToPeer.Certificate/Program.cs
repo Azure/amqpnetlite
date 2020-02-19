@@ -31,19 +31,18 @@ namespace PeerToPeer.Certificate
             //Trace.TraceLevel = TraceLevel.Frame;
             //Trace.TraceListener = (l, f, a) => Console.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
 
-            string address = "amqps://localhost:5671";
+            Address address = new Address("amqps://localhost:5671");
 
             // start a host with custom SSL and SASL settings
             Console.WriteLine("Starting server...");
-            Uri addressUri = new Uri(address);
-            ContainerHost host = new ContainerHost(addressUri);            
+            ContainerHost host = new ContainerHost(address);            
             var listener = host.Listeners[0];
             listener.SSL.Certificate = GetCertificate("localhost");
             listener.SSL.ClientCertificateRequired = true;
             listener.SSL.RemoteCertificateValidationCallback = ValidateServerCertificate;
             listener.SASL.EnableExternalMechanism = true;
             host.Open();
-            Console.WriteLine("Container host is listening on {0}:{1}", addressUri.Host, addressUri.Port);
+            Console.WriteLine("Container host is listening on {0}:{1}", address.Host, address.Port);
 
             string messageProcessor = "message_processor";
             host.RegisterMessageProcessor(messageProcessor, new MessageProcessor());
@@ -55,7 +54,7 @@ namespace PeerToPeer.Certificate
             factory.SSL.RemoteCertificateValidationCallback = ValidateServerCertificate;
             factory.SASL.Profile = SaslProfile.External;
             Console.WriteLine("Sending message...");
-            Connection connection = factory.CreateAsync(new Address(address)).Result;
+            Connection connection = factory.CreateAsync(address).Result;
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "certificate-example-sender", "message_processor");
             sender.Send(new Message("hello world"));

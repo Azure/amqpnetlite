@@ -422,9 +422,9 @@ namespace PerfTest
 
             public override void Run()
             {
-                Uri addressUri = new Uri(this.Args.Address);
+                Address addressUri = new Address(this.Args.Address);
                 X509Certificate2 certificate = TestExtensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
-                ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
+                ContainerHost host = new ContainerHost(new Address[] { addressUri }, certificate);
                 foreach (var listener in host.Listeners)
                 {
                     listener.BufferManager = this.bufferManager;
@@ -466,9 +466,9 @@ namespace PerfTest
 
             public override void Run()
             {
-                Uri addressUri = new Uri(this.Args.Address);
+                Address addressUri = new Address(this.Args.Address);
                 X509Certificate2 certificate = TestExtensions.GetCertificate(addressUri.Scheme, addressUri.Host, this.Args.CertValue);
-                ContainerHost host = new ContainerHost(new Uri[] { addressUri }, certificate, addressUri.UserInfo);
+                ContainerHost host = new ContainerHost(new Address[] { addressUri }, certificate);
                 foreach (var listener in host.Listeners)
                 {
                     listener.BufferManager = this.bufferManager;

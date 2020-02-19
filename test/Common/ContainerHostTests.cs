@@ -41,15 +41,10 @@ namespace Test.Amqp
         ContainerHost host;
         ILinkProcessor linkProcessor;
 
-        public Uri Uri
+        public Address Address
         {
             get;
             set;
-        }
-
-        Address Address
-        {
-            get { return new Address(this.Uri.AbsoluteUri); }
         }
 
         static ContainerHostTests()
@@ -61,9 +56,9 @@ namespace Test.Amqp
         public void ClassInitialize()
         {
             // pick a port other than 5762 so that it doesn't conflict with the test broker
-            this.Uri = new Uri("amqp://guest:guest@localhost:15672");
+            this.Address = new Address("amqp://guest:guest@localhost:15672");
 
-            this.host = new ContainerHost(new List<Uri>() { this.Uri }, null, this.Uri.UserInfo);
+            this.host = new ContainerHost(this.Address);
             this.host.Listeners[0].SASL.EnableExternalMechanism = true;
             this.host.Listeners[0].SASL.EnableAnonymousMechanism = true;
             this.host.Open();
@@ -561,15 +556,15 @@ namespace Test.Amqp
         public void ContainerHostCloseTest()
         {
             string name = "ContainerHostCloseTest";
-            Uri uri = new Uri("amqp://guest:guest@localhost:15673");
+            var address = new Address("amqp://guest:guest@localhost:15673");
 
-            ContainerHost h = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            ContainerHost h = new ContainerHost(address);
             h.Open();
             h.RegisterMessageProcessor(name, new TestMessageProcessor());
 
             //Create a client to send data to the host message processor
             var closedEvent = new ManualResetEvent(false);
-            var connection = new Connection(new Address(uri.AbsoluteUri));
+            var connection = new Connection(address);
             connection.Closed += (IAmqpObject obj, Error error) =>
             {
                 closedEvent.Set();
@@ -601,12 +596,12 @@ namespace Test.Amqp
 
             // Reopen the host and send again
             // Use a different port as on some system the port is not released immediately
-            uri = new Uri("amqp://guest:guest@localhost:15674");
-            h = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            address = new Address("amqp://guest:guest@localhost:15674");
+            h = new ContainerHost(address);
             h.RegisterMessageProcessor(name, new TestMessageProcessor());
             h.Open();
 
-            connection = new Connection(new Address(uri.AbsoluteUri));
+            connection = new Connection(address);
             session = new Session(connection);
             sender = new SenderLink(session, "sender-link", name);
             sender.Send(new Message("Hello"), Timeout);
@@ -894,12 +889,12 @@ namespace Test.Amqp
         [TestMethod]
         public void ContainerHostSaslPlainNegativeTest()
         {
-            string address = new UriBuilder(this.Uri) { Password = "invalid" }.Uri.AbsoluteUri;
+            var addressWithInvalidPassword = new Address("amqp://guest:invalid@localhost:15672");
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
                 try
                 {
-                    var connection = new Connection(new Address(address));
+                    var connection = new Connection(addressWithInvalidPassword);
                     Assert.IsTrue(false, "Exception not thrown");
                 }
                 catch (AmqpException ae)
@@ -913,7 +908,7 @@ namespace Test.Amqp
             {
                 try
                 {
-                    Connection connection = await Connection.Factory.CreateAsync(new Address(address));
+                    Connection connection = await Connection.Factory.CreateAsync(addressWithInvalidPassword);
                     Assert.IsTrue(false, "Exception not thrown");
                 }
                 catch (AmqpException ae)
@@ -927,7 +922,7 @@ namespace Test.Amqp
         public void ContainerHostListenerSaslPlainNegativeTest()
         {
             var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(this.Uri.Host, this.Uri.Port);
+            socket.Connect(this.Address.Host, this.Address.Port);
             var stream = new NetworkStream(socket);
 
             stream.Write(new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 3, 1, 0, 0 }, 0, 8);
@@ -968,7 +963,7 @@ namespace Test.Amqp
                 return;
             }
 
-            ContainerHost sslHost = new ContainerHost(new Uri(address));
+            ContainerHost sslHost = new ContainerHost(new Address(address));
             sslHost.Listeners[0].SSL.Certificate = cert;
             sslHost.Listeners[0].SSL.ClientCertificateRequired = true;
             sslHost.Listeners[0].SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
@@ -1051,7 +1046,7 @@ namespace Test.Amqp
         {
             string name = "ContainerHostCustomTransportTest";
             string address = "pipe://./" + name;
-            ContainerHost host = new ContainerHost(new Uri(address));
+            ContainerHost host = new ContainerHost(new Address(address));
             host.CustomTransports.Add("pipe", NamedPipeTransport.Listener);
             host.RegisterMessageProcessor(name, new TestMessageProcessor());
             host.Open();

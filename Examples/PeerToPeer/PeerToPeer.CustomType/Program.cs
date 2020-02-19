@@ -32,8 +32,7 @@ namespace PeerToPeer.CustomType
         static void Main(string[] args)
         {
             //Create host and register message processor
-            var uri = new Uri(Address);
-            var host = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            var host = new ContainerHost(new Address(Address));
             host.RegisterMessageProcessor(MsgProcName, new MessageProcessor());
             host.Open();
 

@@ -31,8 +31,7 @@ namespace PeerToPeer.CustomTransport
         static void Main(string[] args)
         {
             //Create host and register custom transport listener
-            var uri = new Uri(address);
-            var host = new ContainerHost(new List<Uri>() { uri }, null, uri.UserInfo);
+            var host = new ContainerHost(new Address(address));
             host.CustomTransports.Add("pipe", NamedPipeTransport.Listener);
             host.RegisterMessageProcessor(nodeName, new MessageProcessor());
             host.Open();

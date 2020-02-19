@@ -59,9 +59,19 @@ namespace Amqp.Listener
         /// <param name="address">The address to listen on.</param>
         /// <param name="container">The IContainer implementation to handle client requests.</param>
         public ConnectionListener(string address, IContainer container)
+            : this(new Address(address), container)
+        {
+        }
+        
+        /// <summary>
+        /// Initializes the connection listener object.
+        /// </summary>
+        /// <param name="address">The address to listen on.</param>
+        /// <param name="container">The IContainer implementation to handle client requests.</param>
+        public ConnectionListener(Address address, IContainer container)
             : this(container)
         {
-            this.address = new Address(address);
+            this.address = address;
         }
 
         /// <summary>
