@@ -27,6 +27,18 @@ namespace Amqp
     {
         public static void SetTcpKeepAlive(this Socket socket, TcpKeepAliveSettings settings)
         {
+#if NETSTANDARD2_0
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+            // the keep-alive option names are not available in netstandard2.0.
+            // but it seems that the value is passed to the PAL implementation
+            // so it should work if the runtime supports it.
+            // 3 = TcpKeepAliveTime, 17 = TcpKeepAliveInterval
+            socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, (int)settings.KeepAliveTime);
+            socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, (int)settings.KeepAliveInterval);
+#else
+            // This is only supported on Windows
+
             /* the native structure
             struct tcp_keepalive {
             ULONG onoff;
@@ -36,7 +48,7 @@ namespace Amqp
             
             ULONG is an unsigned 32 bit integer
             */
-            
+
             int bytesPerUInt = 4;
             byte[] inOptionValues = new byte[bytesPerUInt * 3];
             
@@ -45,6 +57,7 @@ namespace Amqp
             BitConverter.GetBytes((uint)settings.KeepAliveInterval).CopyTo(inOptionValues, bytesPerUInt * 2);
 
             socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
+#endif
         }
 
         public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)
