@@ -163,6 +163,55 @@
   </table>
   <h3 id="methods">Methods
   </h3>
+  <a id="Amqp_Listener_ConnectionListener_SaslSettings_EnableMechanism_" data-uid="Amqp.Listener.ConnectionListener.SaslSettings.EnableMechanism*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_SaslSettings_EnableMechanism__1_Amqp_Types_Symbol___0_" data-uid="Amqp.Listener.ConnectionListener.SaslSettings.EnableMechanism``1(Amqp.Types.Symbol,``0)">EnableMechanism&lt;T&gt;(Symbol, T)</h4>
+  <div class="markdown level1 summary"><p>Enables a custom mechanism.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void EnableMechanism&lt;T&gt;(Symbol mechanism, T profile)where T : SaslProfile</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Symbol.html">Symbol</a></td>
+        <td><span class="parametername">mechanism</span></td>
+        <td><p>The mechanism.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">profile</span></td>
+        <td><p>The <a class="xref" href="Amqp.Sasl.SaslProfile.html">SaslProfile</a> that handles the negotiation for this mechanism.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The type of <code data-dev-comment-type="paramref" class="paramref">profile</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="Amqp_Listener_ConnectionListener_SaslSettings_EnablePlainMechanism_" data-uid="Amqp.Listener.ConnectionListener.SaslSettings.EnablePlainMechanism*"></a>
   <h4 id="Amqp_Listener_ConnectionListener_SaslSettings_EnablePlainMechanism_System_String_System_String_" data-uid="Amqp.Listener.ConnectionListener.SaslSettings.EnablePlainMechanism(System.String,System.String)">EnablePlainMechanism(String, String)</h4>
   <div class="markdown level1 summary"><p>Enables SASL PLAIN mechanism.</p>

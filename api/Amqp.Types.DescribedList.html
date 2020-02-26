@@ -84,13 +84,24 @@
     <div class="level3"><span class="xref">DescribedList</span></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Attach.html">Attach</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Begin.html">Begin</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.Close.html">Close</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.DeliveryState.html">DeliveryState</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.Detach.html">Detach</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.Dispose.html">Dispose</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.End.html">End</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Error.html">Error</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.Flow.html">Flow</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Header.html">Header</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Open.html">Open</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Properties.html">Properties</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Source.html">Source</a></div>
       <div class="level4"><a class="xref" href="Amqp.Framing.Target.html">Target</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Framing.Transfer.html">Transfer</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Sasl.SaslChallenge.html">SaslChallenge</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Sasl.SaslInit.html">SaslInit</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Sasl.SaslMechanisms.html">SaslMechanisms</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Sasl.SaslOutcome.html">SaslOutcome</a></div>
+      <div class="level4"><a class="xref" href="Amqp.Sasl.SaslResponse.html">SaslResponse</a></div>
       <div class="level4"><a class="xref" href="Amqp.Transactions.Coordinator.html">Coordinator</a></div>
       <div class="level4"><a class="xref" href="Amqp.Transactions.Declare.html">Declare</a></div>
       <div class="level4"><a class="xref" href="Amqp.Transactions.Discharge.html">Discharge</a></div>
@@ -169,32 +180,6 @@
       </tr>
     </tbody>
   </table>
-  <h3 id="properties">Properties
-  </h3>
-  <a id="Amqp_Types_DescribedList_Fields_" data-uid="Amqp.Types.DescribedList.Fields*"></a>
-  <h4 id="Amqp_Types_DescribedList_Fields" data-uid="Amqp.Types.DescribedList.Fields">Fields</h4>
-  <div class="markdown level1 summary"><p>Gets the array of all fields.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected object[] Fields { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Object</span>[]</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h3 id="methods">Methods
   </h3>
   <a id="Amqp_Types_DescribedList_GetDebugString_" data-uid="Amqp.Types.DescribedList.GetDebugString*"></a>
@@ -251,6 +236,82 @@
       </tr>
     </tbody>
   </table>
+  <a id="Amqp_Types_DescribedList_HasField_" data-uid="Amqp.Types.DescribedList.HasField*"></a>
+  <h4 id="Amqp_Types_DescribedList_HasField_System_Int32_" data-uid="Amqp.Types.DescribedList.HasField(System.Int32)">HasField(Int32)</h4>
+  <div class="markdown level1 summary"><p>Examines the list to check if a field is set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasField(int index)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>Zero-based offset of the field in the list.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p>True if a value is set; otherwise false.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Types_DescribedList_HasField_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The field index can be found in the description of each field.</p>
+</div>
+  <a id="Amqp_Types_DescribedList_ResetField_" data-uid="Amqp.Types.DescribedList.ResetField*"></a>
+  <h4 id="Amqp_Types_DescribedList_ResetField_System_Int32_" data-uid="Amqp.Types.DescribedList.ResetField(System.Int32)">ResetField(Int32)</h4>
+  <div class="markdown level1 summary"><p>Resets the value of a field to null.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ResetField(int index)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">index</span></td>
+        <td><p>Zero-based offset of the field in the list.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Types_DescribedList_ResetField_System_Int32__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>The field index can be found in the description of each field.</p>
+</div>
 </article>
           </div>
           

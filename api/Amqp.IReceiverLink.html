@@ -82,6 +82,12 @@
       <a class="xref" href="Amqp.ILink.html#Amqp_ILink_Name">ILink.Name</a>
     </div>
     <div>
+      <a class="xref" href="Amqp.ILink.html#Amqp_ILink_Detach_Amqp_Framing_Error_">ILink.Detach(Error)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.ILink.html#Amqp_ILink_DetachAsync_Amqp_Framing_Error_">ILink.DetachAsync(Error)</a>
+    </div>
+    <div>
       <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_Closed">IAmqpObject.Closed</a>
     </div>
     <div>
@@ -103,7 +109,7 @@
       <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_CloseAsync">IAmqpObject.CloseAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_CloseAsync_System_TimeSpan_">IAmqpObject.CloseAsync(TimeSpan)</a>
+      <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_">IAmqpObject.CloseAsync(TimeSpan, Error)</a>
     </div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Amqp.html">Amqp</a></h6>
@@ -254,6 +260,10 @@
       </tr>
     </tbody>
   </table>
+  <h5 id="Amqp_IReceiverLink_Receive_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Use TimeSpan.MaxValue or Timeout.InfiniteTimeSpan to wait infinitely. If TimeSpan.Zero is supplied,
+the call returns immediately.</p>
+</div>
   <a id="Amqp_IReceiverLink_ReceiveAsync_" data-uid="Amqp.IReceiverLink.ReceiveAsync*"></a>
   <h4 id="Amqp_IReceiverLink_ReceiveAsync" data-uid="Amqp.IReceiverLink.ReceiveAsync">ReceiveAsync()</h4>
   <div class="markdown level1 summary"><p>Receives a message asynchronously.</p>
@@ -324,6 +334,10 @@ if available within the specified timeout; otherwise a null value.</p>
       </tr>
     </tbody>
   </table>
+  <h5 id="Amqp_IReceiverLink_ReceiveAsync_System_TimeSpan__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>Use TimeSpan.MaxValue or Timeout.InfiniteTimeSpan to wait infinitely. If TimeSpan.Zero is supplied,
+the task completes immediately.</p>
+</div>
   <a id="Amqp_IReceiverLink_Reject_" data-uid="Amqp.IReceiverLink.Reject*"></a>
   <h4 id="Amqp_IReceiverLink_Reject_Amqp_Message_Amqp_Framing_Error_" data-uid="Amqp.IReceiverLink.Reject(Amqp.Message,Amqp.Framing.Error)">Reject(Message, Error)</h4>
   <div class="markdown level1 summary"><p>Rejects a message. It sends a rejected outcome to the peer.</p>
@@ -385,8 +399,48 @@ if available within the specified timeout; otherwise a null value.</p>
     </tbody>
   </table>
   <a id="Amqp_IReceiverLink_SetCredit_" data-uid="Amqp.IReceiverLink.SetCredit*"></a>
+  <h4 id="Amqp_IReceiverLink_SetCredit_System_Int32_Amqp_CreditMode_System_Int32_" data-uid="Amqp.IReceiverLink.SetCredit(System.Int32,Amqp.CreditMode,System.Int32)">SetCredit(Int32, CreditMode, Int32)</h4>
+  <div class="markdown level1 summary"><p>Sets a credit on the link and the credit management mode.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void SetCredit(int credit, CreditMode creditMode, int flowThreshold = -1)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">credit</span></td>
+        <td><p>The new link credit.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.CreditMode.html">CreditMode</a></td>
+        <td><span class="parametername">creditMode</span></td>
+        <td><p>The credit management mode.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">flowThreshold</span></td>
+        <td><p>If credit mode is Auto, it is the threshold of restored
+credits that trigers a flow; ignored otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_IReceiverLink_SetCredit_" data-uid="Amqp.IReceiverLink.SetCredit*"></a>
   <h4 id="Amqp_IReceiverLink_SetCredit_System_Int32_System_Boolean_" data-uid="Amqp.IReceiverLink.SetCredit(System.Int32,System.Boolean)">SetCredit(Int32, Boolean)</h4>
-  <div class="markdown level1 summary"><p>Sets a credit on the link. A flow is sent to the peer to update link flow control state.</p>
+  <div class="markdown level1 summary"><p>Sets a credit on the link. The credit controls how many messages the peer can send.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -412,8 +466,8 @@ if available within the specified timeout; otherwise a null value.</p>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">autoRestore</span></td>
-        <td><p>If true, link credit is auto-restored when a message is accepted
-or rejected by the caller. If false, caller is responsible for manage link credits.</p>
+        <td><p>If true, this method is the same as SetCredit(credit, CreditMode.Auto);
+if false, it is the same as SetCredit(credit, CreditMode.Manual).</p>
 </td>
       </tr>
     </tbody>

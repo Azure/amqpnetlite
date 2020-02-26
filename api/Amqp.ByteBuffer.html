@@ -490,7 +490,7 @@
   </table>
   <a id="Amqp_ByteBuffer_Validate_" data-uid="Amqp.ByteBuffer.Validate*"></a>
   <h4 id="Amqp_ByteBuffer_Validate_System_Boolean_System_Int32_" data-uid="Amqp.ByteBuffer.Validate(System.Boolean,System.Int32)">Validate(Boolean, Int32)</h4>
-  <div class="markdown level1 summary"><p>Verifies that if the buffer has enough bytes for read or enough room for write and grow the buffer if needed.</p>
+  <div class="markdown level1 summary"><p>Verifies that the buffer has enough bytes for read or enough room for write and grow the buffer if needed.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -517,6 +517,60 @@
         <td><span class="xref">System.Int32</span></td>
         <td><span class="parametername">dataSize</span></td>
         <td><p>The size to read or write.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_ValidateRead_" data-uid="Amqp.ByteBuffer.ValidateRead*"></a>
+  <h4 id="Amqp_ByteBuffer_ValidateRead_System_Int32_" data-uid="Amqp.ByteBuffer.ValidateRead(System.Int32)">ValidateRead(Int32)</h4>
+  <div class="markdown level1 summary"><p>Verifies that the buffer has enough bytes for read.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ValidateRead(int dataSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dataSize</span></td>
+        <td><p>The size to read.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_ByteBuffer_ValidateWrite_" data-uid="Amqp.ByteBuffer.ValidateWrite*"></a>
+  <h4 id="Amqp_ByteBuffer_ValidateWrite_System_Int32_" data-uid="Amqp.ByteBuffer.ValidateWrite(System.Int32)">ValidateWrite(Int32)</h4>
+  <div class="markdown level1 summary"><p>Verifies that the buffer has enough room for write and grow the buffer if needed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ValidateWrite(int dataSize)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td><span class="parametername">dataSize</span></td>
+        <td><p>The size to write.</p>
 </td>
       </tr>
     </tbody>

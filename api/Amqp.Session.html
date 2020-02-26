@@ -112,7 +112,7 @@
       <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync">AmqpObject.CloseAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_">AmqpObject.CloseAsync(TimeSpan)</a>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_">AmqpObject.CloseAsync(TimeSpan, Error)</a>
     </div>
     <div>
       <span class="xref">System.Object.ToString()</span>
@@ -236,6 +236,30 @@
       </tr>
     </tbody>
   </table>
+  <a id="Amqp_Session_SessionState_" data-uid="Amqp.Session.SessionState*"></a>
+  <h4 id="Amqp_Session_SessionState" data-uid="Amqp.Session.SessionState">SessionState</h4>
+  <div class="markdown level1 summary"><p>Get the session state. </p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SessionState SessionState { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.SessionState.html">SessionState</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   <a id="Amqp_Session_OnClose_" data-uid="Amqp.Session.OnClose*"></a>
@@ -285,6 +309,56 @@
   <h3 id="eii">Explicit Interface Implementations
   </h3>
   <a id="Amqp_Session_Amqp_ISession_CreateReceiver_" data-uid="Amqp.Session.Amqp#ISession#CreateReceiver*"></a>
+  <h4 id="Amqp_Session_Amqp_ISession_CreateReceiver_System_String_Amqp_Framing_Source_Amqp_OnAttached_" data-uid="Amqp.Session.Amqp#ISession#CreateReceiver(System.String,Amqp.Framing.Source,Amqp.OnAttached)">ISession.CreateReceiver(String, Source, OnAttached)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">IReceiverLink ISession.CreateReceiver(string name, Source source, OnAttached onAttached)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Source.html">Source</a></td>
+        <td><span class="parametername">source</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.OnAttached.html">OnAttached</a></td>
+        <td><span class="parametername">onAttached</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.IReceiverLink.html">IReceiverLink</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Session_Amqp_ISession_CreateReceiver_" data-uid="Amqp.Session.Amqp#ISession#CreateReceiver*"></a>
   <h4 id="Amqp_Session_Amqp_ISession_CreateReceiver_System_String_System_String_" data-uid="Amqp.Session.Amqp#ISession#CreateReceiver(System.String,System.String)">ISession.CreateReceiver(String, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
@@ -325,6 +399,56 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Amqp.IReceiverLink.html">IReceiverLink</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Session_Amqp_ISession_CreateSender_" data-uid="Amqp.Session.Amqp#ISession#CreateSender*"></a>
+  <h4 id="Amqp_Session_Amqp_ISession_CreateSender_System_String_Amqp_Framing_Target_Amqp_OnAttached_" data-uid="Amqp.Session.Amqp#ISession#CreateSender(System.String,Amqp.Framing.Target,Amqp.OnAttached)">ISession.CreateSender(String, Target, OnAttached)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">ISenderLink ISession.CreateSender(string name, Target target, OnAttached onAttached)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">name</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Target.html">Target</a></td>
+        <td><span class="parametername">target</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.OnAttached.html">OnAttached</a></td>
+        <td><span class="parametername">onAttached</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ISenderLink.html">ISenderLink</a></td>
         <td></td>
       </tr>
     </tbody>

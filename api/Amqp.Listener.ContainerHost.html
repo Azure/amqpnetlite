@@ -142,7 +142,7 @@ sink or message source. Application can create custom LinkEndpoint class
 to handle all link events (flow, transfer and disposition). However, it
 is recommended to use the built-in LinkEndpoint classes.</li>
 <li>TargetLinkEndpoint: a TargetLinkEndpoint simply forwards the request
-to the IMessgeProcessor.</li>
+to the IMessageProcessor.</li>
 <li>SourceLinkEndpoint: a SourceLinkEndpoint manages link credit and
 transforms flow state into a receive loop on the IMessageSource. Delivery
 acknowledgements are simply forwarded to the IMessageSource.</li>
@@ -150,7 +150,7 @@ acknowledgements are simply forwarded to the IMessageSource.</li>
 <p>When per-link handling is required, it is recommended to combine message
 level processing with link level processing.</p>
 <ul>
-<li>An IMessageProcessor/Souce should be implemented.</li>
+<li>An IMessageProcessor/Source should be implemented.</li>
 <li>After the link attach is handled, wrap it in a Target/SourceLinkEndpoint
 that works with the previously implemented message processor or source.</li>
 </ul>
@@ -158,7 +158,7 @@ that works with the previously implemented message processor or source.</li>
 processors (IMessageProcessor, IMessageSource, IRequestProcessor) are
 checked first. If a processor matches the address on the received attach
 performative, a link is automatically created and the send/receive requests
-will be rounted to the associated processor.
+will be routed to the associated processor.
 Otherwise, the registered link processor, if any, is invoked to create a
 LinkEndpoint, where subsequent send/receive requests will be routed.
 When none is found, the link is detached with error &quot;amqp:not-found&quot;.</p>
@@ -166,8 +166,95 @@ When none is found, the link is detached with error &quot;amqp:not-found&quot;.<
   <h3 id="constructors">Constructors
   </h3>
   <a id="Amqp_Listener_ContainerHost__ctor_" data-uid="Amqp.Listener.ContainerHost.#ctor*"></a>
+  <h4 id="Amqp_Listener_ContainerHost__ctor_Amqp_Address_" data-uid="Amqp.Listener.ContainerHost.#ctor(Amqp.Address)">ContainerHost(Address)</h4>
+  <div class="markdown level1 summary"><p>Initializes a container host object with one address.
+<param name="address">The address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ContainerHost(Address address)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Address.html">Address</a></td>
+        <td><span class="parametername">address</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ContainerHost__ctor_" data-uid="Amqp.Listener.ContainerHost.#ctor*"></a>
+  <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_Amqp_Address__" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{Amqp.Address})">ContainerHost(IList&lt;Address&gt;)</h4>
+  <div class="markdown level1 summary"><p>Initializes a container host object with multiple addresses.
+<param name="addressList">The list of listen addresses.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ContainerHost(IList&lt;Address&gt; addressList)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IList</span>&lt;<a class="xref" href="Amqp.Address.html">Address</a>&gt;</td>
+        <td><span class="parametername">addressList</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ContainerHost__ctor_" data-uid="Amqp.Listener.ContainerHost.#ctor*"></a>
+  <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_Amqp_Address__System_Security_Cryptography_X509Certificates_X509Certificate2_" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{Amqp.Address},System.Security.Cryptography.X509Certificates.X509Certificate2)">ContainerHost(IList&lt;Address&gt;, X509Certificate2)</h4>
+  <div class="markdown level1 summary"><p>Initializes a container host object with multiple addresses.
+<param name="addressList">The list of listen addresses.
+<param name="certificate">The service certificate for TLS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ContainerHost(IList&lt;Address&gt; addressList, X509Certificate2 certificate)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.IList</span>&lt;<a class="xref" href="Amqp.Address.html">Address</a>&gt;</td>
+        <td><span class="parametername">addressList</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Security.Cryptography.X509Certificates.X509Certificate2</span></td>
+        <td><span class="parametername">certificate</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ContainerHost__ctor_" data-uid="Amqp.Listener.ContainerHost.#ctor*"></a>
   <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_String__" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{System.String})">ContainerHost(IList&lt;String&gt;)</h4>
-  <div class="markdown level1 summary"><p>Initializes a container host object with multiple address.</p>
+  <div class="markdown level1 summary"><p>Initializes a container host object with multiple addresses.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -198,12 +285,13 @@ set on the listeners of the host after it is created.</p>
 </div>
   <a id="Amqp_Listener_ContainerHost__ctor_" data-uid="Amqp.Listener.ContainerHost.#ctor*"></a>
   <h4 id="Amqp_Listener_ContainerHost__ctor_System_Collections_Generic_IList_System_Uri__System_Security_Cryptography_X509Certificates_X509Certificate2_System_String_" data-uid="Amqp.Listener.ContainerHost.#ctor(System.Collections.Generic.IList{System.Uri},System.Security.Cryptography.X509Certificates.X509Certificate2,System.String)">ContainerHost(IList&lt;Uri&gt;, X509Certificate2, String)</h4>
-  <div class="markdown level1 summary"><p>Initializes a container host object with multiple address.</p>
+  <div class="markdown level1 summary"><p>Initializes a container host object with multiple addresses.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ContainerHost(IList&lt;Uri&gt; addressUriList, X509Certificate2 certificate, string userInfo)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ContainerHost(IList&lt;Address&gt;, X509Certificate2) instead.&quot;)]
+public ContainerHost(IList&lt;Uri&gt; addressUriList, X509Certificate2 certificate, string userInfo)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -243,7 +331,8 @@ form &quot;user:password&quot; (parts are URL encoded).</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ContainerHost(Uri addressUri)</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use ContainerHost(Address) instead.&quot;)]
+public ContainerHost(Uri addressUri)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

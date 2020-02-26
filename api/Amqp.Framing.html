@@ -98,6 +98,9 @@
       <h4><a class="xref" href="Amqp.Framing.Begin.html">Begin</a></h4>
       <section><p>The Begin class contains parameters to begin a session in a connection.</p>
 </section>
+      <h4><a class="xref" href="Amqp.Framing.Close.html">Close</a></h4>
+      <section><p>The Close class contains parameters to signal a connection close. </p>
+</section>
       <h4><a class="xref" href="Amqp.Framing.Data.html">Data</a></h4>
       <section><p>A data section contains opaque binary data.</p>
 </section>
@@ -109,8 +112,20 @@ properties at the head of the message.</p>
       <section><p>The Messaging layer defines a concrete set of delivery states which can be used
 to indicate the state of the message at the receiver.</p>
 </section>
+      <h4><a class="xref" href="Amqp.Framing.Detach.html">Detach</a></h4>
+      <section><p>The Detach class contains parameters to detach the link endpoint from the session.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Framing.Dispose.html">Dispose</a></h4>
+      <section><p>The Dispose class defines a disposition frame to inform remote peer of delivery state changes.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Framing.End.html">End</a></h4>
+      <section><p>The End class defines an end frame that indicates that the session has ended.</p>
+</section>
       <h4><a class="xref" href="Amqp.Framing.Error.html">Error</a></h4>
       <section><p>Defines the details of an error.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Framing.Flow.html">Flow</a></h4>
+      <section><p>The Flow class defines a flow frame that updates the flow state for the specified link.</p>
 </section>
       <h4><a class="xref" href="Amqp.Framing.Footer.html">Footer</a></h4>
       <section><p>The Footer class represents the footer section of a message.</p>
@@ -148,6 +163,9 @@ message transfer behavior.</p>
       <h4><a class="xref" href="Amqp.Framing.Target.html">Target</a></h4>
       <section><p>The target is comprised of an address coupled with properties that determine
 message transfer behavior.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Framing.Transfer.html">Transfer</a></h4>
+      <section><p>The Transfer class defines an transfer frame to send messages across a link. </p>
 </section>
     <h3 id="enums">Enums
   </h3>

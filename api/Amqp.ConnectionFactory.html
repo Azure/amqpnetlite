@@ -278,6 +278,55 @@ custom implementation.</p>
       </tr>
     </tbody>
   </table>
+  <a id="Amqp_ConnectionFactory_CreateAsync_" data-uid="Amqp.ConnectionFactory.CreateAsync*"></a>
+  <h4 id="Amqp_ConnectionFactory_CreateAsync_Amqp_Address_Amqp_Handler_IHandler_" data-uid="Amqp.ConnectionFactory.CreateAsync(Amqp.Address,Amqp.Handler.IHandler)">CreateAsync(Address, IHandler)</h4>
+  <div class="markdown level1 summary"><p>Creates a new connection with a protocol handler.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;Connection&gt; CreateAsync(Address address, IHandler handler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Address.html">Address</a></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address of remote endpoint to connect to.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Handler.IHandler.html">IHandler</a></td>
+        <td><span class="parametername">handler</span></td>
+        <td><p>The protocol handler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Amqp.Connection.html">Connection</a>&gt;</td>
+        <td><p>A task for the connection creation operation. On success, the result is an AMQP <a class="xref" href="Amqp.Connection.html">Connection</a></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="eii">Explicit Interface Implementations
   </h3>
   <a id="Amqp_ConnectionFactory_Amqp_IConnectionFactory_CreateAsync_" data-uid="Amqp.ConnectionFactory.Amqp#IConnectionFactory#CreateAsync*"></a>

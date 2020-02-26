@@ -135,7 +135,74 @@
       <tr>
         <td><a class="xref" href="Amqp.Message.html">Message</a></td>
         <td><span class="parametername">message</span></td>
-        <td></td>
+        <td><p>The message from which the body is deserialized.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><p>An object of type T.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td><p>The object type.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Extensions_GetBody_" data-uid="Amqp.Extensions.GetBody*"></a>
+  <h4 id="Amqp_Extensions_GetBody__1_Amqp_Message_Amqp_Serialization_AmqpSerializer_" data-uid="Amqp.Extensions.GetBody``1(Amqp.Message,Amqp.Serialization.AmqpSerializer)">GetBody&lt;T&gt;(Message, AmqpSerializer)</h4>
+  <div class="markdown level1 summary"><p>Gets an object of type T from the message body using the
+provided serializer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T GetBody&lt;T&gt;(this Message message, AmqpSerializer serializer)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message from which the body is deserialized.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Serialization.AmqpSerializer.html">AmqpSerializer</a></td>
+        <td><span class="parametername">serializer</span></td>
+        <td><p>The serializer to deserialize the object.</p>
+</td>
       </tr>
     </tbody>
   </table>

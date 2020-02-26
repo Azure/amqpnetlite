@@ -87,7 +87,10 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_Fields">DescribedList.Fields</a>
+      <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_HasField_System_Int32_">DescribedList.HasField(Int32)</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_ResetField_System_Int32_">DescribedList.ResetField(Int32)</a>
     </div>
     <div>
       <a class="xref" href="Amqp.Types.DescribedList.html#Amqp_Types_DescribedList_GetDebugString_System_String_System_Object___System_Object___">DescribedList.GetDebugString(String, Object[], Object[])</a>
@@ -135,13 +138,41 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Error()</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete]
+public Error()</code></pre>
   </div>
+  <a id="Amqp_Framing_Error__ctor_" data-uid="Amqp.Framing.Error.#ctor*"></a>
+  <h4 id="Amqp_Framing_Error__ctor_Amqp_Types_Symbol_" data-uid="Amqp.Framing.Error.#ctor(Amqp.Types.Symbol)">Error(Symbol)</h4>
+  <div class="markdown level1 summary"><p>Initializes an error object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Error(Symbol condition)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Symbol.html">Symbol</a></td>
+        <td><span class="parametername">condition</span></td>
+        <td><p>The error condition (<a class="xref" href="Amqp.ErrorCode.html">ErrorCode</a> for standard error conditions).</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   <a id="Amqp_Framing_Error_Condition_" data-uid="Amqp.Framing.Error.Condition*"></a>
   <h4 id="Amqp_Framing_Error_Condition" data-uid="Amqp.Framing.Error.Condition">Condition</h4>
-  <div class="markdown level1 summary"><p>Gets or sets a symbolic value indicating the error condition.</p>
+  <div class="markdown level1 summary"><p>Gets or sets a symbolic value indicating the error condition (index=0).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -165,7 +196,7 @@
   </table>
   <a id="Amqp_Framing_Error_Description_" data-uid="Amqp.Framing.Error.Description*"></a>
   <h4 id="Amqp_Framing_Error_Description" data-uid="Amqp.Framing.Error.Description">Description</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the descriptive text about the error condition.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the descriptive text about the error condition (index=1).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -189,7 +220,7 @@
   </table>
   <a id="Amqp_Framing_Error_Info_" data-uid="Amqp.Framing.Error.Info*"></a>
   <h4 id="Amqp_Framing_Error_Info" data-uid="Amqp.Framing.Error.Info">Info</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the map carrying information about the error condition.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the map carrying information about the error condition (index=2).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

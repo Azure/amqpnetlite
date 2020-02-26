@@ -128,7 +128,10 @@
   </div>
   <a id="Amqp_Message__ctor_" data-uid="Amqp.Message.#ctor*"></a>
   <h4 id="Amqp_Message__ctor_System_Object_" data-uid="Amqp.Message.#ctor(System.Object)">Message(Object)</h4>
-  <div class="markdown level1 summary"><p>Initializes a message with an AmqpValue body. The body must be a defined AMQP type.</p>
+  <div class="markdown level1 summary"><p>Initializes a message from an object as the body. The object is wrapped
+in an <a class="xref" href="Amqp.Framing.AmqpValue.html">AmqpValue</a> section. To control the body section type,
+create an empty message and set <a class="xref" href="Amqp.Message.html#Amqp_Message_BodySection">BodySection</a> to either
+<a class="xref" href="Amqp.Framing.AmqpValue.html">AmqpValue</a>, <a class="xref" href="Amqp.Framing.Data.html">Data</a> or <a class="xref" href="Amqp.Framing.AmqpSequence.html">AmqpSequence</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -452,6 +455,9 @@ Use the BodySection field if the entire section is needed.</p>
   <h3 id="extensionmethods">Extension Methods</h3>
   <div>
       <a class="xref" href="Amqp.Extensions.html#Amqp_Extensions_GetBody__1_Amqp_Message_">Extensions.GetBody&lt;T&gt;(Message)</a>
+  </div>
+  <div>
+      <a class="xref" href="Amqp.Extensions.html#Amqp_Extensions_GetBody__1_Amqp_Message_Amqp_Serialization_AmqpSerializer_">Extensions.GetBody&lt;T&gt;(Message, AmqpSerializer)</a>
   </div>
 </article>
           </div>

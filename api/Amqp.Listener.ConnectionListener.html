@@ -73,7 +73,7 @@
   
   <h1 id="Amqp_Listener_ConnectionListener" data-uid="Amqp.Listener.ConnectionListener" class="text-break">Class ConnectionListener
   </h1>
-  <div class="markdown level0 summary"><p>The conneciton listener accepts AMQP connections from an address.</p>
+  <div class="markdown level0 summary"><p>The connection listener accepts AMQP connections from an address.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -123,6 +123,39 @@
   </div>
   <h3 id="constructors">Constructors
   </h3>
+  <a id="Amqp_Listener_ConnectionListener__ctor_" data-uid="Amqp.Listener.ConnectionListener.#ctor*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener__ctor_Amqp_Address_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(Amqp.Address,Amqp.Listener.IContainer)">ConnectionListener(Address, IContainer)</h4>
+  <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConnectionListener(Address address, IContainer container)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Address.html">Address</a></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address to listen on.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Listener.IContainer.html">IContainer</a></td>
+        <td><span class="parametername">container</span></td>
+        <td><p>The IContainer implementation to handle client requests.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="Amqp_Listener_ConnectionListener__ctor_" data-uid="Amqp.Listener.ConnectionListener.#ctor*"></a>
   <h4 id="Amqp_Listener_ConnectionListener__ctor_System_String_Amqp_Listener_IContainer_" data-uid="Amqp.Listener.ConnectionListener.#ctor(System.String,Amqp.Listener.IContainer)">ConnectionListener(String, IContainer)</h4>
   <div class="markdown level1 summary"><p>Initializes the connection listener object.</p>
@@ -246,6 +279,30 @@ after the connection listener is created.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Amqp.Listener.IContainer.html">IContainer</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Listener_ConnectionListener_HandlerFactory_" data-uid="Amqp.Listener.ConnectionListener.HandlerFactory*"></a>
+  <h4 id="Amqp_Listener_ConnectionListener_HandlerFactory" data-uid="Amqp.Listener.ConnectionListener.HandlerFactory">HandlerFactory</h4>
+  <div class="markdown level1 summary"><p>Gets or sets a factory that creates a <a class="xref" href="Amqp.Handler.IHandler.html">IHandler</a> for an accepted connection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Func&lt;ConnectionListener, IHandler&gt; HandlerFactory { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Func</span>&lt;<a class="xref" href="Amqp.Listener.ConnectionListener.html">ConnectionListener</a>, <a class="xref" href="Amqp.Handler.IHandler.html">IHandler</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>

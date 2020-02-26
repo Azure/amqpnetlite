@@ -92,6 +92,9 @@
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
+      <a class="xref" href="Amqp.Link.html#Amqp_Link_DetachAsync_Amqp_Framing_Error_">Link.DetachAsync(Error)</a>
+    </div>
+    <div>
       <a class="xref" href="Amqp.Link.html#Amqp_Link_Name">Link.Name</a>
     </div>
     <div>
@@ -99,6 +102,12 @@
     </div>
     <div>
       <a class="xref" href="Amqp.Link.html#Amqp_Link_Session">Link.Session</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Link.html#Amqp_Link_LinkState">Link.LinkState</a>
+    </div>
+    <div>
+      <a class="xref" href="Amqp.Link.html#Amqp_Link_Detach_Amqp_Framing_Error_">Link.Detach(Error)</a>
     </div>
     <div>
       <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Closed">AmqpObject.Closed</a>
@@ -122,7 +131,7 @@
       <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync">AmqpObject.CloseAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_">AmqpObject.CloseAsync(TimeSpan)</a>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_">AmqpObject.CloseAsync(TimeSpan, Error)</a>
     </div>
     <div>
       <span class="xref">System.Object.ToString()</span>
@@ -382,6 +391,53 @@ TimeoutException if ack is not received in 60 seconds.</p>
         <td><a class="xref" href="Amqp.Message.html">Message</a></td>
         <td><span class="parametername">message</span></td>
         <td><p>The message to send.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_SenderLink_Send_" data-uid="Amqp.SenderLink.Send*"></a>
+  <h4 id="Amqp_SenderLink_Send_Amqp_Message_Amqp_Framing_DeliveryState_Amqp_OutcomeCallback_System_Object_" data-uid="Amqp.SenderLink.Send(Amqp.Message,Amqp.Framing.DeliveryState,Amqp.OutcomeCallback,System.Object)">Send(Message, DeliveryState, OutcomeCallback, Object)</h4>
+  <div class="markdown level1 summary"><p>Sends a message asynchronously. If callback is null, the message is sent without
+requesting for an acknowledgement (best effort). This method is not transaction aware. If you need transaction support,
+use <a class="xref" href="Amqp.SenderLink.html#Amqp_SenderLink_Send_Amqp_Message_Amqp_OutcomeCallback_System_Object_">Send(Message, OutcomeCallback, Object)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Send(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Message.html">Message</a></td>
+        <td><span class="parametername">message</span></td>
+        <td><p>The message to send.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.DeliveryState.html">DeliveryState</a></td>
+        <td><span class="parametername">deliveryState</span></td>
+        <td><p>The transactional state of the message. If null, no transaction is used.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.OutcomeCallback.html">OutcomeCallback</a></td>
+        <td><span class="parametername">callback</span></td>
+        <td><p>The callback to invoke when acknowledgement is received.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">state</span></td>
+        <td><p>The object that is passed back to the outcome callback.</p>
 </td>
       </tr>
     </tbody>

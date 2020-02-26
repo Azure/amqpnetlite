@@ -112,7 +112,7 @@
       <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync">AmqpObject.CloseAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_">AmqpObject.CloseAsync(TimeSpan)</a>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_">AmqpObject.CloseAsync(TimeSpan, Error)</a>
     </div>
     <div>
       <span class="xref">System.Object.ToString()</span>
@@ -177,6 +177,39 @@ which typically has blocking network I/O. Depending on the current synchronizati
 context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
 method instead.</p>
 </div>
+  <a id="Amqp_Connection__ctor_" data-uid="Amqp.Connection.#ctor*"></a>
+  <h4 id="Amqp_Connection__ctor_Amqp_Address_Amqp_Handler_IHandler_" data-uid="Amqp.Connection.#ctor(Amqp.Address,Amqp.Handler.IHandler)">Connection(Address, IHandler)</h4>
+  <div class="markdown level1 summary"><p>Initializes a connection from the address.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Connection(Address address, IHandler handler)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Address.html">Address</a></td>
+        <td><span class="parametername">address</span></td>
+        <td><p>The address.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Handler.IHandler.html">IHandler</a></td>
+        <td><span class="parametername">handler</span></td>
+        <td><p>The protocol handler.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
   <a id="Amqp_Connection__ctor_" data-uid="Amqp.Connection.#ctor*"></a>
   <h4 id="Amqp_Connection__ctor_Amqp_Address_Amqp_Sasl_SaslProfile_Amqp_Framing_Open_Amqp_OnOpened_" data-uid="Amqp.Connection.#ctor(Amqp.Address,Amqp.Sasl.SaslProfile,Amqp.Framing.Open,Amqp.OnOpened)">Connection(Address, SaslProfile, Open, OnOpened)</h4>
   <div class="markdown level1 summary"><p>Initializes a connection with SASL profile, open and open callback.</p>
@@ -257,6 +290,30 @@ method instead.</p>
   </table>
   <h3 id="properties">Properties
   </h3>
+  <a id="Amqp_Connection_ConnectionState_" data-uid="Amqp.Connection.ConnectionState*"></a>
+  <h4 id="Amqp_Connection_ConnectionState" data-uid="Amqp.Connection.ConnectionState">ConnectionState</h4>
+  <div class="markdown level1 summary"><p>Gets the connection state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ConnectionState ConnectionState { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ConnectionState.html">ConnectionState</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <a id="Amqp_Connection_Factory_" data-uid="Amqp.Connection.Factory*"></a>
   <h4 id="Amqp_Connection_Factory" data-uid="Amqp.Connection.Factory">Factory</h4>
   <div class="markdown level1 summary"><p>Gets a factory with default settings.</p>
@@ -277,6 +334,30 @@ method instead.</p>
     <tbody>
       <tr>
         <td><a class="xref" href="Amqp.ConnectionFactory.html">ConnectionFactory</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Connection_Handler_" data-uid="Amqp.Connection.Handler*"></a>
+  <h4 id="Amqp_Connection_Handler" data-uid="Amqp.Connection.Handler">Handler</h4>
+  <div class="markdown level1 summary"><p>Gets the protocol handler on the connection if it is set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IHandler Handler { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Handler.IHandler.html">IHandler</a></td>
         <td></td>
       </tr>
     </tbody>

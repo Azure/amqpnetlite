@@ -12,7 +12,7 @@
           "hash": "FTg17PNPifoB0caLLIP9rg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -24,7 +24,7 @@
           "hash": "HD1PEkjZcdi8JN5Z7l/Yuw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -36,7 +36,7 @@
           "hash": "hh+c0smthsAC40nc8/cLcQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -45,10 +45,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.AmqpObject.html",
-          "hash": "rgD193wmyEkNlmiF1/PLIQ=="
+          "hash": "bhBnW8jC9cmxEX4GST+RMg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -60,7 +60,7 @@
           "hash": "n7FdenU6mHWS9EQ3UjmQgQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -69,10 +69,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.BufferManager.html",
-          "hash": "UU9rcYaFS+WyFSpS2M0piQ=="
+          "hash": "1xeogBdrVgClmpoh6Sjs9g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -81,10 +81,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.ByteBuffer.html",
-          "hash": "eT1kt0zWHLPZrUhPF7bOqQ=="
+          "hash": "j8uP2YitejJpBtcZwAiZNg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -96,7 +96,7 @@
           "hash": "PvTlrngSGnGVGF/mjQhhrw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -105,10 +105,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Connection.html",
-          "hash": "GSMsIKYHruGTrYHJfs8ynQ=="
+          "hash": "oh4Pxf4VBgwB1gmOSWAEow=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -120,7 +120,7 @@
           "hash": "un6NJjLLknNihQMVEtlK2Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -132,7 +132,7 @@
           "hash": "Pt2oYwWuLSplzVIHT7pNhg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -141,10 +141,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.ConnectionFactory.html",
-          "hash": "BWvIWdcwmEfVPnaCiKebWA=="
+          "hash": "IA+hQct6zuP/H6jcWLBgCA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -156,7 +156,31 @@
           "hash": "km6JAAYuIVQuIcfpS7/ZSQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.ConnectionState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.ConnectionState.html",
+          "hash": "eH+yCbz7bFBUVfSKXbgnvA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.CreditMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.CreditMode.html",
+          "hash": "rEgEGAIuLDeOA82x4qa6Wg=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -168,7 +192,7 @@
           "hash": "okwls5EA7ft1ajBpFUHArg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -177,10 +201,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Extensions.html",
-          "hash": "AwLjtGE2pMpEG99Ze/JhkQ=="
+          "hash": "U/2T8JYGq3nxN9URGlQoAw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -189,10 +213,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Accepted.html",
-          "hash": "bsNfVWXMsJJZSD+kk0Zy1w=="
+          "hash": "ReL7ifn1CS6fRCDU9zSF0w=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -204,7 +228,7 @@
           "hash": "ffAL0IN0SlLWPEewrfTqIg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -213,10 +237,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.AmqpValue-1.html",
-          "hash": "tc+gbeyW08Af+Oa01Nllug=="
+          "hash": "VBixO5j/PmWdBxCZYDPbsA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -228,7 +252,7 @@
           "hash": "pmpw7vcPLJ+BK2BO2Sogug=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -240,7 +264,7 @@
           "hash": "8esPuYGYac1h0ewzkSgtyw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -249,10 +273,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Attach.html",
-          "hash": "UaGG3Nc0HtDRwFWx88ze+Q=="
+          "hash": "5hBZu5HeNQ5eZP/rfprZ9g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -261,10 +285,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Begin.html",
-          "hash": "nM27IVUBIEL7o8xjt9tdmA=="
+          "hash": "Kt5LBHff6ZH4uQ2YUqrs8Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Close.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Close.html",
+          "hash": "sQyGFjdGLxEpbETj0+o1lg=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -276,7 +312,7 @@
           "hash": "pRFFT2eLn1ImvgAhgd2LqQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -288,7 +324,7 @@
           "hash": "t0VSkwVJuVs8BLdHgev/gQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -297,10 +333,46 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.DeliveryState.html",
-          "hash": "7BGPSzWPEdgbylaaqZOF9Q=="
+          "hash": "uBres19M/1OxgMW7+JgsvA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Detach.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Detach.html",
+          "hash": "wUEJZ/Ckm3dAVaZeDdiH6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Dispose.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Dispose.html",
+          "hash": "3Yiqq9zbIy1mPaBlgZnWww=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.End.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.End.html",
+          "hash": "G7V082cTsH/7fmto++5QwA=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -309,10 +381,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Error.html",
-          "hash": "CEVQu2skaPsOfiOGKPeV4A=="
+          "hash": "0b3Yf1MjYw9XCZv52tBuWw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Flow.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Flow.html",
+          "hash": "yS3y3tI78TkqCTB+bD8Cbw=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -324,7 +408,7 @@
           "hash": "as7ImGIhd8uKdmZEKki9ag=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -333,10 +417,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Header.html",
-          "hash": "kd/7kSOPSurCZXNsX2h3OA=="
+          "hash": "l0/aLbSm61WAIPd9oimyOw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -348,7 +432,7 @@
           "hash": "IlDGcnnvxmanfa0IWvagNA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -357,10 +441,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Modified.html",
-          "hash": "NHa5NKZQXdcVuUtgqJncMQ=="
+          "hash": "bT3b+Q5UejqHMDihQjUS3Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -369,10 +453,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Open.html",
-          "hash": "vuAFQXIZpcp03OhBZxro3g=="
+          "hash": "+PitjKgbW/SYOgLbJGJa6g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -381,10 +465,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Outcome.html",
-          "hash": "6BZB+uaBF73V7BdXgQSy+g=="
+          "hash": "AkM/8id+tvNobZvXN44gBg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -393,10 +477,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Properties.html",
-          "hash": "zMrQ3nfO3Cp3fI27PsQKdA=="
+          "hash": "BnY4gK1q+EhI7dyPV11OXA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -408,7 +492,7 @@
           "hash": "N+8I3YwFuZruZbnw/udjFw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -417,10 +501,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Rejected.html",
-          "hash": "ZU78ZRYNS07QYWGvK/ppGg=="
+          "hash": "bCIKIhmR6+MPKGNGWe7BXg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -429,10 +513,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Released.html",
-          "hash": "TxGA4ocmNeHV5e/t46b7ZA=="
+          "hash": "paxgrFvDzcAgfmQXM33Qpw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -444,7 +528,7 @@
           "hash": "oYzz4Re7WkR1owKxjEQQpQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -453,10 +537,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Source.html",
-          "hash": "B1o2Wq48JP7uV4wgoZujjg=="
+          "hash": "Ey1TvtzaNk5nn02Pi0DLIg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -465,10 +549,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.Target.html",
-          "hash": "HzP9JW/BxELgbQgI+2VG/Q=="
+          "hash": "2pJfPdkRWpkcGwMMAfpp+A=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Framing.Transfer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Framing.Transfer.html",
+          "hash": "ozYhSDQd++Nuvg3UI8Nuqw=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -477,10 +573,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Framing.html",
-          "hash": "iftDAB7l22pHH4u2FXdbjw=="
+          "hash": "TaBXkIHfJ1EjPLImw+HNbA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -492,7 +588,67 @@
           "hash": "M/ooNjUdfbHVkt7byJ10rQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Handler.Event.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Handler.Event.html",
+          "hash": "Y1jjG1eCuuoekw+CUR3fMA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Handler.EventId.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Handler.EventId.html",
+          "hash": "NZpDddVtBdR7ui41kmpddg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Handler.IDelivery.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Handler.IDelivery.html",
+          "hash": "lvYUgypg/2cj3su13Zq3Gw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Handler.IHandler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Handler.IHandler.html",
+          "hash": "8LNlXvAMP7E4qTqtIURpcQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Handler.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Handler.html",
+          "hash": "F6AyruguYxcvNSJeL2aqRw=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -501,10 +657,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.IAmqpObject.html",
-          "hash": "jfTK4n3LuV8hM0REA+cCpQ=="
+          "hash": "A6pg8skhRf5el6ZeIn6ymw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -516,7 +672,7 @@
           "hash": "2p//brDrQNFi11J/aPb8dg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -528,7 +684,7 @@
           "hash": "GLc+MlFPZQH/gFWKpwWRNA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -537,10 +693,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.IConnection.html",
-          "hash": "NQjFLypuzlc1sLaNLJmpxQ=="
+          "hash": "kw2OhrbmcxBjER0C/F52uA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -552,7 +708,7 @@
           "hash": "BQQE6e4EcPP8eLyEtr/ROg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -561,10 +717,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.ILink.html",
-          "hash": "zTCYugz/owZyM2b2wVxa3w=="
+          "hash": "dp7nOZOrr3r7Hg0wBeJQlQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -573,10 +729,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.IReceiverLink.html",
-          "hash": "mzntDGO5Se9g8t+ExkZeOg=="
+          "hash": "Lk2WAfI2uNkfP/hkQpFSQw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -585,10 +741,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.ISenderLink.html",
-          "hash": "z3je9kl/Rq0d/+wzj1suJg=="
+          "hash": "poTNy4LVEjeezjtm8WWY8g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -597,10 +753,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.ISession.html",
-          "hash": "LzGCpYKU55YJ6BaUkXK3pw=="
+          "hash": "F3e6Nuo37FpYeAUGBliYlQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -612,7 +768,7 @@
           "hash": "L3MqHROdRqm8usJuNpjyjA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -621,10 +777,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Link.html",
-          "hash": "uzHlepgbX1f8AgpdpgLF7A=="
+          "hash": "/Fnt5Dyy4E49epKtJ3ndtw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.LinkState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.LinkState.html",
+          "hash": "Larej79TY1DZMT7d2rBvxQ=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -636,7 +804,7 @@
           "hash": "YVJ9e/1chcJ5ms4jN5kNiA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -645,10 +813,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ConnectionListener.SaslSettings.html",
-          "hash": "eBaFB8ZoNCx6uXB6k7HMfw=="
+          "hash": "CmoUQ1ewbQdAtp1R9Q7eWA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -660,7 +828,7 @@
           "hash": "43ZvVou3aXG/XOR93JfVug=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -669,10 +837,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ConnectionListener.html",
-          "hash": "+QxEG8WkQwT56J29iuK1sw=="
+          "hash": "hsj83MNqQ+Z/EqGVHBcejA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -681,10 +849,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ContainerHost.html",
-          "hash": "8/hCfgMtehnbOK60WRY9Ow=="
+          "hash": "pE0VFU7pvKooheMFT3brwQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -693,10 +861,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.Context.html",
-          "hash": "hLuNa5R/coOdhVQ8iWXqtQ=="
+          "hash": "xU0mE/6q0qH1Qkb+AJQ/HA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -705,10 +873,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ContextState.html",
-          "hash": "X8PPQLGFYViCRGfwlVdLtA=="
+          "hash": "CrkwdKg0PLFg3RmTyDkAzg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -720,7 +888,7 @@
           "hash": "fEvWJf5UGg3xgLP0I7pXvQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -732,7 +900,7 @@
           "hash": "K7HeYrdxrPvqGBwjwI21rg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -744,7 +912,7 @@
           "hash": "bChGM0P8iwO3ZT6JYTPBqg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -756,7 +924,7 @@
           "hash": "jSzvqS2+wrXXQt4f/HCnHw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -768,7 +936,7 @@
           "hash": "BxB51A+PlI6mnJPiFUTVSw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -780,7 +948,7 @@
           "hash": "hnRi1GNoAqPBc51UDyUP6A=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -792,7 +960,7 @@
           "hash": "t3k9N6P4ixLJZ9tVZ1ok6w=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -804,7 +972,7 @@
           "hash": "MZ/hxYU6qsThv/5S4zsG0A=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -816,7 +984,7 @@
           "hash": "UcSBmsrI3IzJCyH0LyUFAw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -825,10 +993,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ListenerConnection.html",
-          "hash": "sOzv3r1gQgBWBuWpLEAHCQ=="
+          "hash": "1+Kfk3dwrCJIEGI2DFlJPQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -837,10 +1005,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ListenerLink.html",
-          "hash": "kbunhu2D5/P/3tNxPbb5yQ=="
+          "hash": "OwWfvzS7Uy1qqrIyKEgtWA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -849,10 +1017,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.ListenerSession.html",
-          "hash": "McuelOyo0bGyWl26bExDoA=="
+          "hash": "Wc1yrUQVPZbs4YYkK8YbWA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -864,7 +1032,7 @@
           "hash": "H9Y7ZVS3hJg+4r9D1bMRqQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -876,7 +1044,7 @@
           "hash": "nboAGZ6EJMLNV29s+OWd8g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -888,7 +1056,7 @@
           "hash": "str3jncTOmR3Oex+nYg6Xw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -900,7 +1068,7 @@
           "hash": "bwZKbd2xQuIaK8LhXqk9qQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -909,10 +1077,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.TargetLinkEndpoint.html",
-          "hash": "JL7D9SVQZ3qhnvKANb8MyQ=="
+          "hash": "hR3uGEHMQhaSfzX6vCXiJw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -924,7 +1092,7 @@
           "hash": "bzyvVyxhHX5f81wB+OuJAA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -933,10 +1101,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Listener.html",
-          "hash": "Fyn3X4E+6rHIPaMUQUDqQg=="
+          "hash": "8NPI4IzwpuUWKcgBlsR05g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -945,10 +1113,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Message.html",
-          "hash": "iW7Zu6zRUW4IR2S3WbXZEg=="
+          "hash": "ldnwbUEtAUlwflU1/J5KkA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -960,7 +1128,7 @@
           "hash": "F8aPu6UtdNqklIZ7Bpl1qA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -972,7 +1140,7 @@
           "hash": "6haWuS/9s21r05Xlnn9CHg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -984,7 +1152,7 @@
           "hash": "0J/G6GkJo1OUvEwSgDPgLw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -996,7 +1164,7 @@
           "hash": "m1L8wcVNCzbSWtZd40IevQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1005,10 +1173,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.OutcomeCallback.html",
-          "hash": "fxEOolRI5oacd7UKcUzPnw=="
+          "hash": "tTr1mhTdjCiwtIVaqhp8BA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1017,10 +1185,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.ReceiverLink.html",
-          "hash": "ghfi2QVG4uB0R8ISqS+OFQ=="
+          "hash": "p4/6qhfk/4Mr7PE0XqoQyw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1029,10 +1197,70 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.SRAmqp.html",
-          "hash": "H/LtBHNMrDcgtyAW7QSulA=="
+          "hash": "jo1NC/upDTo2JX9dDUiz+g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslChallenge.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslChallenge.html",
+          "hash": "YgNUJgnANpmSd4to3k6IdQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslCode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslCode.html",
+          "hash": "Zbp180zfwha9Ia6UM83EHQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslInit.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslInit.html",
+          "hash": "dMIX5p2EpsYiYPthk/56Nw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslMechanisms.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslMechanisms.html",
+          "hash": "uLdPACiqAT2ML63IbcuWfQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslOutcome.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslOutcome.html",
+          "hash": "zpUEV55FblGLOGi+DEMT9g=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1041,10 +1269,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Sasl.SaslProfile.html",
-          "hash": "qXJofa1LAt+Z3y2QGPL6Xg=="
+          "hash": "GJVpTJFuq9pNrlX4Zn5olQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Sasl.SaslResponse.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Sasl.SaslResponse.html",
+          "hash": "+TMImf1jx14dGttVJ2osxQ=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1053,10 +1293,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Sasl.html",
-          "hash": "D3jziBMHS/gf0LV1b4YHeQ=="
+          "hash": "Oaaot0MlK9l8nZF9fwFKKQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1065,10 +1305,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.SenderLink.html",
-          "hash": "nXkgRlc7WGfxI9bBfhmKzg=="
+          "hash": "RasSeQnYEF6Et1oRIvCvQg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpContract.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpContract.html",
+          "hash": "t0e+CfQpjsm+XtBdnuX2FA=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1077,10 +1329,34 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Serialization.AmqpContractAttribute.html",
-          "hash": "hTJ/295qNZcRNfrzQqaoCg=="
+          "hash": "Wrpid8cf3884WzLU543iVQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpContractResolver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpContractResolver.html",
+          "hash": "6NvbVp7/Jt9vxZrK077O6g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.AmqpMember.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.AmqpMember.html",
+          "hash": "7aXzOwUvWYDQilm24hZs8Q=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1092,7 +1368,7 @@
           "hash": "uO8UOk3tHZFtBTHApDXKpg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1104,7 +1380,7 @@
           "hash": "omtvY3X8HvXBYW20GJleOg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1113,10 +1389,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Serialization.AmqpSerializer.html",
-          "hash": "A0a1+bnRCHr8Y/I6hebO1w=="
+          "hash": "iJFDiQBGyrZELDzDqQXncw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1128,7 +1404,7 @@
           "hash": "mLSm0HDj/ybHvTgoE/s7hQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1140,7 +1416,19 @@
           "hash": "6oiQEuplwhGMy8fpQwz7dg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Serialization.IContractResolver.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Serialization.IContractResolver.html",
+          "hash": "uOfaVmgnHipXJW4nfElKNA=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1152,7 +1440,7 @@
           "hash": "eEgGgnIvGc7a3cewIVAaQA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1164,7 +1452,7 @@
           "hash": "WDDecxrCx00SBTJRwzB6YQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1176,7 +1464,7 @@
           "hash": "J5TmHAPSqzlIVPAlqaLdYQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1188,7 +1476,7 @@
           "hash": "iI54tWhq7E8WIPS2iC93Mg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1197,10 +1485,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Serialization.html",
-          "hash": "Rdun8udjQP8FAStwO/upTQ=="
+          "hash": "tMiHgofq+hK/XwNay1ZYIw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1209,10 +1497,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Session.html",
-          "hash": "JkAtm2pUOX65j4t6ADZ4ZA=="
+          "hash": "C/eniBna0lO3esB+z36R2Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.SessionState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.SessionState.html",
+          "hash": "UHJUii8SsD4ltecgkC3rnQ=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1224,7 +1524,19 @@
           "hash": "xNN4yTMrV3zykl7GXp8oFA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.TcpKeepAliveSettings.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.TcpKeepAliveSettings.html",
+          "hash": "mPkqCxSeHEdJ0A/lQu0PdA=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1233,10 +1545,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.TcpSettings.html",
-          "hash": "1LRr2Al3Uya60v+cWiLf3g=="
+          "hash": "yc0OxZ6FtUf6wf/Xczv8IQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1248,7 +1560,7 @@
           "hash": "rqEkpg8KiLPjgVG7Ztn4KQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1260,7 +1572,7 @@
           "hash": "mwuibSUpAw2nqsf+BUjw9Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1269,10 +1581,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Transactions.Coordinator.html",
-          "hash": "g4EwvlCv/wAylo7Ugs9QFA=="
+          "hash": "i1TSuXJUppOITGyKjqfN8Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1281,10 +1593,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Transactions.Declare.html",
-          "hash": "mzu2Am4xqzzV/VNh1cWmUA=="
+          "hash": "klLqWf0wHtEExdQO9oPEXA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1293,10 +1605,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Transactions.Declared.html",
-          "hash": "jx3NI1zDEoXUYC91EfJa4Q=="
+          "hash": "2EEjuyw1hQYMMdEMfv/3wg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1305,10 +1617,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Transactions.Discharge.html",
-          "hash": "/cjAGe5MIAzXFq+1TiJB0Q=="
+          "hash": "zfPoi5IGVzDUMJIRoqJ7FA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1317,10 +1629,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Transactions.TransactionalState.html",
-          "hash": "WEqhUtCYD8aAE21Mf56PJw=="
+          "hash": "q5v8edtnzzElMDnuitE4BA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Transactions.TxnCapabilities.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Transactions.TxnCapabilities.html",
+          "hash": "rJibJUMep3lA8jf94tDmEw=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1329,10 +1653,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Transactions.html",
-          "hash": "nVn1riqOjQr5SFGAoPQF/Q=="
+          "hash": "20FkCAwv70PzK93CxQOuDw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1344,7 +1668,7 @@
           "hash": "BJT7ohp+Z6mQUc9oIY9q8Q=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1353,10 +1677,22 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Types.CreateDescribed.html",
-          "hash": "vWd2ISzD+5BdSOaIHgSjAA=="
+          "hash": "KB4B4JwnyNG8+yGhKab6cw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Amqp.Types.Decimal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Amqp.Types.Decimal.html",
+          "hash": "EwzoWaMm4//yHmwZxdwGag=="
+        }
+      },
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1368,7 +1704,7 @@
           "hash": "KoqDRA3DB9E/8U46NL6Low=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1380,7 +1716,7 @@
           "hash": "wXQiQ7fHcPbX1aNJ1PiHng=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1389,10 +1725,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Types.DescribedList.html",
-          "hash": "2qNQvCXMpKupUjmUMiQEAg=="
+          "hash": "ZL+TsGHm9tuzxZnoej2Wkg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1404,7 +1740,7 @@
           "hash": "oNPmkHzCwQCB13dqADSk2g=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1416,7 +1752,7 @@
           "hash": "tb4lp0rDy1zSbwbgc4MBYQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1428,7 +1764,7 @@
           "hash": "hSXEkQxHOyTTt0r/iuXSOw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1440,7 +1776,7 @@
           "hash": "jIWt55nD6OVlbvkU2USUWg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1449,10 +1785,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Types.Encoder.html",
-          "hash": "CJxhsPG1WySaJ6vb8SePHg=="
+          "hash": "kVL5TWSSpTo0/FH27EIz2w=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1464,7 +1800,7 @@
           "hash": "M/Ib0W3RGWMQCEp5ylW1sg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1473,10 +1809,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Types.List.html",
-          "hash": "G+3s9HALJDOPu62l8uDguA=="
+          "hash": "k3YJzXmMYKYzW1zRYxBNSw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1488,7 +1824,7 @@
           "hash": "MbjPJNTQ1z6qLJ0L0qvRHw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1500,7 +1836,7 @@
           "hash": "yNt/PpZ7Vrp3BuxRxzRQhA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1512,7 +1848,7 @@
           "hash": "RefMkZRAg84blyuw+PyKFA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1521,10 +1857,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.Types.html",
-          "hash": "U0SDkVnQ3x3rV4BhfMApTg=="
+          "hash": "nmRgGTEaxE/Ozr7CIJc7Kw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1536,7 +1872,7 @@
           "hash": "yYYgwB8k6IkOr8jU8C3VUw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1548,7 +1884,7 @@
           "hash": "Zex8QArFmvdPTBAHglIjIg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1560,7 +1896,7 @@
           "hash": "4ZIdc0dQclbduyuc6JE9Ag=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1569,10 +1905,10 @@
       "output": {
         ".html": {
           "relative_path": "api/Amqp.html",
-          "hash": "LtHIHHvESvACCHstaqjiuA=="
+          "hash": "pPB2vKcB8kiSshLT2goVHA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1581,7 +1917,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "wdy+azYjQ57AmQDfHA2Tew=="
+          "hash": "Y5GQI1Bgugj9aog6MFavDg=="
         }
       },
       "is_incremental": false,
@@ -1620,7 +1956,7 @@
           "hash": "0DCcOEBtPd0mbOAKENxgHA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1701,10 +2037,10 @@
       "output": {
         ".html": {
           "relative_path": "articles/serialization.html",
-          "hash": "j3b8MkrMA7AXfuUUxJbRgg=="
+          "hash": "vqEBoP6LgLaPt1qOIa2AvA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1773,10 +2109,10 @@
       "output": {
         ".html": {
           "relative_path": "articles/working_with_code.html",
-          "hash": "i92k+r5lrWdqyUXY1ol12g=="
+          "hash": "zS+bh65eaHn8bTGfjPeJNw=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1785,10 +2121,10 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "57/LNCsvQENP+HgDkRmP6w=="
+          "hash": "1JZUeWgRpgn3TVXXvQl2bA=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -1811,13 +2147,9 @@
         "incrementalPhase": "build"
       },
       "processors": {
-        "TocDocumentProcessor": {
+        "ResourceDocumentProcessor": {
           "can_incremental": false,
-          "details": "Processor TocDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
-          "incrementalPhase": "build"
-        },
-        "ManagedReferenceDocumentProcessor": {
-          "can_incremental": true,
+          "details": "Processor ResourceDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
         "RestApiDocumentProcessor": {
@@ -1829,9 +2161,13 @@
           "can_incremental": true,
           "incrementalPhase": "build"
         },
-        "ResourceDocumentProcessor": {
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "TocDocumentProcessor": {
           "can_incremental": false,
-          "details": "Processor ResourceDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "details": "Processor TocDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }

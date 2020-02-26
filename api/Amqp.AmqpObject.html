@@ -74,6 +74,7 @@
   <h1 id="Amqp_AmqpObject" data-uid="Amqp.AmqpObject" class="text-break">Class AmqpObject
   </h1>
   <div class="markdown level0 summary"><p>The base class of all AMQP objects.
+<a class="xref" href="Amqp.Connection.html">Connection</a>
 <a class="xref" href="Amqp.Session.html">Session</a>
 <a class="xref" href="Amqp.SenderLink.html">SenderLink</a>
 <a class="xref" href="Amqp.ReceiverLink.html">ReceiverLink</a></p>
@@ -273,13 +274,13 @@ indicating why the object is being closed.</p>
     </tbody>
   </table>
   <a id="Amqp_AmqpObject_CloseAsync_" data-uid="Amqp.AmqpObject.CloseAsync*"></a>
-  <h4 id="Amqp_AmqpObject_CloseAsync_System_TimeSpan_" data-uid="Amqp.AmqpObject.CloseAsync(System.TimeSpan)">CloseAsync(TimeSpan)</h4>
+  <h4 id="Amqp_AmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_" data-uid="Amqp.AmqpObject.CloseAsync(System.TimeSpan,Amqp.Framing.Error)">CloseAsync(TimeSpan, Error)</h4>
   <div class="markdown level1 summary"><p>Closes an AMQP object asynchronously.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task CloseAsync(TimeSpan timeout)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task CloseAsync(TimeSpan timeout, Error error = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -295,6 +296,13 @@ indicating why the object is being closed.</p>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">timeout</span></td>
         <td><p>The time to wait for the task to complete. Refer to AmqpObject.Close for details.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The AMQP <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_Error">Error</a> to send to the peer,
+indicating why the object is being closed.</p>
 </td>
       </tr>
     </tbody>

@@ -72,7 +72,6 @@
 <ul>
 <li>Visual Studio 2013. <a href="https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx">Community Edition</a> works.</li>
 <li>NETMF SDK (4.2 and 4.3) and Visual Studio project system. You can build fro <a href="https://github.com/NETMF/netmf-interpreter">sources</a> or download them from the old <a href="https://netmf.codeplex.com">netmf web site</a>.</li>
-<li>Application Builder for Windows Embedded Compact 2013. To build .Net Compact Framework projects, you need to download <a href="http://www.microsoft.com/en-us/download/details.aspx?id=38819">Application Builder for Windows Embedded Compact 2013</a></li>
 <li>NuGet tools if you want to build the NuGet package. </li>
 </ul>
 <h1 id="build-the-projects">Build the projects</h1>
@@ -86,7 +85,6 @@
 <li>The solution has a test broker which can be used to run tests. It can be started by running the following command. Note that the value of the &quot;/cert&quot; option is the subject name or the thumbprint of the service certificate that is already installed on the machine.
 <code>TestAmqpBroker.exe amqp://localhost:5672 amqps://localhost:5671 ws://localhost:80 /creds:guest:guest /cert:localhost</code></li>
 <li>NETMF tests are in project Test.Amqp.NetMF42/43. It is a NETMF application that runs in the emulator or a real device. It executes all methods whose names begin with &quot;TestMethod_&quot;. </li>
-<li>Test.Amqp.NetCF39 project can be run in a .Net Compact Framework environment. You can try it on a VirtualPC virtual machine created using Platform Builder also with the related SDK. If you have a real device, you need an SDK for it too.</li>
 </ul>
 <h1 id="start-building-applications">Start building applications</h1>
 <ul>

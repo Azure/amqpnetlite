@@ -78,16 +78,17 @@ clients that can read/write AMQP values.</p>
 <ul>
 <li>Primitives as listed in the below mapping table.</li>
 <li>Collection (Array/List/Map) of serializable types.</li>
+<li>AMQP <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Types/Described.cs">Described</a></li>
 <li>Enum</li>
-<li>Custom Types - User defined classes are encoded as AMQP described types when the class
-and its fields/properties are annotated with the AMQP serialization attributes.
-See <a href="#amqpcontract">AmqpContract</a> for details.</li>
-<li><a href="#iamqpserializable">IAmqpSerializable</a> - User defined classes that implement this
-interface can be serialized using the Encode and Decode implementation provided by the user.</li>
+<li>Nullable</li>
+<li><a href="#iamqpserializable">IAmqpSerializable</a> - User defined classes that implements this interface.</li>
+<li>Custom Types - User defined classes that are,
+** annotated with the <a href="#amqpcontract">AMQP serialization attributes</a>.
+** supported by a custom IContractResolver implementation.</li>
 </ul>
 <p>The serializer follows this order to resolve a type. If a type cannot be resolved, an
 exception is thrown.</p>
-<pre><code>[AmqpContract] -&gt; AMQP primitive types -&gt; IAmqpSerializable -&gt; Enum -&gt; Array/List/Map
+<pre><code>[AmqpContract] -&gt; AMQP primitive types -&gt; IAmqpSerializable -&gt; Nullable -&gt; Enum -&gt; Array/List/Map
 </code></pre><p>A custom class should not have AmqpContractAttribute and implement IAmqpSerializable at
 the same time, because the serializer stops checking for IAmqpSerializable as soon as
 AmqpContract attribute is found.</p>
@@ -149,6 +150,10 @@ AmqpContract attribute is found.</p>
 <td>double</td>
 </tr>
 <tr>
+<td>Decimal</td>
+<td>decimal*</td>
+</tr>
+<tr>
 <td>char</td>
 <td>char</td>
 </tr>
@@ -195,7 +200,7 @@ AmqpContract attribute is found.</p>
 </tbody>
 </table>
 <ul>
-<li>decimal is not supported</li>
+<li>decimal is supported only for protocol passthrough.</li>
 </ul>
 <h2 id="amqpcontract">AmqpContract</h2>
 <p>A user defined class can be annotated with a few attribute classes to be serializable.</p>
@@ -308,13 +313,19 @@ deserialization type will fail. With the Resolver class, we can decode all objec
 <code>AmqpSerializer.Deserialize&lt;Resolver, object&gt;(ByteBuffer)</code>.<br>Note that Student and Teacher should be added even when Person is added.</p>
 <h3 id="serialization-callbacks">Serialization Callbacks</h3>
 <p>Extra logic can be inserted before and after serialization/deserialization by serialization callbacks.
-The callback methods should be annotated with the system runtime serialization attributes.</p>
+The callback methods should be annotated with the serialization attributes.</p>
 <ul>
-<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.onserializingattribute(v=vs.110).aspx">OnSerializingAttribute</a> - invoked before writing members</li>
-<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.onserializedattribute(v=vs.110).aspx">OnSerializedAttribute</a> - invoked after writing members</li>
-<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ondeserializingattribute(v=vs.110).aspx">OnDeserializingAttribute</a> - invoked before reading members</li>
-<li><a href="https://msdn.microsoft.com/en-us/library/system.runtime.serialization.ondeserializedattribute(v=vs.110).aspx">OnDeserializedAttribute</a> - invoked after reading members</li>
+<li><a href="https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnSerializingAttribute.cs">OnSerializingAttribute</a> - invoked before writing members</li>
+<li><a href="https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnSerializedAttribute.cs">OnSerializedAttribute</a> - invoked after writing members</li>
+<li><a href="https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnDeserializingAttribute.cs">OnDeserializingAttribute</a> - invoked before reading members</li>
+<li><a href="https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/OnDeserializedAttribute.cs">OnDeserializedAttribute</a> - invoked after reading members</li>
 </ul>
+<h3 id="custom-contract-resolver">Custom Contract Resolver</h3>
+<p>It can be used in cases where the application cannot define the attributes on existing types. The resolver is responsible
+for creating an <a href="https://github.com/Azure/amqpnetlite/blob/master/src/Serialization/AmqpContract.cs">AmqpContract</a> object
+that defines the serialization logic for a given type, as if the attributes are defined.</p>
+<p>For example, the <a href="https://github.com/Azure/amqpnetlite/tree/master/Examples/Serialization/Serialization.Poco">Serialization.Poco</a>
+project shows how to implement a resolver to support Poco classes.</p>
 <h2 id="iamqpserializable">IAmqpSerializable</h2>
 <p>The interface enables the application to have full control on how a type should be serialized by
 implementing Encode and Decode methods.</p>

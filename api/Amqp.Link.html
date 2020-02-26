@@ -114,7 +114,7 @@
       <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync">AmqpObject.CloseAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_">AmqpObject.CloseAsync(TimeSpan)</a>
+      <a class="xref" href="Amqp.AmqpObject.html#Amqp_AmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_">AmqpObject.CloseAsync(TimeSpan, Error)</a>
     </div>
     <div>
       <span class="xref">System.Object.ToString()</span>
@@ -211,6 +211,30 @@
       </tr>
     </tbody>
   </table>
+  <a id="Amqp_Link_LinkState_" data-uid="Amqp.Link.LinkState*"></a>
+  <h4 id="Amqp_Link_LinkState" data-uid="Amqp.Link.LinkState">LinkState</h4>
+  <div class="markdown level1 summary"><p>Gets the link state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LinkState LinkState { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.LinkState.html">LinkState</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <a id="Amqp_Link_Name_" data-uid="Amqp.Link.Name*"></a>
   <h4 id="Amqp_Link_Name" data-uid="Amqp.Link.Name">Name</h4>
   <div class="markdown level1 summary"><p>Gets the link name.</p>
@@ -261,6 +285,84 @@
   </table>
   <h3 id="methods">Methods
   </h3>
+  <a id="Amqp_Link_Detach_" data-uid="Amqp.Link.Detach*"></a>
+  <h4 id="Amqp_Link_Detach_Amqp_Framing_Error_" data-uid="Amqp.Link.Detach(Amqp.Framing.Error)">Detach(Error)</h4>
+  <div class="markdown level1 summary"><p>Detaches the link endpoint without closing it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Detach(Error error = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The error causing a detach.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Link_Detach_Amqp_Framing_Error__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>An exception will be thrown if the peer responded with an error
+or the link was closed instead of being detached.</p>
+</div>
+  <a id="Amqp_Link_DetachAsync_" data-uid="Amqp.Link.DetachAsync*"></a>
+  <h4 id="Amqp_Link_DetachAsync_Amqp_Framing_Error_" data-uid="Amqp.Link.DetachAsync(Amqp.Framing.Error)">DetachAsync(Error)</h4>
+  <div class="markdown level1 summary"><p>Detaches the link endpoint without closing it.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task DetachAsync(Error error = null)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The error causing a detach.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>A Task for the asynchronous detach operation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 id="Amqp_Link_DetachAsync_Amqp_Framing_Error__remarks">Remarks</h5>
+  <div class="markdown level1 remarks"><p>An exception will be thrown if the peer responded with an error
+or the link was closed instead of being detached.</p>
+</div>
   <a id="Amqp_Link_OnAbort_" data-uid="Amqp.Link.OnAbort*"></a>
   <h4 id="Amqp_Link_OnAbort_Amqp_Framing_Error_" data-uid="Amqp.Link.OnAbort(Amqp.Framing.Error)">OnAbort(Error)</h4>
   <div class="markdown level1 summary"><p>Aborts the link.</p>

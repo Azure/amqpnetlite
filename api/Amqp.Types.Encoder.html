@@ -428,6 +428,54 @@
       </tr>
     </tbody>
   </table>
+  <a id="Amqp_Types_Encoder_ReadDecimal_" data-uid="Amqp.Types.Encoder.ReadDecimal*"></a>
+  <h4 id="Amqp_Types_Encoder_ReadDecimal_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadDecimal(Amqp.ByteBuffer,System.Byte)">ReadDecimal(ByteBuffer, Byte)</h4>
+  <div class="markdown level1 summary"><p>Reads a <a class="xref" href="Amqp.Types.Decimal.html">Decimal</a> value from a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Decimal ReadDecimal(ByteBuffer buffer, byte formatCode)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span></td>
+        <td><span class="parametername">formatCode</span></td>
+        <td><p>The format code of the value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Decimal.html">Decimal</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <a id="Amqp_Types_Encoder_ReadDescribed_" data-uid="Amqp.Types.Encoder.ReadDescribed*"></a>
   <h4 id="Amqp_Types_Encoder_ReadDescribed_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadDescribed(Amqp.ByteBuffer,System.Byte)">ReadDescribed(ByteBuffer, Byte)</h4>
   <div class="markdown level1 summary"><p>Reads a described value from a buffer.</p>
@@ -520,6 +568,54 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Types_Encoder_ReadFields_" data-uid="Amqp.Types.Encoder.ReadFields*"></a>
+  <h4 id="Amqp_Types_Encoder_ReadFields_Amqp_ByteBuffer_System_Byte_" data-uid="Amqp.Types.Encoder.ReadFields(Amqp.ByteBuffer,System.Byte)">ReadFields(ByteBuffer, Byte)</h4>
+  <div class="markdown level1 summary"><p>Reads a Fields map value from a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Fields ReadFields(ByteBuffer buffer, byte formatCode)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to read.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span></td>
+        <td><span class="parametername">formatCode</span></td>
+        <td><p>The format code of the value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Fields.html">Fields</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -1599,6 +1695,39 @@
         <td><span class="xref">System.Char</span></td>
         <td><span class="parametername">value</span></td>
         <td><p>The char value.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <a id="Amqp_Types_Encoder_WriteDecimal_" data-uid="Amqp.Types.Encoder.WriteDecimal*"></a>
+  <h4 id="Amqp_Types_Encoder_WriteDecimal_Amqp_ByteBuffer_Amqp_Types_Decimal_" data-uid="Amqp.Types.Encoder.WriteDecimal(Amqp.ByteBuffer,Amqp.Types.Decimal)">WriteDecimal(ByteBuffer, Decimal)</h4>
+  <div class="markdown level1 summary"><p>Writes a <a class="xref" href="Amqp.Types.Decimal.html">Decimal</a> value to a buffer.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static void WriteDecimal(ByteBuffer buffer, Decimal value)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Amqp.ByteBuffer.html">ByteBuffer</a></td>
+        <td><span class="parametername">buffer</span></td>
+        <td><p>The buffer to write.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Types.Decimal.html">Decimal</a></td>
+        <td><span class="parametername">value</span></td>
+        <td><p>The Decimal value.</p>
 </td>
       </tr>
     </tbody>

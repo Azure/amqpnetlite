@@ -136,7 +136,7 @@
   </h3>
   <a id="Amqp_IAmqpObject_AddClosedCallback_" data-uid="Amqp.IAmqpObject.AddClosedCallback*"></a>
   <h4 id="Amqp_IAmqpObject_AddClosedCallback_Amqp_ClosedCallback_" data-uid="Amqp.IAmqpObject.AddClosedCallback(Amqp.ClosedCallback)">AddClosedCallback(ClosedCallback)</h4>
-  <div class="markdown level1 summary"><p>Adds a callback to be called when the object is called.
+  <div class="markdown level1 summary"><p>Adds a callback to be called when the object is closed.
 This method guarantees that the callback is invoked even if
 it is called after the object is closed.</p>
 </div>
@@ -234,13 +234,13 @@ indicating why the object is being closed.</p>
     </tbody>
   </table>
   <a id="Amqp_IAmqpObject_CloseAsync_" data-uid="Amqp.IAmqpObject.CloseAsync*"></a>
-  <h4 id="Amqp_IAmqpObject_CloseAsync_System_TimeSpan_" data-uid="Amqp.IAmqpObject.CloseAsync(System.TimeSpan)">CloseAsync(TimeSpan)</h4>
+  <h4 id="Amqp_IAmqpObject_CloseAsync_System_TimeSpan_Amqp_Framing_Error_" data-uid="Amqp.IAmqpObject.CloseAsync(System.TimeSpan,Amqp.Framing.Error)">CloseAsync(TimeSpan, Error)</h4>
   <div class="markdown level1 summary"><p>Closes an AMQP object asynchronously.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task CloseAsync(TimeSpan timeout)</code></pre>
+    <pre><code class="lang-csharp hljs">Task CloseAsync(TimeSpan timeout, Error error)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -256,6 +256,13 @@ indicating why the object is being closed.</p>
         <td><span class="xref">System.TimeSpan</span></td>
         <td><span class="parametername">timeout</span></td>
         <td><p>The time to wait for the task to complete. Refer to AmqpObject.Close for details.</p>
+</td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Amqp.Framing.Error.html">Error</a></td>
+        <td><span class="parametername">error</span></td>
+        <td><p>The AMQP <a class="xref" href="Amqp.IAmqpObject.html#Amqp_IAmqpObject_Error">Error</a> to send to the peer,
+indicating why the object is being closed.</p>
 </td>
       </tr>
     </tbody>

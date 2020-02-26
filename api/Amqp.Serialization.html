@@ -77,8 +77,18 @@
   <div class="markdown level0 remarks"></div>
     <h3 id="classes">Classes
   </h3>
+      <h4><a class="xref" href="Amqp.Serialization.AmqpContract.html">AmqpContract</a></h4>
+      <section><p>The AMQP contract for serializing a custom type.</p>
+</section>
       <h4><a class="xref" href="Amqp.Serialization.AmqpContractAttribute.html">AmqpContractAttribute</a></h4>
       <section><p>Specifies that the type is serializable by the AMQP serializer.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Serialization.AmqpContractResolver.html">AmqpContractResolver</a></h4>
+      <section><p>Creates a serialization contract for types with <a class="xref" href="Amqp.Serialization.AmqpContractAttribute.html">AmqpContractAttribute</a>
+and <a class="xref" href="Amqp.Serialization.AmqpMemberAttribute.html">AmqpMemberAttribute</a> attributes defined.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Serialization.AmqpMember.html">AmqpMember</a></h4>
+      <section><p>Represents an AMQP member (a field or a property) within a contract.</p>
 </section>
       <h4><a class="xref" href="Amqp.Serialization.AmqpMemberAttribute.html">AmqpMemberAttribute</a></h4>
       <section><p>Specifies that the member is part of an AMQP serializable type.</p>
@@ -89,7 +99,7 @@
       <h4><a class="xref" href="Amqp.Serialization.AmqpSerializer.html">AmqpSerializer</a></h4>
       <section><p>Serializes and deserializes an instance of an AMQP type.
 The descriptor (name and code) is scoped to and must be
-uniqueue within an instance of the serializer.
+unique within an instance of the serializer.
 When the static Serialize and Deserialize methods are called,
 the default instance is used.</p>
 </section>
@@ -113,6 +123,9 @@ of an object.</p>
   </h3>
       <h4><a class="xref" href="Amqp.Serialization.IAmqpSerializable.html">IAmqpSerializable</a></h4>
       <section><p>Specifies that a type is serializable by the AMQP serializer.</p>
+</section>
+      <h4><a class="xref" href="Amqp.Serialization.IContractResolver.html">IContractResolver</a></h4>
+      <section><p>Resolves a given type to the AMQP contract for serialization.</p>
 </section>
     <h3 id="enums">Enums
   </h3>
