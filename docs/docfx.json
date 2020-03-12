@@ -3,7 +3,7 @@
     {
       "src": [
         {
-          "files": [ "src/Amqp.Net.csproj" ],
+          "files": [ "csproj/Amqp.Net.csproj" ],
           "exclude": [ "**/obj/**", "**/bin/**" ],
           "src": "../"
         }
