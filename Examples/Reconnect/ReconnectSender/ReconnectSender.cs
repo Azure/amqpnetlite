@@ -140,9 +140,7 @@ namespace ReconnectSender
         {
             Trace.WriteLine(TraceLevel.Verbose, "Event: OnOpened");
 
-            if (connection is null) {
-                connection = (Connection)conn;
-            }
+            connection = (Connection)conn;
 
             session = new Session(connection, new Begin() { }, onBegin);
         }
