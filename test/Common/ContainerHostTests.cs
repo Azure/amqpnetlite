@@ -323,11 +323,12 @@ namespace Test.Amqp
                 }
             }
 
+            Thread.Sleep(200);
+
             receiver.Close();
             session.Close();
             connection.Close();
 
-            Thread.Sleep(200);
             Assert.AreEqual(released, messages.Count);
             Assert.AreEqual(rejected, source.DeadletterMessage.Count);
         }
