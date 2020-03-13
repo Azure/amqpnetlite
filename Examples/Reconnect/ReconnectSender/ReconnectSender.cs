@@ -131,13 +131,16 @@ namespace ReconnectSender
         }
 
         /// <summary>
-        /// AMQP connection has opened
+        /// AMQP connection has opened. This callback may be called before
+        /// ConnectAsync returns a value to the _connection_ variable.
         /// </summary>
-        /// <param name="_">Which connection (ignored).</param>
+        /// <param name="conn">Which connection. </param>
         /// <param name="__">Peer AMQP Open (ignored).</param>
-        void onOpened(IConnection _, Open __)
+        void onOpened(IConnection conn, Open __)
         {
             Trace.WriteLine(TraceLevel.Verbose, "Event: OnOpened");
+
+            connection = (Connection)conn;
 
             session = new Session(connection, new Begin() { }, onBegin);
         }
