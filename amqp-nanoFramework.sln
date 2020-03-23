@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Amqp.nanoFramework", "nanoFramework\Amqp.nanoFramework.nfproj", "{FD8A8669-2183-4D5C-87B7-1CAB4CD26E90}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Amqp.nanoFramework", "nanoFramework\Amqp.nanoFramework\Amqp.nanoFramework.nfproj", "{FD8A8669-2183-4D5C-87B7-1CAB4CD26E90}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Amqp.Micro.nanoFramework", "nanoFramework\Amqp.Micro.nanoFramework.nfproj", "{F66A975C-A958-4D17-BCF3-AC28CE9D460B}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Amqp.Micro.nanoFramework", "nanoFramework\Amqp.Micro.nanoFramework\Amqp.Micro.nanoFramework.nfproj", "{F66A975C-A958-4D17-BCF3-AC28CE9D460B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{293DB0BF-B993-42B0-953E-200F01869A92}"
 EndProject
@@ -13,7 +13,7 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Device.Thermometer.nanoFram
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Device.SmallMemory.nanoFramework", "Examples\Device\Device.SmallMemory.nanoFramework\Device.SmallMemory.nanoFramework.nfproj", "{058153C5-5319-43B3-A10B-C50521ED02EA}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Test.Amqp.nanoFramework", "nanoFramework\Test.Amqp.nanoFramework.nfproj", "{3E5028BE-B7FA-4D5D-A931-132032FD1171}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "Test.Amqp.nanoFramework", "nanoFramework\Test.Amqp.nanoFramework\Test.Amqp.nanoFramework.nfproj", "{3E5028BE-B7FA-4D5D-A931-132032FD1171}"
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ServiceBus.EventHub.nanoFramework", "Examples\ServiceBus\ServiceBus.EventHub.nanoFramework\ServiceBus.EventHub.nanoFramework.nfproj", "{87B9BB65-B55F-4639-8DE9-6612C7675C22}"
 EndProject

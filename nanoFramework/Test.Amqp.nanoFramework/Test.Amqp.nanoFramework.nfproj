@@ -8,51 +8,69 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectTypeGuids>{11A8DD76-328B-46DF-9F39-F559912D0360};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>aa510bd3-3aa7-4d0c-8b2e-fd03fee288f4</ProjectGuid>
+    <ProjectGuid>{3E5028BE-B7FA-4D5D-A931-132032FD1171}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <RootNamespace>Device.Thermometer</RootNamespace>
-    <AssemblyName>Device.Thermometer.nanoFramework</AssemblyName>
+    <RootNamespace>Test.Amqp</RootNamespace>
+    <AssemblyName>Test.Amqp.nanoFramework</AssemblyName>
     <TargetFrameworkVersion>v1.0</TargetFrameworkVersion>
+    <DefineConstants>$(DefineConstants);NETMF</DefineConstants>
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="..\Device.SmallMemory.nanoFramework\NetworkHelpers.cs" Link="NetworkHelpers.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="..\..\netmf\Test\Program.cs" Link="Test\Program.cs" />
+    <Compile Include="..\..\test\Common\Assert.cs" Link="Assert.cs" />
+    <Compile Include="..\..\test\Common\LinkTests.cs" Link="LinkTests.cs" />
+    <Compile Include="..\..\test\Common\TestRunner.cs" Link="TestRunner.cs" />
+    <Compile Include="..\..\test\Common\TestTarget.cs" Link="TestTarget.cs" />
+    <Compile Include="..\..\test\Common\UtilityTests.cs" Link="UtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\nanoFramework\Amqp.nanoFramework\Amqp.nanoFramework.nfproj" />
+    <ProjectReference Include="..\Amqp.nanoFramework\Amqp.nanoFramework.nfproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Test\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.7.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.1.7.0-preview.12\lib\mscorlib.dll</HintPath>
+      <HintPath>..\..\packages\nanoFramework.CoreLibrary.1.7.0-preview.12\lib\mscorlib.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="nanoFramework.ResourceManager, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\packages\nanoFramework.ResourceManager.1.0.0-preview.9\lib\nanoFramework.ResourceManager.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="nanoFramework.Runtime.Events, Version=1.4.2.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.Runtime.Events.1.4.2-preview.1\lib\nanoFramework.Runtime.Events.dll</HintPath>
+      <HintPath>..\..\packages\nanoFramework.Runtime.Events.1.4.2-preview.1\lib\nanoFramework.Runtime.Events.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="nanoFramework.Runtime.Native, Version=1.2.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\packages\nanoFramework.Runtime.Native.1.2.0-preview.12\lib\nanoFramework.Runtime.Native.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="nanoFramework.System.Collections, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Collections.1.0.0-preview.12\lib\nanoFramework.System.Collections.dll</HintPath>
+      <HintPath>..\..\packages\nanoFramework.System.Collections.1.0.0-preview.12\lib\nanoFramework.System.Collections.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="nanoFramework.System.Text, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Text.1.0.0-preview.8\lib\nanoFramework.System.Text.dll</HintPath>
+      <HintPath>..\..\packages\nanoFramework.System.Text.1.0.0-preview.8\lib\nanoFramework.System.Text.dll</HintPath>
+      <Private>True</Private>
+      <SpecificVersion>True</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Math, Version=1.2.0.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\packages\nanoFramework.System.Math.1.2.0-preview.11\lib\System.Math.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="System.Net, Version=1.4.1.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Net.1.4.1-preview.12\lib\System.Net.dll</HintPath>
-      <Private>True</Private>
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
-    <Reference Include="Windows.Devices.Gpio, Version=1.4.1.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.Windows.Devices.Gpio.1.4.1-preview.13\lib\Windows.Devices.Gpio.dll</HintPath>
+      <HintPath>..\..\packages\nanoFramework.System.Net.1.4.1-preview.12\lib\System.Net.dll</HintPath>
       <Private>True</Private>
       <SpecificVersion>True</SpecificVersion>
     </Reference>
