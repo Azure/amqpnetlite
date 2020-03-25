@@ -18,7 +18,7 @@ using Amqp;
 #if NETMF && !NANOFRAMEWORK_1_0
 using Microsoft.SPOT;
 #elif NANOFRAMEWORK_1_0
-using System;
+using System.Diagnostics;
 #endif
 #if COMPACT_FRAMEWORK
 using System.Diagnostics;
@@ -44,7 +44,7 @@ namespace Test.Amqp
 #if NETMF && !NANOFRAMEWORK_1_0
             Debug.Print(message);
 #elif NANOFRAMEWORK_1_0
-            Console.WriteLine(message);
+            Debug.WriteLine(message);
 #elif COMPACT_FRAMEWORK
             Debug.WriteLine(message);
 #endif

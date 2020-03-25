@@ -15,11 +15,12 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using System;
-using System.Threading;
 using Amqp;
 using Amqp.Types;
 using nanoFramework.Networking;
+using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace Device.SmallMemory
 {
@@ -97,7 +98,7 @@ namespace Device.SmallMemory
 
         static void client_OnError(Client client, Link link, Symbol error)
         {
-            Console.WriteLine((link != null ? "Link" : "Client") + " was closed due to error " + (error ?? "[unknown]"));
+            Debug.WriteLine((link != null ? "Link" : "Client") + " was closed due to error " + (error ?? "[unknown]"));
         }
     }
 }

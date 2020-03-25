@@ -15,10 +15,11 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using System;
 using Amqp;
 using nanoFramework.Networking;
 using ServiceBus.Scenarios;
+using System;
+using System.Diagnostics;
 using AmqpTrace = Amqp.Trace;
 
 namespace ServiceBus.EventHub
@@ -31,7 +32,7 @@ namespace ServiceBus.EventHub
             NetworkHelpers.SetupAndConnectNetwork(true);
 
             AmqpTrace.TraceLevel = TraceLevel.Information;
-            AmqpTrace.TraceListener = (l, f, a) => Console.WriteLine(Fx.Format(f, a));
+            AmqpTrace.TraceListener = (l, f, a) => Debug.WriteLine(Fx.Format(f, a));
             Connection.DisableServerCertValidation = true;
 
             // wait for network and valid system date time

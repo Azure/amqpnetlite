@@ -15,10 +15,11 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-using System;
-using System.Threading;
 using Amqp;
 using nanoFramework.Networking;
+using System;
+using System.Diagnostics;
+using System.Threading;
 using Windows.Devices.Gpio;
 using AmqpTrace = Amqp.Trace;
 
@@ -126,7 +127,7 @@ namespace Device.Thermometer
 
         static void WriteTrace(TraceLevel level, string format, params object[] args)
         {
-            Console.WriteLine(Fx.Format(format, args));
+            Debug.WriteLine(Fx.Format(format, args));
         }
     }
 }
