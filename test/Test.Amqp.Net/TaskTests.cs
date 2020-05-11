@@ -196,9 +196,9 @@ namespace Test.Amqp
 
 #if NETFX && !NETFX40
         [TestMethod]
-        public async Task CustomMessgeBody()
+        public async Task CustomMessageBody()
         {
-            string testName = "CustomMessgeBody";
+            string testName = "CustomMessageBody";
 
             Connection connection = await Connection.Factory.CreateAsync(this.testTarget.Address);
             Session session = new Session(connection);
