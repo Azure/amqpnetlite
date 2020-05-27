@@ -95,7 +95,7 @@ namespace Amqp.Listener
                         string.Equals(this.mechanism.password, items[2], StringComparison.Ordinal))
                     {
                         this.Principal = new GenericPrincipal(
-                            new GenericIdentity(string.IsNullOrEmpty(items[2]) ? items[0] : items[2], this.mechanism.Name),
+                            new GenericIdentity(string.IsNullOrEmpty(items[0]) ? items[1] : items[0], this.mechanism.Name),
                             new string[0]);
 
                         return SaslCode.Ok;
