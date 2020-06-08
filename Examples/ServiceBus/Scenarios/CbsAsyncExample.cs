@@ -117,8 +117,9 @@ namespace ServiceBus.Scenarios
         static string GetSASToken(string keyName, string keyValue, string requestUri, TimeSpan ttl)
         {
             // http://msdn.microsoft.com/en-us/library/azure/dn170477.aspx
-            // the canonical Uri scheme is http because the token is not amqp specific
-            // signature is computed from joined encoded request Uri string and expiry string
+            // The canonical Uri scheme is http because the token is not amqp specific.
+            // The request Uri must be a full Uri including the scheme part.
+            // Signature is computed from joined encoded request Uri string and expiry string
             string expiry = ((long)((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)) + ttl).TotalSeconds).ToString();
             string encodedUri = HttpUtility.UrlEncode(requestUri);
 
