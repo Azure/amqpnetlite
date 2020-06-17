@@ -978,7 +978,11 @@ namespace Test.Amqp
                 Assert.IsTrue(transport != null, "transport is null");
                 try
                 {
-                    transport.WriteByte(1);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        transport.WriteByte(1);
+                        Thread.Sleep(100);
+                    }
                     Assert.IsTrue(false, "transport not disposed 1.");
                 }
                 catch (ObjectDisposedException) { }
@@ -997,7 +1001,11 @@ namespace Test.Amqp
                 Assert.IsTrue(transport != null, "transport is null 2");
                 try
                 {
-                    transport.WriteByte(2);
+                    for (int i = 0; i < 5; i++)
+                    {
+                        transport.WriteByte(2);
+                        Thread.Sleep(100);
+                    }
                     Assert.IsTrue(false, "transport not disposed 2.");
                 }
                 catch (ObjectDisposedException) { }
