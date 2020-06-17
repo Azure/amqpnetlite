@@ -18,8 +18,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
@@ -29,8 +30,6 @@ using Amqp.Listener;
 using Amqp.Sasl;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Net.Sockets;
-using System.Text;
 
 namespace Test.Amqp
 {
@@ -174,8 +173,8 @@ namespace Test.Amqp
             connection.Close();
 
             Thread.Sleep(500);
-            Assert.AreEqual(released + ignored, messages.Count, string.Join(",", messages.Select(m => m.Properties.MessageId)));
-            Assert.AreEqual(rejected, source.DeadletterMessage.Count, string.Join(",", source.DeadletterMessage.Select(m => m.Properties.MessageId)));
+            Assert.AreEqual(released + ignored, source.Count, string.Join(",", messages.Select(m => m.Properties.MessageId)));
+            Assert.AreEqual(rejected, source.DeadLetterCount, string.Join(",", source.DeadletterMessage.Select(m => m.Properties.MessageId)));
         }
 
         [TestMethod]
@@ -330,8 +329,8 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
 
-            Assert.AreEqual(released, messages.Count);
-            Assert.AreEqual(rejected, source.DeadletterMessage.Count);
+            Assert.AreEqual(released, source.Count);
+            Assert.AreEqual(rejected, source.DeadLetterCount);
         }
 
         [TestMethod]
@@ -1268,6 +1267,29 @@ namespace Test.Amqp
             this.deadletterMessage = new List<Message>();
         }
 
+        public int Count
+        {
+            get
+            {
+                lock (this.messages)
+                {
+                    return this.messages.Count;
+                }
+            }
+        }
+
+        public int DeadLetterCount
+        {
+            get
+            {
+                lock (this.deadletterMessage)
+                {
+                    return this.deadletterMessage.Count;
+                }
+            }
+        }
+
+        // Not thread safe
         public IList<Message> DeadletterMessage
         {
             get { return this.deadletterMessage; }
@@ -1293,7 +1315,10 @@ namespace Test.Amqp
         {
             if (dispositionContext.DeliveryState is Rejected)
             {
-                this.deadletterMessage.Add(receiveContext.Message);
+                lock (this.deadletterMessage)
+                {
+                    this.deadletterMessage.Add(receiveContext.Message);
+                }
             }
             else if (dispositionContext.DeliveryState is Released)
             {
