@@ -17,6 +17,7 @@
 
 using nanoFramework.Runtime.Events;
 using System;
+using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading;
 
@@ -61,7 +62,7 @@ namespace nanoFramework.Networking
                 if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211)
                 {
                     // network interface is Wi-Fi
-                    Console.WriteLine("Network connection is: Wi-Fi");
+                    Debug.WriteLine("Network connection is: Wi-Fi");
 
                     Wireless80211Configuration wc = Wireless80211Configuration.GetAllWireless80211Configurations()[ni.SpecificConfigId];
                     if (wc.Ssid != c_SSID && wc.Password != c_AP_PASSWORD)
@@ -78,7 +79,7 @@ namespace nanoFramework.Networking
                 else
                 {
                     // network interface is Ethernet
-                    Console.WriteLine("Network connection is: Ethernet");
+                    Debug.WriteLine("Network connection is: Ethernet");
 
                     ni.EnableAutomaticDns();
                     ni.EnableDhcp();
@@ -102,12 +103,12 @@ namespace nanoFramework.Networking
 
         private static void SetDateTime()
         {
-            Console.WriteLine("Setting up system clock...");
+            Debug.WriteLine("Setting up system clock...");
 
             // if SNTP is available and enabled on target device this can be skipped because we should have a valid date & time
             while (DateTime.UtcNow.Year < 2018)
             {
-                Console.WriteLine("Waiting for valid date time...");
+                Debug.WriteLine("Waiting for valid date time...");
                 // wait for valid date & time
                 Thread.Sleep(1000);
             }
@@ -117,14 +118,14 @@ namespace nanoFramework.Networking
 
         private static void CheckIP()
         {
-            Console.WriteLine("Checking for IP");
+            Debug.WriteLine("Checking for IP");
 
             NetworkInterface ni = NetworkInterface.GetAllNetworkInterfaces()[0];
             if (ni.IPv4Address != null && ni.IPv4Address.Length > 0)
             {
                 if (ni.IPv4Address[0] != '0')
                 {
-                    Console.WriteLine($"We have an IP: {ni.IPv4Address}");
+                    Debug.WriteLine($"We have an IP: {ni.IPv4Address}");
                     IpAddressAvailable.Set();
                 }
             }

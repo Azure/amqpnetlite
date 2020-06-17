@@ -23,8 +23,6 @@ namespace Amqp
     using System.Threading;
 #if (MF_FRAMEWORK_VERSION_V4_2 || MF_FRAMEWORK_VERSION_V4_3 || MF_FRAMEWORK_VERSION_V4_4)
     using Microsoft.SPOT;
-#elif (NANOFRAMEWORK_1_0)
-    using nanoFramework.Runtime.Native;
 #endif
 
     /// <summary>
