@@ -302,6 +302,7 @@ namespace Test.Amqp
             var connection = new Connection(Address);
             var session = new Session(connection);
             var receiver = new ReceiverLink(session, "receiver0", name);
+            receiver.SetCredit(100, CreditMode.Manual);
             int released = 0;
             int rejected = 0;
             for (int i = 1; i <= count; i++)
@@ -322,8 +323,6 @@ namespace Test.Amqp
                     receiver.Accept(message);
                 }
             }
-
-            Thread.Sleep(200);
 
             receiver.Close();
             session.Close();
