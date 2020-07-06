@@ -19,8 +19,14 @@ namespace Amqp.Listener
 {
     using System.Security.Principal;
 
-    interface IAuthenticated
+    /// <summary>
+    /// Provides a principal through transport or SASL authentication.
+    /// </summary>
+    public interface IAuthenticated
     {
+        /// <summary>
+        /// Gets the <see cref="IPrincipal"/>Principal.
+        /// </summary>
         IPrincipal Principal { get; }
     }
 }
