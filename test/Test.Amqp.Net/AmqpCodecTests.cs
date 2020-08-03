@@ -283,6 +283,17 @@ namespace Test.Amqp
         }
 
         [TestMethod()]
+        public void AmqpCodecTimestampRangeTest()
+        {
+            long max = (long)(DateTime.MaxValue - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            long min = (long)(DateTime.MinValue - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            Assert.AreEqual(DateTime.MaxValue, Encoder.TimestampToDateTime(max));
+            Assert.AreEqual(DateTime.MaxValue, Encoder.TimestampToDateTime(max + 1));
+            Assert.AreEqual(DateTime.MinValue, Encoder.TimestampToDateTime(min));
+            Assert.AreEqual(DateTime.MinValue, Encoder.TimestampToDateTime(min - 1));
+        }
+
+        [TestMethod()]
         public void AmqpCodecList0Test()
         {
             byte[] list0Bin = new byte[] { 0x45 };

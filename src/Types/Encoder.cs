@@ -387,6 +387,15 @@ namespace Amqp.Types
         /// <returns></returns>
         public static DateTime TimestampToDateTime(long timestamp)
         {
+            if (timestamp > (DateTime.MaxValue.Ticks - epochTicks) / TicksPerMillisecond)
+            {
+                return DateTime.MaxValue;
+            }
+            else if (timestamp < (DateTime.MinValue.Ticks - epochTicks) / TicksPerMillisecond)
+            {
+                return DateTime.MinValue;
+            }
+
             return new DateTime(epochTicks + timestamp * TicksPerMillisecond, DateTimeKind.Utc);
         }
 
