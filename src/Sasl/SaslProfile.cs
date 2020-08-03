@@ -109,6 +109,7 @@ namespace Amqp.Sasl
                 8);
             transport.Send(headerBuffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP {0}", myHeader);
+            Trace.WriteBuffer("SEND {0}", headerBuffer.Buffer, headerBuffer.Offset, headerBuffer.Length);
 
             if (command != null)
             {
@@ -236,6 +237,7 @@ namespace Amqp.Sasl
             Frame.Encode(buffer, FrameType.Sasl, 0, command);
             transport.Send(buffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND {0}", command);
+            Trace.WriteBuffer("SEND {0}", buffer.Buffer, buffer.Offset, buffer.Length);
         }
     }
 }

@@ -46,6 +46,7 @@ namespace Amqp
             {
                 // header
                 await this.ReceiveBufferAsync(header, 0, FixedWidth.ULong).ConfigureAwait(false);
+                Trace.WriteBuffer("RECV {0}", header, 0, header.Length);
                 if (!onHeader(ProtocolHeader.Create(header, 0)))
                 {
                     return;
@@ -70,6 +71,7 @@ namespace Amqp
                     Buffer.BlockCopy(header, 0, buffer.Buffer, buffer.Offset, FixedWidth.UInt);
                     await this.ReceiveBufferAsync(buffer.Buffer, buffer.Offset + FixedWidth.UInt, frameSize - FixedWidth.UInt).ConfigureAwait(false);
                     buffer.Append(frameSize);
+                    Trace.WriteBuffer("RECV {0}", buffer.Buffer, buffer.Offset, buffer.Length);
 
                     if (!onBuffer(buffer))
                     {

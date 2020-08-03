@@ -51,6 +51,11 @@ namespace Amqp
         Frame = 0x10,
 
         /// <summary>
+        /// Specifies that frame buffers should be traced. Cannot be combined with other levels.
+        /// </summary>
+        Buffer = 0x20,
+
+        /// <summary>
         /// Specifies that application output should be traced.
         /// </summary>
         Output = 0x80
@@ -155,21 +160,35 @@ namespace Amqp
             }
         }
 
+        [Conditional("TRACE")]
+        internal static void WriteBuffer(string format, byte[] buffer, int offset, int count)
+        {
+            if (TraceListener != null && (TraceLevel.Buffer & TraceLevel) > 0)
+            {
+                TraceListener(TraceLevel.Buffer, format, GetBinaryString(buffer, offset, count));
+            }
+        }
+
 #if TRACE
+        internal static string GetBinaryString(byte[] buffer, int offset, int count)
+        {
+            const string hexChars = "0123456789ABCDEF";
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(count * 2);
+            for (int i = offset; i < offset + count; ++i)
+            {
+                sb.Append(hexChars[buffer[i] >> 4]);
+                sb.Append(hexChars[buffer[i] & 0x0F]);
+            }
+
+            return sb.ToString();
+        }
+
         internal static object GetTraceObject(object value)
         {
             byte[] binary = value as byte[];
             if (binary != null)
             {
-                const string hexChars = "0123456789ABCDEF";
-                System.Text.StringBuilder sb = new System.Text.StringBuilder(binary.Length * 2);
-                for (int i = 0; i < binary.Length; ++i)
-                {
-                    sb.Append(hexChars[binary[i] >> 4]);
-                    sb.Append(hexChars[binary[i] & 0x0F]);
-                }
-
-                return sb.ToString();
+                return GetBinaryString(binary, 0, binary.Length);
             }
 
             var list = value as System.Collections.IList;

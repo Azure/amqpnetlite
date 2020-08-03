@@ -320,14 +320,11 @@ namespace Amqp
                 ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
                 Frame.Encode(buffer, FrameType.Amqp, channel, command);
                 this.writer.Send(buffer);
+                Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
+                Trace.WriteBuffer("SEND {0}", buffer.Buffer, buffer.Offset, buffer.Length);
                 if (this.heartBeat != null)
                 {
                     this.heartBeat.OnSend();
-                }
-
-                if (Trace.TraceLevel >= TraceLevel.Frame)
-                {
-                    Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1}", channel, command);
                 }
             }
         }
@@ -367,10 +364,8 @@ namespace Amqp
 
             payload.Complete(payloadSize);
             this.writer.Send(frameBuffer);
-            if (Trace.TraceLevel >= TraceLevel.Frame)
-            {
-                Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
-            }
+            Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
+            Trace.WriteBuffer("SEND {0}", frameBuffer.Buffer, frameBuffer.Offset, frameBuffer.Length);
 
             return payloadSize;
         }
@@ -501,6 +496,7 @@ namespace Amqp
             byte[] header = new byte[] { (byte)'A', (byte)'M', (byte)'Q', (byte)'P', 0, 1, 0, 0 };
             this.writer.Send(new ByteBuffer(header, 0, header.Length, header.Length));
             Trace.WriteLine(TraceLevel.Frame, "SEND AMQP 0 1.0.0");
+            Trace.WriteBuffer("SEND {0}", header, 0, header.Length);
         }
 
         void SendOpen(Open open)

@@ -26,6 +26,7 @@ namespace Amqp.Framing
         {
             byte[] smallBuffer = new byte[8];
             ReadBuffer(transport, smallBuffer, 0, 8);
+            Trace.WriteBuffer("RECV {0}", smallBuffer, 0, smallBuffer.Length);
             return ProtocolHeader.Create(smallBuffer, 0);
         }
 
@@ -43,6 +44,7 @@ namespace Amqp.Framing
             AmqpBitConverter.WriteInt(frameBuffer, size);
             ReadBuffer(transport, frameBuffer.Buffer, frameBuffer.Length, frameBuffer.Size);
             frameBuffer.Append(frameBuffer.Size);
+            Trace.WriteBuffer("RECV {0}", frameBuffer.Buffer, frameBuffer.Offset, frameBuffer.Length);
             return frameBuffer;
         }
 
