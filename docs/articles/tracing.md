@@ -4,8 +4,9 @@ Tracing is important in troubleshooting and debugging. The library emits traces 
 * Information 
 * Verbose 
 * Frame
+* Buffer
 
-Except Frame level tracing, a higher level includes the previous level(s). By default Frame level tracing only outputs AMQP protocol headers and frames. It is the easiest way to read the AMQP traffic. However, it can be combined with other levels if you OR the Frame level with the other level(s) you need.
+From Error to Verbose, a higher level includes the previous level(s). Frame level tracing outputs the incoming and outgoing AMQP protocol headers and frames. Buffer level tracing outputs the incoming and outgoing bytes. Both Frame and Buffer levels can be combined with other levels but the output can be more difficult to read.
 
 To enable tracing, set the trace level and a listener. For example, the following code writes AMQP frames to the system diagnostics trace in an .Net application.
 
