@@ -142,7 +142,14 @@ namespace ReconnectSender
 
             connection = (Connection)conn;
 
-            session = new Session(connection, new Begin() { }, onBegin);
+            var begin = new Begin()
+            {
+                IncomingWindow = 2048,
+                OutgoingWindow = 2048,
+                NextOutgoingId = 0
+            };
+
+            session = new Session(connection, begin, onBegin);
         }
 
         /// <summary>
