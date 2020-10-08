@@ -29,6 +29,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="nanoFramework\Amqp.Micro.nanoFramework\bin\Release\Amqp.nanoFramework.*" target="lib" />
+    <file src="nanoFramework\Amqp.nanoFramework\bin\Release\Amqp.nanoFramework.*" target="lib" />
   </files>
 </package>
