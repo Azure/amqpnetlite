@@ -61,9 +61,9 @@ namespace Amqp.Types
 
 #if NETMF
         // NETMF DateTime ticks origin is 1601/1/1
-        const long epochTicks = 116444736000000000; // 1970-1-1 00:00:00 UTC
+        const long epochTicks = 621355968000000000; // 1601-1-1 00:00:00 UTC
 #else
-        const long epochTicks = 621355968000000000; // 1970-1-1 00:00:00 UTC
+        const long epochTicks = 116444736000000000; // 1970-1-1 00:00:00 UTC
 #endif
         internal const long TicksPerMillisecond = 10000;
         static Serializer[] serializers;
