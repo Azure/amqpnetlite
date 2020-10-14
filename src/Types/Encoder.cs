@@ -59,7 +59,7 @@ namespace Amqp.Types
             public Decode Decoder;
         }
 
-#if NETMF
+#if NETMF && !NANOFRAMEWORK_1_0 
         // NETMF DateTime ticks origin is 1601/1/1
         const long epochTicks = 116444736000000000; // 1970-1-1 00:00:00 UTC
 #else
