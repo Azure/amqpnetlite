@@ -70,7 +70,8 @@ namespace PerfTest
                 }
                 else
                 {
-                    throw new ArgumentException(perfArgs.Operation);
+                    Usage();
+                    return;
                 }
 
                 Console.WriteLine("Running perf test...");
@@ -91,7 +92,7 @@ namespace PerfTest
             Console.WriteLine("  reply  \tstart a request processor and send replies");
             Console.WriteLine("  listen \tstart a listener and accept messages from remote peer");
             Console.WriteLine("\r\narguments:");
-            Arguments.PrintArguments(typeof(PerfArguments));
+            Console.WriteLine(Arguments.PrintArguments(typeof(PerfArguments)));
         }
 
         abstract class Role
@@ -503,7 +504,7 @@ namespace PerfTest
             public PerfArguments(string[] args)
                 : base(args, 1)
             {
-                this.Operation = args[0];
+                this.Operation = args.Length > 0 ? args[0] : null;
             }
 
             public string Operation

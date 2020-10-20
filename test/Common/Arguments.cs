@@ -36,6 +36,8 @@ namespace Test.Common
 
             for (int i = offset; i < args.Length; i++)
             {
+                this.HasHelp = IsHelp(args[i]);
+
                 int j = 0;
                 while (j < args[i].Length && args[i][j] == '-') j++;
                 if (j == 0 || j == args[i].Length)
@@ -64,10 +66,6 @@ namespace Test.Common
                         (attribute.Shortcut != null && dict.TryGetValue(attribute.Shortcut, out value)))
                     {
                         prop.SetValue(this, Convert(prop.PropertyType, value));
-                    }
-                    else if (IsHelp(attribute.Name))
-                    {
-                        this.HasHelp = true;
                     }
                     else if (attribute.Default != null)
                     {

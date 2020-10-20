@@ -77,7 +77,7 @@ namespace LongHaulTest
                 }
                 else
                 {
-                    Arguments.PrintArguments(commonArgs.GetType());
+                    Console.WriteLine(Arguments.PrintArguments(commonArgs.GetType()));
                 }
             }
             else
