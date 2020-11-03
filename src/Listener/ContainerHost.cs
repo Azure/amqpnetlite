@@ -589,7 +589,7 @@ namespace Amqp.Listener
                 RequestProcessor thisPtr = (RequestProcessor)state;
 
                 ListenerLink responseLink = null;
-                if (message.Properties != null || message.Properties.ReplyTo != null)
+                if (message.Properties != null && message.Properties.ReplyTo != null)
                 {
                     thisPtr.responseLinks.TryGetValue(message.Properties.ReplyTo, out responseLink);
                 }
