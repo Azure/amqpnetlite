@@ -896,16 +896,19 @@ namespace Amqp
                         thisPtr.OnSend();
                         Trace.WriteLine(TraceLevel.Frame, "SEND (ch=0) empty");
                     }
-                }
-                catch (Exception exception)
-                {
-                    Trace.WriteLine(TraceLevel.Warning, "{0}:{1}", exception.GetType().Name, exception.Message);
-                }
-                finally
-                {
+
                     if (!thisPtr.connection.IsClosed)
                     {
                         thisPtr.SetTimer();
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Trace.WriteLine(TraceLevel.Warning, "OnTimer: {0}:{1}", exception.GetType().Name, exception.Message);
+
+                    if (!thisPtr.connection.IsClosed)
+                    {
+                        thisPtr.connection.OnException(exception);
                     }
                 }
             }
