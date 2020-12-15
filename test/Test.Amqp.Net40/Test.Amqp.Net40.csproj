@@ -65,6 +65,9 @@
     <Compile Include="..\Common\TestHandler.cs">
       <Link>Common\TestHandler.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Types\Circular.cs">
+      <Link>Types\Circular.cs</Link>
+    </Compile>
     <Compile Include="..\Test.Amqp.Net\AmqpCodecTests.cs">
       <Link>AmqpCodecTests.cs</Link>
     </Compile>

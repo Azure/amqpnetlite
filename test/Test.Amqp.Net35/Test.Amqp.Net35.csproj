@@ -73,6 +73,9 @@
     <Compile Include="..\Common\TestTarget.cs">
       <Link>TestTarget.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Types\Circular.cs">
+      <Link>Types\Circular.cs</Link>
+    </Compile>
     <Compile Include="..\Common\Types\EmployeeId.cs">
       <Link>Types\EmployeeId.cs</Link>
     </Compile>

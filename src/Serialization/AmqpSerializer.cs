@@ -129,7 +129,7 @@ namespace Amqp.Serialization
 
         internal SerializableType GetType(Type type)
         {
-            return this.GetOrCompileType(type, false);
+            return this.GetOrCompileType(type, false, null);
         }
 
         static void WriteObject(AmqpSerializer serializer, ByteBuffer buffer, object graph)
@@ -151,13 +151,13 @@ namespace Amqp.Serialization
             return (TAs)type.ReadObject(buffer);
         }
 
-        SerializableType GetOrCompileType(Type type, bool describedOnly)
+        SerializableType GetOrCompileType(Type type, bool describedOnly, HashSet<Type> pendingTypes)
         {
             SerializableType serialiableType = null;
             if (!this.typeCache.TryGetValue(type, out serialiableType))
             {
-                serialiableType = this.CompileType(type, describedOnly);
-                if (serialiableType != null)
+                serialiableType = this.CompileType(type, describedOnly, pendingTypes ?? new HashSet<Type>());
+                if (serialiableType != null && serialiableType.IsResolved)
                 {
                     serialiableType = this.typeCache.GetOrAdd(type, serialiableType);
                 }
@@ -171,20 +171,26 @@ namespace Amqp.Serialization
             return serialiableType;
         }
 
-        SerializableType CompileType(Type type, bool describedOnly)
+        SerializableType CompileType(Type type, bool describedOnly, HashSet<Type> pendingTypes)
         {
             AmqpContract contract = this.contractResolver.Resolve(type);
             if (contract != null)
             {
-                return this.CreateContractType(contract);
+                return this.CreateContractType(contract, pendingTypes);
             }
 
             return this.CompileNonContractTypes(type);
         }
 
-        SerializableType CreateContractType(AmqpContract contract)
+        SerializableType CreateContractType(AmqpContract contract, HashSet<Type> pendingTypes)
         {
             Type type = contract.Type;
+            if (pendingTypes.Contains(type))
+            {
+                return SerializableType.CreateDelegatingType(this, type);
+            }
+
+            pendingTypes.Add(type);
             string descriptorName = contract.Attribute.Name;
             ulong? descriptorCode = contract.Attribute.InternalCode;
             if (descriptorName == null && descriptorCode == null)
@@ -207,7 +213,7 @@ namespace Amqp.Serialization
                 Type memberType = amqpMember.Info is FieldInfo ?
                     ((FieldInfo)amqpMember.Info).FieldType :
                     ((PropertyInfo)amqpMember.Info).PropertyType;
-                member.Type = GetType(memberType);
+                member.Type = GetOrCompileType(memberType, false, pendingTypes);
             }
 
             MethodAccessor[] serializationCallbacks = new MethodAccessor[]
@@ -221,42 +227,45 @@ namespace Amqp.Serialization
             SerializableType baseType = null;
             if (contract.BaseContract != null)
             {
-                baseType = this.CreateContractType(contract.BaseContract);
+                baseType = this.CreateContractType(contract.BaseContract, pendingTypes);
             }
 
-            Dictionary<Type, SerializableType> knownTypes = null;
+            SerializableType[] knownTypes = null;
             if (contract.Provides != null)
             {
-                knownTypes = new Dictionary<Type, SerializableType>();
+                knownTypes = new SerializableType[contract.Provides.Length];
                 for (int i = 0; i < contract.Provides.Length; i++)
                 {
-                    // KnownType compilation is delayed and non-recursive to avoid circular references
-                    knownTypes.Add(contract.Provides[i], null);
+                    knownTypes[i] = this.GetOrCompileType(contract.Provides[i], true, pendingTypes);
                 }
             }
 
+            SerializableType result;
             if (contract.Attribute.Encoding == EncodingType.List)
             {
-                return SerializableType.CreateDescribedListType(this, type, baseType, descriptorName,
+                result = SerializableType.CreateDescribedListType(this, type, baseType, descriptorName,
                     descriptorCode, members, knownTypes, serializationCallbacks);
             }
             else if (contract.Attribute.Encoding == EncodingType.Map)
             {
-                return SerializableType.CreateDescribedMapType(this, type, baseType, descriptorName,
+                result = SerializableType.CreateDescribedMapType(this, type, baseType, descriptorName,
                     descriptorCode, members, knownTypes, serializationCallbacks);
             }
             else if (contract.Attribute.Encoding == EncodingType.SimpleMap)
             {
-                return SerializableType.CreateDescribedSimpleMapType(this, type, baseType, members, serializationCallbacks);
+                result = SerializableType.CreateDescribedSimpleMapType(this, type, baseType, members, serializationCallbacks);
             }
             else if (contract.Attribute.Encoding == EncodingType.SimpleList)
             {
-                return SerializableType.CreateDescribedSimpleListType(this, type, baseType, members, serializationCallbacks);
+                result = SerializableType.CreateDescribedSimpleListType(this, type, baseType, members, serializationCallbacks);
             }
             else
             {
                 throw new NotSupportedException(contract.Attribute.Encoding.ToString());
             }
+
+            pendingTypes.Remove(type);
+            return result;
         }
 
         SerializableType CompileNonContractTypes(Type type)

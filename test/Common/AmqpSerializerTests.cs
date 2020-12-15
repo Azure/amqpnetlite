@@ -620,6 +620,52 @@ namespace Test.Amqp
             }
         }
 
+        [TestMethod]
+        public void AmqpSerializerCircularSelfRefTest()
+        {
+            TestNode node = new TestNode() { Id = 1 };
+            node.Next = new TestNode() { Id = 2 };
+            node.Previous = new TestNode() { Id = 0 };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, node);
+            var n = AmqpSerializer.Deserialize<TestNode>(b);
+            Assert.AreEqual(n.Id, node.Id);
+            Assert.AreEqual(n.Next.Id, node.Next.Id);
+            Assert.AreEqual(n.Previous.Id, node.Previous.Id);
+        }
+
+        [TestMethod]
+        public void AmqpSerializerCircularMultipleTest()
+        {
+            Type1 t1 = new Type1() { Id = 1 };
+            t1.Next = new Type2() { Name = "2", Next = new Type3() };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, t1);
+            var t = AmqpSerializer.Deserialize<Type1>(b);
+            Assert.AreEqual(t1.Id, t.Id);
+            Assert.AreEqual(t1.Next.Name, t.Next.Name);
+        }
+
+        [TestMethod]
+        public void AmqpSerializerCircularProvidesTest()
+        {
+            Provides1 p1 = new Provides1() { Value = 2, Id = Guid.NewGuid() };
+            Provides2 p2 = p1.Next = new Provides2() { Value = 8, Name = "p2" };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, p1);
+
+            var serializer = new AmqpSerializer();
+            var t = serializer.ReadObject<ProvidesBase>(b);
+            var p = t as Provides1;
+            Assert.IsTrue(p != null);
+            Assert.AreEqual(7, p2.Value);
+            Assert.AreEqual(p2.Value, p.Next.Value);
+            Assert.AreEqual(p1.Value + 1, p.Value);
+        }
+
 #if !DOTNET
         [TestMethod]
         public void MessageSerializationTest()
@@ -738,6 +784,12 @@ namespace Test.Amqp
             {
                 var value = new NegativeSimpleListNoProvides() { Name = "test", Field1 = 9 };
                 NegativeTest(value, "SimpleList encoding does not include descriptors so it does not support AmqpProvidesAttribute");
+            }
+
+            // AmqpProvides not a contract
+            {
+                var value = new NegativeProvidesNotContract() { Name = "test", Field1 = 9 };
+                NegativeTest(value, "has AmqpMemberAttribute members without AmqpContractAttribute on class");
             }
         }
 

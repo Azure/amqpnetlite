@@ -80,5 +80,19 @@ namespace Test.Amqp
         [AmqpMember]
         public int Field1;
     }
+
+    // AmqpProvides is not a contract
+    [AmqpContract(Encoding = EncodingType.List)]
+    [AmqpProvides(typeof(NegativeProvidesNotContract))]
+    abstract class NegativeProvidesNotContractBase
+    {
+        [AmqpMember]
+        public string Name { get; set; }
+    }
+
+    class NegativeProvidesNotContract : NegativeProvidesNotContractBase
+    {
+        public int Field1;
+    }
 }
 

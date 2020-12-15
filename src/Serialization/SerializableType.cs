@@ -52,6 +52,14 @@ namespace Amqp.Serialization
             }
         }
 
+        public virtual bool IsResolved
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         public virtual SerializableMember[] Members
         {
             get
@@ -85,6 +93,11 @@ namespace Amqp.Serialization
             return new ArrayType(serializer, type, itemType);
         }
 
+        public static SerializableType CreateDelegatingType(AmqpSerializer serializer, Type type)
+        {
+            return new DelegatingType(serializer, type);
+        }
+
         public static SerializableType CreateGenericListType(
             AmqpSerializer serializer,
             Type type,
@@ -111,7 +124,7 @@ namespace Amqp.Serialization
             string descriptorName,
             ulong? descriptorCode,
             SerializableMember[] members,
-            Dictionary<Type, SerializableType> knownTypes,
+            SerializableType[] knownTypes,
             MethodAccessor[] serializationCallbacks)
         {
             return new DescribedListType(serializer, type, baseType, descriptorName,
@@ -125,7 +138,7 @@ namespace Amqp.Serialization
             string descriptorName,
             ulong? descriptorCode,
             SerializableMember[] members,
-            Dictionary<Type, SerializableType> knownTypes,
+            SerializableType[] knownTypes,
             MethodAccessor[] serializationCallbacks)
         {
             return new DescribedMapType(serializer, type, baseType, descriptorName, descriptorCode,
@@ -152,13 +165,66 @@ namespace Amqp.Serialization
             return new DescribedSimpleListType(serializer, type, baseType, members, serializationCallbacks);
         }
 
-        public virtual void ValidateType(SerializableType otherType)
-        {
-        }
-
         public abstract void WriteObject(ByteBuffer buffer, object graph);
 
         public abstract object ReadObject(ByteBuffer buffer);
+
+        sealed class DelegatingType : SerializableType
+        {
+            SerializableType serializableType;
+
+            public DelegatingType(AmqpSerializer serializer, Type type) :
+                base(serializer, type)
+            {
+            }
+
+            public override EncodingType Encoding
+            {
+                get
+                {
+                    return this.Serializable.Encoding;
+                }
+            }
+
+            public override SerializableMember[] Members
+            {
+                get
+                {
+                    return this.Serializable.Members;
+                }
+            }
+
+            public override bool IsResolved
+            {
+                get
+                {
+                    return false;
+                }
+            }
+
+            SerializableType Serializable
+            {
+                get
+                {
+                    if (this.serializableType == null)
+                    {
+                        this.serializableType = this.serializer.GetType(this.type);
+                    }
+
+                    return this.serializableType;
+                }
+            }
+
+            public override object ReadObject(ByteBuffer buffer)
+            {
+                return this.Serializable.ReadObject(buffer);
+            }
+
+            public override void WriteObject(ByteBuffer buffer, object graph)
+            {
+                this.Serializable.WriteObject(buffer, graph);
+            }
+        }
 
         sealed class AmqpPrimitiveType : SerializableType
         {
@@ -531,12 +597,12 @@ namespace Amqp.Serialization
 
         abstract class DescribedCompoundType : CollectionType
         {
-            readonly DescribedCompoundType baseType;
             readonly Symbol descriptorName;
             readonly ulong? descriptorCode;
             readonly SerializableMember[] members;
             readonly MethodAccessor[] serializationCallbacks;
-            readonly KeyValuePair<Type, SerializableType>[] knownTypes;
+            readonly SerializableType[] knownTypes;
+            SerializableType baseType;
 
             protected DescribedCompoundType(
                 AmqpSerializer serializer,
@@ -545,16 +611,16 @@ namespace Amqp.Serialization
                 string descriptorName,
                 ulong? descriptorCode,
                 SerializableMember[] members,
-                Dictionary<Type, SerializableType> knownTypes,
+                SerializableType[] knownTypes,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type)
             {
-                this.baseType = (DescribedCompoundType)baseType;
+                this.baseType = baseType;
                 this.descriptorName = descriptorName;
                 this.descriptorCode = descriptorCode;
                 this.members = members;
                 this.serializationCallbacks = serializationCallbacks;
-                this.knownTypes = GetKnownTypes(knownTypes);
+                this.knownTypes = knownTypes;
             }
 
             public override SerializableMember[] Members
@@ -565,11 +631,6 @@ namespace Amqp.Serialization
             protected abstract byte Code
             {
                 get;
-            }
-
-            protected DescribedCompoundType BaseType
-            {
-                get { return this.baseType; }
             }
 
             protected override int WriteMembers(ByteBuffer buffer, object container)
@@ -659,14 +720,14 @@ namespace Amqp.Serialization
                 {
                     for (int i = 0; i < this.knownTypes.Length; ++i)
                     {
-                        var kvp = this.knownTypes[i];
-                        if (kvp.Value == null)
+                        SerializableType knownType = this.knownTypes[i];
+                        if (!knownType.IsResolved)
                         {
-                            SerializableType knownType = this.serializer.GetType(kvp.Key);
-                            this.knownTypes[i] = kvp = new KeyValuePair<Type, SerializableType>(kvp.Key, knownType);
+                            knownType = this.serializer.GetType(knownType.type);
+                            this.knownTypes[i] = knownType;
                         }
 
-                        DescribedCompoundType describedKnownType = (DescribedCompoundType)kvp.Value;
+                        DescribedCompoundType describedKnownType = (DescribedCompoundType)knownType;
                         if (this.AreEqual(describedKnownType.descriptorCode, describedKnownType.descriptorName, code, symbol))
                         {
                             effectiveType = describedKnownType;
@@ -689,7 +750,12 @@ namespace Amqp.Serialization
             {
                 if (this.baseType != null)
                 {
-                    this.baseType.InvokeSerializationCallback(callbackIndex, container);
+                    if (!this.baseType.IsResolved)
+                    {
+                        this.baseType = this.serializer.GetType(this.baseType.type);
+                    }
+
+                    ((DescribedCompoundType)this.baseType).InvokeSerializationCallback(callbackIndex, container);
                 }
 
                 var callback = this.serializationCallbacks[callbackIndex];
@@ -697,23 +763,6 @@ namespace Amqp.Serialization
                 {
                     callback.Invoke(container, new object[0] );
                 }
-            }
-
-            static KeyValuePair<Type, SerializableType>[] GetKnownTypes(Dictionary<Type, SerializableType> types)
-            {
-                if (types == null || types.Count == 0)
-                {
-                    return null;
-                }
-
-                var kt = new KeyValuePair<Type, SerializableType>[types.Count];
-                int i = 0;
-                foreach (var kvp in types)
-                {
-                    kt[i++] = kvp;
-                }
-
-                return kt;
             }
 
             bool AreEqual(ulong? code1, Symbol symbol1, ulong? code2, Symbol symbol2)
@@ -741,7 +790,7 @@ namespace Amqp.Serialization
                 string descriptorName,
                 ulong? descriptorCode,
                 SerializableMember[] members,
-                Dictionary<Type, SerializableType> knownTypes,
+                SerializableType[] knownTypes,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
@@ -793,7 +842,7 @@ namespace Amqp.Serialization
                 string descriptorName,
                 ulong? descriptorCode,
                 SerializableMember[] members,
-                Dictionary<Type, SerializableType> knownTypes,
+                SerializableType[] knownTypes,
                 MethodAccessor[] serializationCallbacks)
                 : base(serializer, type, baseType, descriptorName, descriptorCode, members, knownTypes, serializationCallbacks)
             {
