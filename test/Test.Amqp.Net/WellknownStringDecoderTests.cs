@@ -18,6 +18,7 @@
 using System;
 using System.Text;
 using Amqp;
+using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Encoder = Amqp.Types.Encoder;
 

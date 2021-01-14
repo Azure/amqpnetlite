@@ -135,13 +135,12 @@
       <Link>Transactions\ResourceManager.cs</Link>
     </Compile>
     <Compile Include="..\src\Net\BufferManager.cs" />
-    <Compile Include="..\src\Net\IStringDecoder.cs">
-      <Link>IStringDecoder.cs</Link>
+    <Compile Include="..\src\Types\IStringDecoder.cs">
+      <Link>Types\IStringDecoder.cs</Link>
     </Compile>
-    <Compile Include="..\src\Net\WellknownStringDecoder.cs">
-      <Link>WellknownStringDecoder.cs</Link>
+    <Compile Include="..\src\Types\WellknownStringDecoder.cs">
+      <Link>Types\TypesWellknownStringDecoder.cs</Link>
     </Compile>
-
     <Compile Include="..\src\Net\TransportWriter.cs">
       <Link>Internal\TransportWriter.cs</Link>
     </Compile>

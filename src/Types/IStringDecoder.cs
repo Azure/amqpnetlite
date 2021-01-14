@@ -15,7 +15,7 @@
 //  limitations under the License.
 //  ------------------------------------------------------------------------------------
 
-namespace Amqp
+namespace Amqp.Types
 {
     using System;
 
