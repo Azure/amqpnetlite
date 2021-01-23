@@ -179,7 +179,7 @@ namespace Amqp.Serialization
                 return this.CreateContractType(contract, pendingTypes);
             }
 
-            return this.CompileNonContractTypes(type);
+            return this.CompileNonContractTypes(type, pendingTypes);
         }
 
         SerializableType CreateContractType(AmqpContract contract, HashSet<Type> pendingTypes)
@@ -268,7 +268,7 @@ namespace Amqp.Serialization
             return result;
         }
 
-        SerializableType CompileNonContractTypes(Type type)
+        SerializableType CompileNonContractTypes(Type type, HashSet<Type> pendingTypes)
         {
             // built-in type
             Encode encoder;
@@ -313,7 +313,7 @@ namespace Amqp.Serialization
                 return CompileEnumType(type);
             }
 
-            SerializableType collection = this.CompileCollectionTypes(type);
+            SerializableType collection = this.CompileCollectionTypes(type, pendingTypes);
             if (collection != null)
             {
                 return collection;
@@ -328,17 +328,18 @@ namespace Amqp.Serialization
             return SerializableType.CreateEnumType(type, underlyingType);
         }
 
-        SerializableType CompileCollectionTypes(Type type)
+        SerializableType CompileCollectionTypes(Type type, HashSet<Type> pendingTypes)
         {
             MemberAccessor keyAccessor = null;
             MemberAccessor valueAccessor = null;
             MethodAccessor addAccess = null;
-            Type itemType = null;
 
             if (type.IsArray)
             {
                 // array of custom types. encode it as list
-                return SerializableType.CreateArrayType(this, type, type.GetElementType());
+                var itemType = type.GetElementType();
+                var listType = this.GetOrCompileType(typeof(List<>).MakeGenericType(itemType), false, pendingTypes);
+                return SerializableType.CreateArrayType(this, type, itemType, listType);
             }
 
             foreach (Type it in type.GetInterfaces())
@@ -349,17 +350,20 @@ namespace Amqp.Serialization
                     if (genericTypeDef == typeof(IDictionary<,>))
                     {
                         Type[] argTypes = it.GetGenericArguments();
-                        itemType = typeof(KeyValuePair<,>).MakeGenericType(argTypes);
+                        var itemType = typeof(KeyValuePair<,>).MakeGenericType(argTypes);
                         keyAccessor = MemberAccessor.Create(itemType.GetProperty("Key"), false);
                         valueAccessor = MemberAccessor.Create(itemType.GetProperty("Value"), false);
                         addAccess = MethodAccessor.Create(type.GetMethod("Add", argTypes));
+                        var keyType = this.GetOrCompileType(keyAccessor.Type, false, pendingTypes);
+                        var valueType = this.GetOrCompileType(valueAccessor.Type, false, pendingTypes);
 
-                        return SerializableType.CreateGenericMapType(this, type, keyAccessor, valueAccessor, addAccess);
+                        return SerializableType.CreateGenericMapType(this, type, keyType,
+                            valueType, keyAccessor, valueAccessor, addAccess);
                     }
                     else if (genericTypeDef == typeof(IList<>))
                     {
                         Type[] argTypes = it.GetGenericArguments();
-                        itemType = argTypes[0];
+                        var itemType = this.GetOrCompileType(argTypes[0], false, pendingTypes);
                         addAccess = MethodAccessor.Create(type.GetMethod("Add", argTypes));
 
                         return SerializableType.CreateGenericListType(this, type, itemType, addAccess);

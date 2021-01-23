@@ -99,4 +99,34 @@ namespace Test.Amqp
             this.Value--;
         }
     }
+
+    [AmqpContract(Name = "test.amqp:group-list", Code = 0x0000123400000017)]
+    class GroupList
+    {
+        [AmqpMember]
+        public string Name { get; set; }
+
+        [AmqpMember]
+        public List<GroupList> SubGroups { get; set; }
+    }
+
+    [AmqpContract(Name = "test.amqp:group-array", Code = 0x0000123400000018)]
+    class GroupArray
+    {
+        [AmqpMember]
+        public string Name { get; set; }
+
+        [AmqpMember]
+        public GroupArray[] SubGroups { get; set; }
+    }
+
+    [AmqpContract(Name = "test.amqp:group-map", Code = 0x0000123400000019)]
+    class GroupMap
+    {
+        [AmqpMember]
+        public string Name { get; set; }
+
+        [AmqpMember]
+        public Dictionary<int, GroupMap> SubGroups { get; set; }
+    }
 }

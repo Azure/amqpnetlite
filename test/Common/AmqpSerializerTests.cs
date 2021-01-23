@@ -636,6 +636,63 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void AmqpSerializerCircularListSelfRefTest()
+        {
+            GroupList group = new GroupList() { Name = "test-group" };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, group);
+            var n = AmqpSerializer.Deserialize<GroupList>(b);
+            Assert.AreEqual(n.Name, group.Name);
+
+            b.Reset();
+            group.SubGroups = new List<GroupList>() { new GroupList() { Name = "sub-1" } };
+            AmqpSerializer.Serialize(b, group);
+            n = AmqpSerializer.Deserialize<GroupList>(b);
+            Assert.AreEqual(n.Name, group.Name);
+            Assert.AreEqual(1, group.SubGroups.Count);
+            Assert.AreEqual(group.SubGroups[0].Name, n.SubGroups[0].Name);
+        }
+
+        [TestMethod]
+        public void AmqpSerializerCircularArraySelfRefTest()
+        {
+            GroupArray group = new GroupArray() { Name = "test-group" };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, group);
+            var n = AmqpSerializer.Deserialize<GroupArray>(b);
+            Assert.AreEqual(n.Name, group.Name);
+
+            b.Reset();
+            group.SubGroups = new GroupArray[] { new GroupArray() { Name = "sub-1" } };
+            AmqpSerializer.Serialize(b, group);
+            n = AmqpSerializer.Deserialize<GroupArray>(b);
+            Assert.AreEqual(n.Name, group.Name);
+            Assert.AreEqual(1, group.SubGroups.Length);
+            Assert.AreEqual(group.SubGroups[0].Name, n.SubGroups[0].Name);
+        }
+
+        [TestMethod]
+        public void AmqpSerializerCircularMapSelfRefTest()
+        {
+            GroupMap group = new GroupMap() { Name = "test-group" };
+
+            ByteBuffer b = new ByteBuffer(512, true);
+            AmqpSerializer.Serialize(b, group);
+            var n = AmqpSerializer.Deserialize<GroupMap>(b);
+            Assert.AreEqual(n.Name, group.Name);
+
+            b.Reset();
+            group.SubGroups = new Dictionary<int, GroupMap>() { { 10, new GroupMap() { Name = "sub-1" } } };
+            AmqpSerializer.Serialize(b, group);
+            n = AmqpSerializer.Deserialize<GroupMap>(b);
+            Assert.AreEqual(n.Name, group.Name);
+            Assert.AreEqual(1, group.SubGroups.Count);
+            Assert.AreEqual(group.SubGroups[10].Name, n.SubGroups[10].Name);
+        }
+
+        [TestMethod]
         public void AmqpSerializerCircularMultipleTest()
         {
             Type1 t1 = new Type1() { Id = 1 };

@@ -88,9 +88,9 @@ namespace Amqp.Serialization
             return new AmqpSerializableType(serializer, type);
         }
 
-        public static SerializableType CreateArrayType(AmqpSerializer serializer, Type type, Type itemType)
+        public static SerializableType CreateArrayType(AmqpSerializer serializer, Type type, Type itemType, SerializableType listType)
         {
-            return new ArrayType(serializer, type, itemType);
+            return new ArrayType(serializer, type, itemType, listType);
         }
 
         public static SerializableType CreateDelegatingType(AmqpSerializer serializer, Type type)
@@ -101,7 +101,7 @@ namespace Amqp.Serialization
         public static SerializableType CreateGenericListType(
             AmqpSerializer serializer,
             Type type,
-            Type itemType,
+            SerializableType itemType,
             MethodAccessor addAccessor)
         {
             return new GenericListType(serializer, type, itemType, addAccessor);
@@ -110,11 +110,13 @@ namespace Amqp.Serialization
         public static SerializableType CreateGenericMapType(
             AmqpSerializer serializer,
             Type type,
+            SerializableType keyType,
+            SerializableType valueType,
             MemberAccessor keyAccessor,
             MemberAccessor valueAccessor,
             MethodAccessor addAccessor)
         {
-            return new GenericMapType(serializer, type, keyAccessor, valueAccessor, addAccessor);
+            return new GenericMapType(serializer, type, keyType, valueType, keyAccessor, valueAccessor, addAccessor);
         }
 
         public static SerializableType CreateDescribedListType(
@@ -439,11 +441,11 @@ namespace Amqp.Serialization
             readonly Type itemType;
             readonly SerializableType listType;
 
-            public ArrayType(AmqpSerializer serializer, Type type, Type itemType)
+            public ArrayType(AmqpSerializer serializer, Type type, Type itemType, SerializableType listType)
                 : base(serializer, type)
             {
                 this.itemType = itemType;
-                this.listType = serializer.GetType(typeof(List<>).MakeGenericType(itemType));
+                this.listType = listType;
             }
 
             public override void WriteObject(ByteBuffer buffer, object graph)
@@ -471,10 +473,10 @@ namespace Amqp.Serialization
             readonly SerializableType itemType;
             readonly MethodAccessor addMethodAccessor;
 
-            public GenericListType(AmqpSerializer serializer, Type type, Type itemType, MethodAccessor addAccessor)
+            public GenericListType(AmqpSerializer serializer, Type type, SerializableType itemType, MethodAccessor addAccessor)
                 : base(serializer, type)
             {
-                this.itemType = serializer.GetType(itemType);
+                this.itemType = itemType;
                 this.addMethodAccessor = addAccessor;
             }
 
@@ -535,12 +537,17 @@ namespace Amqp.Serialization
             readonly MemberAccessor valueAccessor;
             readonly MethodAccessor addMethodAccessor;
 
-            public GenericMapType(AmqpSerializer serializer, Type type, MemberAccessor keyAccessor,
-                MemberAccessor valueAccessor, MethodAccessor addAccessor)
+            public GenericMapType(AmqpSerializer serializer,
+                Type type,
+                SerializableType keyType,
+                SerializableType valueType,
+                MemberAccessor keyAccessor,
+                MemberAccessor valueAccessor,
+                MethodAccessor addAccessor)
                 : base(serializer, type)
             {
-                this.keyType = this.serializer.GetType(keyAccessor.Type);
-                this.valueType = this.serializer.GetType(valueAccessor.Type);
+                this.keyType = keyType;
+                this.valueType = valueType;
                 this.keyAccessor = keyAccessor;
                 this.valueAccessor = valueAccessor;
                 this.addMethodAccessor = addAccessor;
