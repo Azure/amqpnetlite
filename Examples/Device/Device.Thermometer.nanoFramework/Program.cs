@@ -20,7 +20,7 @@ using nanoFramework.Networking;
 using System;
 using System.Diagnostics;
 using System.Threading;
-using Windows.Devices.Gpio;
+using System.Device.Gpio;
 using AmqpTrace = Amqp.Trace;
 
 namespace Device.Thermometer
@@ -52,8 +52,8 @@ namespace Device.Thermometer
 
             // setup user button
             // F769I-DISCO -> USER_BUTTON is @ PA0 -> (0 * 16) + 0 = 0
-            _userButton = GpioController.GetDefault().OpenPin(0);
-            _userButton.SetDriveMode(GpioPinDriveMode.Input);
+            var gpioController = new GpioController();
+            _userButton = gpioController.OpenPin(0, PinMode.Input);
             _userButton.ValueChanged += UserButton_ValueChanged;
 
             AmqpTrace.TraceLevel = TraceLevel.Frame | TraceLevel.Verbose;
@@ -114,7 +114,7 @@ namespace Device.Thermometer
             changed.Set();
         }
 
-        private static void UserButton_ValueChanged(object sender, GpioPinValueChangedEventArgs e)
+        private static void UserButton_ValueChanged(object sender, PinValueChangedEventArgs e)
         {
             WriteTrace(TraceLevel.Information, "User button pressed, generating random temperature value");
 
