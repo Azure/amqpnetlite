@@ -132,15 +132,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF44", "netmf\Amqp.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.NetMF", "netmf\Test.Amqp.NetMF.csproj", "{2C4CBC7A-16BD-4F27-86BA-3CF38BE0F426}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", "csproj\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net", .csproj\Amqp.Net.csproj", "{92153715-1D99-43B1-B291-470CF91A156D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net35", "csproj\Amqp.Net35.csproj", "{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net35", .csproj\Amqp.Net35.csproj", "{4FB9C0D9-C3A8-4FB5-86CD-927E5EBC6885}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net40", "csproj\Amqp.Net40.csproj", "{4A250B81-35E9-4D2F-8030-62909F6C8C63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Net40", .csproj\Amqp.Net40.csproj", "{4A250B81-35E9-4D2F-8030-62909F6C8C63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetCore", "csproj\Amqp.NetCore.csproj", "{35F64888-3446-444D-8E44-128378434AB3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetCore", .csproj\Amqp.NetCore.csproj", "{35F64888-3446-444D-8E44-128378434AB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Uwp", "csproj\Amqp.Uwp.csproj", "{75DC3484-F6C8-4373-A8C4-9D1A8C9FC3B0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Uwp", .csproj\Amqp.Uwp.csproj", "{75DC3484-F6C8-4373-A8C4-9D1A8C9FC3B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

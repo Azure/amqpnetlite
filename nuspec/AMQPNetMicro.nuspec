@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>AMQPNetMicro</id>
     <title>A compact version of AMQP.Net Lite for NETMF</title>
