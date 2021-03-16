@@ -72,6 +72,33 @@ namespace Amqp
                         {
                             sb.Append('[');
                             bool first = true;
+
+#if (NANOFRAMEWORK_1_0)
+                            if(it is string)
+                            {
+                                if (!first)
+                                {
+                                    sb.Append(',');
+                                }
+
+                                sb.Append(it);
+                                first = false;
+                            }
+                            else
+                            {
+                                foreach (var o in it)
+                                {
+                                    if (!first)
+                                    {
+                                        sb.Append(',');
+                                    }
+
+                                    sb.Append(o);
+                                    first = false;
+                                }
+                            }
+
+#else
                             foreach (var o in it)
                             {
                                 if (!first)
@@ -82,6 +109,7 @@ namespace Amqp
                                 sb.Append(o);
                                 first = false;
                             }
+#endif
 
                             sb.Append(']');
                         }

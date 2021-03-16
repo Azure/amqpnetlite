@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>AMQPNetLite</id>
     <title>AMQP.Net Lite</title>
@@ -38,7 +38,6 @@
   <files>
     <file src="dotnet\" target="lib\netstandard2.0" />
     <file src="dotnet\" target="lib\netstandard1.3" />
-    
     <file src="bin\Release\Amqp.Net\Amqp.Net.dll" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.pdb" target="lib\net45" />
     <file src="bin\Release\Amqp.Net\Amqp.Net.XML" target="lib\net45" />
@@ -49,12 +48,10 @@
     <file src="bin\Release\Amqp.Net35\Amqp.Net.dll" target="lib\net35" />
     <file src="bin\Release\Amqp.Net35\Amqp.Net.pdb" target="lib\net35" />
     <file src="bin\Release\Amqp.Net35\Amqp.Net.xml" target="lib\net35" />
-
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\netcore451" />
-
     <file src="bin\Release\Amqp.Uwp\Amqp.Net.dll" target="lib\uap10.0" />
     <file src="bin\Release\Amqp.Uwp\Amqp.Net.pdb" target="lib\uap10.0" />
     <file src="bin\Release\Amqp.Uwp\Amqp.Net.pri" target="lib\uap10.0" />
