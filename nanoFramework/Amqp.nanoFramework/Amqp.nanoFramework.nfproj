@@ -281,24 +281,15 @@
     <Compile Include="..\..\netmf\NetMF\TimeoutException.cs">
       <Link>nF\TimeoutException.cs</Link>
     </Compile>
-    <Compile Include="..\..\netmf\NetMF\SRAmqp.cs">
-      <Link>nF\SRAmqp.cs</Link>
+    <Compile Include="nF\nanoSRAmqp.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>nanoSRAmqp.resx</DependentUpon>
     </Compile>
-    <Compile Include="nF\SRAmqp.Designer.cs">
-      <DependentUpon>..\..\netmf\NetMF\SRAmqp.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\..\src\SRAmqp.resx">
-      <Link>nF\SRAmqp.resx</Link>
-      <Generator>NFResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
+    <Compile Include="nF\nanoSRAmqp.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Handler\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="nF\" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib, Version=1.10.1.0, Culture=neutral, PublicKeyToken=c07d481e9758c731">
@@ -336,6 +327,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="nF\nanoSRAmqp.resx">
+      <Generator>nFResXFileCodeGenerator</Generator>
+      <LastGenOutput>nanoSRAmqp.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Amqp</CustomToolNamespace>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.CSharp.targets')" />
   <ProjectExtensions>

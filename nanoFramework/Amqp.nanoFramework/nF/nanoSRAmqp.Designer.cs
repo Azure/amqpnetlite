@@ -8,24 +8,24 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Amqp
+namespace Amqp.nF
 {
     
-    internal partial class SRAmqp
+    internal partial class nanoSRAmqp
     {
         private static System.Resources.ResourceManager manager;
         internal static System.Resources.ResourceManager ResourceManager
         {
             get
             {
-                if ((SRAmqp.manager == null))
+                if ((nanoSRAmqp.manager == null))
                 {
-                    SRAmqp.manager = new System.Resources.ResourceManager("Amqp.SRAmqp", typeof(SRAmqp).Assembly);
+                    nanoSRAmqp.manager = new System.Resources.ResourceManager("Amqp.nF.nanoSRAmqp", typeof(nanoSRAmqp).Assembly);
                 }
-                return SRAmqp.manager;
+                return nanoSRAmqp.manager;
             }
         }
-        internal static string GetString(SRAmqp.StringResources id)
+        internal static string GetString(nanoSRAmqp.StringResources id)
         {
             return ((string)(nanoFramework.Runtime.Native.ResourceUtility.GetObject(ResourceManager, id)));
         }
