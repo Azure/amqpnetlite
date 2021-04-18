@@ -439,6 +439,10 @@ namespace Amqp.Types
                 {
                     encoder(buffer, value, smallEncoding);
                 }
+                else if (value is IList list)
+                {
+                    WriteList(buffer, list, smallEncoding);
+                }
                 else if (value is Described)
                 {
                     ((Described)value).Encode(buffer);
