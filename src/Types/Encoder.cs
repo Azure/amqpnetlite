@@ -439,9 +439,9 @@ namespace Amqp.Types
                 {
                     encoder(buffer, value, smallEncoding);
                 }
-                else if (value is IList list)
+                else if (value is IList)
                 {
-                    WriteList(buffer, list, smallEncoding);
+                    WriteList(buffer, (IList)value, smallEncoding);
                 }
                 else if (value is Described)
                 {
