@@ -239,6 +239,29 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ConnectionHeartBeatCloseTimeoutTest()
+        {
+            this.testListener.RegisterTarget(TestPoint.Close, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ConnectionHeartBeatCloseTimeoutTest";
+
+            typeof(Connection).GetField("HeartBeatCloseTimeout", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 800);
+            bool closeCalled = false;
+
+            Open open = new Open() { ContainerId = testName, IdleTimeOut = 1000, HostName = this.address.Host };
+            Connection connection = new Connection(this.address, null, open, null);
+            connection.AddClosedCallback((s, e) => closeCalled = true);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+            sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+            Thread.Sleep(2000);
+            Assert.IsTrue(closeCalled);
+        }
+
+        [TestMethod]
         public void SaslMismatchTest()
         {
             this.testListener.RegisterTarget(TestPoint.Header, (stream, channel, fields) =>

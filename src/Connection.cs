@@ -108,6 +108,7 @@ namespace Amqp
         internal const uint DefaultMaxFrameSize = 256 * 1024;
         internal const ushort DefaultMaxSessions = 256;
         internal const int DefaultMaxLinksPerSession = 64;
+        internal static int HeartBeatCloseTimeout = 20 * 1000;
         const uint MaxIdleTimeout = 30 * 60 * 1000;
         readonly Address address;
         readonly OnOpened onOpened;
@@ -876,6 +877,13 @@ namespace Amqp
                 var thisPtr = (HeartBeat)state;
                 try
                 {
+                    if (thisPtr.connection.state == ConnectionState.CloseSent)
+                    {
+                        thisPtr.connection.state = ConnectionState.End;
+                        thisPtr.connection.OnEnded(thisPtr.connection.Error);
+                        return;
+                    }
+
                     DateTime now = DateTime.UtcNow;
                     if (thisPtr.local > 0 &&
                         GetDueMilliseconds(thisPtr.local, now, thisPtr.lastReceive) == 0)
@@ -886,6 +894,7 @@ namespace Amqp
                             {
                                 Description = Fx.Format("Connection closed after idle timeout {0} ms", thisPtr.local)
                             });
+                        thisPtr.SetTimerForClose();
                         return;
                     }
 
@@ -933,6 +942,11 @@ namespace Amqp
                 uint due = localDue < remoteDue ? localDue : remoteDue;
                 Fx.Assert(due < uint.MaxValue, "At least one timeout should be set");
                 this.timer.Change(due > int.MaxValue ? int.MaxValue : (int)due, -1);
+            }
+
+            void SetTimerForClose()
+            {
+                this.timer.Change(HeartBeatCloseTimeout, -1);
             }
         }
 
