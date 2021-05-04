@@ -19,6 +19,7 @@ namespace Amqp
 {
     using System.Net.Security;
     using System.Net.Sockets;
+    using Amqp.Handler;
 
     sealed class TcpTransport : ITransport
     {
@@ -28,12 +29,25 @@ namespace Amqp
         public void Connect(Connection connection, Address address, bool noVerification)
         {
             TcpSocket socket = new TcpSocket();
+            if (connection.Handler != null && connection.Handler.CanHandle(EventId.SocketConnect))
+            {
+                connection.Handler.Handle(Event.Create(EventId.SocketConnect, connection, null, null, socket));
+            }
+
             socket.Connect(address.Host, address.Port);
 
             if (address.UseSsl)
             {
                 SslSocket sslSocket = new SslSocket(socket, noVerification);
-                sslSocket.AuthenticateAsClient(address.Host);
+                if (connection.Handler != null && connection.Handler.CanHandle(Handler.EventId.SocketConnect))
+                {
+                    connection.Handler.Handle(Event.Create(EventId.SslAuthenticate, connection, null, null, sslSocket));
+                }
+                else
+                {
+                    sslSocket.AuthenticateAsClient(address.Host);
+                }
+
                 this.socketTransport = sslSocket;
             }
             else

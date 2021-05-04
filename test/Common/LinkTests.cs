@@ -21,6 +21,7 @@ using Amqp.Types;
 using System;
 using System.Text;
 using System.Threading;
+using Amqp.Handler;
 #if NETFX || NETFX35 || DOTNET
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
@@ -894,6 +895,54 @@ namespace Test.Amqp
             session.Close();
             connection.Close();
         }
+
+#if !NETMF && !NETFX_CORE
+        [TestMethod]
+        public void ProtocolHandler()
+        {
+            string testName = "ProtocolHandler";
+            int nMsgs = 5;
+
+            var handler = new TestHandler(e =>
+            {
+                if (e.Id == EventId.SocketConnect)
+                {
+                    ((System.Net.Sockets.Socket)e.Context).SendBufferSize = 4096;
+                }
+                else if (e.Id == EventId.SslAuthenticate)
+                {
+                    ((System.Net.Security.SslStream)e.Context).AuthenticateAsClient("localhost");
+                }
+            });
+
+            Address sslAddress = new Address("amqps://guest:guest@localhost:5671");
+            Connection connection = new Connection(sslAddress, handler);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = "abcdefg" };
+                message.ApplicationProperties = new ApplicationProperties();
+                message.ApplicationProperties["sn"] = i;
+                sender.Send(message, null, null);
+            }
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            for (int i = 0; i < nMsgs; ++i)
+            {
+                Message message = receiver.Receive();
+                Trace.WriteLine(TraceLevel.Verbose, "receive: {0}", message.ApplicationProperties["sn"]);
+                receiver.Accept(message);
+            }
+
+            sender.Close();
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+#endif
 
         /// <summary>
         /// This test proves that issue #14 is fixed.

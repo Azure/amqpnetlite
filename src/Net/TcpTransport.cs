@@ -23,6 +23,7 @@ namespace Amqp
     using System.Net.Security;
     using System.Net.Sockets;
     using System.Threading.Tasks;
+    using Amqp.Handler;
 
     class TcpTransport : IAsyncTransport
     {
@@ -56,10 +57,10 @@ namespace Amqp
                 factory.SSL.RemoteCertificateValidationCallback = noneCertValidator;
             }
 
-            this.ConnectAsync(address, factory).ConfigureAwait(false).GetAwaiter().GetResult();
+            this.ConnectAsync(address, factory, connection.Handler).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        public async Task ConnectAsync(Address address, ConnectionFactory factory)
+        public async Task ConnectAsync(Address address, ConnectionFactory factory, IHandler handler)
         {
             IPAddress[] ipAddresses;
             IPAddress ip;
@@ -87,7 +88,6 @@ namespace Amqp
                 socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
-
                     await socket.ConnectAsync(ipAddresses[i], address.Port).ConfigureAwait(false);
 
                     exception = null;
@@ -106,6 +106,11 @@ namespace Amqp
                 throw exception ?? new SocketException((int)SocketError.AddressNotAvailable);
             }
 
+            if (handler != null && handler.CanHandle(EventId.SocketConnect))
+            {
+                handler.Handle(Event.Create(EventId.SocketConnect, connection, null, null, socket));
+            }
+
             if (factory.tcpSettings != null)
             {
                 factory.tcpSettings.Configure(socket);
@@ -114,18 +119,31 @@ namespace Amqp
             IAsyncTransport transport;
             if (address.UseSsl)
             {
-                SslStream sslStream;
+                RemoteCertificateValidationCallback remoteCertificateValidationCallback = null;
+                LocalCertificateSelectionCallback localCertificateSelectionCallback = null;
                 var ssl = factory.SslInternal;
-                if (ssl == null)
+                if (ssl != null)
                 {
-                    sslStream = new SslStream(new NetworkStream(socket));
-                    await sslStream.AuthenticateAsClientAsync(address.Host).ConfigureAwait(false);
+                    remoteCertificateValidationCallback = ssl.RemoteCertificateValidationCallback;
+                    localCertificateSelectionCallback = ssl.LocalCertificateSelectionCallback;
+                }
+
+                SslStream sslStream = new SslStream(new NetworkStream(socket), false, remoteCertificateValidationCallback, localCertificateSelectionCallback);
+                if (handler != null && handler.CanHandle(EventId.SslAuthenticate))
+                {
+                    handler.Handle(Event.Create(EventId.SslAuthenticate, connection, null, null, sslStream));
                 }
                 else
                 {
-                    sslStream = new SslStream(new NetworkStream(socket), false, ssl.RemoteCertificateValidationCallback, ssl.LocalCertificateSelectionCallback);
-                    await sslStream.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
-                        ssl.Protocols, ssl.CheckCertificateRevocation).ConfigureAwait(false);
+                    if (ssl == null)
+                    {
+                        await sslStream.AuthenticateAsClientAsync(address.Host).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await sslStream.AuthenticateAsClientAsync(address.Host, ssl.ClientCertificates,
+                            ssl.Protocols, ssl.CheckCertificateRevocation).ConfigureAwait(false);
+                    }
                 }
 
                 transport = new SslSocket(this, sslStream);

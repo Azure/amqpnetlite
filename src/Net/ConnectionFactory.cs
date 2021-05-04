@@ -129,7 +129,7 @@ namespace Amqp
             else if (TcpTransport.MatchScheme(address.Scheme))
             {
                 TcpTransport tcpTransport = new TcpTransport(this.BufferManager);
-                await tcpTransport.ConnectAsync(address, this).ConfigureAwait(false);
+                await tcpTransport.ConnectAsync(address, this, handler).ConfigureAwait(false);
                 transport = tcpTransport;
             }
 #if NETFX

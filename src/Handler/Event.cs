@@ -80,6 +80,15 @@ namespace Amqp.Handler
         /// A <see cref="IDelivery"/> (<see cref="Event.Context"/>) is received.
         /// </summary>
         ReceiveDelivery,
+        /// <summary>
+        /// A System.Net.Sockets.Socket (<see cref="Event.Context"/>) is connected.
+        /// </summary>
+        SocketConnect,
+        /// <summary>
+        /// A System.Net.Security.SslStream (<see cref="Event.Context"/>) is created and about to be authenticated.
+        /// Handler MUST call System.Net.Security.SslStream.AuthenticateAsClient(string) or one of its overloads.
+        /// </summary>
+        SslAuthenticate,
     }
 
     /// <summary>

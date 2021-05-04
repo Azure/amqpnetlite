@@ -1697,6 +1697,33 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void HandlerSslAuthenticateTest()
+        {
+            Event evt = default(Event);
+
+            var handler = new TestHandler(e =>
+            {
+                if (e.Id == EventId.SslAuthenticate)
+                {
+                    evt = e;
+                }
+            });
+
+            var sslAddress = new Address("amqps://127.0.0.1:" + port);
+            try
+            {
+                Connection connection = new Connection(sslAddress, handler);
+            }
+            catch
+            {
+                // OK to fail as the listener doesnt support SSL
+                // but the event should fire.
+            }
+
+            Assert.AreEqual(EventId.SslAuthenticate, evt.Id);
+        }
+
+        [TestMethod]
         public void HandlerTest()
         {
             string testName = "HandlerTest";
@@ -1708,7 +1735,8 @@ namespace Test.Amqp
 
             Action<Dictionary<EventId, int>> validator = dict =>
             {
-                Assert.AreEqual(10, dict.Count);
+                Assert.AreEqual(11, dict.Count);
+                Assert.AreEqual(1, dict[EventId.SocketConnect]);
                 Assert.AreEqual(1, dict[EventId.ConnectionLocalOpen]);
                 Assert.AreEqual(1, dict[EventId.ConnectionRemoteOpen]);
                 Assert.AreEqual(1, dict[EventId.SessionLocalOpen]);
