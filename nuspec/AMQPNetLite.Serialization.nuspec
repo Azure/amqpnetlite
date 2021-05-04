@@ -15,12 +15,12 @@
     <tags>AMQP coreclr .NetCore netstandard serialization</tags>
     <dependencies>
       <group targetFramework="netstandard1.3">
-        <dependency id="System.Collections" version="4.0.11" />
-        <dependency id="System.Collections.Concurrent" version="4.0.12" />
-        <dependency id="System.Reflection" version="4.1.0" />
-        <dependency id="System.Reflection.Emit.Lightweight" version="4.0.1" />
-        <dependency id="System.Reflection.Extensions" version="4.0.1" />
-        <dependency id="System.Reflection.TypeExtensions" version="4.1.0" />
+        <dependency id="System.Collections" version="4.3.0" />
+        <dependency id="System.Collections.Concurrent" version="4.3.0" />
+        <dependency id="System.Reflection" version="4.3.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.3.0" />
+        <dependency id="System.Reflection.Extensions" version="4.3.0" />
+        <dependency id="System.Reflection.TypeExtensions" version="4.3.0" />
         <dependency id="AMQPNetLite.Core" version="$version$" />
       </group>
     </dependencies>

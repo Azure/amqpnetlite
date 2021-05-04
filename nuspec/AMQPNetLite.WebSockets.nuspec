@@ -18,7 +18,7 @@
         <dependency id="AMQPNetLite.Core" version="$version$" />
       </group>
       <group targetFramework="netstandard1.3">
-        <dependency id="System.Net.WebSockets.Client" version="4.0.0" />
+        <dependency id="System.Net.WebSockets.Client" version="4.3.2" />
         <dependency id="AMQPNetLite.Core" version="$version$" />
       </group>
     </dependencies>

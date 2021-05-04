@@ -16,24 +16,24 @@
     <dependencies>
       <group targetFramework="netstandard2.0" />
       <group targetFramework="netstandard1.3">
-        <dependency id="System.Collections" version="4.0.11" />
-        <dependency id="System.Collections.Concurrent" version="4.0.12" />
-        <dependency id="System.Diagnostics.Debug" version="4.0.11" />
-        <dependency id="System.Diagnostics.Tools" version="4.0.1" />
-        <dependency id="System.Net.NameResolution" version="4.0.0" />
-        <dependency id="System.Net.Security" version="4.0.0" />
-        <dependency id="System.Net.Sockets" version="4.1.0" />
-        <dependency id="System.Reflection" version="4.1.0" />
-        <dependency id="System.Resources.ResourceManager" version="4.0.1" />
-        <dependency id="System.Runtime" version="4.1.0" />
-        <dependency id="System.Runtime.Extensions" version="4.1.0" />
-        <dependency id="System.Security.Claims" version="4.0.1" />
-        <dependency id="System.Security.Principal" version="4.0.1" />
-        <dependency id="System.Threading" version="4.0.11" />
-        <dependency id="System.Threading.Tasks" version="4.0.11" />
-        <dependency id="System.Threading.Thread" version="4.0.0" />
-        <dependency id="System.Threading.ThreadPool" version="4.0.10" />
-        <dependency id="System.Threading.Timer" version="4.0.1" />
+        <dependency id="System.Collections" version="4.3.0" />
+        <dependency id="System.Collections.Concurrent" version="4.3.0" />
+        <dependency id="System.Diagnostics.Debug" version="4.3.0" />
+        <dependency id="System.Diagnostics.Tools" version="4.3.0" />
+        <dependency id="System.Net.NameResolution" version="4.3.0" />
+        <dependency id="System.Net.Security" version="4.3.2" />
+        <dependency id="System.Net.Sockets" version="4.3.0" />
+        <dependency id="System.Reflection" version="4.3.0" />
+        <dependency id="System.Resources.ResourceManager" version="4.3.0" />
+        <dependency id="System.Runtime" version="4.3.0" />
+        <dependency id="System.Runtime.Extensions" version="4.3.0" />
+        <dependency id="System.Security.Claims" version="4.3.0" />
+        <dependency id="System.Security.Principal" version="4.3.0" />
+        <dependency id="System.Threading" version="4.3.0" />
+        <dependency id="System.Threading.Tasks" version="4.3.0" />
+        <dependency id="System.Threading.Thread" version="4.3.0" />
+        <dependency id="System.Threading.ThreadPool" version="4.3.0" />
+        <dependency id="System.Threading.Timer" version="4.3.0" />
       </group>
     </dependencies>
   </metadata>
