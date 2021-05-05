@@ -248,7 +248,7 @@ namespace Test.Amqp
 
             string testName = "ConnectionHeartBeatCloseTimeoutTest";
 
-            typeof(Connection).GetField("HeartBeatCloseTimeout", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 800);
+            typeof(Connection).GetField("HeartBeatCloseTimeout", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 100);
             bool closeCalled = false;
 
             Open open = new Open() { ContainerId = testName, IdleTimeOut = 1000, HostName = this.address.Host };
@@ -257,7 +257,7 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
             sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-            Thread.Sleep(2000);
+            Thread.Sleep(2200);
             Assert.IsTrue(closeCalled);
         }
 

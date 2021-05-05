@@ -898,7 +898,7 @@ namespace Test.Amqp
 
 #if !NETMF && !NETFX_CORE
         [TestMethod]
-        public void ProtocolHandler()
+        public void TestMethod_ProtocolHandler()
         {
             string testName = "ProtocolHandler";
             int nMsgs = 5;
