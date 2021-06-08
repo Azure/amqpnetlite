@@ -212,7 +212,7 @@ namespace Amqp
             }
             catch (TimeoutException)
             {
-                this.OnTimeout(message);
+                this.Cancel(message);
                 throw;
             }
         }
