@@ -110,7 +110,7 @@ namespace Amqp
             bool signaled = acked.WaitOne(waitMilliseconds);
             if (!signaled)
             {
-                this.OnTimeout(message);
+                this.Cancel(message);
                 throw new TimeoutException(Fx.Format(SRAmqp.AmqpTimeout, "send", waitMilliseconds, "message"));
             }
 
@@ -215,7 +215,12 @@ namespace Amqp
             this.WriteDelivery(delivery);
         }
 
-        void OnTimeout(Message message)
+        /// <summary>
+        /// Removes the message from the internal outgoing list if it hasn't been sent yet.
+        /// Issues released disposition frame for inflight message.
+        /// </summary>
+        /// <param name="message">The message to cancel.</param>
+        public void Cancel(Message message)
         {
             lock (this.ThisLock)
             {
