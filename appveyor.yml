@@ -8,7 +8,7 @@ environment:
   matrix:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       FRAMEWORKS_TO_BUILD: REST_OF_FRAMEWORKS
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       FRAMEWORKS_TO_BUILD: NANOFRAMEWORK
 
 before_build:
@@ -73,9 +73,9 @@ before_build:
       $webClient.DownloadFile("http://vsixgallery.com/feed/author/nanoframework", $vsixFeedXml)
       [xml]$feedDetails = Get-Content $vsixFeedXml
 
-      # assuming this is building on VS2017 only
-      $extensionUrl = $feedDetails.feed.entry[0].content.src
-      $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2017.Extension.zip"
+      # assuming this is building on VS2019 only
+      $extensionUrl = $feedDetails.feed.entry[1].content.src
+      $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2019.Extension.zip"
 
       # download VS extension
       Write-Debug "Download VSIX file from $extensionUrl to $vsixPath"
