@@ -89,7 +89,7 @@ before_build:
 
       # copy build files to msbuild location
       Write-Debug "Copy build files to msbuild location"
-      $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\MSBuild"
+      $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild"
       Copy-Item -Path "$($env:USERPROFILE)\nf-extension\`$MSBuild\nanoFramework" -Destination $msbuildPath -Recurse
 
       'OK' | Write-Host -ForegroundColor Green
