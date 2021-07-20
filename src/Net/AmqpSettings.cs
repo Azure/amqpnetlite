@@ -68,7 +68,8 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Gets or sets the open.idle-time-out field.
+        /// Gets or sets the connection idle timeout. Half the value is set
+        /// as the value of open.idle-time-out field.
         /// </summary>
         public int IdleTimeout
         {

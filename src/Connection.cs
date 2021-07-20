@@ -218,13 +218,13 @@ namespace Amqp
                     HostName = amqpSettings.HostName ?? this.address.Host,
                     ChannelMax = this.channelMax,
                     MaxFrameSize = this.maxFrameSize,
-                    IdleTimeOut = (uint)amqpSettings.IdleTimeout
+                    IdleTimeOut = (uint)amqpSettings.IdleTimeout / 2
                 };
             }
 
             if (open.IdleTimeOut > 0)
             {
-                this.heartBeat = new HeartBeat(this, open.IdleTimeOut);
+                this.heartBeat = new HeartBeat(this, open.IdleTimeOut * 2);
             }
 
             this.SendHeader();
@@ -433,7 +433,7 @@ namespace Amqp
 
             if (open.IdleTimeOut > 0)
             {
-                this.heartBeat = new HeartBeat(this, open.IdleTimeOut);
+                this.heartBeat = new HeartBeat(this, open.IdleTimeOut * 2);
             }
 
             ITransport transport;
@@ -848,7 +848,7 @@ namespace Amqp
 
             public void Start(uint remote)
             {
-                this.remote = remote / 2;
+                this.remote = remote;
                 this.lastSend = DateTime.UtcNow;
                 this.lastReceive = DateTime.UtcNow;
                 this.SetTimer();

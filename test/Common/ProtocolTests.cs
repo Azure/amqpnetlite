@@ -209,14 +209,16 @@ namespace Test.Amqp
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
-                Open open = new Open() { ContainerId = testName, HostName = "localhost", IdleTimeOut = 1000 };
+                Open open = new Open() { ContainerId = testName, HostName = "localhost", IdleTimeOut = 500 };
                 Connection connection = new Connection(this.address, null, open, null);
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                Thread.Sleep(1200);
                 var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
+                Thread.Sleep(600);
+                Assert.IsTrue(!connection.IsClosed, "connection should not be closed");
+                Thread.Sleep(600);
                 Assert.IsTrue(connection.IsClosed, "connection not closed");
             }
 

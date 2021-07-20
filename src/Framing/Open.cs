@@ -82,6 +82,7 @@ namespace Amqp.Framing
         /// <summary>
         /// Gets or sets the idle-time-out field (index=4).
         /// </summary>
+        /// <remarks>To avoid spurious timeouts, the value SHOULD be half the actual timeout threshold.</remarks>
         public uint IdleTimeOut
         {
             get { return this.GetField(4, this.idleTimeOut, 0u); }
