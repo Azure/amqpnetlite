@@ -125,6 +125,9 @@
     <Compile Include="..\src\Listener\ListenerLink.cs">
       <Link>Listener\ListenerLink.cs</Link>
     </Compile>
+    <Compile Include="..\src\MessageDelivery.cs">
+      <Link>MessageDelivery.cs</Link>
+    </Compile>
     <Compile Include="..\src\Net\IConnectionFactory.cs" />
     <Compile Include="..\src\Net\TcpKeepAliveSettings.cs" />
     <Compile Include="..\src\Net\TransportProvider.cs" />

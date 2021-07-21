@@ -21,7 +21,7 @@ namespace Amqp
     using Amqp.Types;
     using Amqp.Handler;
 
-    class Delivery : IDelivery, INode
+    sealed class Delivery : IDelivery, INode
     {
         Message message;
 
@@ -56,7 +56,16 @@ namespace Amqp
         public Message Message
         {
             get { return this.message; }
-            set { this.message = value; value.Delivery = this; }
+            set
+            {
+                if (value.Delivery != null)
+                {
+                    value.Delivery.message = null;
+                }
+
+                this.message = value;
+                this.message.Delivery = this;
+            }
         }
 
         public static void ReleaseAll(Delivery delivery, Error error)
@@ -94,6 +103,12 @@ namespace Amqp
         {
             this.State = state;
             this.Link.OnDeliveryStateChanged(this);
+        }
+
+        public void Dispose()
+        {
+            this.Buffer.ReleaseReference();
+            this.message = null;
         }
     }
 }

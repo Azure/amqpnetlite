@@ -63,6 +63,9 @@
       <Link>Handler\IDelivery.cs</Link>
     </Compile>
     <Compile Include="..\src\IAmqpObject.cs" />
+    <Compile Include="..\src\MessageDelivery.cs">
+      <Link>MessageDelivery.cs</Link>
+    </Compile>
     <Compile Include="..\src\Net35\TcpTransport.cs">
       <Link>Internal\TcpTransport.cs</Link>
     </Compile>

@@ -133,6 +133,9 @@
     <Compile Include="..\src\Listener\X509Identity.cs">
       <Link>Listener\X509Identity.cs</Link>
     </Compile>
+    <Compile Include="..\src\MessageDelivery.cs">
+      <Link>MessageDelivery.cs</Link>
+    </Compile>
     <Compile Include="..\src\Net\IConnectionFactory.cs" />
     <Compile Include="..\src\Net\Map.Net.cs">
       <Link>Types\Map.Net.cs</Link>

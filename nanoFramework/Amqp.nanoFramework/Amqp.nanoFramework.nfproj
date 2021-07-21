@@ -176,6 +176,9 @@
     <Compile Include="..\..\src\Message.cs">
       <Link>Message.cs</Link>
     </Compile>
+    <Compile Include="..\..\src\MessageDelivery.cs">
+      <Link>MessageDelivery.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>

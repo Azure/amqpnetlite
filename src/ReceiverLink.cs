@@ -241,8 +241,17 @@ namespace Amqp
         /// <param name="message">The message to accept.</param>
         public void Accept(Message message)
         {
+            this.Accept(message.GetDelivery());
+        }
+
+        /// <summary>
+        /// Accepts a message. It sends an accepted outcome to the peer.
+        /// </summary>
+        /// <param name="messageDelivery">Delivery information of a message to accept.</param>
+        public void Accept(MessageDelivery messageDelivery)
+        {
             this.ThrowIfDetaching("Accept");
-            this.DisposeMessage(message, new Accepted(), null);
+            this.UpdateDelivery(messageDelivery, new Accepted(), null);
         }
 
         /// <summary>
@@ -251,8 +260,17 @@ namespace Amqp
         /// <param name="message">The message to release.</param>
         public void Release(Message message)
         {
-            this.ThrowIfDetaching("Release");
-            this.DisposeMessage(message, new Released(), null);
+            this.Release(message.GetDelivery());
+        }
+
+        /// <summary>
+        /// Releases a message. It sends a released outcome to the peer.
+        /// </summary>
+        /// <param name="messageDelivery">Delivery information of a message to release.</param>
+        public void Release(MessageDelivery messageDelivery)
+        {
+            this.ThrowIfDetaching("Accept");
+            this.UpdateDelivery(messageDelivery, new Released(), null);
         }
 
         /// <summary>
@@ -262,8 +280,18 @@ namespace Amqp
         /// <param name="error">The error, if any, for the rejection.</param>
         public void Reject(Message message, Error error = null)
         {
+            this.Reject(message.GetDelivery(), error);
+        }
+
+        /// <summary>
+        /// Rejects a message. It sends a rejected outcome to the peer.
+        /// </summary>
+        /// <param name="messageDelivery">Delivery information of a message to reject.</param>
+        /// <param name="error">The error, if any, for the rejection.</param>
+        public void Reject(MessageDelivery messageDelivery, Error error = null)
+        {
             this.ThrowIfDetaching("Reject");
-            this.DisposeMessage(message, new Rejected() { Error = error }, null);
+            this.UpdateDelivery(messageDelivery, new Rejected() { Error = error }, null);
         }
 
         /// <summary>
@@ -275,14 +303,26 @@ namespace Amqp
         /// <param name="messageAnnotations">Annotations to be combined with the current message annotations.</param>
         public void Modify(Message message, bool deliveryFailed, bool undeliverableHere = false, Fields messageAnnotations = null)
         {
+            this.Modify(message.GetDelivery(), deliveryFailed, undeliverableHere, messageAnnotations);
+        }
+
+        /// <summary>
+        /// Modifies a message. It sends a modified outcome to the peer.
+        /// </summary>
+        /// <param name="messageDelivery">Delivery information of a message to reject.</param>
+        /// <param name="deliveryFailed">If set, the message's delivery-count is incremented.</param>
+        /// <param name="undeliverableHere">Indicates if the message should not be redelivered to this endpoint.</param>
+        /// <param name="messageAnnotations">Annotations to be combined with the current message annotations.</param>
+        public void Modify(MessageDelivery messageDelivery, bool deliveryFailed, bool undeliverableHere = false, Fields messageAnnotations = null)
+        {
             this.ThrowIfDetaching("Modify");
-            this.DisposeMessage(message, new Modified()
-                {
-                    DeliveryFailed = deliveryFailed,
-                    UndeliverableHere = undeliverableHere,
-                    MessageAnnotations = messageAnnotations
-                },
-                null);
+            this.UpdateDelivery(messageDelivery, new Modified()
+            {
+                DeliveryFailed = deliveryFailed,
+                UndeliverableHere = undeliverableHere,
+                MessageAnnotations = messageAnnotations
+            },
+            null);
         }
 
         /// <summary>
@@ -297,7 +337,22 @@ namespace Amqp
         /// <paramref name="deliveryState"/>.</remarks>
         public void Complete(Message message, DeliveryState deliveryState)
         {
-            this.DisposeMessage(message, null, deliveryState);
+            this.Complete(message.GetDelivery(), deliveryState);
+        }
+
+        /// <summary>
+        /// Completes a received message. It settles the delivery and sends
+        /// a disposition with the delivery state to the remote peer.
+        /// </summary>
+        /// <param name="messageDelivery">Delivery information of a message to reject.</param>
+        /// <param name="deliveryState">An <see cref="Outcome"/> or a TransactionalState.</param>
+        /// <remarks>This method is not transaction aware. It should be used to bypass
+        /// transaction context look up when transactions are not used at all, or
+        /// to manage AMQP transactions directly by providing a TransactionalState to
+        /// <paramref name="deliveryState"/>.</remarks>
+        public void Complete(MessageDelivery messageDelivery, DeliveryState deliveryState)
+        {
+            this.UpdateDelivery(messageDelivery, null, deliveryState);
         }
 
         internal override void OnFlow(Flow flow)
@@ -476,9 +531,14 @@ namespace Amqp
         }
 
         // deliveryState overwrites outcome
-        void DisposeMessage(Message message, Outcome outcome, DeliveryState deliveryState)
+        void UpdateDelivery(MessageDelivery messageDelivery, Outcome outcome, DeliveryState deliveryState)
         {
-            Delivery delivery = message.Delivery;
+            Delivery delivery = messageDelivery.Delivery;
+            if (delivery == null)
+            {
+                throw new InvalidOperationException("Message was not delivered yet.");
+            }
+
             if (delivery == null || delivery.Link != this)
             {
                 throw new InvalidOperationException("Message was not received by this link.");

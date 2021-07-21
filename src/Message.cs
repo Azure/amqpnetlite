@@ -194,17 +194,25 @@ namespace Amqp
         }
 
         /// <summary>
+        /// Gets the information of the message delivery. It can be used to acknowledge the message
+        /// later even if the message has been disposed or discarded.
+        /// </summary>
+        /// <returns>A <see cref="MessageDelivery"/> object, or null if delivery has not happened yet.</returns>
+        public MessageDelivery GetDelivery()
+        {
+            return this.Delivery == null ? MessageDelivery.None : new MessageDelivery(this.Delivery);
+        }
+
+        /// <summary>
         /// Disposes the current message to release resources.
         /// </summary>
         public void Dispose()
         {
-#if NETFX || NETFX40 || DOTNET
-            if (this.Delivery != null &&
-                this.Delivery.Buffer != null)
+            if (this.Delivery != null)
             {
-                this.Delivery.Buffer.ReleaseReference();
+                this.Delivery.Dispose();
+                this.Delivery = null;
             }
-#endif
         }
 
         internal ByteBuffer Encode(int reservedBytes)

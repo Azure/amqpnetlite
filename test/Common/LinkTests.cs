@@ -152,6 +152,110 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_MessageDeliveryAccept()
+        {
+            string testName = "MessageDeliveryAccept";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            Message message = new Message("msg accept");
+            sender.Send(message, null, null);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            message = receiver.Receive();
+            MessageDelivery messageDelivery = message.GetDelivery();
+            message.Dispose();
+            receiver.Accept(messageDelivery);
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
+        public void TestMethod_MessageDeliveryRelease()
+        {
+            string testName = "MessageDeliveryRelease";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            Message message = new Message("msg release");
+            sender.Send(message, null, null);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            message = receiver.Receive();
+            MessageDelivery messageDelivery = message.GetDelivery();
+            message.Dispose();
+            receiver.Release(messageDelivery);
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
+        public void TestMethod_MessageDeliveryReject()
+        {
+            string testName = "MessageDeliveryReject";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            Message message = new Message("msg reject");
+            sender.Send(message, null, null);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            message = receiver.Receive();
+            MessageDelivery messageDelivery = message.GetDelivery();
+            message.Dispose();
+            receiver.Reject(messageDelivery);
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
+        public void TestMethod_MessageDeliveryModify()
+        {
+            string testName = "MessageDeliveryModify";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            Message message = new Message("msg modify");
+            sender.Send(message, null, null);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            message = receiver.Receive();
+            MessageDelivery messageDelivery = message.GetDelivery();
+            message.Dispose();
+            receiver.Modify(messageDelivery, true);
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
+        public void TestMethod_MessageDeliveryResend()
+        {
+            string testName = "MessageDeliveryResend";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            Message message = new Message("msg resend");
+            sender.Send(message, null, null);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            message = receiver.Receive();
+            MessageDelivery messageDelivery = message.GetDelivery();
+
+            message.Properties = new Properties() { GroupId = "abcdefg" };
+            sender.Send(message, null, null);
+            message.Dispose();
+
+            receiver.Accept(messageDelivery);
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ConnectionFrameSize()
         {
             string testName = "ConnectionFrameSize";

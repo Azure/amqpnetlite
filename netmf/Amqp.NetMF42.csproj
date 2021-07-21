@@ -69,6 +69,9 @@
     <Compile Include="..\src\Framing\Data.cs">
       <Link>Framing\Data.cs</Link>
     </Compile>
+    <Compile Include="..\src\MessageDelivery.cs">
+      <Link>MessageDelivery.cs</Link>
+    </Compile>
     <Compile Include="NETMF\TimeoutException.cs" />
     <Compile Include="NETMF\List.cs" />
     <Compile Include="NETMF\Map.cs" />
