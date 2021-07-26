@@ -288,7 +288,7 @@ namespace Amqp
             return 64;
         }
 
-        int GetEstimatedMessageSize()
+        public int GetEstimatedMessageSize()
         {
             int size = 0;
             if (this.Header != null) size += 64;
