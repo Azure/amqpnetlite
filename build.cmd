@@ -6,7 +6,7 @@ ECHO.
 
 SET return-code=0
 
-SET build-sln=amqp.sln amqp-dotnet.sln amqp-netmf.sln
+SET build-sln=amqp.sln
 SET build-target=build
 SET build-config=Debug
 SET build-platform=Any CPU
@@ -54,7 +54,7 @@ GOTO :args-error
 
 :args-solution
   SHIFT
-  SET build-sln=%1
+  SET build-sln=%~1
   GOTO args-loop
 :args-config
   SHIFT
@@ -166,7 +166,7 @@ IF "%MSTestPath%" == "" (
 
 ECHO.
 ECHO Running NET tests...
-"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net\Test.Amqp.Net.dll
+"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net\Test.Amqp.Net.dll /nologo
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -177,7 +177,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO Running NET40 tests...
-"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net40\Test.Amqp.Net40.dll
+"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net40\Test.Amqp.Net40.dll /nologo
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -187,7 +187,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO Running NET35 tests...
-"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net35\Test.Amqp.Net35.dll
+"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.Net35\Test.Amqp.Net35.dll /nologo
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -195,14 +195,16 @@ IF ERRORLEVEL 1 (
   GOTO :exit
 )
 
-IF "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" GOTO :done-test
+IF NOT "%build-sln:amqp.sln=%" == "%build-sln%" GOTO :run-dotnet-test
+IF NOT "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" GOTO :run-dotnet-test
+GOTO :done-test
 
 :run-dotnet-test
-ECHO Running DOTNET (.Net Core 2.0) tests...
+ECHO Running DOTNET (netcoreapp 2.1) tests...
 "%dotnetPath%" test -c %build-config% --no-build test\Test.Amqp\Test.Amqp.csproj -- no-broker
 IF ERRORLEVEL 1 (
   SET return-code=1
-  ECHO .Net Core 2. 0 Test failed!
+  ECHO dotnet Test failed!
   GOTO :exit
 )
 
@@ -225,25 +227,28 @@ IF /I "%build-config%" NEQ "Release" (
 
 IF NOT EXIST ".\Build\Packages" MKDIR ".\Build\Packages"
 ECHO Building NuGet package with version %build-version%
-IF NOT "%build-sln:amqp.sln=%" == "%build-sln%" (
-  "%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+IF NOT "%build-sln:amqp.sln=%" == "%build-sln%" GOTO :package-main
+IF NOT "%build-sln:amqp-vs2015.sln=%" == "%build-sln%" GOTO :package-main
+IF NOT "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" GOTO :package-dotnet
+GOTO :package-netmf
+:package-main
+"%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+IF ERRORLEVEL 1 (
+  SET return-code=1
+  GOTO :exit
+)
+:package-dotnet
+FOR %%G IN (AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) DO (
+  "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages" -Symbols -SymbolPackageFormat snupkg
   IF ERRORLEVEL 1 (
     SET return-code=1
     GOTO :exit
   )
 )
+:package-netmf
 IF NOT "%build-sln:amqp-netmf.sln=%" == "%build-sln%" (
   FOR %%G IN (AMQPNetLite.NetMF AMQPNetMicro) DO (
     "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
-    IF ERRORLEVEL 1 (
-      SET return-code=1
-      GOTO :exit
-    )
-  )
-)
-IF NOT "%build-sln:amqp-dotnet.sln=%" == "%build-sln%" (
-  FOR %%G IN (AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) DO (
-    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages" -Symbols -SymbolPackageFormat snupkg
     IF ERRORLEVEL 1 (
       SET return-code=1
       GOTO :exit

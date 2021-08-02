@@ -115,9 +115,9 @@ build_script:
     {
       Write-Output "Invoking build.cmd script ..."
 
-      & c:\projects\amqpnetlite\build.cmd | Write-Output
+      & c:\projects\amqpnetlite\build.cmd --solution "amqp-vs2015.sln amqp-dotnet.sln amqp-netmf.sln" | Write-Output
 
-      & c:\projects\amqpnetlite\build.cmd release | Write-Output
+      & c:\projects\amqpnetlite\build.cmd release --solution "amqp-vs2015.sln amqp-dotnet.sln amqp-netmf.sln" | Write-Output
 
     }
     Else
