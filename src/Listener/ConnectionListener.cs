@@ -780,12 +780,11 @@ namespace Amqp.Listener
 #if NETFX
         class WebSocketTransportListener : TransportListener
         {
-            readonly ConnectionListener listener;
             HttpListener httpListener;
 
             public WebSocketTransportListener(ConnectionListener listener, string scheme, string host, int port, string path)
             {
-                this.listener = listener;
+                this.Listener = listener;
 
                 // if certificate is set, it must be bound to host:port by netsh http command
                 string address = string.Format("{0}://{1}:{2}{3}", scheme, host, port, path);
@@ -831,7 +830,7 @@ namespace Amqp.Listener
             {
                 X509Certificate2 clientCertificate = null;
 
-                if (this.listener.sslSettings != null && this.listener.sslSettings.ClientCertificateRequired)
+                if (this.Listener.sslSettings != null && this.Listener.sslSettings.ClientCertificateRequired)
                 {
                     clientCertificate = await context.Request.GetClientCertificateAsync(); ;
                     if (clientCertificate == null)
@@ -839,11 +838,11 @@ namespace Amqp.Listener
                         return 40300;
                     }
 
-                    if (this.listener.sslSettings.RemoteCertificateValidationCallback != null)
+                    if (this.Listener.sslSettings.RemoteCertificateValidationCallback != null)
                     {
                         SslPolicyErrors sslError = SslPolicyErrors.None;
                         X509Chain chain = new X509Chain();
-                        chain.ChainPolicy.RevocationMode = this.listener.sslSettings.CheckCertificateRevocation ?
+                        chain.ChainPolicy.RevocationMode = this.Listener.sslSettings.CheckCertificateRevocation ?
                             X509RevocationMode.Online : X509RevocationMode.NoCheck;
                         chain.Build(clientCertificate);
                         if (chain.ChainStatus.Length > 0)
@@ -851,7 +850,7 @@ namespace Amqp.Listener
                             sslError = SslPolicyErrors.RemoteCertificateChainErrors;
                         }
 
-                        bool success = this.listener.sslSettings.RemoteCertificateValidationCallback(
+                        bool success = this.Listener.sslSettings.RemoteCertificateValidationCallback(
                             this, clientCertificate, chain, sslError);
                         if (!success)
                         {
@@ -896,7 +895,7 @@ namespace Amqp.Listener
                 }
 
                 var wsTransport = new ListenerWebSocketTransport(wsContext.WebSocket, principal);
-                await this.listener.HandleTransportAsync(wsTransport, wsContext.WebSocket);
+                await this.Listener.HandleTransportAsync(wsTransport, wsContext.WebSocket);
 
                 return 0;
             }
