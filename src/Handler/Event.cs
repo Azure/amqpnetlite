@@ -89,6 +89,24 @@ namespace Amqp.Handler
         /// Handler MUST call System.Net.Security.SslStream.AuthenticateAsClient(string) or one of its overloads.
         /// </summary>
         SslAuthenticate,
+#if NETFX || NETFX40 || DOTNET
+        /// <summary>
+        /// A System.Net.Sockets.Socket (<see cref="Event.Context"/>) is accepted.
+        /// </summary>
+        SocketAccept,
+        /// <summary>
+        /// A System.Net.HttpListenerContext (<see cref="Event.Context"/>) is accepted in the WebSockets listener.
+        /// </summary>
+        HttpAccept,
+        /// <summary>
+        /// A System.Net.WebSockets.WebSocketContext (<see cref="Event.Context"/>) is accepted.
+        /// </summary>
+        WebSocketAccept,
+        /// <summary>
+        /// A <see cref="Amqp.Listener.ListenerConnection"/> is accepted.
+        /// </summary>
+        ConnectionAccept,
+#endif
     }
 
     /// <summary>

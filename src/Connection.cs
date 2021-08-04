@@ -109,9 +109,9 @@ namespace Amqp
         internal const ushort DefaultMaxSessions = 256;
         internal const int DefaultMaxLinksPerSession = 64;
         internal static int HeartBeatCloseTimeout = 20 * 1000;
-        const uint MaxIdleTimeout = 30 * 60 * 1000;
         readonly Address address;
         readonly OnOpened onOpened;
+        readonly object lockObject;
         IHandler handler;
         Session[] localSessions;
         Session[] remoteSessions;
@@ -122,7 +122,6 @@ namespace Amqp
         ITransport writer;
         Pump reader;
         HeartBeat heartBeat;
-        private readonly object lockObject = new object();
 
         Connection(Address address, ushort channelMax, uint maxFrameSize)
         {
@@ -132,6 +131,7 @@ namespace Amqp
             this.remoteMaxFrameSize = uint.MaxValue;
             this.localSessions = new Session[1];
             this.remoteSessions = new Session[1];
+            this.lockObject = new object();
         }
 
         /// <summary>

@@ -17,11 +17,10 @@
 
 namespace Amqp.Listener
 {
-    using System;
-    using System.Security.Principal;
-    using System.Threading;
     using Amqp.Framing;
     using Amqp.Handler;
+    using System.Collections.Generic;
+    using System.Security.Principal;
 
     /// <summary>
     /// An AMQP connection used by the listener.
@@ -30,6 +29,7 @@ namespace Amqp.Listener
     {
         readonly static OnOpened onOpened = OnOpen;
         readonly ConnectionListener listener;
+        Dictionary<string, object> properties;
 
         internal ListenerConnection(ConnectionListener listener, Address address, IHandler handler, IAsyncTransport transport)
             : base(listener.BufferManager, listener.AMQP, address, transport, null, onOpened, handler)
@@ -45,6 +45,14 @@ namespace Amqp.Listener
         {
             get;
             internal set;
+        }
+
+        /// <summary>
+        /// Custom properties attached to the connection. This is not thread safe.
+        /// </summary>
+        public IDictionary<string, object> Properties
+        {
+            get { return this.properties ?? (this.properties = new Dictionary<string, object>()); }
         }
 
         internal ConnectionListener Listener
