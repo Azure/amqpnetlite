@@ -288,6 +288,9 @@ namespace Amqp
             return 64;
         }
 
+        /// <summary>
+        /// Gets estimated message size in bytes.
+        /// </summary>
         public int GetEstimatedMessageSize()
         {
             int size = 0;
