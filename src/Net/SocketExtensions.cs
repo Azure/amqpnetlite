@@ -34,8 +34,10 @@ namespace Amqp
             // but it seems that the value is passed to the PAL implementation
             // so it should work if the runtime supports it.
             // 3 = TcpKeepAliveTime, 17 = TcpKeepAliveInterval
-            socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, (int)settings.KeepAliveTime);
-            socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, (int)settings.KeepAliveInterval);
+            int timeInSeconds = (int)Math.Ceiling(settings.KeepAliveTime / 1000.0);
+            int intervalInSeconds = (int)Math.Ceiling(settings.KeepAliveInterval / 1000.0);
+            socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, timeInSeconds);
+            socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, intervalInSeconds);
 #else
             // This is only supported on Windows
 

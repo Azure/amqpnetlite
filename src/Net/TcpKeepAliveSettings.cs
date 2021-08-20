@@ -6,7 +6,7 @@
     public class TcpKeepAliveSettings
     {
         /// <summary>
-        /// How often a keep-alive transmission is sent to an idle connection.
+        /// Gets or sets a value in milliseconds that defines how often a keep-alive transmission is sent to an idle connection.
         /// </summary>
         public uint KeepAliveTime
         {
@@ -15,7 +15,8 @@
         }
 
         /// <summary>
-        /// How often a keep-alive transmission is sent when no response is received from previous keep-alive transmissions.
+        /// Gets or sets a value in milliseconds that defines how often a keep-alive transmission
+        /// is sent when no response is received from previous keep-alive transmissions.
         /// </summary>
         public uint KeepAliveInterval
         {
