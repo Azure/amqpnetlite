@@ -288,7 +288,10 @@ namespace Amqp
             return 64;
         }
 
-        int GetEstimatedMessageSize()
+        /// <summary>
+        /// Gets estimated message size in bytes.
+        /// </summary>
+        public int GetEstimatedMessageSize()
         {
             int size = 0;
             if (this.Header != null) size += 64;
