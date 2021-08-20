@@ -101,6 +101,43 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.Topic", "Example
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.WebSockets", "Examples\ServiceBus\ServiceBus.WebSockets\ServiceBus.WebSockets.csproj", "{F0A0D04C-6665-43C2-A3A3-870248A331B9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{2C1E7783-D923-4653-8C1D-5D3BC347E389}"
+	ProjectSection(SolutionItems) = preProject
+		docs\docfx.json = docs\docfx.json
+		docs\index.md = docs\index.md
+		docs\toc.yml = docs\toc.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "articles", "articles", "{4B8415BB-E1D9-46D8-978C-A2F16F7088B1}"
+	ProjectSection(SolutionItems) = preProject
+		docs\articles\azure_eventhubs.md = docs\articles\azure_eventhubs.md
+		docs\articles\buffer_management.md = docs\articles\buffer_management.md
+		docs\articles\building_application.md = docs\articles\building_application.md
+		docs\articles\contributing.md = docs\articles\contributing.md
+		docs\articles\device_to_iothub.md = docs\articles\device_to_iothub.md
+		docs\articles\fault_tolerance.md = docs\articles\fault_tolerance.md
+		docs\articles\hello_amqp.md = docs\articles\hello_amqp.md
+		docs\articles\installation.md = docs\articles\installation.md
+		docs\articles\listener.md = docs\articles\listener.md
+		docs\articles\serialization.md = docs\articles\serialization.md
+		docs\articles\service_to_iothub.md = docs\articles\service_to_iothub.md
+		docs\articles\test_amqp_broker.md = docs\articles\test_amqp_broker.md
+		docs\articles\toc.yml = docs\articles\toc.yml
+		docs\articles\tracing.md = docs\articles\tracing.md
+		docs\articles\versioning.md = docs\articles\versioning.md
+		docs\articles\working_with_code.md = docs\articles\working_with_code.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "template", "template", "{4118D874-F237-461F-BF6F-D125EDF24EE9}"
+	ProjectSection(SolutionItems) = preProject
+		docs\template\index.html.tmpl = docs\template\index.html.tmpl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "styles", "styles", "{7495B426-C91E-4906-80E3-8EAAC817BB6C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\template\styles\main.css = docs\template\styles\main.css
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -703,6 +740,9 @@ Global
 		{D1E69C74-4A33-4079-9665-8818A8479FFB} = {E3CBF770-CCE2-488B-8E2A-4EB3AD17ABA7}
 		{D454DB5E-820F-4A92-B31E-A41A9D20B086} = {E3CBF770-CCE2-488B-8E2A-4EB3AD17ABA7}
 		{F0A0D04C-6665-43C2-A3A3-870248A331B9} = {E3CBF770-CCE2-488B-8E2A-4EB3AD17ABA7}
+		{4B8415BB-E1D9-46D8-978C-A2F16F7088B1} = {2C1E7783-D923-4653-8C1D-5D3BC347E389}
+		{4118D874-F237-461F-BF6F-D125EDF24EE9} = {2C1E7783-D923-4653-8C1D-5D3BC347E389}
+		{7495B426-C91E-4906-80E3-8EAAC817BB6C} = {4118D874-F237-461F-BF6F-D125EDF24EE9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {74AA3680-FF95-46BF-9CDD-F19BB0CE5F56}
