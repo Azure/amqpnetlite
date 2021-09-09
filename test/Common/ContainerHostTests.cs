@@ -888,6 +888,25 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostListenerCustomSaslMechanismTest()
+        {
+            string name = "ContainerHostListenerCustomSaslMechanismTest";
+            var serverSaslProfile = new CustomSaslProfile(name);
+            this.host.Listeners[0].SASL.EnableMechanism(name, serverSaslProfile);
+            this.host.RegisterMessageProcessor(name, new TestMessageProcessor());
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = new CustomSaslProfile(name);
+            var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).Result;
+            var session = new Session(connection);
+            var sender = new SenderLink(session, name, name);
+            sender.Send(new Message("msg1"), Timeout);
+            connection.Close();
+
+            Assert.IsTrue(serverSaslProfile.Transport != null);
+        }
+
+        [TestMethod]
         public void ContainerHostSaslPlainNegativeTest()
         {
             var addressWithInvalidPassword = new Address("amqp://guest:invalid@localhost:15672");
@@ -1395,9 +1414,11 @@ namespace Test.Amqp
         {
         }
 
+        public ITransport Transport { get; private set;}
+
         protected override ITransport UpgradeTransport(ITransport transport)
         {
-            return transport;
+            return this.Transport = transport;
         }
 
         protected override DescribedList GetStartCommand(string hostname)
@@ -1411,6 +1432,11 @@ namespace Test.Amqp
 
         protected override DescribedList OnCommand(DescribedList command)
         {
+            if (command.Descriptor.Code == 0x0000000000000041 /* SaslInit.Code */)
+            {
+                return new SaslOutcome() { Code = SaslCode.Ok };
+            }
+
             return null;
         }
     }

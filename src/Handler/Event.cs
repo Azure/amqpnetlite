@@ -95,6 +95,10 @@ namespace Amqp.Handler
         /// </summary>
         SocketAccept,
         /// <summary>
+        /// A System.Net.Security.SslStream (<see cref="Event.Context"/>) is accepted.
+        /// </summary>
+        SslStreamAccept,
+        /// <summary>
         /// A System.Net.HttpListenerContext (<see cref="Event.Context"/>) is accepted in the WebSockets listener.
         /// </summary>
         HttpAccept,

@@ -36,7 +36,7 @@ namespace Amqp
     {
         async Task<IConnection> IConnectionFactory.CreateAsync(Address address)
         {
-            return await this.CreateAsync(address, null, null);
+            return await this.CreateAsync(address, null, null).ConfigureAwait(false);
         }
     }
 }

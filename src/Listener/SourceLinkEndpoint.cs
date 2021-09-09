@@ -78,7 +78,7 @@ namespace Amqp.Listener
         {
             while (!this.link.IsDetaching)
             {
-                ReceiveContext receiveContext = await this.messageSource.GetMessageAsync(this.link);
+                ReceiveContext receiveContext = await this.messageSource.GetMessageAsync(this.link).ConfigureAwait(false);
                 if (receiveContext != null)
                 {
                     try

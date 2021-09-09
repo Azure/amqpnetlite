@@ -152,14 +152,14 @@ namespace Amqp
             }
 
 #if !NETFX40
-            Task task = await Task.WhenAny(tcs.Task, Task.Delay(timeout));
+            Task task = await Task.WhenAny(tcs.Task, Task.Delay(timeout)).ConfigureAwait(false);
             if (task != tcs.Task)
             {
                 tcs.TrySetException(new TimeoutException(Fx.Format(SRAmqp.AmqpTimeout,
                     "close", timeout, this.GetType().Name)));
             }
 #endif
-            await tcs.Task;
+            await tcs.Task.ConfigureAwait(false);
         }
     }
 

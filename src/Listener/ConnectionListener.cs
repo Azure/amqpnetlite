@@ -245,7 +245,7 @@ namespace Amqp.Listener
             if (this.saslSettings != null)
             {
                 ListenerSaslProfile profile = new ListenerSaslProfile(this);
-                transport = await profile.NegotiateAsync(transport);
+                transport = await profile.NegotiateAsync(transport).ConfigureAwait(false);
                 principal = profile.GetPrincipal();
             }
 
@@ -278,7 +278,7 @@ namespace Amqp.Listener
 
             if (shouldClose)
             {
-                await connection.CloseAsync();
+                await connection.CloseAsync().ConfigureAwait(false);
             }
             else
             {
@@ -500,6 +500,11 @@ namespace Amqp.Listener
 
             protected override ITransport UpgradeTransport(ITransport transport)
             {
+                if (this.innerProfile != null)
+                {
+                    return this.innerProfile.UpgradeTransportInternal(transport);
+                }
+
                 return transport;
             }
 
@@ -551,7 +556,7 @@ namespace Amqp.Listener
 
         class TcpTransportListener : TransportListener
         {
-            Socket[] listenSockets;
+            readonly Socket[] listenSockets;
 
             public TcpTransportListener(ConnectionListener listener, string host, int port)
             {
@@ -630,9 +635,9 @@ namespace Amqp.Listener
                         handler.Handle(Event.Create(EventId.SocketAccept, null, context: socket));
                     }
 
-                    IAsyncTransport transport = await this.CreateTransportAsync(socket);
+                    IAsyncTransport transport = await this.CreateTransportAsync(socket, handler).ConfigureAwait(false);
 
-                    await this.Listener.HandleTransportAsync(transport, handler, socket);
+                    await this.Listener.HandleTransportAsync(transport, handler, socket).ConfigureAwait(false);
                 }
                 catch (Exception exception)
                 {
@@ -641,7 +646,7 @@ namespace Amqp.Listener
                 }
             }
 
-            protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket)
+            protected virtual Task<IAsyncTransport> CreateTransportAsync(Socket socket, IHandler handler)
             {
                 var tcs = new TaskCompletionSource<IAsyncTransport>();
                 tcs.SetResult(new ListenerTcpTransport(socket, this.Listener.BufferManager));
@@ -658,7 +663,7 @@ namespace Amqp.Listener
                     try
                     {
                         args.AcceptSocket = null;
-                        Socket acceptSocket = await socket.AcceptAsync(args, SocketFlags.None);
+                        Socket acceptSocket = await socket.AcceptAsync(args, SocketFlags.None).ConfigureAwait(false);
                         if (acceptSocket != null)
                         {
                             var task = this.HandleSocketAsync(acceptSocket);
@@ -689,13 +694,13 @@ namespace Amqp.Listener
                 this.certificate = certificate;
             }
 
-            protected override async Task<IAsyncTransport> CreateTransportAsync(Socket socket)
+            protected override async Task<IAsyncTransport> CreateTransportAsync(Socket socket, IHandler handler)
             {
                 SslStream sslStream;
                 if (this.Listener.sslSettings == null)
                 {
                     sslStream = new SslStream(new NetworkStream(socket));
-                    await sslStream.AuthenticateAsServerAsync(this.certificate);
+                    await sslStream.AuthenticateAsServerAsync(this.certificate).ConfigureAwait(false);
                 }
                 else
                 {
@@ -703,7 +708,12 @@ namespace Amqp.Listener
                         this.Listener.sslSettings.RemoteCertificateValidationCallback);
 
                     await sslStream.AuthenticateAsServerAsync(this.certificate, this.Listener.sslSettings.ClientCertificateRequired,
-                        this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation);
+                        this.Listener.sslSettings.Protocols, this.Listener.sslSettings.CheckCertificateRevocation).ConfigureAwait(false);
+                }
+
+                if (handler != null && handler.CanHandle(EventId.SslStreamAccept))
+                {
+                    handler.Handle(Event.Create(EventId.SslStreamAccept, null, context: sslStream));
                 }
 
                 return new ListenerTcpTransport(sslStream, this.Listener.BufferManager);
@@ -738,7 +748,7 @@ namespace Amqp.Listener
                     {
                         var transport = await this.provider.CreateAsync(this.Listener.address);
                         IHandler handler = this.Listener.HandlerFactory?.Invoke(this.Listener);
-                        await this.Listener.HandleTransportAsync(transport, handler, null);
+                        await this.Listener.HandleTransportAsync(transport, handler, null).ConfigureAwait(false);
                     }
                     catch (ObjectDisposedException)
                     {
@@ -811,7 +821,7 @@ namespace Amqp.Listener
             {
                 try
                 {
-                    int status = await this.CreateTransportAsync(context, handler);
+                    int status = await this.CreateTransportAsync(context, handler).ConfigureAwait(false);
                     if (status != 0)
                     {
                         Trace.WriteLine(TraceLevel.Error, "Failed to create ws transport ", status);
@@ -834,7 +844,7 @@ namespace Amqp.Listener
 
                 if (this.Listener.sslSettings != null && this.Listener.sslSettings.ClientCertificateRequired)
                 {
-                    clientCertificate = await context.Request.GetClientCertificateAsync(); ;
+                    clientCertificate = await context.Request.GetClientCertificateAsync().ConfigureAwait(false);
                     if (clientCertificate == null)
                     {
                         return 40300;
@@ -889,14 +899,14 @@ namespace Amqp.Listener
                     return 40003;
                 }
 
-                var wsContext = await context.AcceptWebSocketAsync(subProtocol);
+                var wsContext = await context.AcceptWebSocketAsync(subProtocol).ConfigureAwait(false);
                 if (handler != null && handler.CanHandle(EventId.WebSocketAccept))
                 {
                     handler.Handle(Event.Create(EventId.WebSocketAccept, null, context: wsContext));
                 }
 
                 var wsTransport = new ListenerWebSocketTransport(wsContext.WebSocket, principal);
-                await this.Listener.HandleTransportAsync(wsTransport, handler, wsContext.WebSocket);
+                await this.Listener.HandleTransportAsync(wsTransport, handler, wsContext.WebSocket).ConfigureAwait(false);
 
                 return 0;
             }
@@ -907,7 +917,7 @@ namespace Amqp.Listener
                 {
                     try
                     {
-                        HttpListenerContext context = await this.httpListener.GetContextAsync();
+                        HttpListenerContext context = await this.httpListener.GetContextAsync().ConfigureAwait(false);
 
                         IHandler handler = this.Listener.HandlerFactory?.Invoke(this.Listener);
                         if (handler != null && handler.CanHandle(EventId.HttpAccept))
