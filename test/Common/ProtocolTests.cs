@@ -101,6 +101,36 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ConnectionWithUserOpenTest()
+        {
+            string testName = "ConnectionWithUserOpenTest";
+            List receivedOpen = null;
+            this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
+            {
+                receivedOpen = fields;
+                return TestOutcome.Continue;
+            });
+
+            Task.Factory.StartNew(async () =>
+            {
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.AMQP.MaxFrameSize = 2048;
+                factory.AMQP.MaxSessionsPerConnection = 10;
+
+                Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 4096, ChannelMax = 128 };
+                Connection connection = await factory.CreateAsync(this.address, open, null);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                await connection.CloseAsync();
+
+                Assert.IsTrue(receivedOpen != null);
+                Assert.AreEqual(open.MaxFrameSize, receivedOpen[2]);
+                Assert.AreEqual(open.ChannelMax, receivedOpen[3]);
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
         public void RemoteSessionChannelTest()
         {
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>

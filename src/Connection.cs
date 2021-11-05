@@ -197,9 +197,19 @@ namespace Amqp
         }
 
 #if NETFX || NETFX40 || DOTNET || NETFX_CORE || WINDOWS_STORE || WINDOWS_PHONE
+        static ushort GetChannelMax(AmqpSettings amqpSettings, Open open)
+        {
+            return open != null ? open.ChannelMax : (ushort)(amqpSettings.MaxSessionsPerConnection - 1);
+        }
+
+        static uint GetMaxFrameSize(AmqpSettings amqpSettings, Open open)
+        {
+            return open != null ? open.MaxFrameSize : (uint)amqpSettings.MaxFrameSize;
+        }
+
         internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
             IAsyncTransport transport, Open open, OnOpened onOpened, IHandler handler)
-            : this(address, (ushort)(amqpSettings.MaxSessionsPerConnection - 1), (uint)amqpSettings.MaxFrameSize)
+            : this(address, GetChannelMax(amqpSettings, open), GetMaxFrameSize(amqpSettings, open))
         {
             transport.SetConnection(this);
 
