@@ -45,7 +45,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Indicates if handle field was defined (index=0).
+        /// Indicates if handle field was defined.
         /// </summary>
         public bool HasHandle
         {
@@ -53,7 +53,7 @@ namespace Amqp.Framing
         }
 
         /// <summary>
-        /// Gets or sets the next-incoming-id field (index=1).
+        /// Gets or sets the next-incoming-id field (index=0).
         /// </summary>
         public uint NextIncomingId
         {

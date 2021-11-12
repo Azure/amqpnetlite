@@ -778,7 +778,7 @@ namespace Amqp
             return shouldContinue;
         }
 
-        void OnException(Exception exception)
+        internal void OnException(Exception exception)
         {
             Trace.WriteLine(TraceLevel.Error, "Exception occurred: {0}", exception.ToString());
             AmqpException amqpException = exception as AmqpException;
@@ -1042,6 +1042,11 @@ namespace Amqp
                     ProtocolHeader header = Reader.ReadHeader(this.transport);
                     this.connection.OnHeader(header);
                 }
+                catch (AmqpException amqpException)
+                {
+                    this.connection.OnException(amqpException);
+                    return;
+                }
                 catch (Exception exception)
                 {
                     this.connection.OnIoException(exception);
@@ -1055,6 +1060,10 @@ namespace Amqp
                     {
                         ByteBuffer buffer = Reader.ReadFrameBuffer(this.transport, sizeBuffer, this.connection.maxFrameSize);
                         this.connection.OnFrame(buffer);
+                    }
+                    catch (AmqpException amqpException)
+                    {
+                        this.connection.OnException(amqpException);
                     }
                     catch (Exception exception)
                     {

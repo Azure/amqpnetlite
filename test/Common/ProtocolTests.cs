@@ -101,6 +101,70 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ConnectionMaxFrameSizeNegativeTest()
+        {
+            Stream networkStream = null;
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                networkStream = stream;
+                TestListener.FRM(stream, 0x13UL, 0, channel, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, false, false,
+                    new Fields() { { new Symbol("big-string"), new string('a', 1024) } });  // flow
+                return TestOutcome.Stop;
+            });
+
+            string testName = "ConnectionMaxFrameSizeNegativeTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 512 };
+                Connection connection = new Connection(this.address, null, open, null);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+                try
+                {
+                    receiver.Receive();
+                }
+                catch (AmqpException) { }
+                Assert.IsTrue(connection.Error != null);
+                Assert.AreEqual((Symbol)ErrorCode.InvalidField, connection.Error.Condition);
+                Assert.AreEqual(ConnectionState.End, connection.ConnectionState);
+                try
+                {
+                    networkStream.WriteByte(0);
+                    Assert.IsTrue(false, "transport connection not closed");
+                }
+                catch (IOException) { }
+                catch (ObjectDisposedException) { }
+            }
+
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            networkStream = null;
+            Task.Factory.StartNew(async () =>
+            {
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.AMQP.MaxFrameSize = 512;
+                IConnection connection = await factory.CreateAsync(this.address);
+                ISession session = connection.CreateSession();
+                IReceiverLink receiver = session.CreateReceiver("receiver-" + testName, "any");
+                try
+                {
+                    await receiver.ReceiveAsync();
+                }
+                catch (AmqpException) { }
+                Assert.IsTrue(connection.Error != null);
+                Assert.AreEqual((Symbol)ErrorCode.InvalidField, connection.Error.Condition);
+                try
+                {
+                    networkStream.WriteByte(0);
+                    Assert.IsTrue(false, "transport connection not closed");
+                }
+                catch (IOException) { }
+                catch (ObjectDisposedException) { }
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
         public void ConnectionWithUserOpenTest()
         {
             string testName = "ConnectionWithUserOpenTest";

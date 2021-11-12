@@ -91,6 +91,10 @@ namespace Amqp
             {
                 await this.PumpAsync(connection.MaxFrameSize, connection.OnHeader, connection.OnFrame).ConfigureAwait(false); 
             }
+            catch (AmqpException amqpException)
+            {
+                connection.OnException(amqpException);
+            }
             catch (Exception exception)
             {
                 connection.OnIoException(exception);
