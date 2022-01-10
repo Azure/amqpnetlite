@@ -20,6 +20,7 @@
     <AppxBundle>Never</AppxBundle>
     <AllowCrossPlatformRetargeting>False</AllowCrossPlatformRetargeting>
     <IntermediateOutputPath>..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <PackageCertificateThumbprint>04523CFB02DAE8D40D906A2B7AB4D171D46EB550</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
