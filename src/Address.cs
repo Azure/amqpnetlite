@@ -44,7 +44,8 @@ namespace Amqp
         /// <summary>
         /// Initializes a new instance of the Address class from a string.
         /// </summary>
-        /// <param name="address">The string representation of the address.</param>
+        /// <param name="address">The string representation of the address. User and password in
+        /// the string, if any, MUST be URL encoded.</param>
         public Address(string address)
         {
             this.Port = -1;
@@ -57,8 +58,8 @@ namespace Amqp
         /// </summary>
         /// <param name="host">The domain of the address.</param>
         /// <param name="port">The port number of the address.</param>
-        /// <param name="user">User name for SASL PLAIN profile.</param>
-        /// <param name="password">Password for SASL PLAIN profile.</param>
+        /// <param name="user">User name for SASL PLAIN profile without URL encoding.</param>
+        /// <param name="password">Password for SASL PLAIN profile without URL encoding.</param>
         /// <param name="path">The path of the address.</param>
         /// <param name="scheme">Protocol scheme, which can be either "amqp" or "amqps".</param>
         public Address(string host, int port, string user = null, string password = null, string path = "/", string scheme = Amqps)
