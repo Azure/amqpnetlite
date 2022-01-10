@@ -202,7 +202,7 @@ namespace Amqp
                             state = ParseState.Path;
                             startIndex = i;
                         }
-                        else if (state == ParseState.Password)
+                        else if (state == ParseState.Password && this.Password != null)
                         {
                             this.Host = this.User;
                             this.User = null;
