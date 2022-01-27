@@ -130,6 +130,7 @@ namespace Test.Amqp
                 Assert.AreEqual(ConnectionState.End, connection.ConnectionState);
                 try
                 {
+                    Thread.Sleep(300);
                     networkStream.WriteByte(0);
                     Assert.IsTrue(false, "transport connection not closed");
                 }

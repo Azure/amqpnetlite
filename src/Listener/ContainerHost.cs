@@ -62,7 +62,9 @@ namespace Amqp.Listener
     ///  * After the link attach is handled, wrap it in a Target/SourceLinkEndpoint
     ///    that works with the previously implemented message processor or source.
     ///
-    /// Upon receiving an attach performative, the registered message level
+    /// Upon receiving an attach performative, the host uses the address to look up
+    /// the registered processors. If an address resolver is set, it is called first
+    /// and the result overwrites the address in attach. The registered message level
     /// processors (IMessageProcessor, IMessageSource, IRequestProcessor) are
     /// checked first. If a processor matches the address on the received attach
     /// performative, a link is automatically created and the send/receive requests
@@ -139,7 +141,7 @@ namespace Amqp.Listener
         /// </summary>
         public ContainerHost(IList<Address> addressList)
         {
-            this.containerId = string.Join("-", this.GetType().Name, Guid.NewGuid().ToString("N"));
+            this.containerId = Connection.MakeAmqpContainerId();
             this.customTransports = new Dictionary<string, TransportProvider>(StringComparer.OrdinalIgnoreCase);
             this.linkCollection = new LinkCollection(this.containerId);
             this.onLinkClosed = this.OnLinkClosed;
@@ -181,6 +183,21 @@ namespace Amqp.Listener
         public IList<ConnectionListener> Listeners
         {
             get { return this.listeners; }
+        }
+
+        /// <summary>
+        /// Gets or sets an address resolver for all processors.
+        /// </summary>
+        /// <remarks>
+        /// The resolver returns a non-null string which was registered earlier for a
+        /// processor that can handle the incoming attach request. If a null string is
+        /// returned, the host continues to search for registered processors that matches
+        /// the address exactly in the attach.
+        /// </remarks>
+        public Func<ContainerHost, Attach, string> AddressResolver
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -323,9 +340,12 @@ namespace Amqp.Listener
 
         static void ThrowIfExists<T>(string address, Dictionary<string, T> processors)
         {
-            if (processors.ContainsKey(address))
+            lock (processors)
             {
-                throw new AmqpException(ErrorCode.NotAllowed, typeof(T).Name + " processor has been registered at address " + address);
+                if (processors.ContainsKey(address))
+                {
+                    throw new AmqpException(ErrorCode.NotAllowed, typeof(T).Name + " processor has been registered at address " + address);
+                }
             }
         }
 
@@ -392,42 +412,55 @@ namespace Amqp.Listener
                 throw new AmqpException(ErrorCode.Stolen, string.Format("Link '{0}' has been attached already.", attach.LinkName));
             }
 
-            string address = attach.Role ? ((Source)attach.Source).Address : ((Target)attach.Target).Address;
-            if (string.IsNullOrWhiteSpace(address))
+            string address = null;
+            if (this.AddressResolver != null)
             {
-                throw new AmqpException(ErrorCode.InvalidField, "The address field cannot be empty");
+                address = this.AddressResolver(this, attach);
             }
 
-            if (listenerLink.Role)
+            if (address == null)
             {
-                MessageProcessor messageProcessor;
-                if (TryGetProcessor(this.messageProcessors, address, out messageProcessor))
-                {
-                    messageProcessor.AddLink(listenerLink, address);
-                    return true;
-                }
-            }
-            else
-            {
-                MessageSource messageSource;
-                if (TryGetProcessor(this.messageSources, address, out messageSource))
-                {
-                    messageSource.AddLink(listenerLink, address);
-                    return true;
-                }
+                address = attach.Role ? ((Source)attach.Source).Address : ((Target)attach.Target).Address;
             }
 
-            RequestProcessor requestProcessor;
-            if (TryGetProcessor(this.requestProcessors, address, out requestProcessor))
+            if (address != null)
             {
-                requestProcessor.AddLink(listenerLink, address, attach);
-                return true;
+                if (listenerLink.Role)
+                {
+                    MessageProcessor messageProcessor;
+                    if (TryGetProcessor(this.messageProcessors, address, out messageProcessor))
+                    {
+                        messageProcessor.AddLink(listenerLink, address);
+                        return true;
+                    }
+                }
+                else
+                {
+                    MessageSource messageSource;
+                    if (TryGetProcessor(this.messageSources, address, out messageSource))
+                    {
+                        messageSource.AddLink(listenerLink, address);
+                        return true;
+                    }
+                }
+
+                RequestProcessor requestProcessor;
+                if (TryGetProcessor(this.requestProcessors, address, out requestProcessor))
+                {
+                    requestProcessor.AddLink(listenerLink, address, attach);
+                    return true;
+                }
             }
 
             if (this.linkProcessor != null)
             {
                 this.linkProcessor.Process(new AttachContext(listenerLink, attach));
                 return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                throw new AmqpException(ErrorCode.InvalidField, "The address field cannot be empty.");
             }
 
             throw new AmqpException(ErrorCode.NotFound, "No processor was found at " + address);

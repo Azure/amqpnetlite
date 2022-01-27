@@ -5,10 +5,14 @@ ContainerHost is the easiest way to start an AMQP listener. Multiple endpoints c
 
 The application is required to register at least one of the following processors to process AMQP events. Multiple message/request processors can be registered as long as their addresses are different. At most one link processor can be registered.
 
-When the container host receives an attach performative from the remote peer,  
-(1) if a message/request processor is found at the registered address, the host creates a link endpoint for that address and all received messages are routed to that processor.  
-(2) otherwise, if a link processor is registered, the attach request is routed to the processor.  
-(3) otherwise, the attach is rejected with "amqp:not-found" error.  
+When the container host receives an attach performative from the remote peer,
+(1) if an address resolver is set, the host first calls the resolver to translate the address from the incoming attach request.
+The resolver allows the application to implement various logic for mapping a peer specified address to a listener address, which
+is used to register a processor. Common scenarios are message processor to route messages to different destinations and message
+source to serve messages from multiple nodes.
+(2) if a message/request processor is found at the registered address, the host creates a link endpoint for that address and all received messages are routed to that processor.  
+(3) otherwise, if a link processor is registered, the attach request is routed to the processor.  
+(4) otherwise, the attach is rejected with "amqp:not-found" error.
 
 Protocol behavior can be configured through the Listeners properties of the container host.
 

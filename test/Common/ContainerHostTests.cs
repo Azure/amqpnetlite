@@ -73,6 +73,7 @@ namespace Test.Amqp
 
         public void TestCleanup()
         {
+            this.host.AddressResolver = null;
             if (this.linkProcessor != null)
             {
                 this.host.UnregisterLinkProcessor(this.linkProcessor);
@@ -91,6 +92,66 @@ namespace Test.Amqp
         {
             this.linkProcessor = null;
             this.ClassCleanup();
+        }
+
+        [TestMethod]
+        public void ContainerHostAddressResolverTest()
+        {
+            string name = "router";
+            var processor = new TestMessageProcessor();
+            this.host.AddressResolver = (h, a) => name;
+            this.host.RegisterMessageProcessor(name, processor);
+
+            int count = 10;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+
+            for (int i = 0; i < count; i++)
+            {
+                var sender = new SenderLink(session, "send-link", "node" + i);
+                var message = new Message("msg" + i);
+                message.Properties = new Properties() { To = "node" + i };
+                sender.Send(message, null, null);
+                sender.Close();
+            }
+
+            session.Close();
+            connection.Close();
+
+            Assert.AreEqual(count, processor.Messages.Count);
+            for (int i = 0; i < count; i++)
+            {
+                var message = processor.Messages[i];
+                Assert.AreEqual("node" + (i % 10), message.Properties.To);
+            }
+        }
+
+        [TestMethod]
+        public void ContainerHostDynamicProcessorTest()
+        {
+            string name = "ContainerHostDynamicProcessorTest";
+            var processor = new TestMessageProcessor();
+            this.host.AddressResolver = (h, a) =>
+            {
+                h.RegisterMessageProcessor(name, processor);
+                return name;
+            };
+
+            int count = 10;
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+
+            for (int i = 0; i < count; i++)
+            {
+                var message = new Message("msg" + i);
+                message.Properties = new Properties() { GroupId = name };
+                sender.Send(message, Timeout);
+            }
+
+            sender.Close();
+            session.Close();
+            connection.Close();
         }
 
         [TestMethod]
@@ -175,6 +236,35 @@ namespace Test.Amqp
             Thread.Sleep(500);
             Assert.AreEqual(released + ignored, source.Count, string.Join(",", messages.Select(m => m.Properties.MessageId)));
             Assert.AreEqual(rejected, source.DeadLetterCount, string.Join(",", source.DeadletterMessage.Select(m => m.Properties.MessageId)));
+        }
+
+        [TestMethod]
+        public void ContainerHostAnyMessageSourceTest()
+        {
+            string name = "*";
+            int count = 10;
+            Queue<Message> messages = new Queue<Message>();
+            for (int i = 0; i < count; i++)
+            {
+                messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name + i } });
+            }
+
+            this.host.AddressResolver = (h, a) => name;
+            var source = new TestMessageSource(messages);
+            this.host.RegisterMessageSource(name, source);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "receiver0", null);
+            for (int i = 1; i <= count; i++)
+            {
+                Message message = receiver.Receive();
+                receiver.Accept(message);
+            }
+
+            receiver.Close();
+            session.Close();
+            connection.Close();
         }
 
         [TestMethod]
