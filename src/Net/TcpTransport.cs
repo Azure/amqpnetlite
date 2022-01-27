@@ -119,7 +119,7 @@ namespace Amqp
             IAsyncTransport transport;
             if (address.UseSsl)
             {
-                RemoteCertificateValidationCallback remoteCertificateValidationCallback = null;
+                RemoteCertificateValidationCallback remoteCertificateValidationCallback = Connection.DisableServerCertValidation ? noneCertValidator : null;
                 LocalCertificateSelectionCallback localCertificateSelectionCallback = null;
                 var ssl = factory.SslInternal;
                 if (ssl != null)

@@ -107,7 +107,7 @@ namespace Amqp
 
         internal const uint DefaultMaxFrameSize = 256 * 1024;
         internal const ushort DefaultMaxSessions = 256;
-        internal const int DefaultMaxLinksPerSession = 64;
+        internal const int DefaultMaxLinksPerSession = 1024;
         internal static int HeartBeatCloseTimeout = 20 * 1000;
         readonly Address address;
         readonly OnOpened onOpened;
@@ -120,7 +120,6 @@ namespace Amqp
         uint maxFrameSize;
         uint remoteMaxFrameSize;
         ITransport writer;
-        Pump reader;
         HeartBeat heartBeat;
 
         Connection(Address address, ushort channelMax, uint maxFrameSize)
@@ -142,7 +141,7 @@ namespace Amqp
         /// The connection initialization includes establishing the underlying transport,
         /// which typically has blocking network I/O. Depending on the current synchronization
         /// context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
-        /// method instead.
+        /// method instead if it is available for the platform.
         /// </remarks>
         public Connection(Address address)
             : this(address, null)
@@ -154,6 +153,12 @@ namespace Amqp
         /// </summary>
         /// <param name="address">The address.</param>
         /// <param name="handler">The protocol handler.</param>
+        /// <remarks>
+        /// The connection initialization includes establishing the underlying transport,
+        /// which typically has blocking network I/O. Depending on the current synchronization
+        /// context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
+        /// method instead if it is available for the platform.
+        /// </remarks>
         public Connection(Address address, IHandler handler)
             : this(address, DefaultMaxSessions, DefaultMaxFrameSize)
         {
@@ -174,7 +179,7 @@ namespace Amqp
         /// The connection initialization includes establishing the underlying transport,
         /// which typically has blocking network I/O. Depending on the current synchronization
         /// context, it may cause deadlock or UI freeze. Please use the ConnectionFactory.CreateAsync
-        /// method instead.
+        /// method instead if it is available for the platform.
         /// </remarks>
         public Connection(Address address, SaslProfile saslProfile, Open open, OnOpened onOpened)
             : this(address, DefaultMaxSessions, DefaultMaxFrameSize)
@@ -209,14 +214,21 @@ namespace Amqp
 
         internal Connection(IBufferManager bufferManager, AmqpSettings amqpSettings, Address address,
             IAsyncTransport transport, Open open, OnOpened onOpened, IHandler handler)
-            : this(address, GetChannelMax(amqpSettings, open), GetMaxFrameSize(amqpSettings, open))
+            : this(address, DefaultMaxSessions, DefaultMaxFrameSize)
+        {
+            this.onOpened = onOpened;
+            this.handler = handler;
+            this.Init(bufferManager, amqpSettings, transport, open);
+        }
+
+        internal void Init(IBufferManager bufferManager, AmqpSettings amqpSettings, IAsyncTransport transport, Open open)
         {
             transport.SetConnection(this);
 
-            this.handler = handler;
             this.BufferManager = bufferManager;
+            this.channelMax = GetChannelMax(amqpSettings, open);
+            this.maxFrameSize = GetMaxFrameSize(amqpSettings, open);
             this.MaxLinksPerSession = amqpSettings.MaxLinksPerSession;
-            this.onOpened = onOpened;
             this.writer = new TransportWriter(transport, this.OnIoException);
 
             // after getting the transport, move state to open pipe before starting the pump
@@ -242,12 +254,19 @@ namespace Amqp
             this.state = ConnectionState.OpenPipe;
         }
 
+        static ConnectionFactory connectionFactory;
+
         /// <summary>
-        /// Gets a factory with default settings.
+        /// Gets a factory with default settings. Any changes to the settings are
+        /// applied to the connections created from this factory instance.
         /// </summary>
+        /// <remarks>
+        /// On platforms where <seealso cref="ConnectionFactory"/> is supported, this
+        /// is also used for connections initialized by the constructors.
+        /// </remarks>
         public static ConnectionFactory Factory
         {
-            get { return new ConnectionFactory(); }
+            get { return connectionFactory ?? (connectionFactory = new ConnectionFactory()); }
         }
 
         /// <summary>
@@ -280,8 +299,14 @@ namespace Amqp
         {
             return new WrappedByteBuffer(buffer, offset, length);
         }
+
+        void Connect(SaslProfile saslProfile, Open open)
+        {
+            Factory.ConnectAsync(this.address, saslProfile, open, this).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
 #else
         internal int MaxLinksPerSession = DefaultMaxLinksPerSession;
+        Pump reader;
 
         ByteBuffer AllocateBuffer(int size)
         {
@@ -292,7 +317,70 @@ namespace Amqp
         {
             return new ByteBuffer(buffer.Buffer, offset, length, length);
         }
+
+        void Connect(SaslProfile saslProfile, Open open)
+        {
+            if (open != null)
+            {
+                this.maxFrameSize = open.MaxFrameSize;
+                this.channelMax = open.ChannelMax;
+            }
+            else
+            {
+                open = new Open()
+                {
+                    ContainerId = MakeAmqpContainerId(),
+                    HostName = this.address.Host,
+                    MaxFrameSize = this.maxFrameSize,
+                    ChannelMax = this.channelMax
+                };
+            }
+
+            if (open.IdleTimeOut > 0)
+            {
+                this.heartBeat = new HeartBeat(this, open.IdleTimeOut * 2);
+            }
+
+            ITransport transport;
+            {
+                TcpTransport tcpTransport = new TcpTransport();
+                tcpTransport.Connect(this, this.address, DisableServerCertValidation);
+                transport = tcpTransport;
+            }
+
+            try
+            {
+                if (saslProfile != null)
+                {
+                    transport = saslProfile.Open(this.address.Host, transport);
+                }
+                else if (this.address.User != null)
+                {
+                    transport = new SaslPlainProfile(this.address.User, this.address.Password).Open(this.address.Host, transport);
+                }
+            }
+            catch
+            {
+                transport.Close();
+                throw;
+            }
+
+            this.writer = new Writer(transport);
+
+            // after getting the transport, move state to open pipe before starting the pump
+            this.SendHeader();
+            this.SendOpen(open);
+            this.state = ConnectionState.OpenPipe;
+
+            this.reader = new Pump(this, transport);
+            this.reader.Start();
+        }
 #endif
+
+        internal static string MakeAmqpContainerId()
+        {
+            return "AMQPNetLite-" + Guid.NewGuid().ToString().Substring(0, 8);
+        }
 
         internal ushort AddSession(Session session)
         {
@@ -421,73 +509,6 @@ namespace Amqp
                 this.state = newState;
                 return this.state == ConnectionState.End;
             }
-        }
-
-        void Connect(SaslProfile saslProfile, Open open)
-        {
-            if (open != null)
-            {
-                this.maxFrameSize = open.MaxFrameSize;
-                this.channelMax = open.ChannelMax;
-            }
-            else
-            {
-                open = new Open()
-                {
-                    ContainerId = Guid.NewGuid().ToString(),
-                    HostName = this.address.Host,
-                    MaxFrameSize = this.maxFrameSize,
-                    ChannelMax = this.channelMax
-                };
-            }
-
-            if (open.IdleTimeOut > 0)
-            {
-                this.heartBeat = new HeartBeat(this, open.IdleTimeOut * 2);
-            }
-
-            ITransport transport;
-#if NETFX
-            if (WebSocketTransport.MatchScheme(address.Scheme))
-            {
-                WebSocketTransport wsTransport = new WebSocketTransport();
-                wsTransport.ConnectAsync(address, null).ConfigureAwait(false).GetAwaiter().GetResult();
-                transport = wsTransport;
-            }
-            else
-#endif
-            {
-                TcpTransport tcpTransport = new TcpTransport();
-                tcpTransport.Connect(this, this.address, DisableServerCertValidation);
-                transport = tcpTransport;
-            }
-
-            try
-            {
-                if (saslProfile != null)
-                {
-                    transport = saslProfile.Open(this.address.Host, transport);
-                }
-                else if (this.address.User != null)
-                {
-                    transport = new SaslPlainProfile(this.address.User, this.address.Password).Open(this.address.Host, transport);
-                }
-            }
-            catch
-            {
-                transport.Close();
-                throw;
-            }
-
-            this.writer = new Writer(transport);
-
-            // after getting the transport, move state to open pipe before starting the pump
-            this.SendHeader();
-            this.SendOpen(open);
-            this.state = ConnectionState.OpenPipe;
-
-            this.reader = new Pump(this, transport);
-            this.reader.Start();
         }
 
         void ThrowIfClosed(string operation)

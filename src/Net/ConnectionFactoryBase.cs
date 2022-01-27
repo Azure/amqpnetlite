@@ -41,7 +41,7 @@ namespace Amqp
             this.amqpSettings = new AmqpSettings()
             {
                 MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
-                ContainerId = "AMQPNetLite-" + Guid.NewGuid().ToString("N").Substring(0, 8),
+                ContainerId = Connection.MakeAmqpContainerId(),
                 IdleTimeout = int.MaxValue,
                 MaxSessionsPerConnection = Connection.DefaultMaxSessions,
                 MaxLinksPerSession = Connection.DefaultMaxLinksPerSession

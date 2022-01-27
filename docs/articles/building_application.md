@@ -74,6 +74,10 @@ undesired behavior, e.g. UI freeze if it is called from a UI thread. In these ca
 should use the `ConnectionFactory` class to perform asynchronous non-blocking creation of
 a connection.
 
+On platforms where `ConnectionFactory` is supported, the default factory (`Connection.Factory`) is
+used for all connections created by the constructors. Therefore, any change made to the settings of
+the default factory is applied to connections created afterwards.
+
 ### ConnectionFactory
 
 `ConnectionFactory` provides asynchronous connection creation, and it also gives more control

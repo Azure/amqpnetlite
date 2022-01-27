@@ -1019,6 +1019,7 @@ namespace Test.Amqp
                 }
             });
 
+            Connection.DisableServerCertValidation = true;
             Address sslAddress = new Address("amqps://guest:guest@localhost:5671");
             Connection connection = new Connection(sslAddress, handler);
             Session session = new Session(connection);

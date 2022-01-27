@@ -119,7 +119,28 @@ namespace Amqp
             return this.CreateAsync(address, open, onOpened, null);
         }
 
-        async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened, IHandler handler)
+        internal async Task ConnectAsync(Address address, SaslProfile saslProfile, Open open, Connection connection)
+        {
+            if (saslProfile == null)
+            {
+                if (address.User != null)
+                {
+                    saslProfile = new SaslPlainProfile(address.User, address.Password);
+                }
+                else if (this.saslSettings != null && this.saslSettings.Profile != null)
+                {
+                    saslProfile = this.saslSettings.Profile;
+                }
+            }
+
+            IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, connection.Handler).ConfigureAwait(false);
+            connection.Init(this.BufferManager, this.AMQP, transport, open);
+
+            AsyncPump pump = new AsyncPump(this.BufferManager, transport);
+            pump.Start(connection);
+        }
+
+        async Task<IAsyncTransport> CreateTransportAsync(Address address, SaslProfile saslProfile, IHandler handler)
         {
             IAsyncTransport transport;
             TransportProvider provider;
@@ -146,27 +167,38 @@ namespace Amqp
                 throw new NotSupportedException(address.Scheme);
             }
 
-            try
+            if (saslProfile != null)
+            {
+                try
+                {
+                    transport = await saslProfile.OpenAsync(address.Host, this.BufferManager, transport, null).ConfigureAwait(false);
+                }
+                catch
+                {
+                    transport.Close();
+                    throw;
+                }
+            }
 
+            return transport;
+        }
+
+        async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened, IHandler handler)
+        {
+            SaslProfile saslProfile = null;
+            if (address.User != null)
             {
-                if (address.User != null)
-                {
-                    SaslPlainProfile profile = new SaslPlainProfile(address.User, address.Password);
-                    transport = await profile.OpenAsync(address.Host, this.BufferManager, transport, null).ConfigureAwait(false);
-                }
-                else if (this.saslSettings != null && this.saslSettings.Profile != null)
-                {
-                    transport = await this.saslSettings.Profile.OpenAsync(address.Host, this.BufferManager, transport, null).ConfigureAwait(false);
-                }
+                saslProfile = new SaslPlainProfile(address.User, address.Password);
             }
-            catch
+            else if (this.saslSettings != null && this.saslSettings.Profile != null)
             {
-                transport.Close();
-                throw;
+                saslProfile = this.saslSettings.Profile;
             }
+
+            IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, handler).ConfigureAwait(false);
+            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport, open, onOpened, handler);
 
             AsyncPump pump = new AsyncPump(this.BufferManager, transport);
-            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport, open, onOpened, handler);
             pump.Start(connection);
 
             return connection;
