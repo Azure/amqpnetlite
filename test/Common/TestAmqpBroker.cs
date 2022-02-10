@@ -46,7 +46,7 @@ namespace Listener.IContainer
             {
                 foreach (string q in queues)
                 {
-                    this.queues.Add(q, new TestQueue(this));
+                    this.queues.Add(q, new TestQueue(this, q));
                 }
             }
             else
@@ -111,7 +111,7 @@ namespace Listener.IContainer
         {
             lock (this.queues)
             {
-                this.queues.Add(queue, new TestQueue(this));
+                this.queues.Add(queue, new TestQueue(this, queue));
             }
         }
 
@@ -220,9 +220,8 @@ namespace Listener.IContainer
                 {
                     if (dynamic || (this.implicitQueue && !link.Name.StartsWith("$explicit:")))
                     {
-                        queue = new TestQueue(this);
+                        queue = new TestQueue(this, address, !dynamic);
                         this.queues.Add(address, queue);
-                        connection.Closed += (o, e) => this.RemoveQueue(address);
                     }
                     else
                     {
@@ -361,6 +360,9 @@ namespace Listener.IContainer
         sealed class TestQueue
         {
             readonly TestAmqpBroker broker;
+            readonly string address;
+            readonly bool isImplicit;
+            readonly HashSet<Connection> connections;
             readonly LinkedList<BrokerMessage> messages;
             readonly LinkedList<Consumer> waiters;
             readonly Dictionary<int, Publisher> publishers;
@@ -368,23 +370,27 @@ namespace Listener.IContainer
             readonly object syncRoot;
             int currentId;
 
-            public TestQueue(TestAmqpBroker broker)
+            public TestQueue(TestAmqpBroker broker, string address, bool isImplicit = false)
             {
                 this.broker = broker;
+                this.address = address;
+                this.isImplicit = isImplicit;
+                this.connections = isImplicit ? new HashSet<Connection>() : null;
                 this.messages = new LinkedList<BrokerMessage>();
                 this.waiters = new LinkedList<Consumer>();
                 this.publishers = new Dictionary<int, Publisher>();
                 this.consumers = new Dictionary<int, Consumer>();
-                this.syncRoot = this.waiters;
+                this.syncRoot = new object();
             }
 
             public void CreatePublisher(ListenerLink link)
             {
                 int id = Interlocked.Increment(ref this.currentId);
                 Publisher publisher = new Publisher(this, link, id);
-                lock (this.publishers)
+                lock (this.syncRoot)
                 {
                     this.publishers.Add(id, publisher);
+                    this.OnClientConnected(link);
                 }
             }
 
@@ -392,9 +398,34 @@ namespace Listener.IContainer
             {
                 int id = Interlocked.Increment(ref this.currentId);
                 Consumer consumer = new Consumer(this, link, id);
-                lock (this.consumers)
+                lock (this.syncRoot)
                 {
                     this.consumers.Add(id, consumer);
+                    this.OnClientConnected(link);
+                }
+            }
+
+            void OnClientConnected(Link link)
+            {
+                if (this.isImplicit && !this.connections.Contains(link.Session.Connection))
+                {
+                    this.connections.Add(link.Session.Connection);
+                    link.Session.Connection.Closed += OnConnectionClosed;
+                }
+            }
+
+            void OnConnectionClosed(IAmqpObject sender, Error error)
+            {
+                if (this.isImplicit)
+                {
+                    lock (this.syncRoot)
+                    {
+                        this.connections.Remove((Connection)sender);
+                        if (this.connections.Count == 0)
+                        {
+                            this.broker.RemoveQueue(this.address);
+                        }
+                    }
                 }
             }
 
@@ -538,6 +569,14 @@ namespace Listener.IContainer
                 }
             }
 
+            void OnPublisherClosed(int id, Publisher publisher)
+            {
+                lock (this.syncRoot)
+                {
+                    this.publishers.Remove(id);
+                }
+            }
+
             void OnConsumerClosed(int id, Consumer consumer)
             {
                 lock (this.syncRoot)
@@ -576,10 +615,7 @@ namespace Listener.IContainer
 
                 void OnLinkClosed(IAmqpObject sender, Error error)
                 {
-                    lock (this.queue.publishers)
-                    {
-                        this.queue.publishers.Remove(this.id);
-                    }
+                    this.queue.OnPublisherClosed(this.id, this);
                 }
 
                 static void OnMessage(ListenerLink link, Message message, DeliveryState deliveryState, object state)
@@ -631,7 +667,6 @@ namespace Listener.IContainer
                 readonly TestQueue queue;
                 readonly ListenerLink link;
                 readonly int id;
-                int tag;
 
                 public Consumer(TestQueue queue, ListenerLink link, int id)
                 {
@@ -650,11 +685,6 @@ namespace Listener.IContainer
                 public void Signal(BrokerMessage message)
                 {
                     this.link.SendMessage(message, message.Buffer);
-                }
-
-                ArraySegment<byte> GetNextTag()
-                {
-                    return new ArraySegment<byte>(BitConverter.GetBytes(Interlocked.Increment(ref this.tag)));
                 }
 
                 void OnLinkClosed(IAmqpObject sender, Error error)

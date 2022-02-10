@@ -150,6 +150,54 @@ namespace Test.Amqp
 
             await connection.CloseAsync();
         }
+
+        [TestMethod]
+        public async Task ReceiverSenderAsync()
+        {
+            string testName = "ReceiverSenderAsync";
+
+            ConnectionFactory connectionFactory = new ConnectionFactory();
+
+            // Creating first ReceiverLink
+            Connection firstReceiverConnection = await connectionFactory.CreateAsync(this.testTarget.Address);
+            Session firstReceiverSession = new Session(firstReceiverConnection);
+            ReceiverLink firstReceiverLink = new ReceiverLink(firstReceiverSession, "receiver-link", testName);
+
+            // Does not work when creating SenderLink after first ReceiverLink
+            var senderConnection = await connectionFactory.CreateAsync(this.testTarget.Address);
+            var senderSession = new Session(senderConnection);
+            var senderLink = new SenderLink(senderSession, "sender-link", testName);
+
+            // Send and receive message
+            await senderLink.SendAsync(new Message(testName));
+            Message firstMessageReceived = await firstReceiverLink.ReceiveAsync(TimeSpan.FromMilliseconds(1000));
+
+            // Close first reveiver link
+            await firstReceiverLink.CloseAsync();
+            await firstReceiverSession.CloseAsync();
+            await firstReceiverConnection.CloseAsync();
+
+            // Creating second ReceiverLink
+            Connection secondReceiverConnection = await connectionFactory.CreateAsync(this.testTarget.Address);
+            Session secondReceiverSession = new Session(secondReceiverConnection);
+            ReceiverLink secondReceiverLink = new ReceiverLink(secondReceiverSession, "receiver-link", testName);
+
+            // Send and receive message
+            await senderLink.SendAsync(new Message(testName));
+            Message message = await secondReceiverLink.ReceiveAsync(TimeSpan.FromMilliseconds(1000));
+            Assert.IsTrue(message != null, "No message received");
+            secondReceiverLink.Accept(message);
+
+            // Close second reveiver link
+            await secondReceiverLink.CloseAsync();
+            await secondReceiverSession.CloseAsync();
+            await secondReceiverConnection.CloseAsync();
+
+            // Close sender link
+            await senderLink.CloseAsync();
+            await senderSession.CloseAsync();
+            await senderConnection.CloseAsync();
+        }
 #endif
 
 #if NETFX40

@@ -15,7 +15,9 @@ At least one Uri should be specified. Multiple are allowed (typically one for "a
 
 If "amqps" Uri is present, the "cert" option must exist to specify a server certificate for the Tls listener.
 
-If "queues" option is present, the broker is preconfigured with a list of queues. If it does not exist, the broker implicitly creates a queue upon an attach request and deletes it when the associated connection is closed. This allows running the tests easily without creating or draining the queue. Note that this is different from AMQP dynamic nodes. You can still create dynamic nodes through the protocol.
+If "queues" option is present, the broker is preconfigured with a list of queues. If it does not exist, the broker implicitly creates a queue upon the first attach request
+and deletes it when the last connection is closed. This allows running the tests easily without creating or draining the queue. Note that this is different from AMQP dynamic nodes.
+You can still create dynamic nodes through the protocol.
 
 When "trace" option is specified, the traces will be printed to the console window.
 
