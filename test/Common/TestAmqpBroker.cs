@@ -486,7 +486,7 @@ namespace Listener.IContainer
                 }
             }
 
-            void Dequeue(Consumer consumer, int credit)
+            void Dequeue(Consumer consumer, int credit, bool drain)
             {
                 List<BrokerMessage> messageList = new List<BrokerMessage>();
                 lock (this.syncRoot)
@@ -523,7 +523,11 @@ namespace Listener.IContainer
                         }
                     }
 
-                    if (consumer.Credit > 0)
+                    if (drain)
+                    {
+                        consumer.Credit = 0;
+                    }
+                    else if (consumer.Credit > 0)
                     {
                         this.waiters.AddLast(consumer);
                     }
@@ -696,7 +700,12 @@ namespace Listener.IContainer
                 static void OnCredit(int credit, Fields properties, object state)
                 {
                     var thisPtr = (Consumer)state;
-                    thisPtr.queue.Dequeue(thisPtr, credit);
+                    thisPtr.queue.Dequeue(thisPtr, credit, thisPtr.link.IsDraining);
+                    if (thisPtr.link.IsDraining)
+                    {
+                        thisPtr.Credit = 0;
+                        thisPtr.link.CompleteDrain();
+                    }
                 }
 
                 static void OnDispose(Message message, DeliveryState deliveryState, bool settled, object state)

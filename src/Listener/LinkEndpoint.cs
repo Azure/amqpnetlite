@@ -53,7 +53,9 @@ namespace Amqp.Listener
         /// </summary>
         /// <param name="flowContext">Context of the received flow performative.</param>
         /// <remarks>
-        /// A sending endpoint should send messages per the requested message count.
+        /// A sending endpoint should send messages per the requested message count. If not enough
+        /// messages are available, it should also check <see cref="ListenerLink.IsDraining"/> and
+        /// call <see cref="ListenerLink.CompleteDrain"/>.
         /// A receiving endpoint may receive a flow if the sender wants to exchange flow
         /// state or send custom properties.
         /// </remarks>

@@ -32,6 +32,7 @@ namespace Amqp.Listener
         object state;
         SequenceNumber deliveryCount;
         uint credit;
+        bool drain;
 
         // caller can initialize the link for an endpoint, a sender or a receiver
         // based on its needs.
@@ -85,6 +86,14 @@ namespace Amqp.Listener
             get { return this.state; }
         }
 
+        /// <summary>
+        /// Gets a value that indicates whether the link is in drain mode (applicable when the link is in sender role).
+        /// </summary>
+        public bool IsDraining
+        {
+            get { return this.drain; }
+        }
+
         internal uint Credit
         {
             get { return this.credit; }
@@ -112,6 +121,10 @@ namespace Amqp.Listener
         /// <param name="onCredit">The callback to be invoked when delivery limit changes (by received flow performatives).</param>
         /// <param name="onDispose">The callback to be invoked when disposition is received.</param>
         /// <param name="state">The user state attached to the link.</param>
+        /// <remarks>
+        /// In the <see cref="onCredit"/> callback, if the application does not have enough messages to satisfy the credits, it should check the
+        /// <see cref="IsDraining"/> property. If the value is true, it should discard remaining credits and call <see cref="CompleteDrain"/>.
+        /// </remarks>
         public void InitializeSender(Action<int, Fields, object> onCredit, Action<Message, DeliveryState, bool, object> onDispose, object state)
         {
             ThrowIfNotNull(this.linkEndpoint, "endpoint");
@@ -241,6 +254,27 @@ namespace Amqp.Listener
             }
         }
 
+        /// <summary>
+        /// Completes the drain mode. The library will comsume all availble link credits and send a flow to the remote peer.
+        /// </summary>
+        /// <remarks>
+        /// The application should reset any credits that it may keep before calling this function. After this, the application
+        /// should not send any messages, when they are available, until it receives another onCredit callback with credits.
+        /// </remarks>
+        public void CompleteDrain()
+        {
+            lock (this.ThisLock)
+            {
+                if (this.drain)
+                {
+                    this.deliveryCount += (int)this.credit;
+                    this.credit = 0;
+                    this.drain = false;
+                    this.SendFlow(this.deliveryCount, this.credit, this.drain);
+                }
+            }
+        }
+
         internal void SafeAddClosed(ClosedCallback callback)
         {
             this.Closed += callback;
@@ -359,6 +393,7 @@ namespace Amqp.Listener
             {
                 if (!this.role)
                 {
+                    this.drain = flow.Drain;
                     var theirLimit = (SequenceNumber)(flow.DeliveryCount + flow.LinkCredit);
                     var myLimit = this.deliveryCount + (SequenceNumber)this.credit;
                     delta = theirLimit - myLimit;

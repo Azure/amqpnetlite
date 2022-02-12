@@ -104,6 +104,16 @@ namespace Amqp.Listener
                         break;
                     }
                 }
+                else if (this.link.IsDraining)
+                {
+                    lock (this.syncRoot)
+                    {
+                        this.receiving = false;
+                    }
+
+                    this.link.CompleteDrain();
+                    break;
+                }
             }
         }
     }

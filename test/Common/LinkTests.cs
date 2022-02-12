@@ -730,6 +730,33 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_ReceiveDrain()
+        {
+            string testName = "ReceiveDrain";
+            Connection connection = new Connection(testTarget.Address);
+            Session session = new Session(connection);
+
+            SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
+            Message msg = new Message() { Properties = new Properties() { MessageId = "12345" } };
+            sender.Send(msg);
+
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            receiver.SetCredit(2, CreditMode.Drain);
+            msg = receiver.Receive();
+            Assert.IsTrue(msg != null);
+
+            msg = new Message() { Properties = new Properties() { MessageId = "67890" } };
+            sender.Send(msg);
+
+            msg = receiver.Receive(TimeSpan.FromTicks(600 * TimeSpan.TicksPerMillisecond));
+            Assert.IsTrue(msg == null);
+
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ReceiveWaiterZero()
         {
             string testName = "ReceiveWaiterZero";

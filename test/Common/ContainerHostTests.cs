@@ -239,6 +239,41 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void ContainerHostMessageSourceDrainTest()
+        {
+            string name = "ContainerHostMessageSourceDrainTest";
+            int count = 10;
+            Queue<Message> messages = new Queue<Message>();
+            for (int i = 0; i < count; i++)
+            {
+                messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name + i } });
+            }
+
+            var source = new TestMessageSource(messages);
+            this.host.RegisterMessageSource(name, source);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var receiver = new ReceiverLink(session, "receiver0", name);
+            receiver.SetCredit(count + 4, CreditMode.Drain);
+            for (int i = 1; i <= count; i++)
+            {
+                var message = receiver.Receive();
+                Assert.IsTrue(message != null);
+                receiver.Accept(message);
+            }
+            {
+                messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name + count } });
+                var message = receiver.Receive(TimeSpan.FromMilliseconds(500));
+                Assert.IsTrue(message == null);
+            }
+
+            receiver.Close();
+            session.Close();
+            connection.Close();
+        }
+
+        [TestMethod]
         public void ContainerHostAnyMessageSourceTest()
         {
             string name = "*";
