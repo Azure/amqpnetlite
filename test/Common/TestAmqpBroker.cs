@@ -586,6 +586,7 @@ namespace Listener.IContainer
                 lock (this.syncRoot)
                 {
                     this.consumers.Remove(id);
+                    this.waiters.Remove(consumer);
                     var node = this.messages.First;
                     while (node != null)
                     {

@@ -757,6 +757,41 @@ namespace Test.Amqp
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
+        public void TestMethod_ReceiveReceiveSend()
+        {
+            string testName = "ReceiveReceiveSend";
+            Connection connection = new Connection(testTarget.Address);
+
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            Message msg = receiver.Receive(TimeSpan.FromTicks(500 * TimeSpan.TicksPerMillisecond));
+            Assert.IsTrue(msg == null);
+
+            receiver.Close();
+            session.Close();
+
+            session = new Session(connection);
+            receiver = new ReceiverLink(session, "receiver-" + testName, testTarget.Path);
+            msg = receiver.Receive(TimeSpan.FromTicks(500 * TimeSpan.TicksPerMillisecond));
+            Assert.IsTrue(msg == null);
+
+            Connection connection2 = new Connection(testTarget.Address);
+            Session session2 = new Session(connection2);
+            SenderLink sender = new SenderLink(session2, "sender-" + testName, testTarget.Path);
+            msg = new Message() { Properties = new Properties() { MessageId = "12345" } };
+            sender.Send(msg);
+
+            msg = receiver.Receive(TimeSpan.FromTicks(6000 * TimeSpan.TicksPerMillisecond));
+            Assert.IsTrue(msg != null);
+            receiver.Accept(msg);
+
+            connection2.Close();
+            connection.Close();
+        }
+
+#if NETFX || NETFX35 || NETFX_CORE || DOTNET
+        [TestMethod]
+#endif
         public void TestMethod_ReceiveWaiterZero()
         {
             string testName = "ReceiveWaiterZero";
