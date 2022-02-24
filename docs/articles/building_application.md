@@ -228,21 +228,12 @@ recovery by recreating the object, and sometimes maybe its container object.
 
 ## Threading
 
-Send and receive methods on links are thread safe.  
-Usually the library completes an async operation or invokes a callback when a network event
-occurs. These events are generated when a network package is received. So the execution happens
-on the I/O thread where the connection pump is running. Blocking the thread means no more incoming
-frames can be processed and it is very likely to cause deadlock, application hang or timeout errors.  
-To avoid such issues, application should not mix sync and async APIs. DO not perform blocking calls
-from the async callback.  
-Below are examples for potential issues.
-```
-SenderLink sender = new SenderLink(session, "sender", "q1");
-await sender.SendAsync(new Message("m1"));
-sender.Send(new Message("m2"));
-```
-The Send call will timeout because the returned acknowledgement cannot be processed when the I/O
-thread is blocked.
+Send and receive methods on links are thread safe.
+
+The library does not create any threads for sending or receiving messages. Instead the async API relies on an asynchronous connection "pump", 
+meaning a continous loop that asynchronously processes I/O. It is critical for proper operation that the application does not block this pump. 
+
+There are two ways in which an application can accidentally block the pump. The first is by performing a blocking operation in a callback:
 
 ```
 SenderLink sender = new SenderLink(session, "sender", "q1");
@@ -251,8 +242,37 @@ sender.Send(
     (m, o, s) => Thread.Sleep(120000),
     sender);
 ```
-Thread.Sleep is a hypothetical example of having blocking calls in the MessageCallback.
- 
+
+The second occurs when an async operation is completed and its continuation runs *synchronously*:
+
+```
+SenderLink sender = new SenderLink(session, "sender", "q1");
+await sender.SendAsync( new Message("test"));
+
+Thead.Sleep(120000);
+```
+
+The above code will block the pump if the continuation of SendAsync happens to be run synchronously (which it frequently will be). 
+The problem is the same as with the first example, the async pump does not get a chance to release the currently executing thread back to the 
+thread pool and therefore has no chance to await further I/O. This means that no messages can be processed and will typically cause deadlock, 
+application hang or timeout errors.  
+
+Specifically it is important to understand that blocking operations to be avoided include the sync API of this library:
+```
+SenderLink sender = new SenderLink(session, "sender", "q1");
+await sender.SendAsync(new Message("m1"));
+sender.Send(new Message("m2"));
+```
+Here, the Send call will timeout because the returned acknowledgement cannot be processed when the I/O
+processing is blocked.
+
+The solution for callbacks is naturally to schedule blocking work asynchronously instead of blocking the calling thread. The solution for continuations 
+depends on the application, which must either ensure that continuations of async operations never occur on threads that do blocking work, or the async operations can be wrapped by the application using a `TaskCompletionSource` with `TaskCreationOptions.RunContinuationsAsynchronously` specified.
+
+For more details see the following issues:
+https://github.com/Azure/amqpnetlite/issues/237
+https://github.com/Azure/amqpnetlite/issues/490
+
 ## Advanced topics
 * [Listener](listener.md)
 * [Serialization](serialization.md)
