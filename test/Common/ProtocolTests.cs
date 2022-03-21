@@ -130,8 +130,12 @@ namespace Test.Amqp
                 Assert.AreEqual(ConnectionState.End, connection.ConnectionState);
                 try
                 {
-                    Thread.Sleep(300);
-                    networkStream.WriteByte(0);
+                    for (int i = 0; i < 20; i++)
+                    {
+                        networkStream.WriteByte(0);
+                        Thread.Sleep(100);
+                    }
+
                     Assert.IsTrue(false, "transport connection not closed");
                 }
                 catch (IOException) { }
@@ -156,7 +160,12 @@ namespace Test.Amqp
                 Assert.AreEqual((Symbol)ErrorCode.InvalidField, connection.Error.Condition);
                 try
                 {
-                    networkStream.WriteByte(0);
+                    for (int i = 0; i < 20; i++)
+                    {
+                        networkStream.WriteByte(0);
+                        Thread.Sleep(100);
+                    }
+
                     Assert.IsTrue(false, "transport connection not closed");
                 }
                 catch (IOException) { }
