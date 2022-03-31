@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<package>
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>AMQPNetMicro.nanoFramework</id>
     <title>A compact version of AMQP.Net Lite for nanoFramework</title>
@@ -14,12 +14,12 @@
     <copyright>Copyright 2014</copyright>
     <tags>AMQP netmf nf nanoframework</tags>
     <dependencies>
-      <dependency id="nanoFramework.CoreLibrary" version="1.10.5-preview.13" />
-      <dependency id="nanoFramework.Runtime.Events" version="1.9.1-preview.5" />
-      <dependency id="nanoFramework.System.Collections" version="1.2.0-preview.67" />
-      <dependency id="nanoFramework.System.Math" version="1.4.1-preview.5" />
-      <dependency id="nanoFramework.System.Net" version="1.6.5-preview.35" />
-      <dependency id="nanoFramework.System.Text" version="1.1.1-preview.61" />
+      <dependency id="nanoFramework.CoreLibrary" version="1.12.0" />
+      <dependency id="nanoFramework.Runtime.Events" version="1.10.0" />
+      <dependency id="nanoFramework.System.Collections" version="1.4.0" />
+      <dependency id="nanoFramework.System.Math" version="1.4.4" />
+      <dependency id="nanoFramework.System.Net" version="1.8.1" />
+      <dependency id="nanoFramework.System.Text" version="1.1.3" />
     </dependencies>
   </metadata>
   <files>
