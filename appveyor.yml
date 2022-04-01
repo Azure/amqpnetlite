@@ -69,20 +69,49 @@ before_build:
       'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
 
       [System.Net.WebClient]$webClient = New-Object System.Net.WebClient
-      $webClient.UseDefaultCredentials = $true
+      $webClient.Headers.Add("User-Agent", "request")
+      $webClient.Headers.Add("Accept", "application/vnd.github.v3+json")
 
-      # get extension information from MyGet VSIX feed
-      $vsixFeedXml = Join-Path  $($env:USERPROFILE) "vs-extension-feed.xml"
-      $webClient.DownloadFile("http://vsixgallery.com/feed/author/nanoframework", $vsixFeedXml)
-      [xml]$feedDetails = Get-Content $vsixFeedXml
+      $releaseList = $webClient.DownloadString('https://api.github.com/repos/nanoframework/nf-Visual-Studio-extension/tags')
 
-      # assuming this is building on VS2019 only
-      $extensionUrl = $feedDetails.feed.entry[1].content.src
-      $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2019.Extension.zip"
+      if($releaseList -match '"(?<VS2022_version>v2022\.\d+\.\d+\.\d+)')
+      {
+          $vs2022Tag =  $Matches.VS2022_version
+      }
+
+      if($releaseList -match '"(?<VS2019_version>v2019\.\d+\.\d+\.\d+)')
+      {
+          $vs2019Tag =  $Matches.VS2019_version
+      }
+
+      # Find which VS version is installed
+      $VsWherePath = "${env:PROGRAMFILES(X86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+
+      Write-Output "VsWherePath is: $VsWherePath"
+
+      $VsInstance = $(&$VSWherePath -latest -property displayName)
+
+      Write-Output "Latest VS is: $VsInstance"
+
+      # Get extension details according to VS version, starting from VS2022 down to VS2019
+      if($vsInstance.Contains('2022'))
+      {
+          $extensionUrl = "https://github.com/nanoframework/nf-Visual-Studio-extension/releases/download/$vs2022Tag/nanoFramework.Tools.VS2022.Extension.vsix"
+          $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2022.Extension.zip"
+          $extensionVersion = $vs2022Tag
+      }
+      elseif($vsInstance.Contains('2019'))
+      {
+          $extensionUrl = "https://github.com/nanoframework/nf-Visual-Studio-extension/releases/download/$vs2019Tag/nanoFramework.Tools.VS2019.Extension.vsix"
+          $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2019.Extension.zip"
+          $extensionVersion = $vs2019Tag
+      }
+
+      Write-Output "Downloading visx..." -NoNewline
 
       # download VS extension
       Write-Debug "Download VSIX file from $extensionUrl to $vsixPath"
-      $webClient.DownloadFile($extensionUrl,$vsixPath)
+      $webClient.DownloadFile($extensionUrl, $vsixPath)
 
       $outputPath = "$($env:USERPROFILE)\nf-extension"
 
@@ -96,7 +125,6 @@ before_build:
       Copy-Item -Path "$($env:USERPROFILE)\nf-extension\`$MSBuild\nanoFramework" -Destination $msbuildPath -Recurse
 
       'OK' | Write-Host -ForegroundColor Green
-
 
       Write-Output "Copying NuGet.exe ..."
 
