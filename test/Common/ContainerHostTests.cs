@@ -262,11 +262,23 @@ namespace Test.Amqp
                 Assert.IsTrue(message != null);
                 receiver.Accept(message);
             }
+
+            bool gotMessage = true;
+            for (int i = 0; i < 4; i++)
             {
                 messages.Enqueue(new Message("test") { Properties = new Properties() { MessageId = name + count } });
                 var message = receiver.Receive(TimeSpan.FromMilliseconds(500));
-                Assert.IsTrue(message == null);
+                if (message == null)
+                {
+                    gotMessage = false;
+                    break;
+                }
+
+                receiver.Accept(message);
+                Thread.Sleep(1000);
             }
+
+            Assert.IsTrue(!gotMessage, "Message should not be returned.");
 
             receiver.Close();
             session.Close();
