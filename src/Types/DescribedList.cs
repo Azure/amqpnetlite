@@ -452,7 +452,7 @@ namespace Amqp.Types
             bool addComma = false;
             for (int i = 0; i < fieldValues.Length; i++)
             {
-                if (fieldValues[i] != null)
+                if ((this.HasField(i) && fieldValues[i] != null) || Trace.WriteFrameNullFields)
                 {
                     if (addComma)
                     {

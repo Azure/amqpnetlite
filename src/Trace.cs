@@ -46,7 +46,8 @@ namespace Amqp
         Verbose = 0x0F,
 
         /// <summary>
-        /// Specifies that AMQP frames should be traced.
+        /// Specifies that AMQP frames should be traced (<see cref="Trace.WriteFrameNullFields"/>
+        /// controls how null fields should be handled).
         /// </summary>
         Frame = 0x10,
 
@@ -83,6 +84,11 @@ namespace Amqp
         /// Gets or sets the trace callback.
         /// </summary>
         public static WriteTrace TraceListener;
+
+        /// <summary>
+        /// Gets or sets the value that controls if null fields should be written in a frame trace.
+        /// </summary>
+        public static bool WriteFrameNullFields;
 
         /// <summary>
         /// Writes a debug trace.
@@ -185,6 +191,11 @@ namespace Amqp
 
         internal static object GetTraceObject(object value)
         {
+            if (value == null)
+            {
+                return "null";
+            }
+
             byte[] binary = value as byte[];
             if (binary != null)
             {
