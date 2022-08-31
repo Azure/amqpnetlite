@@ -128,7 +128,7 @@ namespace Amqp
                     localCertificateSelectionCallback = ssl.LocalCertificateSelectionCallback;
                 }
 
-                SslStream sslStream = new SslStream(new NetworkStream(socket), false, remoteCertificateValidationCallback, localCertificateSelectionCallback);
+                SslStream sslStream = new SslStream(new NetworkStream(socket, true), false, remoteCertificateValidationCallback, localCertificateSelectionCallback);
                 if (handler != null && handler.CanHandle(EventId.SslAuthenticate))
                 {
                     handler.Handle(Event.Create(EventId.SslAuthenticate, connection, null, null, sslStream));
