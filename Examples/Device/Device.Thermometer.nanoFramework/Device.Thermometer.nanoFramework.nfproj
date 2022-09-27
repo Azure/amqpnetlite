@@ -42,8 +42,8 @@
       <HintPath>..\..\..\packages\nanoFramework.System.Text.1.2.7\lib\nanoFramework.System.Text.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Device.Gpio, Version=1.1.11.18191, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Device.Gpio.1.1.11\lib\System.Device.Gpio.dll</HintPath>
+    <Reference Include="System.Device.Gpio, Version=1.1.18.20780, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.System.Device.Gpio.1.1.18\lib\System.Device.Gpio.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.IO.Streams, Version=1.1.15.36091, Culture=neutral, PublicKeyToken=c07d481e9758c731">
@@ -54,12 +54,12 @@
       <HintPath>..\..\..\packages\nanoFramework.System.Math.1.4.4\lib\System.Math.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net, Version=1.10.14.59724, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Net.1.10.14\lib\System.Net.dll</HintPath>
+    <Reference Include="System.Net, Version=1.10.21.18203, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.System.Net.1.10.21\lib\System.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Threading, Version=1.0.4.3, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Threading.1.0.4\lib\System.Threading.dll</HintPath>
+    <Reference Include="System.Threading, Version=1.1.8.6695, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.System.Threading.1.1.8\lib\System.Threading.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
