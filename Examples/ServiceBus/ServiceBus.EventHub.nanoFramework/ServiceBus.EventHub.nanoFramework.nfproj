@@ -32,8 +32,8 @@
       <HintPath>..\..\..\packages\nanoFramework.CoreLibrary.1.12.0\lib\mscorlib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="nanoFramework.Runtime.Events, Version=1.10.0.3, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.Runtime.Events.1.10.0\lib\nanoFramework.Runtime.Events.dll</HintPath>
+    <Reference Include="nanoFramework.Runtime.Events, Version=1.11.1.42088, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.Runtime.Events.1.11.1\lib\nanoFramework.Runtime.Events.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nanoFramework.System.Collections, Version=1.4.0.3, Culture=neutral, PublicKeyToken=c07d481e9758c731">
@@ -52,8 +52,8 @@
       <HintPath>..\..\..\packages\nanoFramework.System.Math.1.4.4\lib\System.Math.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net, Version=1.10.8.47590, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\..\packages\nanoFramework.System.Net.1.10.8\lib\System.Net.dll</HintPath>
+    <Reference Include="System.Net, Version=1.10.24.31460, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\..\packages\nanoFramework.System.Net.1.10.24\lib\System.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Threading, Version=1.1.8.6695, Culture=neutral, PublicKeyToken=c07d481e9758c731">
