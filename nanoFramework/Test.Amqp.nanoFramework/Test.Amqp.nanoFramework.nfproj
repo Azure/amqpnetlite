@@ -58,8 +58,8 @@
       <HintPath>..\..\packages\nanoFramework.System.IO.Streams.1.1.27\lib\System.IO.Streams.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Math, Version=1.5.15.2306, Culture=neutral, PublicKeyToken=c07d481e9758c731">
-      <HintPath>..\..\packages\nanoFramework.System.Math.1.5.15\lib\System.Math.dll</HintPath>
+    <Reference Include="System.Math, Version=1.5.18.41298, Culture=neutral, PublicKeyToken=c07d481e9758c731">
+      <HintPath>..\..\packages\nanoFramework.System.Math.1.5.18\lib\System.Math.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net, Version=1.10.38.33445, Culture=neutral, PublicKeyToken=c07d481e9758c731">
