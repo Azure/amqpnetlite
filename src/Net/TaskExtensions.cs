@@ -202,7 +202,7 @@ namespace Amqp
         public async Task SendAsync(Message message, TimeSpan timeout)
         {
             DeliveryState txnState = null;
-#if NETFX || NETFX40
+#if NETFX || NETFX40 || NETSTANDARD2_0
             txnState = await TaskExtensions.GetTransactionalStateAsync(this).ConfigureAwait(false);
 #endif
 
