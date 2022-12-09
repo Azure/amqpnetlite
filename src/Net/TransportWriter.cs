@@ -84,7 +84,8 @@ namespace Amqp
                 this.writing = true;
             }
 
-            this.WriteAsync();
+            // Kick off the write loop
+            var _ = this.WriteAsync();
         }
 
         int ITransport.Receive(byte[] buffer, int offset, int count)
@@ -111,7 +112,7 @@ namespace Amqp
             }
         }
 
-        async void WriteAsync()
+        async Task WriteAsync()
         {
             const int maxBatchSize = 128 * 1024;
 
