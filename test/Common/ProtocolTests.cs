@@ -1889,8 +1889,11 @@ namespace Test.Amqp
                 var handler = new TestHandler(e =>
                 {
                     int count = 0;
-                    events.TryGetValue(e.Id, out count);
-                    events[e.Id] = count + 1;
+                    lock (events)
+                    {
+                        events.TryGetValue(e.Id, out count);
+                        events[e.Id] = count + 1;
+                    }
                 });
 
                 var factory = new ConnectionFactory();
