@@ -122,6 +122,11 @@ namespace PerfTest
 
             public abstract void Run();
 
+            protected string GetAddress(int id)
+            {
+                return this.perfArgs.Node.Replace("{i}", id.ToString());
+            }
+
             protected Connection CreateConnection(Address address)
             {
                 var factory = new ConnectionFactory();
@@ -199,7 +204,8 @@ namespace PerfTest
                 Task[] tasks = new Task[this.Args.Connections];
                 for (int i = 0; i < this.Args.Connections; i++)
                 {
-                    tasks[i] = Task.Run(() => this.RunOnce(i));
+                    int id = i;
+                    tasks[i] = Task.Run(() => this.RunOnce(id));
                 }
 
                 Task.WhenAll(tasks).Wait();
@@ -234,7 +240,7 @@ namespace PerfTest
                 Attach attach = new Attach()
                 {
                     Source = new Source(),
-                    Target = new Target() { Address = this.Args.Node },
+                    Target = new Target() { Address = this.GetAddress(id) },
                     SndSettleMode = this.Args.SenderMode,
                     RcvSettleMode = this.Args.ReceiverMode
                 };
@@ -291,7 +297,8 @@ namespace PerfTest
                 Task[] tasks = new Task[this.Args.Connections];
                 for (int i = 0; i < this.Args.Connections; i++)
                 {
-                    tasks[i] = Task.Run(() => this.RunOnce(i));
+                    int id = i;
+                    tasks[i] = Task.Run(() => this.RunOnce(id));
                 }
 
                 Task.WhenAll(tasks).Wait();
@@ -306,7 +313,7 @@ namespace PerfTest
 
                 Attach attach = new Attach()
                 {
-                    Source = new Source() { Address = this.Args.Node },
+                    Source = new Source() { Address = this.GetAddress(id) },
                     Target = new Target(),
                     SndSettleMode = this.Args.SenderMode,
                     RcvSettleMode = this.Args.ReceiverMode
@@ -348,7 +355,8 @@ namespace PerfTest
                 Task[] tasks = new Task[this.Args.Connections];
                 for (int i = 0; i < this.Args.Connections; i++)
                 {
-                    tasks[i] = Task.Run(() => this.RunOnce(i));
+                    int id = i;
+                    tasks[i] = Task.Run(() => this.RunOnce(id));
                 }
 
                 Task.WhenAll(tasks).Wait();
@@ -377,12 +385,12 @@ namespace PerfTest
                 Attach sendAttach = new Attach()
                 {
                     Source = new Source(),
-                    Target = new Target() { Address = this.Args.Node },
+                    Target = new Target() { Address = this.GetAddress(id) },
                     SndSettleMode = SenderSettleMode.Settled
                 };
                 Attach recvAttach = new Attach()
                 {
-                    Source = new Source() { Address = this.Args.Node },
+                    Source = new Source() { Address = this.GetAddress(id) },
                     Target = new Target() { Address = clientId },
                     SndSettleMode = SenderSettleMode.Settled
                 };
