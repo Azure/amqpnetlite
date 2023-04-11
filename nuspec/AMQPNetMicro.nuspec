@@ -1,13 +1,13 @@
-<?xml version="1.0"?>
-<package>
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>AMQPNetMicro</id>
     <title>A compact version of AMQP.Net Lite for NETMF</title>
     <version>0.0.0</version>
     <authors>xinchen</authors>
-    <owners>Microsoft</owners>
     <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <repository type="git" url="https://github.com/Azure/amqpnetlite" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is a compact version of AMQP.Net Lite for .Net Micro Framework on memory/space constrained devices.</description>
     <releaseNotes>[PLACEHOLDER]</releaseNotes>
