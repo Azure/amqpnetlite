@@ -1,5 +1,5 @@
-<?xml version="1.0"?>
-<package>
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>AMQPNetLite.NetMF</id>
     <title>AMQP.Net Lite for NetMF</title>
@@ -7,8 +7,8 @@
     <authors>xinchen</authors>
     <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/Azure/amqpnetlite</projectUrl>
+    <repository type="git" url="https://github.com/Azure/amqpnetlite" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <summary>AMQP 1.0 library for .Net Micro Framework</summary>
     <description>
       This is a lightweight AMQP 1.0 library for .Net Micro Framework (netmf). A more compact version
       for NETMF is available in the AmqpNetMicro package.
