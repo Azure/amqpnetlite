@@ -95,6 +95,9 @@
     <Compile Include="..\src\Framing\Data.cs">
       <Link>Framing\Data.cs</Link>
     </Compile>
+    <Compile Include="..\src\Framing\DataList.cs">
+      <Link>Framing\DataList.cs</Link>
+    </Compile>
     <Compile Include="..\src\Framing\DeliveryAnnotations.cs">
       <Link>Framing\DeliveryAnnotations.cs</Link>
     </Compile>

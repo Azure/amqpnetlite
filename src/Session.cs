@@ -746,7 +746,7 @@ namespace Amqp
                     transfer.DeliveryTag = delivery.Tag;
                     transfer.DeliveryId = delivery.DeliveryId;
                     transfer.State = delivery.State;
-                    transfer.MessageFormat = 0;
+                    transfer.MessageFormat = delivery.Message.Format;
                     transfer.Settled = delivery.Settled;
                     transfer.Batchable = delivery.Batchable;
                 }

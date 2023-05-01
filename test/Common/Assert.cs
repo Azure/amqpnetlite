@@ -1,3 +1,4 @@
+using Amqp.Framing;
 using System;
 using System.Threading;
 #if NETMF && !NANOFRAMEWORK_1_0
@@ -22,6 +23,12 @@ namespace Test.Amqp
             if (expected == null || actual == null)
             {
                 areEqual = expected == actual;
+            }
+            else if (expected is Type && actual is Type)
+            {
+                var t1 = (Type)expected;
+                var t2 = (Type)actual;
+                areEqual = t1 == t2 || (t1 == typeof(DataList) && t2 == typeof(Data));
             }
             else if (expected is byte[] && actual is byte[])
             {

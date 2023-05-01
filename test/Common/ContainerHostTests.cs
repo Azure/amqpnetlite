@@ -1247,7 +1247,59 @@ namespace Test.Amqp
             connection.Close();
         }
 
+        [TestMethod]
+        public void ContainerHostMessageFormatTest()
+        {
+            string name = "ContainerHostMessageFormatTest";
+            var processor = new TestMessageProcessor();
+            this.host.RegisterMessageProcessor(name, processor);
+
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+            for (int i = 0; i < 10; i++)
+            {
+                var message = MessageBatch.Create(new[] { "test1", "test2", "test3" });
+                sender.Send(message);
+            }
+
+            connection.Close();
+
+            Assert.AreEqual(10, processor.Messages.Count);
+            for (int i = 0; i < 10; i++)
+            {
+                Message message = processor.Messages[i];
+                Assert.AreEqual(MessageBatch.BatchFormat, message.Format);
+            }
+        }
+
 #if !NETFX40
+        [TestMethod]
+        public async Task ContainerHostMessageFormatAsyncTest()
+        {
+            string name = "ContainerHostMessageFormatAsyncTest";
+            var processor = new TestMessageProcessor();
+            this.host.RegisterMessageProcessor(name, processor);
+
+            var connection = await Connection.Factory.CreateAsync(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "send-link", name);
+            for (int i = 0; i < 10; i++)
+            {
+                var message = MessageBatch.Create(new[] { "test1", "test2", "test3" });
+                await sender.SendAsync(message);
+            }
+
+            await connection.CloseAsync();
+
+            Assert.AreEqual(10, processor.Messages.Count);
+            for (int i = 0; i < 10; i++)
+            {
+                Message message = processor.Messages[i];
+                Assert.AreEqual(MessageBatch.BatchFormat, message.Format);
+            }
+        }
+
         [TestMethod]
         public void LinkProcessorAsyncTest()
         {

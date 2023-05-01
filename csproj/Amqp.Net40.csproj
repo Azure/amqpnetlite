@@ -54,6 +54,9 @@
     <Compile Include="..\src\CreditMode.cs">
       <Link>CreditMode.cs</Link>
     </Compile>
+    <Compile Include="..\src\Framing\DataList.cs">
+      <Link>Framing\DataList.cs</Link>
+    </Compile>
     <Compile Include="..\src\Handler\Event.cs">
       <Link>Handler\Event.cs</Link>
     </Compile>

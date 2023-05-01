@@ -29,6 +29,7 @@ namespace Listener.IContainer
 
     public sealed class TestAmqpBroker : IContainer
     {
+        public const uint BatchFormat = 0x80013700;
         readonly X509Certificate2 certificate;
         readonly Dictionary<string, TransportProvider> customTransports;
         readonly Dictionary<string, TestQueue> queues;
@@ -56,7 +57,7 @@ namespace Listener.IContainer
 
             this.certificate = certValue == null ? null : GetCertificate(certValue);
 
-            string containerId = "TestAmqpBroker:" + Guid.NewGuid().ToString().Substring(0, 8);
+            string containerId = "AMQPNetLite-TestBroker-" + Guid.NewGuid().ToString().Substring(0, 8);
             this.listeners = new ConnectionListener[endpoints.Count];
             for (int i = 0; i < endpoints.Count; i++)
             {
@@ -251,7 +252,7 @@ namespace Listener.IContainer
             public BrokerMessage(ByteBuffer buffer)
             {
                 this.buffer = buffer;
-                this.messageOffset = buffer.Offset;
+                this.messageOffset = buffer.Capacity - buffer.Length - buffer.Size;
             }
 
             public ByteBuffer Buffer
@@ -460,29 +461,105 @@ namespace Listener.IContainer
 
             void Enqueue(BrokerMessage message)
             {
-                // clone the message as the incoming one is associated with a delivery already
-                BrokerMessage clone = new BrokerMessage(message.Buffer);
-                Consumer consumer = null;
-                lock (this.syncRoot)
+                LinkedListNode<BrokerMessage> node = null;
+                if (message.Format == BatchFormat)
                 {
-                    consumer = this.GetConsumerWithLock(null);
-                    if (consumer == null)
+                    var batch = Message.Decode(message.Buffer);
+                    var dataList = batch.BodySection as DataList;
+                    if (dataList != null)
                     {
-                        clone.Node = this.messages.AddLast(clone);
+                        for(int i = 0; i < dataList.Count; i++)
+                        {
+                            var msg = new BrokerMessage(dataList[i].Buffer);
+                            lock (this.syncRoot)
+                            {
+                                msg.Node = this.messages.AddLast(msg);
+                                if (node == null)
+                                {
+                                    node = msg.Node;
+                                }
+                            }
+                        }
                     }
                     else
                     {
-                        if (!consumer.SettleOnSend)
+                        var data = batch.BodySection as Data;
+                        if (data != null)
                         {
-                            clone.LockedBy = consumer;
-                            clone.Node = this.messages.AddLast(clone);
+                            var msg = new BrokerMessage(data.Buffer);
+                            lock (this.syncRoot)
+                            {
+                                node = msg.Node = this.messages.AddLast(msg);
+                            }
+                        }
+                        else
+                        {
+                            // Ignore it for now
+                            return;
                         }
                     }
                 }
-
-                if (consumer != null)
+                else
                 {
-                    consumer.Signal(clone);
+                    // clone the message as the incoming one is associated with a delivery already
+                    BrokerMessage clone = new BrokerMessage(message.Buffer);
+                    lock (this.syncRoot)
+                    {
+                        node = clone.Node = this.messages.AddLast(clone);
+                    }
+                }
+
+                this.Deliver(node);
+            }
+
+            void Deliver(LinkedListNode<BrokerMessage> node)
+            {
+                Consumer consumer = null;
+                BrokerMessage message = null;
+                while (node != null)
+                {
+                    lock (this.syncRoot)
+                    {
+                        if (consumer == null || consumer.Credit == 0)
+                        {
+                            consumer = this.GetConsumerWithLock(null);
+                            if (consumer == null)
+                            {
+                                return;
+                            }
+                        }
+
+                        if (node.List == null)
+                        {
+                            node = this.messages.First;
+                            continue;
+                        }
+
+                        LinkedListNode<BrokerMessage> next = node.Next;
+                        message = node.Value;
+                        if (message.LockedBy == null)
+                        {
+                            if (consumer.SettleOnSend)
+                            {
+                                this.messages.Remove(node);
+                            }
+                            else
+                            {
+                                message.LockedBy = consumer;
+                            }
+                        }
+                        else
+                        {
+                            message = null;
+                        }
+
+                        node = next;
+                    }
+
+                    if (consumer != null && message != null)
+                    {
+                        consumer.Signal(message);
+                    }
                 }
             }
 

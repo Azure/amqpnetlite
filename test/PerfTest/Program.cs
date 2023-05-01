@@ -24,9 +24,9 @@ namespace PerfTest
     using Amqp;
     using Amqp.Framing;
     using Amqp.Listener;
-    using Amqp.Types;
     using Test.Common;
     using TestExtensions = Test.Common.Extensions;
+    using Stopwatch = System.Diagnostics.Stopwatch;
 
     class Program
     {
@@ -95,6 +95,16 @@ namespace PerfTest
             Console.WriteLine(Arguments.PrintArguments(typeof(PerfArguments)));
         }
 
+        static int GetLatencyMs(Message message)
+        {
+            if (message.Properties != null && message.Properties.CreationTime.Ticks > 0)
+            {
+                return (int)((Stopwatch.GetTimestamp() - message.Properties.CreationTime.Ticks) / TimeSpan.TicksPerMillisecond);
+            }
+
+            return -1;
+        }
+
         abstract class Role
         {
             protected IBufferManager bufferManager;
@@ -104,7 +114,7 @@ namespace PerfTest
             long completed;
             long progress;
             ManualResetEvent completedEvent;
-            System.Diagnostics.Stopwatch stopwatch;
+            OperationTracker tracker;
 
             public Role(PerfArguments perfArgs)
             {
@@ -113,6 +123,7 @@ namespace PerfTest
                 this.count = perfArgs.Count;
                 this.progress = perfArgs.Progress;
                 this.completedEvent = new ManualResetEvent(false);
+                this.tracker = new OperationTracker(20000);
             }
 
             protected PerfArguments Args
@@ -132,6 +143,7 @@ namespace PerfTest
                 var factory = new ConnectionFactory();
                 factory.BufferManager = this.bufferManager;
                 factory.AMQP.MaxFrameSize = this.perfArgs.MaxFrameSize;
+                factory.AMQP.HostName = this.perfArgs.Host;
                 if (address.Scheme.Equals("amqps", StringComparison.OrdinalIgnoreCase))
                 {
                     factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
@@ -145,29 +157,17 @@ namespace PerfTest
                 return Interlocked.Increment(ref this.started) <= this.count || this.count == 0;
             }
 
-            protected bool OnComplete()
+            protected bool OnComplete(int latencyMs)
             {
+                this.tracker.Track(latencyMs);
                 long done = Interlocked.Increment(ref this.completed);
                 if (this.progress > 0 && done % this.progress == 0)
                 {
-                    long throughput;
-                    if (this.stopwatch == null)
-                    {
-                        this.stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                        throughput = -1;
-                    }
-                    else
-                    {
-                        long ms = this.stopwatch.ElapsedMilliseconds;
-                        throughput = ms > 0 ? done * 1000L / ms : -1;
-                    }
-
-                    Trace.WriteLine(TraceLevel.Information, "completed {0} throughput {1} msg/s", done, throughput);
+                    Trace.WriteLine(TraceLevel.Information, this.tracker.Report(reset: true));
                 }
 
                 if (this.count > 0 && done >= this.count)
                 {
-                    this.stopwatch.Stop();
                     this.completedEvent.Set();
                     return false;
                 }
@@ -223,7 +223,7 @@ namespace PerfTest
                     thisPtr.bufferManager.ReturnBuffer(new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Capacity));
                 }
 
-                if (thisPtr.OnComplete())
+                if (thisPtr.OnComplete(GetLatencyMs(message)))
                 {
                     Message msg = thisPtr.CreateMessage();
                     sender.Send(msg, onOutcome, state);
@@ -275,7 +275,7 @@ namespace PerfTest
                 }
 
                 Message message = new Message();
-                message.Properties = new Properties() { MessageId = "msg" };
+                message.Properties = new Properties() { MessageId = "msg", CreationTime = new DateTime(Stopwatch.GetTimestamp(), DateTimeKind.Utc) };
                 message.BodySection = new Data()
                 {
                     Buffer = new ByteBuffer(segment.Array, segment.Offset, this.bodySize, segment.Count)
@@ -326,7 +326,7 @@ namespace PerfTest
                     {
                         r.Accept(m);
                         m.Dispose();
-                        this.OnComplete();
+                        this.OnComplete(GetLatencyMs(m));
                     });
 
                 this.Wait();
@@ -365,7 +365,7 @@ namespace PerfTest
             void SendRequest(SenderLink sender, string replyTo)
             {
                 Message message = new Message();
-                message.Properties = new Properties() { ReplyTo = replyTo };
+                message.Properties = new Properties() { ReplyTo = replyTo, CreationTime = new DateTime(Stopwatch.GetTimestamp(), DateTimeKind.Utc) };
                 message.Properties.SetCorrelationId(Guid.NewGuid());
                 message.BodySection = new Data() { Binary = this.GetBuffer() };
                 sender.Send(message, null, null);
@@ -402,7 +402,7 @@ namespace PerfTest
                     {
                         r.Accept(m);
                         m.Dispose();
-                        if (this.OnComplete())
+                        if (this.OnComplete(GetLatencyMs(m)))
                         {
                             this.SendRequest(sender, clientId);
                         }
@@ -456,10 +456,11 @@ namespace PerfTest
             void IRequestProcessor.Process(RequestContext requestContext)
             {
                 Message response = new Message("request processed");
+                response.Properties = new Properties() { CreationTime = requestContext.Message.Properties.CreationTime };
                 response.ApplicationProperties = new ApplicationProperties();
                 response.ApplicationProperties["status-code"] = 200;
                 requestContext.Complete(response);
-                this.OnComplete();
+                this.OnComplete(GetLatencyMs(requestContext.Message));
             }
         }
 
@@ -503,7 +504,7 @@ namespace PerfTest
             void IMessageProcessor.Process(MessageContext messageContext)
             {
                 messageContext.Complete();
-                this.OnComplete();
+                this.OnComplete(-1);
             }
         }
 
@@ -530,6 +531,13 @@ namespace PerfTest
 
             [Argument(Name = "cert", Shortcut = "f", Description = "certificate for SSL authentication. Default to address.host")]
             public string CertValue
+            {
+                get;
+                protected set;
+            }
+
+            [Argument(Name = "host", Shortcut = "h", Description = "Set open.hostname")]
+            public string Host
             {
                 get;
                 protected set;

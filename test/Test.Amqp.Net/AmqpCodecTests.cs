@@ -580,6 +580,10 @@ namespace Test.Amqp
             {
                 EnsureEqual(((Data)x).Binary, ((Data)y).Binary);
             }
+            else if (x.GetType() == typeof(DataList))
+            {
+                Assert.AreEqual(x, y);
+            }
             else if (x.GetType() == typeof(AmqpValue))
             {
                 EnsureEqual(((AmqpValue)x).Value, ((AmqpValue)y).Value);

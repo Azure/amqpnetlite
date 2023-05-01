@@ -1909,5 +1909,99 @@ namespace Test.Amqp
                 validator(events);
             }).Unwrap().GetAwaiter().GetResult();
         }
+
+        [TestMethod]
+        public void MessageFormatSendTest()
+        {
+            string testName = "MessageFormatSendTest";
+
+            uint format = uint.MaxValue;
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                format = (uint)fields[3];
+                return TestOutcome.Continue;
+            });
+
+            var connection = new Connection(this.address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, "sender-" + testName, "any");
+            var message = MessageBatch.Create(new[] { "test1", "test2", "test3" });
+            sender.Send(message);
+            connection.Close();
+
+            Assert.AreEqual(message.Format, format);
+        }
+
+        [TestMethod]
+        public void MessageFormatReceiveTest()
+        {
+            string testName = "MessageFormatReceiveTest";
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], 0u, BitConverter.GetBytes(0), 123u, false, false);  // transfer
+                return TestOutcome.Stop;
+            });
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+            Message message = receiver.Receive();
+            Assert.AreEqual(123u, message.Format);
+            receiver.Accept(message);
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ForwardMessageTest()
+        {
+            string testName = "ForwardMessageTest";
+
+            uint total = 0;
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint current = total;
+                total = Math.Min(510u, (uint)fields[5] + (uint)fields[6]);
+                for (uint i = current; i < total; i++)
+                {
+                    TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
+                }
+
+                return TestOutcome.Stop;
+            });
+
+            int port2 = port + 1;
+            var listener2 = new TestListener(new IPEndPoint(IPAddress.Any, port2));
+            listener2.Open();
+
+            try
+            {
+                Connection connection = new Connection(this.address);
+                Session session = new Session(connection);
+                ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
+
+                Connection connection2 = new Connection(new Address("amqp://127.0.0.1:" + port2));
+                Session session2 = new Session(connection2);
+                SenderLink sender = new SenderLink(session2, "sender-" + testName, "any");
+
+                int count = 0;
+                var done = new ManualResetEvent(false);
+                receiver.Start(300, (r, m) =>
+                {
+                    r.Accept(m);
+                    sender.Send(m, (a, b, c, d) => { if (count++ >= 500) done.Set(); }, null);
+                });
+
+                done.WaitOne(10000);
+                Trace.WriteLine(TraceLevel.Information, "done: {0}", count);
+
+                connection.Close();
+                connection2.Close();
+            }
+            finally
+            {
+                listener2.Close();
+            }
+        }
     }
 }

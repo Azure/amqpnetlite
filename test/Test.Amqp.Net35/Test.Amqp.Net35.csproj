@@ -70,6 +70,9 @@
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\MessageBatch.cs">
+      <Link>Common\MessageBatch.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestHandler.cs">
       <Link>Common\TestHandler.cs</Link>
     </Compile>

@@ -211,7 +211,7 @@ namespace Amqp
         /// <summary>
         /// Sets the read position.
         /// </summary>
-        /// <param name="seekPosition">Position to set.</param>
+        /// <param name="seekPosition">The position relative to <see cref="Offset"/> of the buffer.</param>
         public void Seek(int seekPosition)
         {
             Fx.Assert(seekPosition >= 0, "seekPosition must not be negative.");

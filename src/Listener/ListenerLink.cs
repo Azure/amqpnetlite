@@ -47,7 +47,7 @@ namespace Amqp.Listener
         // receive
         bool autoRestore;
         int restored;
-        Delivery deliveryCurrent;
+        MessageDelivery deliveryCurrent;
         Action<ListenerLink, Message, DeliveryState, object> onMessage;
 
         /// <summary>
@@ -435,23 +435,21 @@ namespace Amqp.Listener
         {
             if (delivery != null)
             {
+                this.deliveryCurrent = new MessageDelivery(delivery, transfer.MessageFormat);
                 buffer.AddReference();
                 delivery.Buffer = buffer;
                 this.deliveryCount++;
             }
             else
             {
-                delivery = this.deliveryCurrent;
+                delivery = this.deliveryCurrent.Delivery;
                 AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
             }
 
             if (!transfer.More)
             {
-                this.DeliverMessage(delivery);
-            }
-            else
-            {
-                this.deliveryCurrent = delivery;
+                this.DeliverMessage(this.deliveryCurrent);
+                this.deliveryCurrent = MessageDelivery.None;
             }
         }
 
@@ -489,10 +487,13 @@ namespace Amqp.Listener
             }
         }
 
-        void DeliverMessage(Delivery delivery)
+        void DeliverMessage(MessageDelivery messageDelivery)
         {
             var container = ((ListenerConnection)this.Session.Connection).Listener.Container;
-            delivery.Message = container.CreateMessage(delivery.Buffer);
+            Delivery delivery = messageDelivery.Delivery;
+            var message = container.CreateMessage(delivery.Buffer);
+            message.Format = messageDelivery.MessageFormat;
+            delivery.Message = message;
 
             IHandler handler = this.Session.Connection.Handler;
             if (handler != null && handler.CanHandle(EventId.SendDelivery))

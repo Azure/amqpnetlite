@@ -62,6 +62,9 @@
     <Compile Include="..\..\src\Net\TypeExtensions.cs">
       <Link>Common\TypeExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Common\MessageBatch.cs">
+      <Link>Common\MessageBatch.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestHandler.cs">
       <Link>Common\TestHandler.cs</Link>
     </Compile>

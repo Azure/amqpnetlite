@@ -88,6 +88,12 @@ namespace Amqp
         /// Gets the object from the body. The returned value depends on the type of the body section.
         /// Use the BodySection field if the entire section is needed.
         /// </summary>
+        /// <remarks>Returns null if body section is null; otherwise one of the following,
+        /// * A value contained in a <see cref="AmqpValue"/> section.
+        /// * A list of objects contained in a <see cref="AmqpSequence"/> section.
+        /// * A byte[] object contained in a signle <see cref="Data"/> section.
+        /// * A Data[] representing multiple <see cref="Data"/> sections.
+        /// </remarks>
         public object Body
         {
             get
@@ -102,6 +108,12 @@ namespace Amqp
                 }
                 else if (this.BodySection.Descriptor.Code == Codec.Data.Code)
                 {
+                    var dataList = this.BodySection as DataList;
+                    if (dataList != null)
+                    {
+                        return dataList.ToArray();
+                    }
+
                     return ((Data)this.BodySection).Binary;
                 }
                 else if (this.BodySection.Descriptor.Code == Codec.AmqpSequence.Code)
@@ -113,6 +125,18 @@ namespace Amqp
                     throw new AmqpException(ErrorCode.DecodeError, "The body section is invalid.");
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the format of the message. Warning: setting a non-zero value may cause
+        /// inter-operability issues with other standard 1.0 implementations.
+        /// </summary>
+        /// <remarks>The custom format MUST use the same encoding layout as the standard message.
+        /// </remarks>
+        public uint Format
+        {
+            get;
+            set;
         }
 
         /// <summary>
@@ -150,6 +174,7 @@ namespace Amqp
         {
             Message message = new Message();
 
+            DataList dataList = null;
             while (buffer.Length > 0)
             {
                 var described = (RestrictedDescribed)Codec.Decode(buffer);
@@ -173,8 +198,25 @@ namespace Amqp
                 {
                     message.ApplicationProperties = (ApplicationProperties)described;
                 }
+                else if (described.Descriptor.Code == Codec.Data.Code)
+                {
+                    if (message.BodySection == null)
+                    {
+                        message.BodySection = described;
+                    }
+                    else
+                    {
+                        if (dataList == null)
+                        {
+                            dataList = new DataList();
+                            dataList.Add((Data)message.BodySection);
+                            message.BodySection = dataList;
+                        }
+
+                        dataList.Add((Data)described);
+                    }
+                }
                 else if (described.Descriptor.Code == Codec.AmqpValue.Code ||
-                    described.Descriptor.Code == Codec.Data.Code ||
                     described.Descriptor.Code == Codec.AmqpSequence.Code)
                 {
                     message.BodySection = described;
@@ -200,7 +242,7 @@ namespace Amqp
         /// <returns>A <see cref="MessageDelivery"/> object, or null if delivery has not happened yet.</returns>
         public MessageDelivery GetDelivery()
         {
-            return this.Delivery == null ? MessageDelivery.None : new MessageDelivery(this.Delivery);
+            return this.Delivery == null ? MessageDelivery.None : new MessageDelivery(this.Delivery, this.Format);
         }
 
         /// <summary>

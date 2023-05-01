@@ -25,10 +25,12 @@ namespace Amqp
     public struct MessageDelivery
     {
         readonly Delivery delivery;
+        readonly uint messageFormat;
 
-        internal MessageDelivery(Delivery delivery)
+        internal MessageDelivery(Delivery delivery, uint messageFormat)
         {
             this.delivery = delivery;
+            this.messageFormat = messageFormat;
         }
 
         /// <summary>
@@ -61,6 +63,14 @@ namespace Amqp
         public Link Link
         {
             get { return this.delivery.Link; }
+        }
+
+        /// <summary>
+        /// Gets the format of the message being delivered.
+        /// </summary>
+        internal uint MessageFormat
+        {
+            get { return this.messageFormat; }
         }
 
         internal Delivery Delivery

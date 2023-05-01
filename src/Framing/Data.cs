@@ -67,6 +67,11 @@ namespace Amqp.Framing
             set;
         }
 
+        internal int Length
+        {
+            get { return this.Buffer == null ? 0 : this.Buffer.Length; }
+        }
+
         internal override void EncodeValue(ByteBuffer buffer)
         {
             if (this.Buffer != null)
@@ -91,6 +96,11 @@ namespace Amqp.Framing
         {
             get { return this.binary; }
             set { this.binary = value; }
+        }
+
+        internal int Length
+        {
+            get { return this.Binary == null ? 0 : this.Binary.Length; }
         }
 
         internal override void EncodeValue(ByteBuffer buffer)

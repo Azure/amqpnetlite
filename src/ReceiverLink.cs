@@ -44,7 +44,7 @@ namespace Amqp
 
         // received messages queue
         LinkedList receivedMessages;
-        Delivery deliveryCurrent;
+        MessageDelivery deliveryCurrent;
 
         // pending receivers
         LinkedList waiterList;
@@ -372,11 +372,12 @@ namespace Amqp
         {
             if (delivery == null)
             {
-                delivery = this.deliveryCurrent;
+                delivery = this.deliveryCurrent.Delivery;
                 AmqpBitConverter.WriteBytes(delivery.Buffer, buffer.Buffer, buffer.Offset, buffer.Length);
             }
             else
             {
+                this.deliveryCurrent = new MessageDelivery(delivery, transfer.MessageFormat);
                 buffer.AddReference();
                 delivery.Buffer = buffer;
                 lock (this.ThisLock)
@@ -387,8 +388,9 @@ namespace Amqp
 
             if (!transfer.More)
             {
-                this.deliveryCurrent = null;
                 delivery.Message = Message.Decode(delivery.Buffer);
+                delivery.Message.Format = this.deliveryCurrent.MessageFormat;
+                this.deliveryCurrent = MessageDelivery.None;
 
                 IHandler handler = this.Session.Connection.Handler;
                 if (handler != null && handler.CanHandle(EventId.ReceiveDelivery))
@@ -437,10 +439,6 @@ namespace Amqp
                 Fx.Assert(waiter == null, "waiter must be null now");
                 Fx.Assert(callback != null, "callback must not be null now");
                 callback(this, delivery.Message);
-            }
-            else
-            {
-                this.deliveryCurrent = delivery;
             }
         }
 

@@ -28,3 +28,30 @@ value: a described string: descriptor=symbol(“apache.org:selector-filter:strin
 The offset filter is perferred as it is more performant than the enqueued-time filter. The enqueued-time filter is for rare cases when you lose the checkpoint data and have to go back a certain period of time in history. The following special offsets are defined.
 '-1': beginning of the event stream.
 '@latest': end of the even stream, in other words, all new events after the link is attached.
+
+## Batching in message sender
+Azure Event Hubs supports an extended message format (0x80013700) which allows a sender to pack multiple messages into one AMQP message.
+It is intended to help applications publish messages more efficiently, especially with small messages and high-latency networks.
+The envelop message is a standard AMQP 1.0 message with multiple Data sections, each of which contains one encoded payload message in its
+binary value. On the service side, the payload messages are extracted and delivered to receivers individually.
+The `MessageBatch` class in the test project illustrates how such batch messages can be created.
+```
+    public class MessageBatch : Message
+    {
+        public const uint BatchFormat = 0x80013700;
+
+        public static MessageBatch Create<T>(IEnumerable<T> objects)
+        {
+            DataList dataList = new DataList();
+            foreach (var obj in objects)
+            {
+                ByteBuffer buffer = new ByteBuffer(1024, true);
+                var section = new AmqpValue<T>(obj);
+                AmqpSerializer.Serialize(buffer, section);
+                dataList.Add(new Data() { Buffer = buffer });
+            }
+
+            return new MessageBatch() { Format = BatchFormat, BodySection = dataList };
+        }
+    }
+```
