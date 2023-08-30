@@ -52,7 +52,11 @@ namespace Amqp
         public ApplicationProperties ApplicationProperties;
 
         /// <summary>
-        /// The body section. The library supports one section only.
+        /// The body section. It can be one of the following,
+        /// * <see cref="AmqpValue"/>
+        /// * <see cref="AmqpSequence"/>
+        /// * <see cref="Data"/>
+        /// * <see cref="DataList"/>
         /// </summary>
         public RestrictedDescribed BodySection;
 
