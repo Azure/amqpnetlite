@@ -52,7 +52,11 @@ namespace Amqp
         public ApplicationProperties ApplicationProperties;
 
         /// <summary>
-        /// The body section. The library supports one section only.
+        /// The body section. It can be one of the following,
+        /// * <see cref="AmqpValue"/>
+        /// * <see cref="AmqpSequence"/>
+        /// * <see cref="Data"/>
+        /// * <see cref="DataList"/>
         /// </summary>
         public RestrictedDescribed BodySection;
 
@@ -301,14 +305,7 @@ namespace Amqp
             var data = body as Data;
             if (data != null)
             {
-                if (data.Buffer != null)
-                {
-                    return data.Buffer.Length;
-                }
-                else
-                {
-                    return data.Binary.Length;
-                }
+                return GetEstimatedDataSize(data);
             }
 
             var value = body as AmqpValue;
@@ -327,7 +324,30 @@ namespace Amqp
                 }
             }
 
+            var dataList = body as DataList;
+            if (dataList != null)
+            {
+                int size = 0;
+                for (int i = 0; i < dataList.Count; i++)
+                {
+                    size += GetEstimatedDataSize(dataList[i]);
+                }
+                return size;
+            }
+
             return 64;
+        }
+
+        static int GetEstimatedDataSize(Data data)
+        {
+            if (data.Buffer != null)
+            {
+                return data.Buffer.Length;
+            }
+            else
+            {
+                return data.Binary.Length;
+            }
         }
 
         /// <summary>

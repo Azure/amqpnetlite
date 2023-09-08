@@ -33,9 +33,9 @@ namespace Amqp
             this.transport = transport;
         }
 
-        public void Start(Connection connection)
+        public void Start(Connection connection, Action<Exception> onException = null)
         {
-            Task task = this.StartAsync(connection);
+            Task task = this.StartAsync(connection, onException);
         }
 
         public async Task PumpAsync(uint maxFrameSize, Func<ProtocolHeader, bool> onHeader, Func<ByteBuffer, bool> onBuffer)
@@ -85,7 +85,7 @@ namespace Amqp
             }
         }
 
-        async Task StartAsync(Connection connection)
+        async Task StartAsync(Connection connection, Action<Exception> onException)
         {
             try
             {
@@ -94,12 +94,19 @@ namespace Amqp
             catch (AmqpException amqpException)
             {
                 connection.OnException(amqpException);
+                if (onException != null)
+                {
+                    onException(amqpException);
+                }
             }
             catch (Exception exception)
             {
                 connection.OnIoException(exception);
+                if (onException != null)
+                {
+                    onException(exception);
+                }
             }
-
         }
 
         async Task ReceiveBufferAsync(byte[] buffer, int offset, int count)

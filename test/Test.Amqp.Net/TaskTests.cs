@@ -16,15 +16,16 @@
 //  ------------------------------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Types;
-using System.Linq;
 #if NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 #else
+using System.Net.Sockets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
@@ -73,6 +74,22 @@ namespace Test.Amqp
             await receiver.CloseAsync();
             await session.CloseAsync();
             await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task ConnectInvalidSASLAsync()
+        {
+            try
+            {
+                var address = new Address(this.testTarget.Address.Host, this.testTarget.Address.Port, this.testTarget.Address.User,
+                    string.Empty, this.testTarget.Address.Path, this.testTarget.Address.Scheme);
+                await Connection.Factory.CreateAsync(address);
+                Assert.IsTrue(false, "expect AmqpException");
+            }
+            catch (AmqpException ex)
+            {
+                Trace.WriteLine(TraceLevel.Information, "exception: {0}", ex.Message);
+            }
         }
 
         [TestMethod]
@@ -244,6 +261,21 @@ namespace Test.Amqp
 
 #if NETFX && !NETFX40
         [TestMethod]
+        public async Task ConnectInvalidAddressAsync()
+        {
+            try
+            {
+                var address = new Address("sth.invalid", 5672);
+                await Connection.Factory.CreateAsync(address);
+                Assert.IsTrue(false, "expect SocketException");
+            }
+            catch (SocketException ex)
+            {
+                Trace.WriteLine(TraceLevel.Information, "exception: {0}", ex.Message);
+            }
+        }
+
+        [TestMethod]
         public async Task CustomMessageBody()
         {
             string testName = "CustomMessageBody";
@@ -322,6 +354,8 @@ namespace Test.Amqp
 
             Connection connection = await Connection.Factory.CreateAsync(
                 this.testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
+            await Task.Yield();
+
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
@@ -348,7 +382,7 @@ namespace Test.Amqp
                 if (++count == nMsgs) done.Set();
             });
 
-            Assert.IsTrue(done.WaitOne(120000));
+            Assert.IsTrue(done.WaitOne(10000));
 
             connection.Close();
         }
