@@ -782,7 +782,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
             {
                 stream.Dispose();
-                return TestOutcome.Continue;
+                return TestOutcome.Stop;
             });
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
@@ -802,7 +802,8 @@ namespace Test.Amqp
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 connection.Closed += (o, e) => closed.Set();
                 Session session = new Session(connection);
-                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
+                await Task.Factory.StartNew(o => ((ManualResetEvent)o).WaitOne(5000), closed);
+                Assert.IsTrue(closed.WaitOne(10), "closed event not fired");
                 Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
             }).Unwrap().GetAwaiter().GetResult();
         }
@@ -1053,8 +1054,9 @@ namespace Test.Amqp
         {
             this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
             {
-                stream.Dispose();
-                return TestOutcome.Continue;
+                TestListener.FRM(stream, 0x10UL, 0, 0, "Test"); // open
+                TestListener.FRM(stream, 0x18UL, 0, channel, new Error(ErrorCode.UnauthorizedAccess)); // close
+                return TestOutcome.Stop;
             });
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
@@ -1063,7 +1065,7 @@ namespace Test.Amqp
                 Connection connection = new Connection(this.address);
                 connection.AddClosedCallback((o, e) => closed.Set());
                 Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
-                Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
+                Assert.AreEqual(ErrorCode.UnauthorizedAccess, (string)connection.Error.Condition);
                 closed.Reset();
                 connection.AddClosedCallback((o, e) => closed.Set());
                 Assert.IsTrue(closed.WaitOne(5000), "closed event not fired again");
@@ -1075,8 +1077,9 @@ namespace Test.Amqp
                 ManualResetEvent closed = new ManualResetEvent(false);
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 connection.AddClosedCallback((o, e) => closed.Set());
-                Assert.IsTrue(closed.WaitOne(5000), "closed event not fired");
-                Assert.AreEqual(ErrorCode.ConnectionForced, (string)connection.Error.Condition);
+                await Task.Factory.StartNew(o => ((ManualResetEvent)o).WaitOne(5000), closed);
+                Assert.IsTrue(closed.WaitOne(10), "closed event not fired");
+                Assert.AreEqual(ErrorCode.UnauthorizedAccess, (string)connection.Error.Condition);
                 closed.Reset();
                 connection.AddClosedCallback((o, e) => closed.Set());
                 Assert.IsTrue(closed.WaitOne(5000), "closed event not fired again");
@@ -1455,7 +1458,8 @@ namespace Test.Amqp
                 connection.Closed += (s, a) => closed.Set();
                 Session session = new Session(connection);
                 ReceiverLink receiver = new ReceiverLink(session, "receiver-" + testName, "any");
-                Assert.IsTrue(closed.WaitOne(5000), "Connection not closed");
+                await Task.Factory.StartNew(o => ((ManualResetEvent)o).WaitOne(5000), closed);
+                Assert.IsTrue(closed.WaitOne(10), "Connection not closed");
                 Assert.AreEqual(ErrorCode.TransferLimitExceeded, (string)connection.Error.Condition);
                 Assert.IsTrue(receiver.IsClosed);
             }).Unwrap().GetAwaiter().GetResult();
@@ -1794,8 +1798,10 @@ namespace Test.Amqp
                 Connection connection = await Connection.Factory.CreateAsync(this.address);
                 connection.Closed += (o, e) => closedNotified.Set();
                 Session session = new Session(connection);
-                Assert.IsTrue(closeReceived.WaitOne(5000), "Close not received");
-                Assert.IsTrue(closedNotified.WaitOne(5000), "Closed event not fired");
+                await Task.Factory.StartNew(o => ((ManualResetEvent)o).WaitOne(5000), closeReceived);
+                await Task.Factory.StartNew(o => ((ManualResetEvent)o).WaitOne(5000), closedNotified);
+                Assert.IsTrue(closeReceived.WaitOne(10), "Close not received");
+                Assert.IsTrue(closedNotified.WaitOne(10), "Closed event not fired");
                 Assert.AreEqual(ErrorCode.NotFound, (string)connection.Error.Condition);
                 Assert.IsTrue(session.IsClosed);
                 Assert.IsTrue(connection.IsClosed);

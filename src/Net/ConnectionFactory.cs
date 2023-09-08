@@ -196,12 +196,9 @@ namespace Amqp
             }
 
             IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, handler).ConfigureAwait(false);
-            Connection connection = new Connection(this.BufferManager, this.AMQP, address, transport, open, onOpened, handler);
 
-            AsyncPump pump = new AsyncPump(this.BufferManager, transport);
-            pump.Start(connection);
-
-            return connection;
+            var tcs = new ConnectTaskCompletionSource(this, address, open, onOpened, handler, transport);
+            return await tcs.Task.ConfigureAwait(false);
         }
 
         /// <summary>
@@ -279,6 +276,38 @@ namespace Amqp
             {
                 get;
                 set;
+            }
+        }
+
+        sealed class ConnectTaskCompletionSource : TaskCompletionSource<Connection>
+        {
+            readonly ConnectionFactory factory;
+            readonly OnOpened onOpened;
+            Connection connection;
+
+            public ConnectTaskCompletionSource(ConnectionFactory factory, Address address, Open open, OnOpened onOpened, IHandler handler, IAsyncTransport transport)
+            {
+                this.factory = factory;
+                this.onOpened = onOpened;
+
+                this.connection = new Connection(this.factory.BufferManager, this.factory.AMQP, address, transport, open, this.OnOpen, handler);
+                AsyncPump pump = new AsyncPump(this.factory.BufferManager, transport);
+                pump.Start(this.connection, this.OnException);
+            }
+
+            void OnOpen(IConnection connection, Open open)
+            {
+                if (this.onOpened != null)
+                {
+                    this.onOpened(connection, open);
+                }
+
+                this.TrySetResult(this.connection);
+            }
+
+            void OnException(Exception exception)
+            {
+                this.TrySetException(exception);
             }
         }
     }
