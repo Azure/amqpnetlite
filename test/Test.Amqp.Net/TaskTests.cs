@@ -17,7 +17,6 @@
 
 using System;
 using System.Linq;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
@@ -26,6 +25,7 @@ using Amqp.Types;
 #if NETFX_CORE
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 #else
+using System.Net.Sockets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 #endif
 
@@ -74,21 +74,6 @@ namespace Test.Amqp
             await receiver.CloseAsync();
             await session.CloseAsync();
             await connection.CloseAsync();
-        }
-
-        [TestMethod]
-        public async Task ConnectInvalidAddressAsync()
-        {
-            try
-            {
-                var address = new Address("sth.invalid", 5672);
-                await Connection.Factory.CreateAsync(address);
-                Assert.IsTrue(false, "expect SocketException");
-            }
-            catch (SocketException ex)
-            {
-                Trace.WriteLine(TraceLevel.Information, "exception: {0}", ex.Message);
-            }
         }
 
         [TestMethod]
@@ -275,6 +260,21 @@ namespace Test.Amqp
 #endif
 
 #if NETFX && !NETFX40
+        [TestMethod]
+        public async Task ConnectInvalidAddressAsync()
+        {
+            try
+            {
+                var address = new Address("sth.invalid", 5672);
+                await Connection.Factory.CreateAsync(address);
+                Assert.IsTrue(false, "expect SocketException");
+            }
+            catch (SocketException ex)
+            {
+                Trace.WriteLine(TraceLevel.Information, "exception: {0}", ex.Message);
+            }
+        }
+
         [TestMethod]
         public async Task CustomMessageBody()
         {
