@@ -288,6 +288,8 @@ namespace Amqp
 
             void ITransport.Close()
             {
+                this.sendArgs.Dispose();
+                this.receiveArgs.Dispose();
                 this.socket.Dispose();
 
                 var temp = this.receiveBuffer;
