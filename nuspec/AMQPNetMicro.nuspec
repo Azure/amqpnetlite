@@ -19,6 +19,11 @@
       <frameworkAssembly assemblyName="System" targetFramework="netmf42, netmf43, netmf44" />
       <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42, netmf43, netmf44" />
     </frameworkAssemblies>
+    <dependencies>
+      <group targetFramework="netmf42" />
+      <group targetFramework="netmf43" />
+      <group targetFramework="netmf44" />
+    </dependencies>
   </metadata>
   <files>
     <file src="bin\Release\Amqp.Micro.NetMF42\*.*" target="lib\netmf42" />

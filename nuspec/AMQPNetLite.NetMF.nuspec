@@ -23,7 +23,9 @@
       <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42" />
     </frameworkAssemblies>
     <dependencies>
-      <group targetFramework="netmf" />
+      <group targetFramework="netmf42" />
+      <group targetFramework="netmf43" />
+      <group targetFramework="netmf44" />
     </dependencies>
   </metadata>
   <files>
