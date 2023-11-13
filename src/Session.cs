@@ -280,8 +280,11 @@ namespace Amqp
                 this.incomingWindow = defaultWindowSize;
                 flow.NextOutgoingId = this.nextOutgoingId;
                 flow.OutgoingWindow = this.outgoingWindow;
-                flow.NextIncomingId = this.nextIncomingId;
                 flow.IncomingWindow = this.incomingWindow;
+                if (this.state >= SessionState.BeginReceived)
+                {
+                    flow.NextIncomingId = this.nextIncomingId;
+                }
 
                 this.SendCommand(flow);
             }

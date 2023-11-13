@@ -228,6 +228,45 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void FlowNextIncomingIdTest()
+        {
+            string testName = "FlowNextIncomingIdTest";
+
+            List flow = null;
+            ManualResetEvent received = new ManualResetEvent(false);
+
+            this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Attach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, 100u, 100u, 8u);
+                TestListener.FRM(stream, 0x12UL, 0, channel, testName, 0u, false, null, null, new Source(), new Target());
+                flow = fields;
+                received.Set();
+                return TestOutcome.Stop;
+            });
+
+            Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 2048 };
+            Connection connection = new Connection(this.address, null, open, null);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, testName, "foo");
+            receiver.SetCredit(100);
+            received.WaitOne(3000);
+            connection.Close();
+
+            Assert.IsTrue(flow != null, "flow is null");
+            Assert.IsTrue(flow[0] == null, "next-incoming-id is not null");
+        }
+
+        [TestMethod]
         public void RemoteLinkHandleTest()
         {
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
