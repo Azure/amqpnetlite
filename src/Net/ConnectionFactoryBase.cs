@@ -42,7 +42,7 @@ namespace Amqp
             {
                 MaxFrameSize = (int)Connection.DefaultMaxFrameSize,
                 ContainerId = Connection.MakeAmqpContainerId(),
-                IdleTimeout = int.MaxValue,
+                IdleTimeout = uint.MaxValue,
                 MaxSessionsPerConnection = Connection.DefaultMaxSessions,
                 MaxLinksPerSession = Connection.DefaultMaxLinksPerSession
             };
