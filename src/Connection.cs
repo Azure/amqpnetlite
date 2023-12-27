@@ -232,6 +232,7 @@ namespace Amqp
             this.writer = new TransportWriter(transport, this.OnIoException);
 
             // after getting the transport, move state to open pipe before starting the pump
+            uint idleTimeout = 0;
             if (open == null)
             {
                 open = new Open()
@@ -240,13 +241,30 @@ namespace Amqp
                     HostName = amqpSettings.HostName ?? this.address.Host,
                     ChannelMax = this.channelMax,
                     MaxFrameSize = this.maxFrameSize,
-                    IdleTimeOut = (uint)amqpSettings.IdleTimeout / 2
                 };
+
+                if (amqpSettings.IdleTimeout != -1)
+                {
+                    idleTimeout = (uint)amqpSettings.IdleTimeout;
+                    open.IdleTimeOut = idleTimeout / 2;
+                }
+            }
+            else if (open.HasField(4))
+            {
+                idleTimeout = open.IdleTimeOut;
+                if (idleTimeout > (uint.MaxValue / 2))
+                {
+                    idleTimeout = uint.MaxValue;
+                }
+                else
+                {
+                    idleTimeout *= 2;
+                }
             }
 
-            if (open.IdleTimeOut > 0)
+            if (idleTimeout > 0)
             {
-                this.heartBeat = new HeartBeat(this, open.IdleTimeOut * 2);
+                this.heartBeat = new HeartBeat(this, idleTimeout);
             }
 
             this.SendHeader();

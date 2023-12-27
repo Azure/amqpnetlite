@@ -68,9 +68,13 @@ namespace Amqp
         }
 
         /// <summary>
-        /// Gets or sets the connection idle timeout. Half the value is set
-        /// as the value of open.idle-time-out field.
+        /// Gets or sets the connection idle timeout. One-half of the value is set
+        /// as the value of the open.idle-time-out field.
         /// </summary>
+        /// <remarks>
+        /// A value of -1 means infinite (no idle timeout). Other negative values are
+        /// allowed but not recommended. They will be processed as a uint value instead.
+        /// </remarks>
         public int IdleTimeout
         {
             get;

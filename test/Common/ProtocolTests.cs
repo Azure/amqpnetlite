@@ -297,7 +297,7 @@ namespace Test.Amqp
         }
 
         [TestMethod]
-        public void ConnectionRemoteIdleTimeoutTest()
+        public void ConnectionIdleTimeoutRemoteTest()
         {
             ManualResetEvent received = new ManualResetEvent(false);
 
@@ -313,7 +313,7 @@ namespace Test.Amqp
                 return TestOutcome.Continue;
             });
 
-            string testName = "ConnectionRemoteIdleTimeoutTest";
+            string testName = "ConnectionIdleTimeoutRemoteTest";
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
@@ -321,7 +321,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
+                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
                 Assert.IsTrue(received.WaitOne(5000), "Heartbeat not received");
                 connection.Close();
@@ -336,7 +336,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
+                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
                 await Task.Yield();
                 Assert.IsTrue(received.WaitOne(5000), "Heartbeat not received");
@@ -346,9 +346,9 @@ namespace Test.Amqp
         }
 
         [TestMethod]
-        public void ConnectionLocalIdleTimeoutTest()
+        public void ConnectionIdleTimeoutLocalTest()
         {
-            string testName = "ConnectionLocalIdleTimeoutTest";
+            string testName = "ConnectionIdleTimeoutLocalTest";
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
             {
@@ -357,7 +357,7 @@ namespace Test.Amqp
                 Session session = new Session(connection);
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
+                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
                 Thread.Sleep(600);
                 Assert.IsTrue(!connection.IsClosed, "connection should not be closed");
@@ -376,12 +376,75 @@ namespace Test.Amqp
                 SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
                 await Task.Delay(1200);
-                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance);
+                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
                 Assert.IsTrue(connection.IsClosed, "connection not closed");
             }).Unwrap().GetAwaiter().GetResult();
 #endif
         }
+
+        [TestMethod]
+        public void ConnectionIdleTimeoutNoHeartbeatTest()
+        {
+            string testName = "ConnectionIdleTimeoutNoHeartbeatTest";
+
+            Trace.WriteLine(TraceLevel.Information, "sync test");
+            {
+                Open open = new Open() { ContainerId = testName, HostName = "localhost" };
+                Connection connection = new Connection(this.address, null, open, null);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
+                Assert.IsTrue(h == null, "heart beat should not be initialized");
+                connection.Close();
+            }
+
+#if !NETFX40
+            Trace.WriteLine(TraceLevel.Information, "async test");
+            Task.Factory.StartNew(async () =>
+            {
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.AMQP.IdleTimeout = -1;
+                Connection connection = await factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
+                Assert.IsTrue(h == null, "heart beat should not be initialized");
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+#endif
+        }
+
+#if !NETFX40
+        [TestMethod]
+        public void ConnectionIdleTimeoutNegativeValueTest()
+        {
+            string testName = "ConnectionIdleTimeoutNegativeValueTest";
+            uint? timeout = null;
+            int value = -1000;
+
+            this.testListener.RegisterTarget(TestPoint.Open, (stream, channel, fields) =>
+            {
+                timeout = (uint)fields[4];
+                return TestOutcome.Continue;
+            });
+
+            Task.Factory.StartNew(async () =>
+            {
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.AMQP.IdleTimeout = value;
+                Connection connection = await factory.CreateAsync(this.address);
+                Session session = new Session(connection);
+                SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
+                await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });
+                await connection.CloseAsync();
+            }).Unwrap().GetAwaiter().GetResult();
+
+            Assert.IsTrue(timeout == (uint)value / 2);
+        }
+#endif
 
         [TestMethod]
         public void ConnectionHeartBeatCloseTimeoutTest()
