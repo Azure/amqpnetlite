@@ -3,7 +3,7 @@
   <Identity Name="e2c156f1-0460-4ef3-8f5c-d212c8440913" Publisher="CN=amqpnetlite" Version="1.0.0.0" />
   <Properties>
     <DisplayName>Test.Amqp.NetCore</DisplayName>
-    <PublisherDisplayName>xinchen</PublisherDisplayName>
+    <PublisherDisplayName>amqpnetlite</PublisherDisplayName>
     <Logo>Images\UnitTestStoreLogo.png</Logo>
     <Description>Test.Amqp.NetCore</Description>
   </Properties>
