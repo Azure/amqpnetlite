@@ -267,6 +267,39 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void FlowDeliveryCountTest()
+        {
+            string testName = "FlowDeliveryCountTest";
+
+            List flow = null;
+            ManualResetEvent received = new ManualResetEvent(false);
+
+            this.testListener.RegisterTarget(TestPoint.Attach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x12UL, 0, channel, testName, 0u, false, null, null, new Source(), new Target());
+                flow = fields;
+                received.Set();
+                return TestOutcome.Stop;
+            });
+
+            Open open = new Open() { ContainerId = testName, HostName = "localhost", MaxFrameSize = 2048 };
+            Connection connection = new Connection(this.address, null, open, null);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(session, testName, "foo");
+            receiver.SetCredit(100);
+            received.WaitOne(3000);
+            connection.Close();
+
+            Assert.IsTrue(flow != null, "flow is null");
+            Assert.IsTrue(flow[5] == null, "delivery-count is not null");
+        }
+
+        [TestMethod]
         public void RemoteLinkHandleTest()
         {
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
@@ -1575,7 +1608,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 uint current = total;
-                total = (uint)fields[5] + (uint)fields[6];
+                total = (uint)(fields[5] ?? 0u) + (uint)fields[6];
                 for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
@@ -1613,7 +1646,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 uint current = total;
-                total = (uint)fields[5] + (uint)fields[6];
+                total = (uint)(fields[5] ?? 0u) + (uint)fields[6];
                 for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], i, BitConverter.GetBytes(i), 0u, false, false);  // transfer
@@ -1663,7 +1696,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 uint current = total;
-                uint limit = (uint)fields[5] + (uint)fields[6];
+                uint limit = (uint)(fields[5] ?? 0u) + (uint)fields[6];
                 if (limit > total)
                 {
                     total = limit;
@@ -1705,7 +1738,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 uint current = total;
-                total = Math.Max(total, (uint)fields[5] + (uint)fields[6]);
+                total = Math.Max(total, (uint)(fields[5] ?? id) + (uint)fields[6]);
                 for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], id, BitConverter.GetBytes(id), 0u, false, false);  // transfer
@@ -1747,7 +1780,7 @@ namespace Test.Amqp
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
                 uint current = total;
-                total = Math.Max(total, (uint)fields[5] + (uint)fields[6]);
+                total = Math.Max(total, (uint)(fields[5] ?? id) + (uint)fields[6]);
                 for (uint i = current; i < total; i++)
                 {
                     TestListener.FRM(stream, 0x14UL, 0, channel, fields[4], id, BitConverter.GetBytes(id), 0u, false, false);  // transfer
@@ -1785,7 +1818,6 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
-                uint dc = (uint)fields[5];
                 uint credit = (uint)fields[6];
                 for (uint i = 0; i < available; i++)
                 {

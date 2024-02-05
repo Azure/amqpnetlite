@@ -305,7 +305,12 @@ namespace Amqp
             {
                 if (!this.IsDetaching)
                 {
-                    Flow flow = new Flow() { Handle = this.handle, DeliveryCount = deliveryCount, LinkCredit = credit, Drain = drain };
+                    Flow flow = new Flow() { Handle = this.handle, LinkCredit = credit, Drain = drain };
+                    if (this.state >= LinkState.AttachReceived)
+                    {
+                        flow.DeliveryCount = deliveryCount;
+                    }
+
                     this.session.SendFlow(flow);
                 }
             }
