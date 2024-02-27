@@ -383,11 +383,21 @@ namespace Amqp.Types
         /// <returns></returns>
         public static long DateTimeToTimestamp(DateTime dateTime)
         {
-#if (NANOFRAMEWORK_1_0)
-            return (long)((dateTime.Ticks - epochTicks) / TicksPerMillisecond);
-#else
-            return (long)((dateTime.ToUniversalTime().Ticks - epochTicks) / TicksPerMillisecond);
+            DateTime utc = dateTime;
+#if !NANOFRAMEWORK_1_0
+            if (dateTime.Kind == DateTimeKind.Local)
+            {
+                utc = dateTime.ToUniversalTime();
+            }
 #endif
+            long ticks = utc.Ticks - epochTicks;
+            long ms = ticks / TicksPerMillisecond;
+            long remainder = ticks % TicksPerMillisecond;
+            if (remainder >= TicksPerMillisecond / 2)
+            {
+                ms++;
+            }
+            return ms;
         }
 
         /// <summary>

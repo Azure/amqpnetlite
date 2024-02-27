@@ -283,6 +283,22 @@ namespace Test.Amqp
         }
 
         [TestMethod()]
+        public void AmqpCodecTimestampTest()
+        {
+            DateTime now = DateTime.UtcNow;
+            now = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, now.Millisecond, DateTimeKind.Utc);
+            long ms = Encoder.DateTimeToTimestamp(now);
+            DateTime value = Encoder.TimestampToDateTime(ms);
+            Assert.AreEqual(now, value);
+
+            value = Encoder.TimestampToDateTime(Encoder.DateTimeToTimestamp(DateTime.MaxValue));
+            Assert.AreEqual(DateTime.MaxValue, value);
+
+            value = Encoder.TimestampToDateTime(Encoder.DateTimeToTimestamp(DateTime.MinValue));
+            Assert.AreEqual(DateTime.MinValue, value);
+        }
+
+        [TestMethod()]
         public void AmqpCodecTimestampRangeTest()
         {
             long max = (long)(DateTime.MaxValue - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
@@ -839,7 +855,7 @@ namespace Test.Amqp
 
         static void EnsureEqual(DateTime d1, DateTime d2)
         {
-            Assert.IsTrue(Math.Abs((d1.ToUniversalTime() - d2.ToUniversalTime()).TotalMilliseconds) < 5, "Datetime difference is greater than 5ms.");
+            Assert.IsTrue(Math.Abs((d1 - d2).TotalMilliseconds) < 5, "Datetime difference is greater than 5ms.");
         }
 
         static void EnsureEqual(object x, object y)
