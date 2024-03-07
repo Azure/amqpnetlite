@@ -20,8 +20,8 @@ namespace Test.Common
     using System;
     using System.Collections.Generic;
     using System.Security.Cryptography.X509Certificates;
-    using Amqp;
-    using Amqp.Framing;
+    using global::Amqp;
+    using global::Amqp.Framing;
 
     static class Extensions
     {

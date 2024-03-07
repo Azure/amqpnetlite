@@ -866,10 +866,13 @@ namespace Test.Amqp
         public void SmallSessionWindowTest()
         {
             ManualResetEvent done = new ManualResetEvent(false);
+
             int window = 37;
             int total = 8000;
             int received = 0;
 
+            this.testListener.WindowSize = (uint)window;
+            this.testListener.LinkCredit = 2000u;
             this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
             {
                 TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, (uint)window, 65536u, 8u);
@@ -889,7 +892,7 @@ namespace Test.Amqp
                     done.Set();
                 }
 
-                return TestOutcome.Continue;
+                return TestOutcome.Stop;
             });
 
             string testName = "SmallSessionWindowTest";

@@ -4,11 +4,16 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <DefineConstants>$(DefineConstants);DOTNET</DefineConstants>
     <IsPackable>false</IsPackable>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <OutputPath>../../bin/$(Configuration)/$(MSBuildProjectName)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="../Common/**/*.cs;../../src/Net/TypeExtensions.cs;../../Examples/Serialization/Serialization.Poco/PocoContractResolver.cs;../../Examples/Serialization/Serialization.Poco/Shape.cs" Exclude="../Common/Extensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\Extensions.cs" Link="Extensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

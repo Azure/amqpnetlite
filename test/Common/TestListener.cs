@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using Amqp;
 using Amqp.Framing;
 using Amqp.Types;
@@ -55,18 +56,44 @@ namespace Test.Amqp
 
     public class TestListener
     {
+        readonly X509Certificate2 cert;
         readonly IPEndPoint ip;
         readonly Dictionary<TestPoint, TestFunc> testPoints;
         Socket socket;
         SocketAsyncEventArgs args;
 
+        public uint WindowSize { get; set; }
+
+        public uint LinkCredit { get; set; }
+
         public TestListener(IPEndPoint ip)
+            : this(ip, null)
         {
+        }
+
+        public TestListener(IPEndPoint ip, string sslHost)
+        {
+            this.WindowSize = 5000u;
+            this.LinkCredit = 300u;
             this.ip = ip;
             this.testPoints = new Dictionary<TestPoint, TestFunc>();
+            if (sslHost != null)
+            {
+                this.cert = Test.Common.Extensions.GetCertificate("amqps", sslHost, null);
+            }
         }
 
         public static void FRM(Stream stream, ulong code, byte type, ushort channel, params object[] value)
+        {
+            ArraySegment<byte> payload = default(ArraySegment<byte>);
+            if (code == 0x14UL) // transfer
+            {
+                payload = new ArraySegment<byte>(new byte[] { 0x00, 0x53, 0x77, 0xa1, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f });
+            }
+            FRM(stream, code, type, channel, payload, value);
+        }
+
+        public static void FRM(Stream stream, ulong code, byte type, ushort channel, ArraySegment<byte> payload, params object[] value)
         {
             List list = new List();
             if (value != null) list.AddRange(value);
@@ -76,10 +103,9 @@ namespace Test.Amqp
             AmqpBitConverter.WriteUByte(buffer, type);
             AmqpBitConverter.WriteUShort(buffer, channel);
             Encoder.WriteObject(buffer, new DescribedValue(code, list));
-            if (code == 0x14UL) // transfer
+            if (payload.Count > 0)
             {
-                byte[] bytes = new byte[] { 0x00, 0x53, 0x77, 0xa1, 0x05, 0x48, 0x65, 0x6c, 0x6c, 0x6f };
-                AmqpBitConverter.WriteBytes(buffer, bytes, 0, bytes.Length);
+                AmqpBitConverter.WriteBytes(buffer, payload.Array, payload.Offset, payload.Count);
             }
 
             AmqpBitConverter.WriteInt(buffer.Buffer, 0, buffer.Length);
@@ -190,7 +216,8 @@ namespace Test.Amqp
                 }
                 if (this.HandleTestPoint(TestPoint.SaslMechamisms, stream, 0, null) == TestOutcome.Continue)
                 {
-                    FRM(stream, 0x40UL, 1, 0, new Symbol[] { "PLAIN", "EXTERNAL", "ANONYMOUS" });
+                    var mechanisms = new Symbol[] { "PLAIN", "EXTERNAL", "ANONYMOUS" };
+                    FRM(stream, 0x40UL, 1, 0, new object[] { mechanisms });
                 }
             }
             else
@@ -216,6 +243,11 @@ namespace Test.Amqp
             buffer.Complete(1);
             ulong code = Encoder.ReadULong(buffer, Encoder.ReadFormatCode(buffer));
             List fields = Encoder.ReadList(buffer, Encoder.ReadFormatCode(buffer));
+            if (buffer.Length > 0)
+            {
+                fields.Add(buffer);
+            }
+
             switch (code)
             {
                 case 0x41ul:  // sasl-init
@@ -235,7 +267,7 @@ namespace Test.Amqp
                 case 0x11ul:  // begin
                     if (this.HandleTestPoint(TestPoint.Begin, stream, channel, fields) == TestOutcome.Continue)
                     {
-                        FRM(stream, 0x11UL, 0, channel, channel, 0u, 100u, 100u, 8u);
+                        FRM(stream, 0x11UL, 0, channel, channel, 0u, WindowSize, WindowSize, 256u);
                     }
                     break;
 
@@ -243,10 +275,10 @@ namespace Test.Amqp
                     if (this.HandleTestPoint(TestPoint.Attach, stream, channel, fields) == TestOutcome.Continue)
                     {
                         bool role = !(bool)fields[2];
-                        FRM(stream, 0x12UL, 0, channel, fields[0], fields[1], role, fields[3], fields[4], new Source(), new Target());
+                        FRM(stream, 0x12UL, 0, channel, fields[0], fields[1], role, fields[3], fields[4], fields[5], fields[6], null, null, 0u, 4000000ul);
                         if (role)
                         {
-                            FRM(stream, 0x13UL, 0, channel, 0u, 100u, 0u, 100u, fields[1], 0u, 1000u);
+                            FRM(stream, 0x13UL, 0, channel, 0u, WindowSize, 0u, WindowSize, fields[1], 0u, LinkCredit);
                         }
                     }
                     break;
@@ -254,15 +286,38 @@ namespace Test.Amqp
                 case 0x13ul:  // flow
                     if (this.HandleTestPoint(TestPoint.Flow, stream, channel, fields) == TestOutcome.Continue)
                     {
+                        if (fields[4] != null)
+                        {
+                            uint deliveryCount = (uint)fields[5];
+                            uint credit = (uint)fields[6];
+                            for (uint i = 0; i < credit; i++)
+                            {
+                                var msg = new Message();
+                                msg.Properties = new Properties { MessageId = Guid.NewGuid().ToString() };
+                                msg.MessageAnnotations = new MessageAnnotations();
+                                msg.MessageAnnotations.Map["x-opt-enqueued-time"] = DateTime.UtcNow;
+                                msg.MessageAnnotations.Map["x-opt-sequence-number"] = (long)deliveryCount;
+                                msg.BodySection = new AmqpValue() { Value = "test message " + deliveryCount };
+                                var b = msg.Encode();
+                                TestListener.FRM(stream, 0x14UL, 0, channel, new ArraySegment<byte>(b.Buffer, b.Offset, b.Length),
+                                    fields[4], deliveryCount++, Guid.NewGuid().ToByteArray(), 0u, false, false);  // transfer
+                            }
+                        }
                     }
                     break;
 
                 case 0x14ul:  // transfer
                     if (this.HandleTestPoint(TestPoint.Transfer, stream, channel, fields) == TestOutcome.Continue)
                     {
-                        if (false.Equals(fields[4]))
+                        if (fields[4] == null || false.Equals(fields[4]))
                         {
                             FRM(stream, 0x15UL, 0, channel, true, fields[1], null, true, new Accepted());
+                        }
+
+                        uint deliveryId = (uint)fields[1] + 1u;
+                        if (deliveryId % 200u == 0)
+                        {
+                            TestListener.FRM(stream, 0x13UL, 0, channel, deliveryId, WindowSize, 0u, WindowSize, fields[0], deliveryId, LinkCredit);
                         }
                     }
                     break;
@@ -270,6 +325,10 @@ namespace Test.Amqp
                 case 0x15ul:  // disposition
                     if (this.HandleTestPoint(TestPoint.Disposition, stream, channel, fields) == TestOutcome.Continue)
                     {
+                        if (fields[3] == null || false.Equals(fields[4]))
+                        {
+                            FRM(stream, 0x15UL, 0, channel, !(bool)fields[0], fields[1], fields[2], true, fields[4]);
+                        }
                     }
                     break;
 
@@ -305,6 +364,13 @@ namespace Test.Amqp
         {
             try
             {
+                if (this.cert != null)
+                {
+                    var ssl = new System.Net.Security.SslStream(stream, false);
+                    ssl.AuthenticateAsServer(cert);
+                    stream = ssl;
+                }
+
                 while (true)
                 {
                     byte[] buffer = new byte[8];

@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net472;net5</TargetFrameworks>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <IntermediateOutputPath>../../obj/$(Configuration)/$(MSBuildProjectName)</IntermediateOutputPath>
     <OutputPath>../../bin/$(Configuration)/$(MSBuildProjectName)</OutputPath>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <OutputType>Exe</OutputType>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../TestAmqpBroker/Program.cs;../Common/TestAmqpBroker.cs" />
+    <Compile Include="..\Common\Extensions.cs" Link="Extensions.cs" />
+    <Compile Include="..\Common\TestListener.cs" Link="TestListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Amqp.csproj" />

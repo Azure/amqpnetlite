@@ -70,6 +70,9 @@
     <Compile Include="..\Common\ContainerHostTests.cs">
       <Link>ContainerHostTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Extensions.cs">
+      <Link>Common\Extensions.cs</Link>
+    </Compile>
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>

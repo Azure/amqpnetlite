@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2026
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.34114.132
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2-8717-4ECC-9CAD-B104CFA91C38}"
 	ProjectSection(SolutionItems) = preProject
@@ -20,6 +20,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amqp", "src\Amqp.csproj", "{0E8D989C-2C54-42A5-B10F-66CC3DCFAA48}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAmqpBroker", "test\TestAmqpBroker.2\TestAmqpBroker.csproj", "{EC55ADC4-EBF6-47DF-AAA5-C4C596FDA3A7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestServiceBusListener", "test\TestServiceBusListener\TestServiceBusListener.csproj", "{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,22 @@ Global
 		{EC55ADC4-EBF6-47DF-AAA5-C4C596FDA3A7}.Release|x64.Build.0 = Release|Any CPU
 		{EC55ADC4-EBF6-47DF-AAA5-C4C596FDA3A7}.Release|x86.ActiveCfg = Release|Any CPU
 		{EC55ADC4-EBF6-47DF-AAA5-C4C596FDA3A7}.Release|x86.Build.0 = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|ARM.Build.0 = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|x64.Build.0 = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Debug|x86.Build.0 = Debug|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|ARM.Build.0 = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|x64.Build.0 = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|x86.ActiveCfg = Release|Any CPU
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,6 +138,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D59DB637-FEC6-4D01-A2C9-B5505109FA8F} = {3A334EFA-47FA-4CE2-9306-FDFF7CF47157}
 		{EC55ADC4-EBF6-47DF-AAA5-C4C596FDA3A7} = {3A334EFA-47FA-4CE2-9306-FDFF7CF47157}
+		{4239C52E-1A06-4E17-A2C5-6CCD9D53A1CF} = {3A334EFA-47FA-4CE2-9306-FDFF7CF47157}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {74AA3680-FF95-46BF-9CDD-F19BB0CE5F56}
