@@ -8,10 +8,10 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Common\Extensions.cs" Link="Extensions.cs" />
-    <Compile Include="..\Common\TestListener.cs" Link="TestListener.cs" />
+    <Compile Include="..\..\..\test\Common\Extensions.cs" Link="Extensions.cs" />
+    <Compile Include="..\..\..\test\Common\TestListener.cs" Link="TestListener.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Amqp.csproj" />
+    <ProjectReference Include="..\..\..\src\Amqp.csproj" />
   </ItemGroup>
 </Project>
