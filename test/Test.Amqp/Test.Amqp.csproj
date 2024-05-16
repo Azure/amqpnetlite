@@ -7,6 +7,9 @@
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <OutputPath>../../bin/$(Configuration)/$(MSBuildProjectName)</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(BUILD_SCRIPT)' != '' ">
+    <DefineConstants>$(DefineConstants);BUILD_SCRIPT</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="../Common/**/*.cs;../../src/Net/TypeExtensions.cs;../../Examples/Serialization/Serialization.Poco/PocoContractResolver.cs;../../Examples/Serialization/Serialization.Poco/Shape.cs" Exclude="../Common/Extensions.cs" />

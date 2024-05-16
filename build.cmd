@@ -4,6 +4,7 @@ SETLOCAL EnableExtensions EnableDelayedExpansion
 ECHO Build Amqp.Net Lite
 ECHO.
 
+SET BUILD_SCRIPT=1
 SET return-code=0
 
 SET build-sln=amqp.sln

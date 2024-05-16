@@ -35,6 +35,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(BUILD_SCRIPT)' != '' ">
+    <DefineConstants>$(DefineConstants);BUILD_SCRIPT</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Transactions" />
@@ -90,6 +93,9 @@
     </Compile>
     <Compile Include="..\Common\TestListener.cs">
       <Link>Common\TestListener.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TestSetup.cs">
+      <Link>Common\TestSetup.cs</Link>
     </Compile>
     <Compile Include="..\Common\TestTarget.cs">
       <Link>Common\TestTarget.cs</Link>
