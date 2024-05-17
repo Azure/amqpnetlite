@@ -80,6 +80,7 @@ namespace Amqp
         /// <param name="name">The link name.</param>
         /// <param name="attach">The attach frame to send for this link.</param>
         /// <param name="onAttached">The callback to invoke when an attach is received from peer.</param>
+        /// <remarks>Name and Role of attach are replaced with the values from the constructor.</remarks>
         public ReceiverLink(Session session, string name, Attach attach, OnAttached onAttached)
             : base(session, true, name, onAttached)
         {
