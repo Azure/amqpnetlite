@@ -60,12 +60,6 @@ namespace Amqp.Listener
             get { return this.listener; }
         }
 
-        internal string RemoteContainerId
-        {
-            get;
-            private set;
-        }
-
         internal override void OnBegin(ushort remoteChannel, Begin begin)
         {
             this.ValidateChannel(remoteChannel);

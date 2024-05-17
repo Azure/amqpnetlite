@@ -191,16 +191,22 @@ namespace Amqp
                 int count = this.localLinks.Length;
                 for (int i = 0; i < count; ++i)
                 {
-                    if (this.localLinks[i] == null)
+                    Link item = this.localLinks[i];
+                    if (item == null)
                     {
                         if (index < 0)
                         {
                             index = i;
                         }
                     }
-                    else if (string.Compare(this.localLinks[i].Name, link.Name) == 0)
+                    else
                     {
-                        throw new AmqpException(ErrorCode.NotAllowed, link.Name + " has been attached.");
+                        var cached = LinkId.Create(this.Connection, item.Role, item.Name);
+                        var creating = LinkId.Create(this.Connection, link.Role, link.Name);
+                        if (cached.Equals(creating))
+                        {
+                            throw new AmqpException(ErrorCode.NotAllowed, link.Name + " has been attached by a link with the same role.");
+                        }
                     }
                 }
 
@@ -450,11 +456,16 @@ namespace Amqp
                 for (int i = 0; i < this.localLinks.Length; ++i)
                 {
                     Link temp = this.localLinks[i];
-                    if (temp != null && string.Compare(temp.Name, attach.LinkName) == 0)
+                    if (temp != null)
                     {
-                        link = temp;
-                        this.AddRemoteLink(attach.Handle, link);
-                        break;
+                        var cached = LinkId.Create(this.connection, temp.Role, temp.Name);
+                        var attaching = LinkId.Create(this.connection, !attach.Role, attach.LinkName);
+                        if (cached.Equals(attaching))
+                        {
+                            link = temp;
+                            this.AddRemoteLink(attach.Handle, link);
+                            break;
+                        }
                     }
                 }
             }

@@ -67,12 +67,83 @@ namespace Amqp
         End
     }
 
+    struct LinkId : IEquatable<LinkId>
+    {
+        public string SourceContainer { get; private set; }
+
+        public string TargetContainer { get; private set; }
+
+        public bool Role { get; private set; }
+
+        public string Name { get; private set; }
+
+        public static LinkId Create(Connection connection, bool localRole, string name)
+        {
+            string sourceContainer;
+            string targetContainer;
+            if (localRole)
+            {
+                // Receiver
+                sourceContainer = connection.ContainerId;
+                targetContainer = connection.RemoteContainerId;
+            }
+            else
+            {
+                // Sender
+                sourceContainer = connection.RemoteContainerId;
+                targetContainer = connection.ContainerId;
+            }
+
+            return new LinkId()
+            {
+                SourceContainer = sourceContainer,
+                TargetContainer = targetContainer,
+                Role = localRole,
+                Name = name
+            };
+        }
+
+        public static bool Equals(LinkId a, LinkId b)
+        {
+            // Null values are not supported.
+            return string.Equals(a.SourceContainer, b.SourceContainer, StringComparison.Ordinal) &&
+                string.Equals(a.TargetContainer, b.TargetContainer, StringComparison.Ordinal) &&
+                a.Role == b.Role &&
+                string.Equals(a.Name, b.Name, StringComparison.Ordinal);
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = this.SourceContainer.GetHashCode();
+            hash = hash * 31 + this.TargetContainer.GetHashCode();
+            hash = hash * 31 + this.Role.GetHashCode();
+            hash = hash * 31 + this.Name.GetHashCode();
+            return hash;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LinkId)
+            {
+                return Equals(this, (LinkId)obj);
+            }
+
+            return false;
+        }
+
+        bool IEquatable<LinkId>.Equals(LinkId other)
+        {
+            return Equals(this, other);
+        }
+    }
+
     /// <summary>
     /// The Link class represents an AMQP link.
     /// </summary>
     public abstract partial class Link : AmqpObject
     {
         readonly Session session;
+        readonly bool role;
         readonly string name;
         readonly uint handle;
         readonly OnAttached onAttached;
@@ -86,7 +157,20 @@ namespace Amqp
         /// <param name="session">The session.</param>
         /// <param name="name">The link name.</param>
         /// <param name="onAttached">The callback to handle received attach.</param>
+        [Obsolete]
         protected Link(Session session, string name, OnAttached onAttached)
+            : this(session, false, name, onAttached)
+        {
+        }
+
+        /// <summary>
+        /// Initializes the link.
+        /// </summary>
+        /// <param name="session">The session.</param>
+        /// <param name="role">The link's role (true for a receiver and false for a sender).</param>
+        /// <param name="name">The link name.</param>
+        /// <param name="onAttached">The callback to handle received attach.</param>
+        protected Link(Session session, bool role, string name, OnAttached onAttached)
         {
             if (session == null)
             {
@@ -99,6 +183,7 @@ namespace Amqp
             }
 
             this.session = session;
+            this.role = role;
             this.name = name;
             this.onAttached = onAttached;
             this.handle = session.AddLink(this);
@@ -111,6 +196,14 @@ namespace Amqp
         public string Name
         {
             get { return this.name; }
+        }
+
+        /// <summary>
+        /// Gets or sets the sender (false) or receiver (true) role of the link.
+        /// </summary>
+        public bool Role
+        {
+            get { return this.role; }
         }
 
         /// <summary>
@@ -316,14 +409,14 @@ namespace Amqp
             }
         }
 
-        internal void SendAttach(bool role, uint initialDeliveryCount, Attach attach)
+        internal void SendAttach(uint initialDeliveryCount, Attach attach)
         {
             Fx.Assert(this.state == LinkState.Start, "state must be Start");
             this.state = LinkState.AttachSent;
             attach.LinkName = this.name;
             attach.Handle = this.handle;
-            attach.Role = role;
-            if (!role)
+            attach.Role = this.Role;
+            if (!this.Role)
             {
                 attach.InitialDeliveryCount = initialDeliveryCount;
             }

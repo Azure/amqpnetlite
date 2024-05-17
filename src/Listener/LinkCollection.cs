@@ -17,29 +17,26 @@
 
 namespace Amqp.Listener
 {
-    using System;
     using System.Collections.Concurrent;
 
     class LinkCollection
     {
-        readonly string containerId;
-        readonly ConcurrentDictionary<Key, ListenerLink> links;
+        readonly ConcurrentDictionary<LinkId, ListenerLink> links;
 
         public LinkCollection(string containerId)
         {
-            this.containerId = containerId;
-            this.links = new ConcurrentDictionary<Key, ListenerLink>();
+            this.links = new ConcurrentDictionary<LinkId, ListenerLink>();
         }
 
         public bool TryAdd(ListenerLink link)
         {
-            Key key = new Key(this.containerId, link);
+            var key = LinkId.Create(link.Session.Connection, link.Role, link.Name);
             return this.links.TryAdd(key, link);
         }
 
         public bool Remove(ListenerLink link)
         {
-            Key key = new Key(this.containerId, link);
+            var key = LinkId.Create(link.Session.Connection, link.Role, link.Name);
             ListenerLink temp;
             return this.links.TryRemove(key, out temp);
         }
@@ -47,50 +44,6 @@ namespace Amqp.Listener
         public void Clear()
         {
             this.links.Clear();
-        }
-
-        class Key : IEquatable<Key>
-        {
-            string fromContainer;
-            string toContainer;
-            string name;
-
-            public Key(string containerId, ListenerLink link)
-            {
-                this.name = link.Name;
-                string remoteId = ((ListenerConnection)link.Session.Connection).RemoteContainerId;
-                if (link.Role)
-                {
-                    this.fromContainer = remoteId;
-                    this.toContainer = containerId;
-                }
-                else
-                {
-                    this.fromContainer = containerId;
-                    this.toContainer = remoteId;
-                }
-            }
-
-            public bool Equals(Key other)
-            {
-                return string.Equals(this.fromContainer, other.fromContainer, StringComparison.Ordinal) &&
-                    string.Equals(this.toContainer, other.toContainer, StringComparison.Ordinal) &&
-                    string.Equals(this.name, other.name, StringComparison.Ordinal);
-            }
-
-            public override int GetHashCode()
-            {
-                int hash = this.fromContainer.GetHashCode();
-                hash = hash * 31 + this.toContainer.GetHashCode();
-                hash = hash * 31 + this.name.GetHashCode();
-                return hash;
-            }
-
-            public override bool Equals(object obj)
-            {
-                Key key = obj as Key;
-                return key == null ? false : this.Equals(key);
-            }
         }
     }
 }

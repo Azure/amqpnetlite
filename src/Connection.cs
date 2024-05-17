@@ -196,6 +196,18 @@ namespace Amqp
             get { return this.handler; }
         }
 
+        internal string ContainerId
+        {
+            get;
+            private set;
+        }
+
+        internal string RemoteContainerId
+        {
+            get;
+            set;
+        }
+
         object ThisLock
         {
             get { return this.lockObject; }
@@ -551,6 +563,8 @@ namespace Amqp
 
         void SendOpen(Open open)
         {
+            this.ContainerId = open.ContainerId;
+
             IHandler handler = this.Handler;
             if (handler != null && handler.CanHandle(EventId.ConnectionLocalOpen))
             {
@@ -607,6 +621,7 @@ namespace Amqp
                 this.channelMax = open.ChannelMax;
             }
 
+            this.RemoteContainerId = open.ContainerId;
             this.remoteMaxFrameSize = open.MaxFrameSize;
             uint idleTimeout = open.IdleTimeOut;
             if (idleTimeout > 0 && this.heartBeat == null)

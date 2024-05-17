@@ -937,6 +937,83 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void DuplicateLinkNameDifferentRoleSameSessionTest()
+        {
+            string name = "DuplicateLinkNameDifferentRoleSameSessionTest";
+            this.linkProcessor = new TestLinkProcessor();
+            this.host.RegisterLinkProcessor(this.linkProcessor);
+
+            string linkName = "same-link-for-different-role-same-session";
+            var connection = new Connection(Address);
+            var session = new Session(connection);
+            var sender = new SenderLink(session, linkName, name);
+            sender.Send(new Message("msg1"), Timeout);
+
+            var receiver = new ReceiverLink(session, linkName, name);
+            receiver.SetCredit(2, false);
+            var message = receiver.Receive();
+            Assert.IsTrue(message != null, "No message was received");
+            receiver.Accept(message);
+
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void DuplicateLinkNameSameContainerDifferentConnectionTest()
+        {
+            string name = "DuplicateLinkNameSameContainerDifferentConnectionTest";
+            this.linkProcessor = new TestLinkProcessor();
+            this.host.RegisterLinkProcessor(this.linkProcessor);
+
+            string linkName = "same-send-link";
+            var connection1 = new Connection(Address, null, new Open() { ContainerId = name }, null);
+            var session1 = new Session(connection1);
+            var sender = new SenderLink(session1, linkName, name);
+            sender.Send(new Message("msg1"), Timeout);
+
+            var connection2 = new Connection(Address, null, new Open() { ContainerId = name }, null);
+            var session2 = new Session(connection2);
+            var receiver = new ReceiverLink(session2, linkName, name);
+            var message = receiver.Receive();
+            Assert.IsTrue(message != null, "No message was received");
+            receiver.Accept(message);
+
+            connection1.Close();
+            connection2.Close();
+        }
+
+        [TestMethod]
+        public void DuplicateLinkNameDifferentRoleSameContainerDifferentConnectionTest()
+        {
+            string name = "DuplicateLinkNameDifferentRoleSameContainerDifferentConnectionTest";
+            this.linkProcessor = new TestLinkProcessor();
+            this.host.RegisterLinkProcessor(this.linkProcessor);
+
+            string linkName = "same-link";
+            var connection1 = new Connection(Address, null, new Open() { ContainerId = name }, null);
+            var session1 = new Session(connection1);
+            var sender1 = new SenderLink(session1, linkName, name);
+            sender1.Send(new Message("msg1"), Timeout);
+
+            var connection2 = new Connection(Address, null, new Open() { ContainerId = name }, null);
+            var session2 = new Session(connection2);
+            var sender2 = new SenderLink(session2, linkName, name);
+
+            try
+            {
+                sender2.Send(new Message("msg1"), Timeout);
+                Assert.IsTrue(false, "Excpected exception not thrown");
+            }
+            catch (AmqpException ae)
+            {
+                Assert.AreEqual((Symbol)ErrorCode.Stolen, ae.Error.Condition);
+            }
+
+            connection1.Close();
+            connection2.Close();
+        }
+
+        [TestMethod]
         public void ContainerHostSaslAnonymousTest()
         {
             string name = "ContainerHostSaslAnonymousTest";
