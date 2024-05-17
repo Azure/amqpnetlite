@@ -67,6 +67,7 @@ namespace Amqp
         End
     }
 
+#if !NETMF
     struct LinkId : IEquatable<LinkId>
     {
         public string SourceContainer { get; private set; }
@@ -136,6 +137,7 @@ namespace Amqp
             return Equals(this, other);
         }
     }
+#endif
 
     /// <summary>
     /// The Link class represents an AMQP link.

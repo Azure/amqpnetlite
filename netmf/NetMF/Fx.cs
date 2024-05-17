@@ -104,6 +104,21 @@ namespace Amqp
         { }
     }
 
+    struct LinkId
+    {
+        string name;
+
+        public static LinkId Create(Connection connection, bool localRole, string name)
+        {
+            return new LinkId() { name = name };
+        }
+
+        public static bool Equals(LinkId a, LinkId b)
+        {
+            return string.Equals(a.name, b.name);
+        }
+    }
+
     class Uri
     {
         public static string UnescapeDataString(string url)
