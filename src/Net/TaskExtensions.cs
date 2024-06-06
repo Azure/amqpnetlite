@@ -279,16 +279,31 @@ namespace Amqp
         readonly static OutcomeCallback onOutcome = OnOutcome;
         readonly static TimerCallback onTimer = OnTimer;
         readonly Timer timer;
+        readonly bool isFaulted;
 
         public SendTask(SenderLink link, Message message, DeliveryState state, TimeSpan timeout)
         {
             this.timer = new Timer(onTimer, this, (int)timeout.TotalMilliseconds, -1);
-            link.Send(message, state, onOutcome, this);
+            try
+            {
+                link.Send(message, state, onOutcome, this);
+            }
+            catch (Exception)
+            {
+                this.isFaulted = true;
+                this.timer.Dispose();
+                throw;
+            }
         }
 
         static void OnOutcome(ILink link, Message message, Outcome outcome, object state)
         {
             SendTask thisPtr = (SendTask)state;
+            if (thisPtr.isFaulted)
+            {
+                return;
+            }
+            
             thisPtr.timer.Dispose();
 
             if (outcome.Descriptor.Code == Codec.Accepted.Code)
