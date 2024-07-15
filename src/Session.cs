@@ -95,6 +95,7 @@ namespace Amqp
         LinkedList outgoingList;
         SequenceNumber nextOutgoingId;
         uint outgoingWindow;
+        bool writingDelivery;
 
         /// <summary>
         /// Initializes a session object.
@@ -246,8 +247,16 @@ namespace Amqp
             {
                 this.ThrowIfEnded("Send");
                 this.outgoingList.Add(delivery);
-                this.WriteDelivery(delivery);
+                if (this.outgoingWindow == 0 || this.writingDelivery)
+                {
+                    return;
+                }
+
+                delivery.InProgress = true;
+                this.writingDelivery = true;
             }
+
+            this.WriteDelivery(delivery);
         }
 
         internal void DisposeDelivery(bool role, Delivery delivery, DeliveryState state, bool settled)
@@ -530,38 +539,30 @@ namespace Amqp
 
         internal Delivery RemoveDeliveries(Link link)
         {
-            LinkedList list = null;
+            INode first = null;
+            INode last = null;
             lock (this.ThisLock)
             {
-                Delivery temp = (Delivery)this.outgoingList.First;
+                INode temp = this.outgoingList.First;
                 while (temp != null)
                 {
-                    Delivery curr = temp;
-                    temp = (Delivery)temp.Next;
-                    if (curr.Link == link)
+                    Delivery curr = (Delivery)temp;
+                    temp = temp.Next;
+                    if ((curr.Link == link || link == null) && !curr.InProgress)
                     {
+                        // InProgress delivery will be removed by WriteDelivery
                         this.outgoingList.Remove(curr);
-                        if (list == null)
-                        {
-                            list = new LinkedList();
-                        }
-
-                        list.Add(curr);
+                        LinkedList.Add(ref first, ref last, curr);
                     }
                 }
             }
 
-            return list == null ? null : (Delivery)list.First;
+            return (Delivery)first;
         }
 
         void CancelPendingDeliveries(Error error)
         {
-            Delivery toRealse;
-            lock (this.ThisLock)
-            {
-                toRealse = (Delivery)this.outgoingList.Clear();
-            }
-
+            Delivery toRealse = this.RemoveDeliveries(null);
             Delivery.ReleaseAll(toRealse, error);
         }
 
@@ -573,27 +574,30 @@ namespace Amqp
 
         void OnFlow(Flow flow)
         {
+            Delivery delivery = null;
             lock (this.ThisLock)
             {
                 this.outgoingWindow = (uint)((flow.NextIncomingId + flow.IncomingWindow) - this.nextOutgoingId);
-                if (this.outgoingWindow > 0)
+                if (this.outgoingWindow > 0 && !this.writingDelivery)
                 {
-                    Delivery delivery = (Delivery)this.outgoingList.First;
+                    delivery = (Delivery)this.outgoingList.First;
                     while (delivery != null)
                     {
                         if (delivery.Buffer != null && delivery.Buffer.Length > 0)
                         {
+                            delivery.InProgress = true;
+                            this.writingDelivery = true;
                             break;
                         }
 
                         delivery = (Delivery)delivery.Next;
                     }
-
-                    if (delivery != null)
-                    {
-                        this.WriteDelivery(delivery);
-                    }
                 }
+            }
+
+            if (delivery != null)
+            {
+                this.WriteDelivery(delivery);
             }
 
             if (flow.HasHandle)
@@ -745,13 +749,12 @@ namespace Amqp
 
         void WriteDelivery(Delivery delivery)
         {
-            // Must be called under lock. Delivery must be on list already
-            while (this.outgoingWindow > 0 && delivery != null)
+            // Must be called single threaded. Delivery must be on list already
+            // Responsible for releasing the buffer when done transferring or with a closed link
+            bool more = true;
+            while (more)
             {
-                this.outgoingWindow--;
-                this.nextOutgoingId++;
                 Transfer transfer = new Transfer() { Handle = delivery.Handle };
-
                 bool first = delivery.BytesTransfered == 0;
                 if (first)
                 {
@@ -768,17 +771,50 @@ namespace Amqp
                 int len = this.connection.SendCommand(this.channel, transfer, first,
                     delivery.Buffer, delivery.ReservedBufferSize);
                 delivery.BytesTransfered += len;
+                delivery.Buffer.Complete(len);
 
-                if (delivery.Buffer.Length == 0)
+                Delivery release = null;
+                lock (this.ThisLock)
                 {
-                    delivery.Buffer.ReleaseReference();
-                    Delivery next = (Delivery)delivery.Next;
-                    if (delivery.Settled)
+                    this.nextOutgoingId++;
+                    if (this.outgoingWindow > 0)
                     {
-                        this.outgoingList.Remove(delivery);
+                        this.outgoingWindow--;
                     }
 
-                    delivery = next;
+                    if (delivery.Buffer.Length == 0 || delivery.Link.IsClosed)
+                    {
+                        delivery.InProgress = false;
+                        var next = (Delivery)delivery.Next;
+                        if (delivery.Link.IsClosed)
+                        {
+                            release = delivery;
+                            this.outgoingList.Remove(delivery);
+                        }
+                        else if (delivery.Settled)
+                        {
+                            this.outgoingList.Remove(delivery);
+                        }
+
+                        delivery = next;
+                    }
+
+                    if (delivery == null)
+                    {
+                        this.writingDelivery = false;
+                        more = false;
+                    }
+                    else if (this.outgoingWindow == 0)
+                    {
+                        delivery.InProgress = false;
+                        this.writingDelivery = false;
+                        more = false;
+                    }
+                }
+
+                if (release != null)
+                {
+                    Delivery.ReleaseAll(release, release.Link.Error);
                 }
             }
         }

@@ -910,7 +910,72 @@ namespace Test.Amqp
                 senders[i % senders.Length].Send(new Message("message" + i), null, null);
             }
 
-            Assert.IsTrue(done.WaitOne(10000), "not all messages are transferred");
+            Assert.IsTrue(done.WaitOne(10000), $"Transferred {received} out of {total} messages");
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void SmallSessionWindowWithLinkCloseTest()
+        {
+            ManualResetEvent done = new ManualResetEvent(false);
+
+            int window = 43;
+            int total = 8000;
+            int received = 0;
+            int success = 0;
+            int cancel = 0;
+
+            this.testListener.WindowSize = (uint)window;
+            this.testListener.LinkCredit = 4000u;
+            this.testListener.RegisterTarget(TestPoint.Begin, (stream, channel, fields) =>
+            {
+                TestListener.FRM(stream, 0x11UL, 0, channel, channel, 0u, (uint)window, 65536u, 8u);
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Detach, (stream, channel, fields) =>
+            {
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                received++;
+                TestListener.FRM(stream, 0x15UL, 0, channel, true, fields[1], null, true, new Accepted());
+                if (received % window == 0)
+                {
+                    TestListener.FRM(stream, 0x13UL, 0, channel, (uint)received, (uint)window, 0u, 65536u);
+                }
+                if (received >= 3000 && received % 1000 == 0)
+                {
+                    TestListener.FRM(stream, 0x16UL, 0, channel, (uint)((received / 1000) - 3), true);
+                }
+                return TestOutcome.Stop;
+            });
+
+            string testName = "SmallSessionWindowWithLinkCloseTest";
+
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            SenderLink[] senders = new SenderLink[8];
+            for (int i = 0; i < senders.Length; i++)
+            {
+                senders[i] = new SenderLink(session, "sender:" + i, testName);
+            }
+
+            for (int i = 0; i < total; i++)
+            {
+                senders[i % senders.Length].Send(
+                    new Message("message" + i),
+                    (s, m, o, t) => {
+                        if (o.Descriptor.Code == 0x24ul) success++; else cancel++;
+                        if (success + cancel >= total) done.Set();
+                    },
+                    null);
+            }
+
+            Assert.IsTrue(done.WaitOne(10000), $"total:{total} received:{received} success:{success} fail:{cancel}");
+
             connection.Close();
         }
 

@@ -491,7 +491,6 @@ namespace Amqp
                 frameBuffer = buffer;
             }
 
-            payload.Complete(payloadSize);
             this.writer.Send(frameBuffer);
             Trace.WriteLine(TraceLevel.Frame, "SEND (ch={0}) {1} payload {2}", channel, transfer, payloadSize);
             Trace.WriteBuffer("SEND {0}", frameBuffer.Buffer, frameBuffer.Offset, frameBuffer.Length);
