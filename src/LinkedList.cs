@@ -31,42 +31,42 @@ namespace Amqp
 
         public INode First { get { return this.head; } }
 
-        public void Add(INode node)
+        public static void Add(ref INode head, ref INode tail, INode node)
         {
             Fx.Assert(node.Previous == null && node.Next == null, "node is already in a list");
-            if (this.head == null)
+            if (head == null)
             {
-                Fx.Assert(this.tail == null, "tail must be null");
-                this.head = this.tail = node;
+                Fx.Assert(tail == null, "tail must be null");
+                head = tail = node;
             }
             else
             {
-                Fx.Assert(this.tail != null, "tail must not be null");
-                this.tail.Next = node;
-                node.Previous = this.tail;
-                this.tail = node;
+                Fx.Assert(tail != null, "tail must not be null");
+                tail.Next = node;
+                node.Previous = tail;
+                tail = node;
             }
         }
 
-        public void Remove(INode node)
+        public static void Remove(ref INode head, ref INode tail, INode node)
         {
             Fx.Assert(node != null, "node cannot be null");
-            if (node == this.head)
+            if (node == head)
             {
-                this.head = node.Next;
-                if (this.head == null)
+                head = node.Next;
+                if (head == null)
                 {
-                    this.tail = null;
+                    tail = null;
                 }
                 else
                 {
-                    this.head.Previous = null;
+                    head.Previous = null;
                 }
             }
-            else if (node == this.tail)
+            else if (node == tail)
             {
-                this.tail = node.Previous;
-                this.tail.Next = null;
+                tail = node.Previous;
+                tail.Next = null;
             }
             else if (node.Previous != null && node.Next != null)
             {
@@ -76,6 +76,16 @@ namespace Amqp
             }
 
             node.Previous = node.Next = null;
+        }
+
+        public void Add(INode node)
+        {
+            Add(ref this.head, ref this.tail, node);
+        }
+
+        public void Remove(INode node)
+        {
+            Remove(ref this.head, ref this.tail, node);
         }
 
         public INode Clear()

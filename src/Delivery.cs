@@ -23,7 +23,9 @@ namespace Amqp
 
     sealed class Delivery : IDelivery, INode
     {
+        const byte InProgressMask = 0x01;
         Message message;
+        byte flags;
 
         public ByteBuffer Buffer;
 
@@ -65,6 +67,22 @@ namespace Amqp
 
                 this.message = value;
                 this.message.Delivery = this;
+            }
+        }
+
+        public bool InProgress
+        {
+            get { return (this.flags & InProgressMask) > 0; }
+            set
+            {
+                if (value)
+                {
+                    this.flags |= InProgressMask;
+                }
+                else
+                {
+                    this.flags &= byte.MaxValue ^ InProgressMask;
+                }
             }
         }
 
