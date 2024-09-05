@@ -57,11 +57,7 @@ before_build:
 
       Write-Output "Restoring dotnet projects ..."
 
-      pushd dotnet
-
-      dotnet restore
-
-      popd
+      dotnet restore amqp-dotnet.sln
 
     }
     Else
