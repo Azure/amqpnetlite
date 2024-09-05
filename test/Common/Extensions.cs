@@ -81,7 +81,7 @@ namespace Test.Common
             X509Certificate2Collection collection = store.Certificates.Find(
                 X509FindType.FindBySubjectName,
                 certFindValue,
-                true);
+                false);
             if (collection.Count == 0)
             {
                 cert = null;

@@ -54,7 +54,6 @@ before_build:
 
       [Environment]::SetEnvironmentVariable("PATH", $env:Path, "User")
 
-
       Write-Output "Restoring dotnet projects ..."
 
       dotnet restore amqp-dotnet.sln
