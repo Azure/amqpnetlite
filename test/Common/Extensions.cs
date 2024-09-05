@@ -60,7 +60,8 @@ namespace Test.Common
 
         public static X509Certificate2 GetCertificate(string certFindValue)
         {
-            if (TryGetCertificate(StoreLocation.CurrentUser, StoreName.My, certFindValue, out X509Certificate2 cert))
+            X509Certificate2 cert = null;
+            if (TryGetCertificate(StoreLocation.CurrentUser, StoreName.My, certFindValue, out cert))
             {
                 return cert;
             }
