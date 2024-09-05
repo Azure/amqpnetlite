@@ -22,6 +22,7 @@ namespace Amqp
     using System.Net.Security;
     using System.Security.Authentication;
     using System.Security.Cryptography.X509Certificates;
+    using System.Threading;
     using System.Threading.Tasks;
     using Amqp.Framing;
     using Amqp.Handler;
@@ -103,7 +104,7 @@ namespace Amqp
         /// <returns>A task for the connection creation operation. On success, the result is an AMQP <see cref="Connection"/></returns>
         public Task<Connection> CreateAsync(Address address, IHandler handler)
         {
-            return this.CreateAsync(address, null, null, handler);
+            return this.CreateAsync(address, null, null, handler, CancellationToken.None);
         }
 
         /// <summary>
@@ -116,7 +117,19 @@ namespace Amqp
         /// <remarks>The Open object, when provided, is used as is, and not augmented by the AMQP settings.</remarks>
         public Task<Connection> CreateAsync(Address address, Open open = null, OnOpened onOpened = null)
         {
-            return this.CreateAsync(address, open, onOpened, null);
+            return this.CreateAsync(address, open, onOpened, null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Creates a new connection with an optional protocol handler.
+        /// </summary>
+        /// <param name="address">The address of remote endpoint to connect to.</param>
+        /// <param name="cancellationToken">The cancellation token associated with the async operation.</param>
+        /// <param name="handler">The protocol handler.</param>
+        /// <returns>A task for the connection creation operation. On success, the result is an AMQP <see cref="Connection"/></returns>
+        public Task<Connection> CreateAsync(Address address, CancellationToken cancellationToken, IHandler handler = null)
+        {
+            return this.CreateAsync(address, null, null, handler, cancellationToken);
         }
 
         internal async Task ConnectAsync(Address address, SaslProfile saslProfile, Open open, Connection connection)
@@ -133,14 +146,14 @@ namespace Amqp
                 }
             }
 
-            IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, connection.Handler).ConfigureAwait(false);
+            IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, connection.Handler, CancellationToken.None).ConfigureAwait(false);
             connection.Init(this.BufferManager, this.AMQP, transport, open);
 
             AsyncPump pump = new AsyncPump(this.BufferManager, transport);
             pump.Start(connection);
         }
 
-        async Task<IAsyncTransport> CreateTransportAsync(Address address, SaslProfile saslProfile, IHandler handler)
+        async Task<IAsyncTransport> CreateTransportAsync(Address address, SaslProfile saslProfile, IHandler handler, CancellationToken cancellationToken)
         {
             IAsyncTransport transport;
             TransportProvider provider;
@@ -151,7 +164,7 @@ namespace Amqp
             else if (TcpTransport.MatchScheme(address.Scheme))
             {
                 TcpTransport tcpTransport = new TcpTransport(this.BufferManager);
-                await tcpTransport.ConnectAsync(address, this, handler).ConfigureAwait(false);
+                await tcpTransport.ConnectAsync(address, this, handler, cancellationToken).ConfigureAwait(false);
                 transport = tcpTransport;
             }
 #if NETFX
@@ -183,7 +196,7 @@ namespace Amqp
             return transport;
         }
 
-        async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened, IHandler handler)
+        async Task<Connection> CreateAsync(Address address, Open open, OnOpened onOpened, IHandler handler, CancellationToken cancellationToken)
         {
             SaslProfile saslProfile = null;
             if (address.User != null)
@@ -195,9 +208,9 @@ namespace Amqp
                 saslProfile = this.saslSettings.Profile;
             }
 
-            IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, handler).ConfigureAwait(false);
+            IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, handler, cancellationToken).ConfigureAwait(false);
 
-            var tcs = new ConnectTaskCompletionSource(this, address, open, onOpened, handler, transport);
+            var tcs = new ConnectTaskCompletionSource(this, address, open, onOpened, handler, transport, cancellationToken);
             return await tcs.Task.ConfigureAwait(false);
         }
 
@@ -283,12 +296,20 @@ namespace Amqp
         {
             readonly ConnectionFactory factory;
             readonly OnOpened onOpened;
+            readonly IAsyncTransport transport;
+            readonly CancellationTokenRegistration ctr;
             Connection connection;
 
-            public ConnectTaskCompletionSource(ConnectionFactory factory, Address address, Open open, OnOpened onOpened, IHandler handler, IAsyncTransport transport)
+            public ConnectTaskCompletionSource(ConnectionFactory factory, Address address, Open open,
+                OnOpened onOpened, IHandler handler, IAsyncTransport transport, CancellationToken cancellationToken)
             {
                 this.factory = factory;
                 this.onOpened = onOpened;
+                this.transport = transport;
+                if (cancellationToken.CanBeCanceled)
+                {
+                    this.ctr = cancellationToken.Register(o => ((ConnectTaskCompletionSource)o).OnCancel(), this);
+                }
 
                 this.connection = new Connection(this.factory.BufferManager, this.factory.AMQP, address, transport, open, this.OnOpen, handler);
                 AsyncPump pump = new AsyncPump(this.factory.BufferManager, transport);
@@ -297,16 +318,30 @@ namespace Amqp
 
             void OnOpen(IConnection connection, Open open)
             {
+                this.ctr.Dispose();
                 if (this.onOpened != null)
                 {
                     this.onOpened(connection, open);
                 }
 
-                this.TrySetResult(this.connection);
+                if (!this.TrySetResult(this.connection))
+                {
+                    this.transport.Close();
+                }
+            }
+
+            void OnCancel()
+            {
+                this.ctr.Dispose();
+                if (this.TrySetCanceled())
+                {
+                    this.transport.Close();
+                }
             }
 
             void OnException(Exception exception)
             {
+                this.ctr.Dispose();
                 this.TrySetException(exception);
             }
         }

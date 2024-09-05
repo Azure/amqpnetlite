@@ -22,6 +22,7 @@ namespace Amqp
     using System.Net;
     using System.Net.Security;
     using System.Net.Sockets;
+    using System.Threading;
     using System.Threading.Tasks;
     using Amqp.Handler;
 
@@ -57,10 +58,10 @@ namespace Amqp
                 factory.SSL.RemoteCertificateValidationCallback = noneCertValidator;
             }
 
-            this.ConnectAsync(address, factory, connection.Handler).ConfigureAwait(false).GetAwaiter().GetResult();
+            this.ConnectAsync(address, factory, connection.Handler, CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-        public async Task ConnectAsync(Address address, ConnectionFactory factory, IHandler handler)
+        public async Task ConnectAsync(Address address, ConnectionFactory factory, IHandler handler, CancellationToken cancellationToken)
         {
             IPAddress[] ipAddresses;
             IPAddress ip;
@@ -88,7 +89,7 @@ namespace Amqp
                 socket = new Socket(ipAddresses[i].AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                 try
                 {
-                    await socket.ConnectAsync(ipAddresses[i], address.Port).ConfigureAwait(false);
+                    await socket.ConnectAsync(ipAddresses[i], address.Port, cancellationToken).ConfigureAwait(false);
 
                     exception = null;
                     break;

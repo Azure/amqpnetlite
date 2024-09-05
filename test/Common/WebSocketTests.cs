@@ -85,7 +85,7 @@ namespace Test.Amqp
             string testName = "WebSocketSslMutalAuthTest";
             Address listenAddress = new Address("wss://localhost:18081/" + testName + "/");
 
-            X509Certificate2 cert = ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+            X509Certificate2 cert = Test.Common.Extensions.GetCertificate("localhost");
 
             string output;
             int code = Exec("netsh.exe", string.Format("http show sslcert hostnameport={0}:{1}", listenAddress.Host, listenAddress.Port), out output);
@@ -117,7 +117,7 @@ namespace Test.Amqp
                 var wssFactory = new WebSocketTransportFactory();
                 wssFactory.Options = o =>
                 {
-                    o.ClientCertificates.Add(ContainerHostTests.GetCertificate(StoreLocation.LocalMachine, StoreName.My, listenAddress.Host));
+                    o.ClientCertificates.Add(Test.Common.Extensions.GetCertificate(listenAddress.Host));
                 };
 
                 ConnectionFactory connectionFactory = new ConnectionFactory(new TransportProvider[] { wssFactory });

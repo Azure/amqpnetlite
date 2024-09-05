@@ -36,6 +36,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\test\Common\Extensions.cs">
+      <Link>Extensions.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\..\test\Common\TestAmqpBroker.cs">
       <Link>TestAmqpBroker.cs</Link>

@@ -1189,7 +1189,7 @@ namespace Test.Amqp
             
             try
             {
-                cert = GetCertificate(StoreLocation.LocalMachine, StoreName.My, "localhost");
+                cert = Test.Common.Extensions.GetCertificate("localhost");
             }
             catch (PlatformNotSupportedException)
             {
@@ -1455,27 +1455,6 @@ namespace Test.Amqp
             Message copy = Message.Decode(message.Encode());
 
             Assert.AreEqual((message.BodySection as AmqpValue).Value, (copy.BodySection as AmqpValue).Value);
-        }
-
-        public static X509Certificate2 GetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue)
-        {
-            X509Store store = new X509Store(storeName, storeLocation);
-            store.Open(OpenFlags.OpenExistingOnly);
-            X509Certificate2Collection collection = store.Certificates.Find(
-                X509FindType.FindBySubjectName,
-                certFindValue,
-                false);
-            if (collection.Count == 0)
-            {
-                throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
-            }
-
-#if DOTNET
-            store.Dispose();
-#else
-            store.Close();
-#endif
-            return collection[0];
         }
     }
 

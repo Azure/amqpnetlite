@@ -169,6 +169,21 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public async Task ConnectionFactoryCancelAsync()
+        {
+            // Invalid address for test
+            var address = new Address("amqp://192.0.2.3:5672");
+            try
+            {
+                Connection connection = await Connection.Factory.CreateAsync(address, new CancellationTokenSource(300).Token);
+                Assert.IsTrue(false, "Connection creation should have been cancelled.");
+            }
+            catch (TaskCanceledException)
+            {
+            }
+        }
+
+        [TestMethod]
         public async Task ReceiverSenderAsync()
         {
             string testName = "ReceiverSenderAsync";

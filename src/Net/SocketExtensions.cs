@@ -21,6 +21,7 @@ namespace Amqp
     using System.Collections.Generic;
     using System.Net;
     using System.Net.Sockets;
+    using System.Threading;
     using System.Threading.Tasks;
 
     static class SocketExtensions
@@ -64,26 +65,28 @@ namespace Amqp
 
         public static void Complete<T>(object sender, SocketAsyncEventArgs args, bool throwOnError, T result)
         {
-            var tcs = (TaskCompletionSource<T>)args.UserToken;
-            args.UserToken = null;
-            if (tcs == null)
+            using (var tcs = (SocketTaskCompletionSource<T>)args.UserToken)
             {
-                return;
-            }
+                args.UserToken = null;
+                if (tcs == null)
+                {
+                    return;
+                }
 
-            if (args.SocketError != SocketError.Success && throwOnError)
-            {
-                tcs.TrySetException(new SocketException((int)args.SocketError));
-            }
-            else
-            {
-                tcs.TrySetResult(result);
+                if (args.SocketError != SocketError.Success && throwOnError)
+                {
+                    tcs.TrySetException(new SocketException((int)args.SocketError));
+                }
+                else
+                {
+                    tcs.TrySetResult(result);
+                }
             }
         }
 
-        public static Task ConnectAsync(this Socket socket, IPAddress addr, int port)
+        public static Task ConnectAsync(this Socket socket, IPAddress addr, int port, CancellationToken cancellationToken)
         {
-            var tcs = new TaskCompletionSource<int>();
+            var tcs = new SocketTaskCompletionSource<int>(cancellationToken);
             var args = new SocketAsyncEventArgs();
             args.RemoteEndPoint = new IPEndPoint(addr, port);
             args.UserToken = tcs;
@@ -99,7 +102,7 @@ namespace Amqp
 
         public static Task<int> ReceiveAsync(this Socket socket, SocketAsyncEventArgs args, byte[] buffer, int offset, int count)
         {
-            var tcs = new TaskCompletionSource<int>();
+            var tcs = new SocketTaskCompletionSource<int>(CancellationToken.None);
             args.SetBuffer(buffer, offset, count);
             args.UserToken = tcs;
             if (!socket.ReceiveAsync(args))
@@ -112,7 +115,7 @@ namespace Amqp
 
         public static Task<int> SendAsync(this Socket socket, SocketAsyncEventArgs args, IList<ArraySegment<byte>> buffers)
         {
-            var tcs = new TaskCompletionSource<int>();
+            var tcs = new SocketTaskCompletionSource<int>(CancellationToken.None);
             args.SetBuffer(null, 0, 0);
             args.BufferList = buffers;
             args.UserToken = tcs;
@@ -126,7 +129,7 @@ namespace Amqp
 
         public static Task<Socket> AcceptAsync(this Socket socket, SocketAsyncEventArgs args, SocketFlags flags)
         {
-            var tcs = new TaskCompletionSource<Socket>();
+            var tcs = new SocketTaskCompletionSource<Socket>(CancellationToken.None);
             args.UserToken = tcs;
             if (!socket.AcceptAsync(args))
             {
@@ -134,6 +137,31 @@ namespace Amqp
             }
 
             return tcs.Task;
+        }
+
+        sealed class SocketTaskCompletionSource<T> : TaskCompletionSource<T>, IDisposable
+        {
+            readonly CancellationTokenRegistration ctr;
+
+            public SocketTaskCompletionSource(CancellationToken ct)
+            {
+                if (ct.CanBeCanceled)
+                {
+                    this.ctr = ct.Register(o => OnCancel(o), this);
+                }
+            }
+
+            public void Dispose()
+            {
+                this.ctr.Dispose();
+            }
+
+            static void OnCancel(object state)
+            {
+                var thisPtr = (SocketTaskCompletionSource<T>)state;
+                thisPtr.ctr.Dispose();
+                thisPtr.TrySetCanceled();
+            }
         }
     }
 }

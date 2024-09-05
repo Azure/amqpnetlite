@@ -55,39 +55,45 @@ namespace Test.Common
                 return null;
             }
 
-            if (certFindValue == null)
+            return GetCertificate(certFindValue ?? host);
+        }
+
+        public static X509Certificate2 GetCertificate(string certFindValue)
+        {
+            if (TryGetCertificate(StoreLocation.CurrentUser, StoreName.My, certFindValue, out X509Certificate2 cert))
             {
-                certFindValue = host;
+                return cert;
             }
 
-            StoreLocation[] locations = new StoreLocation[] { StoreLocation.LocalMachine, StoreLocation.CurrentUser };
-            foreach (StoreLocation location in locations)
+            if (TryGetCertificate(StoreLocation.LocalMachine, StoreName.My, certFindValue, out cert))
             {
-                X509Store store = new X509Store(StoreName.My, location);
-                store.Open(OpenFlags.OpenExistingOnly);
-
-                X509Certificate2Collection collection = store.Certificates.Find(
-                    X509FindType.FindBySubjectName,
-                    certFindValue,
-                    false);
-
-                if (collection.Count == 0)
-                {
-                    collection = store.Certificates.Find(
-                        X509FindType.FindByThumbprint,
-                        certFindValue,
-                        false);
-                }
-
-                store.Close();
-
-                if (collection.Count > 0)
-                {
-                    return collection[0];
-                }
+                return cert;
             }
 
             throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
+        }
+
+        public static bool TryGetCertificate(StoreLocation storeLocation, StoreName storeName, string certFindValue, out X509Certificate2 cert)
+        {
+            X509Store store = new X509Store(storeName, storeLocation);
+            store.Open(OpenFlags.OpenExistingOnly);
+            X509Certificate2Collection collection = store.Certificates.Find(
+                X509FindType.FindBySubjectName,
+                certFindValue,
+                true);
+            if (collection.Count == 0)
+            {
+                cert = null;
+                return false;
+            }
+
+#if DOTNET
+            store.Dispose();
+#else
+            store.Close();
+#endif
+            cert = collection[0];
+            return true;
         }
 
         static Dictionary<string, TraceLevel> GetTraceMapping()

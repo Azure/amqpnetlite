@@ -6,7 +6,7 @@
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../TestAmqpBroker/Program.cs;../Common/TestAmqpBroker.cs" />
+    <Compile Include="../TestAmqpBroker/Program.cs;../Common/Extensions.cs;../Common/TestAmqpBroker.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Amqp.csproj" />

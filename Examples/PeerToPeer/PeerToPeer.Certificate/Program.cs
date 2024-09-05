@@ -37,7 +37,7 @@ namespace PeerToPeer.Certificate
             Console.WriteLine("Starting server...");
             ContainerHost host = new ContainerHost(address);            
             var listener = host.Listeners[0];
-            listener.SSL.Certificate = GetCertificate("localhost");
+            listener.SSL.Certificate = Test.Common.Extensions.GetCertificate("localhost");
             listener.SSL.ClientCertificateRequired = true;
             listener.SSL.RemoteCertificateValidationCallback = ValidateServerCertificate;
             listener.SASL.EnableExternalMechanism = true;
@@ -50,7 +50,7 @@ namespace PeerToPeer.Certificate
 
             Console.WriteLine("Starting client...");
             ConnectionFactory factory = new ConnectionFactory();
-            factory.SSL.ClientCertificates.Add(GetCertificate("localhost"));
+            factory.SSL.ClientCertificates.Add(Test.Common.Extensions.GetCertificate("localhost"));
             factory.SSL.RemoteCertificateValidationCallback = ValidateServerCertificate;
             factory.SASL.Profile = SaslProfile.External;
             Console.WriteLine("Sending message...");
@@ -71,38 +71,6 @@ namespace PeerToPeer.Certificate
         {
             Console.WriteLine("Received remote certificate. Subject: {0}, Policy errors: {1}", certificate.Subject, sslPolicyErrors);
             return true;
-        }
-
-        static X509Certificate2 GetCertificate(string certFindValue)
-        {
-            StoreLocation[] locations = new StoreLocation[] { StoreLocation.LocalMachine, StoreLocation.CurrentUser };
-            foreach (StoreLocation location in locations)
-            {
-                X509Store store = new X509Store(StoreName.My, location);
-                store.Open(OpenFlags.OpenExistingOnly);
-
-                X509Certificate2Collection collection = store.Certificates.Find(
-                    X509FindType.FindBySubjectName,
-                    certFindValue,
-                    false);
-
-                if (collection.Count == 0)
-                {
-                    collection = store.Certificates.Find(
-                        X509FindType.FindByThumbprint,
-                        certFindValue,
-                        false);
-                }
-
-                store.Close();
-
-                if (collection.Count > 0)
-                {
-                    return collection[0];
-                }
-            }
-
-            throw new ArgumentException("No certificate can be found using the find value " + certFindValue);
         }
 
         class MessageProcessor : IMessageProcessor
