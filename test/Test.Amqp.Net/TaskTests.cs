@@ -168,6 +168,7 @@ namespace Test.Amqp
             await connection.CloseAsync();
         }
 
+#if !NETFX_CORE
         [TestMethod]
         public async Task ConnectionFactoryCancelAsync()
         {
@@ -182,6 +183,7 @@ namespace Test.Amqp
             {
             }
         }
+#endif
 
         [TestMethod]
         public async Task ReceiverSenderAsync()
