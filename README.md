@@ -7,14 +7,15 @@ AMQP.Net Lite is a lightweight AMQP 1.0 library for the .Net Framework, .Net Cor
 
 |NuGet Package|Status|
 |------|-------------|
-|AMQPNetLite (main package)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite)](https://www.nuget.org/packages/AMQPNetLite/)|
-|AMQPNetLite.Core (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Core?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Core/)|
-|AMQPNetLite.Serialization (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.Serialization?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.Serialization/)|
-|AMQPNetLite.WebSockets (.Net Core)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.WebSockets?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
-|AMQPNetLite.NetMF (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.NetMF)](https://www.nuget.org/packages/AMQPNetLite.NetMF/)|
-|AMQPNetMicro (NETMF)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro)](https://www.nuget.org/packages/AMQPNetMicro/)|
-|AMQPNetLite.nanoFramework (nanoFramework)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetLite.nanoFramework?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetLite.nanoFramework/)|
-|AMQPNetMicro.nanoFramework (nanoFramework)|[![NuGet Version and Downloads count](https://buildstats.info/nuget/AMQPNetMicro.nanoFramework?includePreReleases=true)](https://www.nuget.org/packages/AMQPNetMicro.nanoFramework/)|
+|AMQPNetLite (main package)|[![Version](https://img.shields.io/nuget/v/AMQPNetLite.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetLite.svg)](https://www.nuget.org/packages/AMQPNetLite/)|
+|AMQPNetLite.Core (.Net Core)|[![Version](https://img.shields.io/nuget/v/AMQPNetLite.Core.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetLite.Core.svg)](https://www.nuget.org/packages/AMQPNetLite.Core/)|
+|AMQPNetLite.Serialization (.Net Core)|[![Version](https://img.shields.io/nuget/v/AMQPNetLite.Serialization.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetLite.Serialization.svg)](https://www.nuget.org/packages/AMQPNetLite.Serialization/)|
+|AMQPNetLite.WebSockets (.Net Core)|[![Version](https://img.shields.io/nuget/v/AMQPNetLite.WebSockets.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetLite.WebSockets.svg)](https://www.nuget.org/packages/AMQPNetLite.WebSockets/)|
+|AMQPNetLite.NetMF (NETMF)|[![Version](https://img.shields.io/nuget/v/AMQPNetLite.NetMF.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetLite.NetMF.svg)](https://www.nuget.org/packages/AMQPNetLite.NetMF/)|
+|AMQPNetMicro (NETMF)|[![Version](https://img.shields.io/nuget/v/AMQPNetMicro.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetMicro.svg)](https://www.nuget.org/packages/AMQPNetMicro/)|
+|AMQPNetLite.nanoFramework (nanoFramework)|[![Version](https://img.shields.io/nuget/v/AMQPNetLite.nanoFramework.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetLite.nanoFramework.svg)](https://www.nuget.org/packages/AMQPNetLite.nanoFramework/)|
+|AMQPNetMicro.nanoFramework (nanoFramework)|[![Version](https://img.shields.io/nuget/v/AMQPNetMicro.nanoFramework.svg) ![Downloads](https://img.shields.io/nuget/dt/AMQPNetMicro.nanoFramework.svg)](https://www.nuget.org/packages/AMQPNetMicro.nanoFramework/)|
+
 
 ## Features
 * Full control of AMQP 1.0 protocol behavior.
