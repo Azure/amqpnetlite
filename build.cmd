@@ -114,8 +114,8 @@ ECHO MSBuild: "%MSBuildPath%"
 CALL :findfile dotnet exe
 ECHO dotnet: "%dotnetPath%"
 
-CALL :findfile MSTest exe
-ECHO MSTest: %MSTestPath%
+CALL :findfile vstest.console exe
+ECHO vstest.console: %vstest.consolePath%
 
 IF /I "%build-target%" == "test" GOTO :build-done
 IF /I "%build-target%" == "pack" GOTO :build-done
@@ -155,17 +155,19 @@ ECHO Starting the test AMQP broker
 ECHO %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 rem Delay to allow broker to start up
-PING -n 1 -w 2000 1.1.1.1 >nul 2>&1
+timeout 3
 
 :run-test
-IF "%MSTestPath%" == "" (
-  ECHO MSTest.exe does not exist or is not under PATH. Will not run tests.
+IF "%vstest.consolePath%" == "" (
+  ECHO vstest.console.exe does not exist or is not under PATH. Will not run tests.
+  SET return-code=1
+  TASKKILL /F /IM TestAmqpBroker.exe
   GOTO :exit
 )
 
 ECHO.
 ECHO Running NET tests...
-"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.NetFX\Test.Amqp.Net.dll /nologo
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX\Test.Amqp.Net.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -176,7 +178,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO Running NET40 tests...
-"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.NetFX40\Test.Amqp.Net40.dll /nologo
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX40\Test.Amqp.Net40.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -186,7 +188,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO Running NET35 tests...
-"%MSTestPath%" /testcontainer:.\bin\%build-config%\Test.Amqp.NetFX35\Test.Amqp.Net35.dll /nologo
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX35\Test.Amqp.Net35.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
