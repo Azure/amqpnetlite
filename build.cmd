@@ -294,6 +294,10 @@ EXIT /b %return-code%
     "%MSBuildPath%" %2 /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
     IF ERRORLEVEL 1 EXIT /b 1
   )
+  IF /I "%2" EQU "amqp-nanoFramework.sln" (
+    "%MSBuildPath%" %2 /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity% /p:NoWarn=1591
+    IF ERRORLEVEL 1 EXIT /b 1
+  )
   IF /I "%2" EQU "amqp-vs2015.sln" (
     call build2015.cmd %1 %build-config% "%build-platform%" %build-verbosity%
     IF ERRORLEVEL 1 EXIT /b 1
