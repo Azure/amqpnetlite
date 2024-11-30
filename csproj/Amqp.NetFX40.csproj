@@ -500,9 +500,8 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.Amqp.Net40.config" />
+    <None Include="packages.Amqp.NetFX40.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(NUGET_PACKAGES)\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('$(NUGET_PACKAGES)\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">

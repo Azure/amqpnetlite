@@ -13,6 +13,7 @@
     <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,12 +58,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Amqp.NetMF44.csproj">
-      <Project>{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}</Project>
-      <Name>Amqp.NetMF44</Name>
-    </ProjectReference>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="Amqp.NetMF.csproj">
+      <Project>{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}</Project>
+      <Name>Amqp.NetMF</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

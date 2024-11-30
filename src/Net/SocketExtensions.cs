@@ -28,7 +28,7 @@ namespace Amqp
     {
         public static void SetTcpKeepAlive(this Socket socket, TcpKeepAliveSettings settings)
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD2_0 || NET5_0_OR_GREATER
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
             // the keep-alive option names are not available in netstandard2.0.

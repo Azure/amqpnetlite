@@ -94,6 +94,7 @@ namespace Test.Amqp
                 Assert.IsTrue(cert != null, "Failed to get dev-cert from LocalMachine store");
                 string args = string.Format("http add sslcert hostnameport={0}:{1} certhash={2} certstorename=MY appid={{{3}}} clientcertnegotiation=enable",
                     listenAddress.Host, listenAddress.Port, cert.Thumbprint, Guid.NewGuid());
+                Debug.WriteLine(args);
                 code = Exec("netsh.exe", args, out output);
                 Assert.AreEqual(0, code, "failed to add ssl cert: " + output);
             }

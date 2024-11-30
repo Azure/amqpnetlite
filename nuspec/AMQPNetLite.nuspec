@@ -19,6 +19,7 @@
     <copyright>Copyright 2014</copyright>
     <tags>AMQP net netstandard UWP mono</tags>
     <dependencies>
+      <group targetFramework="net5.0" />
       <group targetFramework="net35" />
       <group targetFramework="net40">
         <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
@@ -37,16 +38,18 @@
   <files>
     <file src="dotnet\" target="lib\netstandard2.0" />
     <file src="dotnet\" target="lib\netstandard1.3" />
-    <file src="bin\Release\Amqp.Net\Amqp.Net.dll" target="lib\net45" />
-    <file src="bin\Release\Amqp.Net\Amqp.Net.pdb" target="lib\net45" />
-    <file src="bin\Release\Amqp.Net\Amqp.Net.XML" target="lib\net45" />
-    <file src="bin\Release\Amqp.Net40\Amqp.Net.dll" target="lib\net40" />
-    <file src="bin\Release\Amqp.Net40\Amqp.Net.pdb" target="lib\net40" />
-    <file src="bin\Release\Amqp.Net40\Amqp.Net.xml" target="lib\net40" />
-    <file src="bin\Release\Amqp.Net40\Amqp.Net.dll.config" target="lib\net40" />
-    <file src="bin\Release\Amqp.Net35\Amqp.Net.dll" target="lib\net35" />
-    <file src="bin\Release\Amqp.Net35\Amqp.Net.pdb" target="lib\net35" />
-    <file src="bin\Release\Amqp.Net35\Amqp.Net.xml" target="lib\net35" />
+    <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.dll" target="lib\net5.0" />
+    <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.pdb" target="lib\net5.0" />
+    <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.xml" target="lib\net5.0" />
+    <file src="bin\Release\Amqp.NetFX\Amqp.Net.pdb" target="lib\net45" />
+    <file src="bin\Release\Amqp.NetFX\Amqp.Net.XML" target="lib\net45" />
+    <file src="bin\Release\Amqp.NetFX40\Amqp.Net.dll" target="lib\net40" />
+    <file src="bin\Release\Amqp.NetFX40\Amqp.Net.pdb" target="lib\net40" />
+    <file src="bin\Release\Amqp.NetFX40\Amqp.Net.xml" target="lib\net40" />
+    <file src="bin\Release\Amqp.NetFX40\Amqp.Net.dll.config" target="lib\net40" />
+    <file src="bin\Release\Amqp.NetFX35\Amqp.Net.dll" target="lib\net35" />
+    <file src="bin\Release\Amqp.NetFX35\Amqp.Net.pdb" target="lib\net35" />
+    <file src="bin\Release\Amqp.NetFX35\Amqp.Net.xml" target="lib\net35" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\netcore451" />
     <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\netcore451" />

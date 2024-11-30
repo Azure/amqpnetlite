@@ -12,6 +12,7 @@
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
     <IntermediateOutputPath>..\..\..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <TargetFrameworkProfile />
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

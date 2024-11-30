@@ -124,7 +124,7 @@
     <Compile Include="..\Common\TestTarget.cs">
       <Link>TestTarget.cs</Link>
     </Compile>
-    <Compile Include="..\Test.Amqp.Net\TaskTests.cs">
+    <Compile Include="..\Test.Amqp.NetFX\TaskTests.cs">
       <Link>TaskTests.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

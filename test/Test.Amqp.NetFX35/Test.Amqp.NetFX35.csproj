@@ -112,10 +112,10 @@
     <Compile Include="..\Common\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>
-    <Compile Include="..\Test.Amqp.Net\AmqpCodecTests.cs">
+    <Compile Include="..\Test.Amqp.NetFX\AmqpCodecTests.cs">
       <Link>AmqpCodecTests.cs</Link>
     </Compile>
-    <Compile Include="..\Test.Amqp.Net\WellknownStringDecoderTests.cs">
+    <Compile Include="..\Test.Amqp.NetFX\WellknownStringDecoderTests.cs">
       <Link>WellknownStringDecoderTests.cs</Link>
     </Compile>
   </ItemGroup>
@@ -123,9 +123,9 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\csproj\Amqp.Net35.csproj">
+    <ProjectReference Include="..\..\csproj\Amqp.NetFX35.csproj">
       <Project>{4fb9c0d9-c3a8-4fb5-86cd-927e5ebc6885}</Project>
-      <Name>Amqp.Net35</Name>
+      <Name>Amqp.NetFX35</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

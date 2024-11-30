@@ -3,6 +3,8 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <FrameworkVersionMajor Condition=" '$(FrameworkVersionMajor)' == '' ">4</FrameworkVersionMajor>
+    <FrameworkVersionMinor Condition=" '$(FrameworkVersionMinor)' == '' ">4</FrameworkVersionMinor>
     <AssemblyName>Amqp.NetMF</AssemblyName>
     <OutputType>Library</OutputType>
     <RootNamespace>Amqp</RootNamespace>
@@ -10,16 +12,18 @@
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}</ProjectGuid>
-    <TargetFrameworkVersion>v4.4</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v$(FrameworkVersionMajor).$(FrameworkVersionMinor)</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <DocumentationFile>..\bin\$(Configuration)\$(MSBuildProjectName)\$(AssemblyName).XML</DocumentationFile>
+    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</IntermediateOutputPath>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</OutputPath>
     <DefineConstants>TRACE;DEBUG;NETMF,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +32,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)$(FrameworkVersionMajor)$(FrameworkVersionMinor)\</OutputPath>
     <DefineConstants>TRACE;NETMF,MF_FRAMEWORK_VERSION_V4_4</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

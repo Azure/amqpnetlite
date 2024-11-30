@@ -1,15 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <NUGET_PACKAGES Condition=" '$(NUGET_PACKAGES)' == '' ">$(SolutionDir)packages</NUGET_PACKAGES>
-    <ProjectGuid>{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}</ProjectGuid>
+    <ProjectGuid>{06CAA70A-20A7-4334-AF03-D6228039C178}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Test.Amqp.Net</RootNamespace>
-    <AssemblyName>Test.Amqp.Net40</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyName>Test.Amqp.Net</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -24,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX;NETFX40</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -32,9 +31,12 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;NETFX;NETFX40</DefineConstants>
+    <DefineConstants>TRACE;NETFX</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(BUILD_SCRIPT)' != '' ">
+    <DefineConstants>$(DefineConstants);BUILD_SCRIPT</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,31 +64,6 @@
     <Compile Include="..\..\src\Net\TypeExtensions.cs">
       <Link>Common\TypeExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Common\Extensions.cs">
-      <Link>Common\Extensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Common\MessageBatch.cs">
-      <Link>Common\MessageBatch.cs</Link>
-    </Compile>
-    <Compile Include="..\Common\TestHandler.cs">
-      <Link>Common\TestHandler.cs</Link>
-    </Compile>
-    <Compile Include="..\Common\Types\Circular.cs">
-      <Link>Types\Circular.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.Net\AmqpCodecTests.cs">
-      <Link>AmqpCodecTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.Net\TaskTests.cs">
-      <Link>TaskTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.Net\TransactionTests.cs">
-      <Link>TransactionTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.Net\WellknownStringDecoderTests.cs">
-      <Link>WellknownStringDecoderTests.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Common\AmqpSerializerTests.cs">
       <Link>AmqpSerializerTests.cs</Link>
     </Compile>
@@ -96,20 +73,38 @@
     <Compile Include="..\Common\ContainerHostTests.cs">
       <Link>ContainerHostTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\Extensions.cs">
+      <Link>Common\Extensions.cs</Link>
+    </Compile>
     <Compile Include="..\Common\LinkTests.cs">
       <Link>LinkTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\MessageBatch.cs">
+      <Link>Common\MessageBatch.cs</Link>
     </Compile>
     <Compile Include="..\Common\ProtocolTests.cs">
       <Link>ProtocolTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TestAmqpBroker.cs">
+      <Link>Common\TestAmqpBroker.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TestHandler.cs">
+      <Link>Common\TestHandler.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestListener.cs">
       <Link>Common\TestListener.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TestSetup.cs">
+      <Link>Common\TestSetup.cs</Link>
     </Compile>
     <Compile Include="..\Common\TestTarget.cs">
       <Link>Common\TestTarget.cs</Link>
     </Compile>
     <Compile Include="..\Common\NamedPipeTransport.cs">
       <Link>Common\NamedPipeTransport.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\Types\Circular.cs">
+      <Link>Types\Circular.cs</Link>
     </Compile>
     <Compile Include="..\Common\Types\EmployeeId.cs">
       <Link>Types\EmployeeId.cs</Link>
@@ -141,33 +136,21 @@
     <Compile Include="..\Common\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\WebSocketTests.cs">
+      <Link>WebSocketTests.cs</Link>
+    </Compile>
+    <Compile Include="AmqpCodecTests.cs" />
+    <Compile Include="TestBrokerTests.cs" />
+    <Compile Include="WellknownStringDecoderTests.cs" />
+    <Compile Include="TransactionTests.cs" />
+    <Compile Include="PerfTests.cs" />
+    <Compile Include="TaskTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Threading.Tasks">
-      <HintPath>$(NUGET_PACKAGES)\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.IO, Version=2.6.8.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(NUGET_PACKAGES)\Microsoft.Bcl.1.1.8\lib\net40\System.IO.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net" />
-    <Reference Include="System.Runtime, Version=2.6.8.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(NUGET_PACKAGES)\Microsoft.Bcl.1.1.8\lib\net40\System.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Tasks, Version=2.6.8.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(NUGET_PACKAGES)\Microsoft.Bcl.1.1.8\lib\net40\System.Threading.Tasks.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\csproj\Amqp.Net40.csproj">
-      <Project>{4a250b81-35e9-4d2f-8030-62909f6c8c63}</Project>
-      <Name>Amqp.Net40</Name>
+    <ProjectReference Include="..\..\csproj\Amqp.NetFX.csproj">
+      <Project>{92153715-1d99-43b1-b291-470cf91a156d}</Project>
+      <Name>Amqp.NetFX</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
@@ -190,11 +173,6 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(NUGET_PACKAGES)\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('$(NUGET_PACKAGES)\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
-  <Target Name="EnsureBclBuildImported" BeforeTargets="BeforeBuild" Condition="'$(BclBuildImported)' == ''">
-    <Error Condition="!Exists('$(NUGET_PACKAGES)\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=317567." HelpKeyword="BCLBUILD2001" />
-    <Error Condition="Exists('$(NUGET_PACKAGES)\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build. For more information, see http://go.microsoft.com/fwlink/?LinkID=317568." HelpKeyword="BCLBUILD2002" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

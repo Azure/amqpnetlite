@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net5.0</TargetFrameworks>
+    <AssemblyName>Amqp.Net</AssemblyName>
+    <PackageId>AmqpNetLite</PackageId>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <DefineConstants>$(DefineConstants);NETFX</DefineConstants>
+    <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
+    <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Net35/*;WinRT/*" />
+    <EmbeddedResource Include="SRAmqp.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SRAmqp.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>Amqp</CustomToolNamespace>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Update="SRAmqp.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SRAmqp.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
