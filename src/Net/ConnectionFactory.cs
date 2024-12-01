@@ -221,6 +221,8 @@ namespace Amqp
         {
 #if NETFX40
             internal const SslProtocols DefaultSslProtocols = SslProtocols.Default;
+#elif NET5_0_OR_GREATER || NET48_OR_GREATER
+            internal const SslProtocols DefaultSslProtocols = SslProtocols.None;
 #else
             internal const SslProtocols DefaultSslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
 #endif
