@@ -25,6 +25,7 @@
         <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
       </group>
       <group targetFramework="net45" />
+      <group targetFramework="net48" />
       <group targetFramework="netcore451" />
       <group targetFramework="uap10.0" />
       <group targetFramework="netstandard1.3">
@@ -41,8 +42,12 @@
     <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.dll" target="lib\net5.0" />
     <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.pdb" target="lib\net5.0" />
     <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.xml" target="lib\net5.0" />
-    <file src="bin\Release\Amqp.NetFX\Amqp.Net.pdb" target="lib\net45" />
-    <file src="bin\Release\Amqp.NetFX\Amqp.Net.XML" target="lib\net45" />
+    <file src="bin\Release\Amqp.Net\net48\Amqp.Net.dll" target="lib\net48" />
+    <file src="bin\Release\Amqp.Net\net48\Amqp.Net.pdb" target="lib\net48" />
+    <file src="bin\Release\Amqp.Net\net48\Amqp.Net.xml" target="lib\net48" />
+    <file src="bin\Release\Amqp.NetFX45\Amqp.Net.dll" target="lib\net45" />
+    <file src="bin\Release\Amqp.NetFX45\Amqp.Net.pdb" target="lib\net45" />
+    <file src="bin\Release\Amqp.NetFX45\Amqp.Net.XML" target="lib\net45" />
     <file src="bin\Release\Amqp.NetFX40\Amqp.Net.dll" target="lib\net40" />
     <file src="bin\Release\Amqp.NetFX40\Amqp.Net.pdb" target="lib\net40" />
     <file src="bin\Release\Amqp.NetFX40\Amqp.Net.xml" target="lib\net40" />
