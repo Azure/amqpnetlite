@@ -64,6 +64,9 @@
     <Compile Include="..\..\src\Net\TypeExtensions.cs">
       <Link>Common\TypeExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Common\AmqpCodecTests.cs">
+      <Link>AmqpCodecTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\AmqpSerializerTests.cs">
       <Link>AmqpSerializerTests.cs</Link>
     </Compile>
@@ -82,11 +85,20 @@
     <Compile Include="..\Common\MessageBatch.cs">
       <Link>Common\MessageBatch.cs</Link>
     </Compile>
+    <Compile Include="..\Common\PerfTests.cs">
+      <Link>PerfTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\ProtocolTests.cs">
       <Link>ProtocolTests.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TaskTests.cs">
+      <Link>TaskTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestAmqpBroker.cs">
       <Link>Common\TestAmqpBroker.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TestBrokerTests.cs">
+      <Link>TestBrokerTests.cs</Link>
     </Compile>
     <Compile Include="..\Common\TestHandler.cs">
       <Link>Common\TestHandler.cs</Link>
@@ -102,6 +114,9 @@
     </Compile>
     <Compile Include="..\Common\NamedPipeTransport.cs">
       <Link>Common\NamedPipeTransport.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TransactionTests.cs">
+      <Link>TransactionTests.cs</Link>
     </Compile>
     <Compile Include="..\Common\Types\Circular.cs">
       <Link>Types\Circular.cs</Link>
@@ -139,12 +154,9 @@
     <Compile Include="..\Common\WebSocketTests.cs">
       <Link>WebSocketTests.cs</Link>
     </Compile>
-    <Compile Include="AmqpCodecTests.cs" />
-    <Compile Include="TestBrokerTests.cs" />
-    <Compile Include="WellknownStringDecoderTests.cs" />
-    <Compile Include="TransactionTests.cs" />
-    <Compile Include="PerfTests.cs" />
-    <Compile Include="TaskTests.cs" />
+    <Compile Include="..\Common\WellknownStringDecoderTests.cs">
+      <Link>WellknownStringDecoderTests.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

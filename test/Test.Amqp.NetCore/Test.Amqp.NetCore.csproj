@@ -9,8 +9,8 @@
     <ProjectGuid>{6BCA313F-794F-4C54-9F96-C500290E147C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test.Amqp.NetCore</RootNamespace>
-    <AssemblyName>Test.Amqp.NetCore</AssemblyName>
+    <RootNamespace>Test.Amqp.Net</RootNamespace>
+    <AssemblyName>Test.Amqp.Net</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
     <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
@@ -124,7 +124,7 @@
     <Compile Include="..\Common\TestTarget.cs">
       <Link>TestTarget.cs</Link>
     </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\TaskTests.cs">
+    <Compile Include="..\Common\TaskTests.cs">
       <Link>TaskTests.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,8 +6,8 @@
     <ProjectGuid>{7852029D-235C-40B7-8957-8E78414C3F97}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Test.Amqp.Net35</RootNamespace>
-    <AssemblyName>Test.Amqp.Net35</AssemblyName>
+    <RootNamespace>Test.Amqp.Net</RootNamespace>
+    <AssemblyName>Test.Amqp.Net</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -61,6 +61,9 @@
     <Compile Include="..\..\src\Net\TypeExtensions.cs">
       <Link>TypeExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Common\AmqpCodecTests.cs">
+      <Link>AmqpCodecTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\AmqpSerializerTests.cs">
       <Link>AmqpSerializerTests.cs</Link>
     </Compile>
@@ -112,10 +115,7 @@
     <Compile Include="..\Common\UtilityTests.cs">
       <Link>UtilityTests.cs</Link>
     </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\AmqpCodecTests.cs">
-      <Link>AmqpCodecTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\WellknownStringDecoderTests.cs">
+    <Compile Include="..\Common\WellknownStringDecoderTests.cs">
       <Link>WellknownStringDecoderTests.cs</Link>
     </Compile>
   </ItemGroup>

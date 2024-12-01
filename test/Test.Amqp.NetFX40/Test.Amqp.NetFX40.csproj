@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Test.Amqp.Net</RootNamespace>
-    <AssemblyName>Test.Amqp.Net40</AssemblyName>
+    <AssemblyName>Test.Amqp.Net</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -62,28 +62,28 @@
     <Compile Include="..\..\src\Net\TypeExtensions.cs">
       <Link>Common\TypeExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Common\AmqpCodecTests.cs">
+      <Link>AmqpCodecTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\Extensions.cs">
       <Link>Common\Extensions.cs</Link>
     </Compile>
     <Compile Include="..\Common\MessageBatch.cs">
       <Link>Common\MessageBatch.cs</Link>
     </Compile>
+    <Compile Include="..\Common\TaskTests.cs">
+      <Link>TaskTests.cs</Link>
+    </Compile>
     <Compile Include="..\Common\TestHandler.cs">
       <Link>Common\TestHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\Common\TransactionTests.cs">
+      <Link>TransactionTests.cs</Link>
     </Compile>
     <Compile Include="..\Common\Types\Circular.cs">
       <Link>Types\Circular.cs</Link>
     </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\AmqpCodecTests.cs">
-      <Link>AmqpCodecTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\TaskTests.cs">
-      <Link>TaskTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\TransactionTests.cs">
-      <Link>TransactionTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Test.Amqp.NetFX\WellknownStringDecoderTests.cs">
+    <Compile Include="..\Common\WellknownStringDecoderTests.cs">
       <Link>WellknownStringDecoderTests.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />

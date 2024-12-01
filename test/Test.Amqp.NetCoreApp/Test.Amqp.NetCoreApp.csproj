@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <DefineConstants>$(DefineConstants);DOTNET</DefineConstants>
     <IsPackable>false</IsPackable>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <OutputPath>../../bin/$(Configuration)/$(MSBuildProjectName)</OutputPath>
+    <AssemblyName>Test.Amqp.Net</AssemblyName>
+    <RootNamespace>Test.Amqp.Net</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition="'$(BUILD_SCRIPT)' != '' ">
     <DefineConstants>$(DefineConstants);BUILD_SCRIPT</DefineConstants>

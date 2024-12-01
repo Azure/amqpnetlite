@@ -166,8 +166,8 @@ IF "%vstest.consolePath%" == "" (
 )
 
 ECHO.
-ECHO Running NET tests...
-"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX\Test.Amqp.Net.dll
+ECHO Running NET45 tests...
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX45\Test.Amqp.Net.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -178,7 +178,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO Running NET40 tests...
-"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX40\Test.Amqp.Net40.dll
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX40\Test.Amqp.Net.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -188,7 +188,7 @@ IF ERRORLEVEL 1 (
 
 ECHO.
 ECHO Running NET35 tests...
-"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX35\Test.Amqp.Net35.dll
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetFX35\Test.Amqp.Net.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO Test failed!
@@ -200,8 +200,8 @@ IF NOT "%build-sln:amqp.sln=%" == "%build-sln%" GOTO :run-dotnet-test
 GOTO :done-test
 
 :run-dotnet-test
-ECHO Running DOTNET (netcoreapp 2.1) tests...
-"%dotnetPath%" test -c %build-config% --no-build test\Test.Amqp.NetCoreApp\Test.Amqp.NetCoreApp.csproj -- no-broker
+ECHO Running DOTNET (netcoreapp 3.1) tests...
+"%dotnetPath%" test -c %build-config% --no-build -v normal test\Test.Amqp.NetCoreApp\Test.Amqp.NetCoreApp.csproj -- no-broker
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO dotnet Test failed!
