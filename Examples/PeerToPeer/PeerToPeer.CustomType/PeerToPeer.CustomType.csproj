@@ -51,9 +51,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\csproj\Amqp.NetFX.csproj">
+    <ProjectReference Include="..\..\..\csproj\Amqp.NetFX45.csproj">
       <Project>{92153715-1d99-43b1-b291-470cf91a156d}</Project>
-      <Name>Amqp.NetFX</Name>
+      <Name>Amqp.NetFX45</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

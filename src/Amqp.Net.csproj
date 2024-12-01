@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net5.0</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <AssemblyName>Amqp.Net</AssemblyName>
     <PackageId>AmqpNetLite</PackageId>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -22,7 +22,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
-  
+  <ItemGroup>
+    <Reference Condition="'$(TargetFramework)' == 'net48'" Include="System.Transactions" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Update="SRAmqp.Designer.cs">
       <DesignTime>True</DesignTime>
