@@ -1,10 +1,25 @@
 # Prerequisites
-* Visual Studio 2013. [Community Edition](https://www.visualstudio.com/en-us/news/vs2013-community-vs.aspx) works.
+* Visual Studio 2019. [Community Edition](https://visualstudio.microsoft.com/vs/older-downloads/) works. Enable the following optional components.
+  * .NET desktop development
+    * .NET development tools
+    * .NET Framework 4 - 4.6 development tools
+    * .NET Framework 4.8 development tools
+  * Universal Windows Platform development
+    * Windows 10 SDK (10.0.16299)
+* [.NET nanoFramework Extension](https://github.com/nanoframework/nf-Visual-Studio-extension)
+* NuGet tools if you want to build the NuGet package.
+
+To build NETMF and NetCore projects, install the following.
+* Visual Studio 2015 with the following features.
+  * Windows and Web Development
+    * Universal Windows App Development Tools
+      * Tools (1.4.1) and Windows 10 SDK (10.0.14393)
+    * Windows 8.1 and Windows Phone 8.0/8.1 Tools
+      * Tools and Windows SDKs
 * NETMF SDK (4.2 and 4.3) and Visual Studio project system. You can build fro [sources](https://github.com/NETMF/netmf-interpreter) or download them from the old [netmf web site](https://netmf.codeplex.com).
-* NuGet tools if you want to build the NuGet package. 
 
 # Build the projects
-* Build with Visual Studio. Open amqp.sln in Visual Studio. This solution contains both source and test projects for all supported platforms. If the SDK of a particular platform is not present, the project(s) will fail to load. You can either install the required SDK or remove the project(s) from the solution.
+* Build with Visual Studio 2019. Open amqp.sln in Visual Studio. This solution contains both source and test projects for all supported platforms. If the SDK of a particular platform is not present, the project(s) will fail to load. You can either install the required SDK or remove the project(s) from the solution.
 * Build from command prompt. Run the build.cmd script to build the solution. If you need to build the NuGet packet, please [install NuGet](http://docs.nuget.org/consume/installing-nuget) or download NuGet.exe directly and save it under ".\build\tools\" directory.
 
 # Run the tests
