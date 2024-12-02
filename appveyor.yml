@@ -103,20 +103,23 @@ build_script:
     If($env:FRAMEWORKS_TO_BUILD -eq "LEGACY_FRAMEWORKS")
     {
       Write-Output "Invoking build.cmd script ..."
-
       & c:\projects\amqpnetlite\build.cmd --solution amqp-vs2015.sln | Write-Output
-
       & c:\projects\amqpnetlite\build.cmd release --solution amqp-vs2015.sln | Write-Output
-
     }
     Else
     {
-      Write-Output "Invoking build.cmd script ..."
+      Write-Output "Invoking build.cmd script for Debug..."
+      .\build.cmd --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
 
-      & c:\projects\amqpnetlite\build.cmd --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
+      Write-Output "Creating dummy files for NetCore to allow NuGet build ..."
+      mkdir .\bin\Release\Amqp.NetCore
+      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.dll
+      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.pdb
+      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.xml
+      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.pri
 
-      & c:\projects\amqpnetlite\build.cmd release --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
-
+      Write-Output "Invoking build.cmd script for Release..."
+      .\build.cmd release --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
     }
 
 test: off
