@@ -110,8 +110,8 @@ namespace Amqp
         internal const int DefaultMaxLinksPerSession = 1024;
         internal static int HeartBeatCloseTimeout = 20 * 1000;
         readonly Address address;
-        readonly OnOpened onOpened;
         readonly object lockObject;
+        OnOpened onOpened;
         IHandler handler;
         Session[] localSessions;
         Session[] remoteSessions;
@@ -613,6 +613,7 @@ namespace Amqp
             if (this.onOpened != null)
             {
                 this.onOpened(this, open);
+                this.onOpened = null;
             }
 
             if (open.ChannelMax < this.channelMax)

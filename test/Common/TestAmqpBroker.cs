@@ -26,6 +26,7 @@ namespace Listener.IContainer
     using global::Amqp.Listener;
     using global::Amqp.Transactions;
     using global::Amqp.Types;
+    using Test.Common;
 
     public sealed class TestAmqpBroker : IContainer
     {
@@ -62,6 +63,7 @@ namespace Listener.IContainer
             for (int i = 0; i < endpoints.Count; i++)
             {
                 this.listeners[i] = new ConnectionListener(endpoints[i], this);
+                this.listeners[i].ConfigureTest();
                 this.listeners[i].AMQP.MaxSessionsPerConnection = 1000;
                 this.listeners[i].AMQP.ContainerId = containerId;
                 this.listeners[i].AMQP.IdleTimeout = 4 * 60 * 1000;

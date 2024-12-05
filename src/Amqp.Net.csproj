@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>
     <AssemblyName>Amqp.Net</AssemblyName>
+    <RootNamespace>Amqp</RootNamespace>
     <PackageId>AmqpNetLite</PackageId>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
@@ -14,7 +15,7 @@
     <Compile Remove="Net35/*;WinRT/*" />
     <EmbeddedResource Include="SRAmqp.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SRAmqp.Designer.cs</LastGenOutput>
+      <LastGenOutput>Net\SRAmqp.Designer.cs</LastGenOutput>
       <CustomToolNamespace>Amqp</CustomToolNamespace>
     </EmbeddedResource>
   </ItemGroup>
@@ -25,11 +26,5 @@
   <ItemGroup>
     <Reference Condition="'$(TargetFramework)' == 'net48'" Include="System.Transactions" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Update="SRAmqp.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>SRAmqp.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+
 </Project>

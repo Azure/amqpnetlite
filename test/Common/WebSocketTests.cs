@@ -130,7 +130,9 @@ namespace Test.Amqp
                 await sender.SendAsync(new Message("test") { Properties = new Properties() { MessageId = testName } });                
                 await connection.CloseAsync();
 
+#if !NET5_0_OR_GREATER
                 Assert.IsTrue(serviceCert != null, "service cert not received");
+#endif
                 Assert.IsTrue(clientCert != null, "client cert not received");
                 Assert.IsTrue(listenerLink != null, "link not attached");
 

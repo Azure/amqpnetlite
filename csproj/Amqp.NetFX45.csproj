@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NETFX;NETFX45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,7 +28,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
-    <DefineConstants>TRACE;NETFX</DefineConstants>
+    <DefineConstants>TRACE;NETFX;NETFX45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

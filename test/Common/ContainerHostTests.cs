@@ -30,6 +30,7 @@ using Amqp.Listener;
 using Amqp.Sasl;
 using Amqp.Types;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Test.Common;
 
 namespace Test.Amqp
 {
@@ -1202,6 +1203,7 @@ namespace Test.Amqp
             sslHost.Listeners[0].SSL.ClientCertificateRequired = true;
             sslHost.Listeners[0].SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
             sslHost.Listeners[0].SASL.EnableExternalMechanism = true;
+            sslHost.Listeners[0].ConfigureTest();
             ListenerLink link = null;
             var linkProcessor = new TestLinkProcessor();
             linkProcessor.SetHandler(a => { link = a.Link; return false; });

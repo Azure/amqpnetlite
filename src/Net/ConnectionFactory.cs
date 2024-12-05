@@ -211,7 +211,12 @@ namespace Amqp
             IAsyncTransport transport = await this.CreateTransportAsync(address, saslProfile, handler, cancellationToken).ConfigureAwait(false);
 
             var tcs = new ConnectTaskCompletionSource(this, address, open, onOpened, handler, transport, cancellationToken);
-            return await tcs.Task.ConfigureAwait(false);
+            var connection = await tcs.Task.ConfigureAwait(false);
+#if NETX40 || NETFX45
+            // Same effect as RunContinuationsAsynchronously to avoid user code blocking the IO thread.
+            await Task.Yield();
+#endif
+            return connection;
         }
 
         /// <summary>
@@ -304,6 +309,9 @@ namespace Amqp
 
             public ConnectTaskCompletionSource(ConnectionFactory factory, Address address, Open open,
                 OnOpened onOpened, IHandler handler, IAsyncTransport transport, CancellationToken cancellationToken)
+#if !NETFX45 && !NETFX40
+                : base(TaskCreationOptions.RunContinuationsAsynchronously)
+#endif
             {
                 this.factory = factory;
                 this.onOpened = onOpened;

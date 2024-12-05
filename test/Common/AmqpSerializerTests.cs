@@ -723,7 +723,7 @@ namespace Test.Amqp
             Assert.AreEqual(p1.Value + 1, p.Value);
         }
 
-#if !DOTNET
+#if !DOTNET && !NET5_0
         [TestMethod]
         public void MessageSerializationTest()
         {

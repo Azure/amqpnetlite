@@ -22,6 +22,7 @@ namespace Test.Common
     using System.Security.Cryptography.X509Certificates;
     using global::Amqp;
     using global::Amqp.Framing;
+    using global::Amqp.Listener;
 
     static class Extensions
     {
@@ -56,6 +57,15 @@ namespace Test.Common
             }
 
             return GetCertificate(certFindValue ?? host);
+        }
+
+        public static void ConfigureTest(this ConnectionListener listener)
+        {
+#if NET48
+            // NET48 defaults to None protocol which does not work on Win10.
+            // This can be removed if testing on Win11.
+            listener.SSL.Protocols = System.Security.Authentication.SslProtocols.Tls12;
+#endif
         }
 
         public static X509Certificate2 GetCertificate(string certFindValue)

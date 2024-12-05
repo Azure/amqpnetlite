@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Amqp;
@@ -172,8 +173,12 @@ namespace Test.Amqp
         [TestMethod]
         public async Task ConnectionFactoryCancelAsync()
         {
-            // Invalid address for test
-            var address = new Address("amqp://192.0.2.3:5672");
+            // Open the port but not accept any socket
+            int port = 5674;
+            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Bind(new IPEndPoint(IPAddress.Any, port));
+
+            var address = new Address($"amqp://127.0.0.1:{port}");
             try
             {
                 Connection connection = await Connection.Factory.CreateAsync(address, new CancellationTokenSource(300).Token);
@@ -181,6 +186,10 @@ namespace Test.Amqp
             }
             catch (TaskCanceledException)
             {
+            }
+            finally
+            {
+                socket.Dispose();
             }
         }
 #endif
@@ -371,8 +380,6 @@ namespace Test.Amqp
 
             Connection connection = await Connection.Factory.CreateAsync(
                 this.testTarget.Address, new Open() { ContainerId = "c1", MaxFrameSize = 4096 }, null);
-            await Task.Yield();
-
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
