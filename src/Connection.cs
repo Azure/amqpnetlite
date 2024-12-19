@@ -313,6 +313,11 @@ namespace Amqp
             private set;
         }
 
+        internal ITransport Transport
+        {
+            get { return this.writer; }
+        }
+
         internal uint MaxFrameSize
         {
             get { return this.maxFrameSize; }

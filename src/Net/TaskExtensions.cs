@@ -337,6 +337,22 @@ namespace Amqp
     /// </summary>
     public static class TaskExtensions
     {
+        /// <summary>
+        /// Flushes all pending write buffers to transport. Some transports may not support the operation.
+        /// </summary>
+        /// <param name="connection">The connection object.</param>
+        /// <returns>A Task for the asynchronous operation.</returns>
+        public static Task FlushAsync(this Connection connection)
+        {
+            var writer = connection.Transport as TransportWriter;
+            if (writer != null)
+            {
+                return writer.FlushAsync();
+            }
+
+            return Task.FromResult(true);
+        }
+
 #if NETFX || NETFX40 || NETSTANDARD2_0
         internal static async Task<DeliveryState> GetTransactionalStateAsync(SenderLink sender)
         {
