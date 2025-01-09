@@ -18,6 +18,7 @@
 namespace PerfTest
 {
     using System;
+    using System.Collections.Generic;
     using System.Security.Cryptography.X509Certificates;
     using System.Threading;
     using System.Threading.Tasks;
@@ -25,8 +26,8 @@ namespace PerfTest
     using Amqp.Framing;
     using Amqp.Listener;
     using Test.Common;
-    using TestExtensions = Test.Common.Extensions;
     using Stopwatch = System.Diagnostics.Stopwatch;
+    using TestExtensions = Test.Common.Extensions;
 
     class Program
     {
@@ -51,6 +52,10 @@ namespace PerfTest
                 if (string.Equals("send", perfArgs.Operation, StringComparison.OrdinalIgnoreCase))
                 {
                     role = new Sender(perfArgs);
+                }
+                else if (string.Equals("loadgen", perfArgs.Operation, StringComparison.OrdinalIgnoreCase))
+                {
+                    role = new LoadGenerator(perfArgs);
                 }
                 else if (string.Equals("receive", perfArgs.Operation, StringComparison.OrdinalIgnoreCase))
                 {
@@ -90,6 +95,7 @@ namespace PerfTest
             Console.WriteLine("  receive\treceive messages from remote peer");
             Console.WriteLine("  request\tsend requests to a remote peer");
             Console.WriteLine("  reply  \tstart a request processor and send replies");
+            Console.WriteLine("  loadgen\tstart a load generator");
             Console.WriteLine("  listen \tstart a listener and accept messages from remote peer");
             Console.WriteLine("\r\narguments:");
             Console.WriteLine(Arguments.PrintArguments(typeof(PerfArguments)));
@@ -163,7 +169,7 @@ namespace PerfTest
                 long done = Interlocked.Increment(ref this.completed);
                 if (this.progress > 0 && done % this.progress == 0)
                 {
-                    Trace.WriteLine(TraceLevel.Information, this.tracker.Report(reset: true));
+                    Console.WriteLine(this.tracker.Report(reset: true));
                 }
 
                 if (this.count > 0 && done >= this.count)
@@ -177,9 +183,9 @@ namespace PerfTest
                 }
             }
 
-            protected void Wait()
+            protected bool Wait(int milliseconds = -1)
             {
-                this.completedEvent.WaitOne();
+                return this.completedEvent.WaitOne(milliseconds);
             }
 
             protected void SetComplete()
@@ -279,6 +285,144 @@ namespace PerfTest
                 message.BodySection = new Data()
                 {
                     Buffer = new ByteBuffer(segment.Array, segment.Offset, this.bodySize, segment.Count)
+                };
+
+                return message;
+            }
+        }
+
+        class LoadGenerator : Role
+        {
+            byte[] payload;
+
+            public LoadGenerator(PerfArguments args)
+                : base(args)
+            {
+                this.payload = new byte[args.BodySize];
+            }
+
+            public override void Run()
+            {
+                Task[] tasks = new Task[this.Args.Connections];
+                for (int i = 0; i < this.Args.Connections; i++)
+                {
+                    int id = i;
+                    tasks[i] = this.RunOnce(id);
+                }
+
+                Task.WhenAll(tasks).Wait();
+            }
+
+            async Task RunOnce(int id)
+            {
+                IList<string> nodes = Expand(this.Args.Node);
+                var address = new Address(this.Args.Address);
+                var factory = new ConnectionFactory();
+                factory.AMQP.MaxFrameSize = this.Args.MaxFrameSize;
+                factory.AMQP.HostName = this.Args.Host;
+                factory.SSL.RemoteCertificateValidationCallback = (a, b, c, d) => true;
+
+                do
+                {
+                    try
+                    {
+                        var connection = await factory.CreateAsync(address);
+                        Session session = null;
+
+                        for (int m = 0; m < nodes.Count && !connection.IsClosed; m++)
+                        {
+                            string node = null;
+                            try
+                            {
+                                node = nodes[m];
+                                if (m % 100 == 0)
+                                {
+                                    session = new Session(connection);
+                                }
+
+                                Attach attach = new Attach()
+                                {
+                                    Source = new Source(),
+                                    Target = new Target() { Address = node },
+                                    SndSettleMode = this.Args.SenderMode,
+                                    RcvSettleMode = this.Args.ReceiverMode
+                                };
+                                SenderLink sender = new SenderLink(session, "load-generator-" + m, attach, null);
+                                await Task.Yield();
+
+                                for (int i = 1; i <= this.Args.Queue; i++)
+                                {
+                                    var message = this.CreateMessage();
+                                    sender.Send(message, null, null);
+                                }
+
+                                await connection.FlushAsync();
+                                Console.WriteLine($"{id}: {node} done {this.Args.Queue} messages");
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"{id}: {node} send failure: {e.GetType().Name}-{e.Message}");
+                            }
+                        }
+
+                        await Task.Delay(4000);
+                        connection.Close(TimeSpan.Zero);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"{id}: Setup failure-{e.GetType().Name}-{e.Message}");
+                    }
+                }
+                while (!this.Wait(10000));
+                Console.WriteLine($"{id}: Exit");
+            }
+
+            static IList<string> Expand(string pattern)
+            {
+                int start = pattern.IndexOf('[');
+                int end = -1;
+                if (start >= 0)
+                {
+                    end = pattern.IndexOf(']', start);
+                }
+
+                if (start < 0 || end < 0 || end - start <= 1)
+                {
+                    return new string[] { pattern };
+                }
+
+                // [3-4,7,10,1-5]
+                string left = pattern.Substring(0, start);
+                string right = pattern.Substring(end + 1);
+
+                var items = new List<string>();
+                string[] ranges = pattern.Substring(start + 1, end - start - 1).Split(',');
+                foreach (var r in ranges)
+                {
+                    string[] pair = r.Split('-');
+                    if (pair.Length == 1 || !int.TryParse(pair[0], out int r1) || !int.TryParse(pair[1], out int r2))
+                    {
+                        items.Add(left + r + right);
+                    }
+                    else
+                    {
+                        for (int i = r1; i <= r2; i++)
+                        {
+                            items.Add(left + i + right);
+                        }
+                    }
+                }
+
+                return items;
+            }
+
+            Message CreateMessage()
+            {
+                Message message = new Message();
+                message.Properties = new Properties() { MessageId = "msg", CreationTime = new DateTime(Stopwatch.GetTimestamp(), DateTimeKind.Utc) };
+                message.BodySection = new Data()
+                {
+                    Buffer = new ByteBuffer(payload, 0, payload.Length, payload.Length)
                 };
 
                 return message;
@@ -543,7 +687,7 @@ namespace PerfTest
                 protected set;
             }
 
-            [Argument(Name = "node", Shortcut = "n", Description = "name of the AMQP node", Default = "q1")]
+            [Argument(Name = "node", Shortcut = "n", Description = "name of the AMQP node. Can have '{i}' for connection id and '[range]' for multiple names.", Default = "q1")]
             public string Node
             {
                 get;
@@ -606,7 +750,7 @@ namespace PerfTest
                 set;
             }
 
-            [Argument(Name = "trace", Shortcut = "t", Description = "trace level: err|warn|info|verbose|frm", Default = "info")]
+            [Argument(Name = "trace", Shortcut = "t", Description = "trace level: err|warn|info|verbose|frm", Default = null)]
             protected string Trace
             {
                 get;
@@ -625,7 +769,7 @@ namespace PerfTest
 
             public TraceLevel TraceLevel
             {
-                get { return this.Trace.ToTraceLevel(); }
+                get { return this.Trace == null ? 0 : this.Trace.ToTraceLevel(); }
             }
         }
     }
