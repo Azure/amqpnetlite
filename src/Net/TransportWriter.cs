@@ -43,26 +43,17 @@ namespace Amqp
 
         public Task FlushAsync()
         {
-            var buffer = new FlushByteBuffer();
             lock (this.SyncRoot)
             {
-                if (this.closed)
+                if (!this.closed && this.writing)
                 {
-                    buffer.ReleaseReference();
-                    throw new ObjectDisposedException(this.GetType().Name);
-                }
-
-                if (this.writing)
-                {
+                    var buffer = new FlushByteBuffer();
                     this.bufferQueue.Enqueue(buffer);
-                }
-                else
-                {
-                    buffer.ReleaseReference();
+                    return buffer.Task;
                 }
             }
 
-            return buffer.Task;
+            return Task.FromResult(0);
         }
 
         void ITransport.Send(ByteBuffer buffer)
@@ -97,19 +88,20 @@ namespace Amqp
         {
             lock (this.SyncRoot)
             {
-                if (!this.closed)
+                if (this.closed)
                 {
-                    this.closed = true;
-                    if (this.writing)
-                    {
-                        this.bufferQueue.Enqueue(new CloseByteBuffer(this));
-                    }
-                    else
-                    {
-                        this.transport.Close();
-                    }
+                    return;
+                }
+
+                this.closed = true;
+                if (this.writing)
+                {
+                    this.bufferQueue.Enqueue(new CloseByteBuffer(this));
+                    return;
                 }
             }
+
+            this.transport.Close();
         }
 
         async Task WriteAsync()
@@ -139,7 +131,7 @@ namespace Amqp
                         }
                     }
 
-                    if (size == 0)
+                    if (size == 0 && buffer == null)
                     {
                         this.writing = false;
                         if (buffer == null)

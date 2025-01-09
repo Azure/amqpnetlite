@@ -863,7 +863,7 @@ namespace Amqp
 
         internal void OnIoException(Exception exception)
         {
-            Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception.ToString());
+            Trace.WriteLine(TraceLevel.Error, "I/O: {0}", exception);
             if (this.state != ConnectionState.End)
             {
                 this.state = ConnectionState.End;
