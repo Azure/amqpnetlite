@@ -133,7 +133,7 @@ namespace Test.Common
             Interlocked.Add(ref this.totalLatencyMs, latencyMs);
 
             int index = GetIndex(latencyMs);
-            if (index >= 0)
+            if (index >= 0 && index < this.samples.Length)
             {
                 Interlocked.Increment(ref this.samples[index]);
             }
