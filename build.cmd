@@ -108,14 +108,24 @@ IF /I "%build-verbosity%" EQU "" GOTO :args-error
 CALL :findfile NuGet exe
 ECHO NuGet: "%NuGetPath%"
 
+SET VSInstallPath=
 CALL :findfile MSBuild exe
+IF "" == "%MSBuildPath%" (
+  IF EXIST "%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" (
+    for /F "tokens=* USEBACKQ" %%F in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -Property installationPath`) DO SET VSInstallPath=%%F
+    IF NOT "" == "!VSInstallPath!" SET MSBuildPath=!VSInstallPath!\MSBuild\Current\Bin\MSBuild.exe
+  )
+)
 ECHO MSBuild: "%MSBuildPath%"
 
 CALL :findfile dotnet exe
 ECHO dotnet: "%dotnetPath%"
 
 CALL :findfile vstest.console exe
-ECHO vstest.console: %vstest.consolePath%
+IF "" == "%vstest.consolePath%" (
+  IF NOT "" == "%VSInstallPath%" SET vstest.consolePath=!VSInstallPath!\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe
+)
+ECHO vstest.console: "%vstest.consolePath%"
 
 IF /I "%build-target%" == "test" GOTO :build-done
 IF /I "%build-target%" == "pack" GOTO :build-done

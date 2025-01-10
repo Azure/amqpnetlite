@@ -53,7 +53,7 @@ namespace Amqp
                 }
             }
 
-            return Task.FromResult(0);
+            return TaskExtensions.CompletedTask;
         }
 
         void ITransport.Send(ByteBuffer buffer)

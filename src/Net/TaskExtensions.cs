@@ -337,6 +337,21 @@ namespace Amqp
     /// </summary>
     public static class TaskExtensions
     {
+        internal static readonly Task CompletedTask;
+
+        static TaskExtensions()
+        {
+#if NETFX40
+            var tcs = new TaskCompletionSource<int>();
+            tcs.SetResult(0);
+            CompletedTask = tcs.Task;
+#elif NETFX45
+            CompletedTask = Task.FromResult(0);
+#else
+            CompletedTask = Task.CompletedTask;
+#endif
+        }
+
         /// <summary>
         /// Flushes all pending write buffers to transport. Some transports may not support the operation.
         /// </summary>
@@ -350,7 +365,7 @@ namespace Amqp
                 return writer.FlushAsync();
             }
 
-            return Task.FromResult(true);
+            return CompletedTask;
         }
 
 #if NETFX || NETFX40 || NETSTANDARD2_0
