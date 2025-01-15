@@ -211,7 +211,7 @@ GOTO :done-test
 
 :run-dotnet-test
 ECHO Running DOTNET (netcoreapp 3.1) tests...
-"%dotnetPath%" test -c %build-config% --no-build -v normal test\Test.Amqp.NetCoreApp\Test.Amqp.NetCoreApp.csproj -- no-broker
+"%vstest.consolePath%" .\bin\%build-config%\Test.Amqp.NetCoreApp\Test.Amqp.Net.dll
 IF ERRORLEVEL 1 (
   SET return-code=1
   ECHO dotnet Test failed!
