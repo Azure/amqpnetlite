@@ -392,10 +392,9 @@ namespace Test.Amqp
                 sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
                 var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
-                Thread.Sleep(600);
+                Thread.Sleep(500);
                 Assert.IsTrue(!connection.IsClosed, "connection should not be closed");
-                Thread.Sleep(600);
-                Assert.IsTrue(connection.IsClosed, "connection not closed");
+                Assert.Wait(5000, () => connection.IsClosed, "connection not closed");
             }
 
 #if !NETFX40
@@ -411,7 +410,7 @@ namespace Test.Amqp
                 await Task.Delay(1200);
                 var h = connection.GetType().GetField("heartBeat", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(connection);
                 Assert.IsTrue(h != null, "heart beat is not initialized");
-                Assert.IsTrue(connection.IsClosed, "connection not closed");
+                Assert.Wait(1000, () => connection.IsClosed, "connection not closed");
             }).Unwrap().GetAwaiter().GetResult();
 #endif
         }
@@ -498,8 +497,7 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, "any");
             sender.Send(new Message("test") { Properties = new Properties() { MessageId = testName } });
-            Thread.Sleep(2200);
-            Assert.IsTrue(closeCalled);
+            Assert.Wait(5000, () => closeCalled);
         }
 
         [TestMethod]

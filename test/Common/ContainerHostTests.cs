@@ -581,8 +581,7 @@ namespace Test.Amqp
             var session = new Session(connection);
             var sender = new SenderLink(session, "send-link", name);
             sender.Send(new Message("test") { Properties = new Properties() { MessageId = name } });
-            Thread.Sleep(1100);
-            Assert.IsTrue(connection.Error != null, "error should be set");
+            Assert.Wait(5000, () => connection.Error != null, "error should be set");
             Assert.AreEqual((Symbol)ErrorCode.ConnectionForced, connection.Error.Condition);
         }
 

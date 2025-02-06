@@ -17,6 +17,23 @@ namespace Test.Amqp
             }
         }
 
+        public static void Wait(int waitMilliseconds, Func<bool> func, string message = null)
+        {
+            int milliseconds = 0;
+            while (milliseconds < waitMilliseconds)
+            {
+                if (func())
+                {
+                    return;
+                }
+
+                milliseconds += 100;
+                Thread.Sleep(100);
+            }
+
+            throw new Exception(message ?? "Condition is not true after waiting.");
+        }
+
         public static void AreEqual(object expected, object actual, string message = null)
         {
             bool areEqual = false;
