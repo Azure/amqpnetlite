@@ -75,7 +75,8 @@ namespace Amqp.Sasl
             this.OnHeader(myHeader, theirHeader);
 
             SaslCode code = SaslCode.SysTemp;
-            while (true)
+            bool shouldContinue = true;
+            while (shouldContinue)
             {
                 ByteBuffer buffer = Reader.ReadFrameBuffer(transport, new byte[4], MaxFrameSize);
                 if (buffer == null)
@@ -83,9 +84,11 @@ namespace Amqp.Sasl
                     throw new OperationCanceledException(Fx.Format(SRAmqp.TransportClosed, transport.GetType().Name));
                 }
 
-                if (!this.OnFrame(hostname, transport, buffer, out code))
+                DescribedList response = null;
+                shouldContinue = this.OnFrame(hostname, buffer, out response, out code);
+                if (response != null)
                 {
-                    break;
+                    SendCommand(transport, response);
                 }
             }
 
@@ -113,7 +116,7 @@ namespace Amqp.Sasl
 
             if (command != null)
             {
-                this.SendCommand(transport, command);
+                SendCommand(transport, command);
             }
 
             return myHeader;
@@ -129,7 +132,7 @@ namespace Amqp.Sasl
             }
         }
 
-        internal bool OnFrame(string hostname, ITransport transport, ByteBuffer buffer, out SaslCode code)
+        internal bool OnFrame(string hostname, ByteBuffer buffer, out DescribedList response, out SaslCode code)
         {
             ushort channel;
             DescribedList command;
@@ -137,6 +140,7 @@ namespace Amqp.Sasl
             Trace.WriteLine(TraceLevel.Frame, "RECV {0}", command);
 
             bool shouldContinue = true;
+            response = null;
             if (command.Descriptor.Code == Codec.SaslOutcome.Code)
             {
                 code = ((SaslOutcome)command).Code;
@@ -162,24 +166,16 @@ namespace Amqp.Sasl
                     throw new AmqpException(ErrorCode.NotImplemented, mechanisms.ToString());
                 }
 
-                DescribedList init = this.GetStartCommand(hostname);
-                if (init != null)
-                {
-                    this.SendCommand(transport, init);
-                }
+                response = this.GetStartCommand(hostname);
             }
             else
             {
                 code = SaslCode.Ok;
-                DescribedList response = this.OnCommand(command);
-                if (response != null)
+                response = this.OnCommand(command);
+                if (response != null && response.Descriptor.Code == Codec.SaslOutcome.Code)
                 {
-                    this.SendCommand(transport, response);
-                    if (response.Descriptor.Code == Codec.SaslOutcome.Code)
-                    {
-                        code = ((SaslOutcome)response).Code;
-                        shouldContinue = false;
-                    }
+                    code = ((SaslOutcome)response).Code;
+                    shouldContinue = false;
                 }
             }
 
@@ -231,7 +227,7 @@ namespace Amqp.Sasl
         /// <returns>A SASL command as a response to the incoming command.</returns>
         protected abstract DescribedList OnCommand(DescribedList command);
 
-        void SendCommand(ITransport transport, DescribedList command)
+        internal static void SendCommand(ITransport transport, DescribedList command)
         {
             ByteBuffer buffer = new ByteBuffer(Frame.CmdBufferSize, true);
             Frame.Encode(buffer, FrameType.Sasl, 0, command);

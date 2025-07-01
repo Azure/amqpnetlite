@@ -141,6 +141,9 @@
       <Link>Transactions\ResourceManager.cs</Link>
     </Compile>
     <Compile Include="..\src\Net\BufferManager.cs" />
+    <Compile Include="..\src\Sasl\AsyncSaslProfile.cs">
+      <Link>Sasl\AsyncSaslProfile.cs</Link>
+    </Compile>
     <Compile Include="..\src\Types\IStringDecoder.cs">
       <Link>Types\IStringDecoder.cs</Link>
     </Compile>

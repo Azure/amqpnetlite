@@ -9,6 +9,7 @@
     <DefineConstants>$(DefineConstants);NETFX</DefineConstants>
     <IntermediateOutputPath>..\obj\$(Configuration)\$(MSBuildProjectName)\</IntermediateOutputPath>
     <OutputPath>..\bin\$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <DocumentationFile>..\bin\$(Configuration)\$(MSBuildProjectName)\$(AssemblyName).XML</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

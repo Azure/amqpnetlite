@@ -19,7 +19,9 @@ namespace Test.Common
 {
     using System;
     using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
     using System.Security.Cryptography.X509Certificates;
+    using System.Threading.Tasks;
     using global::Amqp;
     using global::Amqp.Framing;
     using global::Amqp.Listener;
@@ -106,6 +108,31 @@ namespace Test.Common
             cert = collection[0];
             return true;
         }
+
+#if NETFX40
+        public static Task Yield()
+        {
+            return Task.Factory.StartNew(() => { });
+        }
+
+        public static Task<T> FromResult<T>(T result)
+        {
+            var tcs = new TaskCompletionSource<T>();
+            tcs.SetResult(result);
+            return tcs.Task;
+        }
+#else
+
+        public static YieldAwaitable Yield()
+        {
+            return Task.Yield();
+        }
+
+        public static Task<T> FromResult<T>(T result)
+        {
+            return Task.FromResult(result);
+        }
+#endif
 
         static Dictionary<string, TraceLevel> GetTraceMapping()
         {
