@@ -84,7 +84,8 @@ namespace Amqp.Sasl
                     throw new OperationCanceledException(Fx.Format(SRAmqp.TransportClosed, transport.GetType().Name));
                 }
 
-                shouldContinue = this.OnFrame(hostname, buffer, out var response, out code);
+                DescribedList response = null;
+                shouldContinue = this.OnFrame(hostname, buffer, out response, out code);
                 if (response != null)
                 {
                     SendCommand(transport, response);
