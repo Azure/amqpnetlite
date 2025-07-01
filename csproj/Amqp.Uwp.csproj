@@ -226,6 +226,9 @@
       <Link>Properties\Version.cs</Link>
     </Compile>
     <Compile Include="..\src\ReceiverLink.cs" />
+    <Compile Include="..\src\Sasl\AsyncSaslProfile.cs">
+      <Link>Sasl\AsyncSaslProfile.cs</Link>
+    </Compile>
     <Compile Include="..\src\Sasl\SaslChallenge.cs">
       <Link>Sasl\SaslChallenge.cs</Link>
     </Compile>

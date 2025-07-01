@@ -38,7 +38,10 @@ namespace Amqp
             Task task = this.StartAsync(connection, onException);
         }
 
-        public async Task PumpAsync(uint maxFrameSize, Func<ProtocolHeader, bool> onHeader, Func<ByteBuffer, bool> onBuffer)
+        public async Task PumpAsync(uint maxFrameSize,
+            Func<ProtocolHeader, bool> onHeader,
+            Func<ByteBuffer, bool> onBuffer,
+            Func<ByteBuffer, Task<bool>> onBufferAsync = null)
         {
             byte[] header = new byte[FixedWidth.ULong];
 
@@ -73,7 +76,10 @@ namespace Amqp
                     buffer.Append(frameSize);
                     Trace.WriteBuffer("RECV {0}", buffer.Buffer, buffer.Offset, buffer.Length);
 
-                    if (!onBuffer(buffer))
+                    var pending = onBufferAsync != null ?
+                        await onBufferAsync(buffer).ConfigureAwait(false) :
+                        onBuffer(buffer);
+                    if (!pending)
                     {
                         break;
                     }

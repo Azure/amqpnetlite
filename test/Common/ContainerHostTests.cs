@@ -49,8 +49,8 @@ namespace Test.Amqp
 
         static ContainerHostTests()
         {
-            //Trace.TraceLevel = TraceLevel.Frame;
-            //Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
+            Trace.TraceLevel = TraceLevel.Frame;
+            Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
         public void ClassInitialize()
@@ -559,7 +559,7 @@ namespace Test.Amqp
                 sender.Send(new Message("test"));
                 Assert.IsTrue(false, "exception not thrown");
             }
-            catch(AmqpException exception)
+            catch (AmqpException exception)
             {
                 Assert.IsTrue(exception.Error != null, "Error is null");
                 Assert.AreEqual((Symbol)ErrorCode.NotFound, exception.Error.Condition, "Wrong error code");
@@ -851,7 +851,7 @@ namespace Test.Amqp
                 var sender2 = new SenderLink(session, linkName, name);
                 Assert.IsTrue(false, "Excpected exception not thrown");
             }
-            catch(AmqpException ae)
+            catch (AmqpException ae)
             {
                 Assert.AreEqual((Symbol)ErrorCode.NotAllowed, ae.Error.Condition);
             }
@@ -1045,7 +1045,7 @@ namespace Test.Amqp
                 var c = new Connection(a, u, null, null);
                 Assert.IsTrue(false, "connection should fail");
             }
-            catch(AmqpException exception)
+            catch (AmqpException exception)
             {
                 Assert.AreEqual((Symbol)ErrorCode.NotImplemented, exception.Error.Condition);
             }
@@ -1099,6 +1099,136 @@ namespace Test.Amqp
             var sender = new SenderLink(session, name, name);
             sender.Send(new Message("msg1"), Timeout);
             connection.Close();
+        }
+
+        [TestMethod]
+        public void ContainerHostSaslProfileCodeTest()
+        {
+            string name = "ContainerHostSaslProfileCodeTest";
+
+            SaslCode code = SaslCode.Ok;
+            var profile = new CustomSaslProfile(name)
+            {
+                CommandHandler = cmd => new SaslOutcome { Code = code }
+            };
+
+            this.host.Listeners[0].SASL.EnableMechanism(name, profile);
+
+            SaslCode[] codes = new[] { SaslCode.Auth, SaslCode.Sys, SaslCode.SysPerm, SaslCode.SysTemp };
+            for (int i = 0; i < codes.Length; i++)
+            {
+                code = codes[i];
+                var factory = new ConnectionFactory();
+                factory.SASL.Profile = new CustomSaslProfile(name);
+                try
+                {
+                    factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).GetAwaiter().GetResult();
+                    Assert.IsTrue(false, "SASL should fail");
+                }
+                catch (AmqpException e)
+                {
+                    Assert.IsTrue(e.Message.Contains(code.ToString()));
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ContainerHostSaslAsyncProfileTest()
+        {
+            string name = "ContainerHostSaslAsyncProfileTest";
+
+            var profile = new CustomAsyncSaslProfile(name)
+            {
+                CommandHandler = async cmd =>
+                {
+                    await Test.Common.Extensions.Yield();
+                    return new SaslOutcome { Code = SaslCode.Ok };
+                }
+            };
+
+            this.host.Listeners[0].SASL.EnableMechanism(name, profile);
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = new CustomSaslProfile(name);
+            var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).GetAwaiter().GetResult();
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ContainerHostSaslAsyncProfileChallengeTest()
+        {
+            string name = "ContainerHostSaslAsyncProfileChallengeTest";
+
+            int iteration = 0;
+            var serverProfile = new CustomAsyncSaslProfile(name)
+            {
+                CommandHandler = async cmd =>
+                {
+                    await Test.Common.Extensions.Yield();
+                    if (iteration++ < 5)
+                    {
+                        return new SaslChallenge() { Challenge = BitConverter.GetBytes(iteration) };
+                    }
+
+                    return new SaslOutcome { Code = SaslCode.Ok };
+                }
+            };
+
+            var clientProfile = new CustomAsyncSaslProfile(name)
+            {
+                CommandHandler = async cmd =>
+                {
+                    await Test.Common.Extensions.Yield();
+                    if (cmd is SaslChallenge saslChallenge)
+                    {
+                        return new SaslResponse() { Response = saslChallenge.Challenge };
+                    }
+
+                    return null;
+                }
+            };
+
+            this.host.Listeners[0].SASL.EnableMechanism(name, serverProfile);
+
+            var factory = new ConnectionFactory();
+            factory.SASL.Profile = clientProfile;
+            var connection = factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).GetAwaiter().GetResult();
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ContainerHostSaslAsyncProfileCodeTest()
+        {
+            string name = "ContainerHostSaslAsyncProfileCodeTest";
+
+            SaslCode code = SaslCode.Ok;
+            var profile = new CustomAsyncSaslProfile(name)
+            {
+                CommandHandler = async cmd =>
+                {
+                    await Test.Common.Extensions.Yield();
+                    return new SaslOutcome { Code = code };
+                }
+            };
+
+            this.host.Listeners[0].SASL.EnableMechanism(name, profile);
+
+            SaslCode[] codes = new[] { SaslCode.Auth, SaslCode.Sys, SaslCode.SysPerm, SaslCode.SysTemp };
+            for (int i = 0; i < codes.Length; i++)
+            {
+                code = codes[i];
+                var factory = new ConnectionFactory();
+                factory.SASL.Profile = new CustomSaslProfile(name);
+                try
+                {
+                    factory.CreateAsync(new Address(Address.Host, Address.Port, null, null, "/", Address.Scheme)).GetAwaiter().GetResult();
+                    Assert.IsTrue(false, "SASL should fail");
+                }
+                catch (AmqpException e)
+                {
+                    Assert.IsTrue(e.Message.Contains(code.ToString()));
+                }
+            }
         }
 
         [TestMethod]
@@ -1186,7 +1316,7 @@ namespace Test.Amqp
             string name = "ContainerHostX509PrincipalTest";
             string address = "amqps://localhost:5676";
             X509Certificate2 cert = null;
-            
+
             try
             {
                 cert = Test.Common.Extensions.GetCertificate("localhost");
@@ -1660,7 +1790,18 @@ namespace Test.Amqp
         {
         }
 
-        public ITransport Transport { get; private set;}
+        public Func<DescribedList, DescribedList> CommandHandler { get; set; }
+
+        public ITransport Transport { get; private set; }
+
+        public static SaslInit GetSaslInit(Symbol mechanism)
+        {
+            return new SaslInit()
+            {
+                Mechanism = mechanism,
+                InitialResponse = Encoding.UTF8.GetBytes($"{mechanism}@contoso.com")
+            };
+        }
 
         protected override ITransport UpgradeTransport(ITransport transport)
         {
@@ -1669,21 +1810,63 @@ namespace Test.Amqp
 
         protected override DescribedList GetStartCommand(string hostname)
         {
-            return new SaslInit()
-            {
-                Mechanism = this.Mechanism,
-                InitialResponse = Encoding.UTF8.GetBytes($"{this.Mechanism}@contoso.com")
-            };
+            return GetSaslInit(this.Mechanism);
         }
 
         protected override DescribedList OnCommand(DescribedList command)
         {
+            if (this.CommandHandler != null)
+            {
+                return this.CommandHandler(command);
+            }
+
+            if (command.Descriptor.Code == 0x0000000000000042 /* SaslChallenge.Code */)
+            {
+                return new SaslResponse() { Response = ((SaslChallenge)command).Challenge };
+            }
+
             if (command.Descriptor.Code == 0x0000000000000041 /* SaslInit.Code */)
             {
                 return new SaslOutcome() { Code = SaslCode.Ok };
             }
 
             return null;
+        }
+    }
+
+    sealed class CustomAsyncSaslProfile : AsyncSaslProfile
+    {
+        public CustomAsyncSaslProfile(string name)
+            : base(name)
+        {
+        }
+
+        public Func<DescribedList, Task<DescribedList>> CommandHandler { get; set; }
+
+        protected override DescribedList GetStartCommand(string hostname)
+        {
+            return CustomSaslProfile.GetSaslInit(this.Mechanism);
+        }
+
+        protected override Task<DescribedList> OnCommandAsync(DescribedList command)
+        {
+            if (this.CommandHandler != null)
+            {
+                return this.CommandHandler(command);
+            }
+
+            DescribedList response = null;
+            if (command.Descriptor.Code == 0x0000000000000041 /* SaslInit.Code */)
+            {
+                response = new SaslOutcome() { Code = SaslCode.Ok };
+            }
+
+            return Test.Common.Extensions.FromResult(response);
+        }
+
+        protected override ITransport UpgradeTransport(ITransport transport)
+        {
+            return transport;
         }
     }
 }

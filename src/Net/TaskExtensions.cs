@@ -511,9 +511,30 @@ namespace Amqp
                     saslProfile.OnHeader(myHeader, header);
                     return true;
                 },
-                buffer =>
+                null,
+                async buffer =>
                 {
-                    return saslProfile.OnFrame(hostname, writer, buffer, out code);
+                    bool shouldContinue = saslProfile.OnFrame(hostname, buffer, out var response, out code);
+                    if (response != null)
+                    {
+                        var responseTask = response as AsyncSaslProfile.ResponseTask;
+                        if (responseTask != null)
+                        {
+                            response = await responseTask.Task;
+                            if (response != null && response.Descriptor.Code == Codec.SaslOutcome.Code)
+                            {
+                                code = ((SaslOutcome)response).Code;
+                                shouldContinue = false;
+                            }
+                        }
+
+                        if (response != null)
+                        {
+                            SaslProfile.SendCommand(writer, response);
+                        }
+                    }
+
+                    return shouldContinue;
                 }).ConfigureAwait(false);
 
             await writer.FlushAsync().ConfigureAwait(false);
