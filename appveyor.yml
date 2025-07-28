@@ -15,7 +15,7 @@ before_build:
       Write-Output "Installing .NET MicroFramework 4.4 ..."
       $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
       (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
-      & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+      msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
       Write-Output "NETMF44 Installed"
 
       'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
