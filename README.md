@@ -30,6 +30,7 @@ The following table shows what features are supported on each platform/framework
 
 |        | TLS | SASL<sup>2</sup> | Txn | Task | Serializer | Listener | WebSockets | BufferPooling |
 |:-------|:---:|:----------------:|:---:|:----:|:----------:|:--------:|:----------:|:-------------:|
+|net50+  |+|+|+|+|+|+|+|+|
 |net45+  |+|+|+|+|+|+|+|+|
 |net40   |+|+|+|+<sup>3</sup>|+|+| |+|
 |net35   |+|+| | |+| | | |
@@ -40,6 +41,7 @@ The following table shows what features are supported on each platform/framework
 |wpa81   |+|+| |+| | | | |
 |win8/wp8|+|+| |+| | | | |
 |netstandard1.3<sup>4</sup>|+|+| |+|+|+|+|+|
+|netstandard2.0|+|+| |+|+|+|+|+|
 |mono/Xamarin<sup>5</sup>|+|+| |+|+|+|+|+|
 
 1. requires a TLS-capable device.
@@ -49,12 +51,14 @@ The following table shows what features are supported on each platform/framework
 5. projects targeting Mono/Xamarin should be able to consume the netstandard1.3 library.
 
 ## Tested Platforms
+* .Net 5.0+.
 * .Net Framework 3.5, 4.0 and 4.5+.
-* .NET Micro Framework 4.2, 4.3, 4.4.
+* Universal Windows App 10.
 * .NET nanoFramework 1.0.
+* .NET Micro Framework 4.2, 4.3, 4.4. On version 2.5.0 and above, only NETMF 4.4 is supported.
 * .NET Compact Framework 3.9.
-* Windows Phone 8 and 8.1.
-* Windows Store 8 and 8.1. Universal Windows App 10.
+* Windows Phone 8 and 8.1, up to version 2.4.11.
+* Windows Store 8 and 8.1, up to version 2.4.11.
 * .Net Core 1.0 on Windows 10 and Ubuntu 14.04.
 * Mono on Linux (requires v4.2.1 and up. Only the client APIs are verified and state of the listener APIs is unknown).
 
