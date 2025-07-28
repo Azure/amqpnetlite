@@ -4,123 +4,81 @@ branches:
   - master
 skip_tags: true
 
+image: Visual Studio 2019
+
 init:
   - git config --global core.autocrlf true
 
-environment:
-  matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      FRAMEWORKS_TO_BUILD: LEGACY_FRAMEWORKS
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      FRAMEWORKS_TO_BUILD: MAIN_FRAMEWORKS
-
 before_build:
-- ps: >-
+- ps: |
 
-    If($env:FRAMEWORKS_TO_BUILD -eq "LEGACY_FRAMEWORKS")
+    $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild"
+
+    Write-Output "Installing .NET MicroFramework 4.4 ..."
+    $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
+    (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
+    Start-Process -FilePath msiexec.exe -ArgumentList "/i $($env:USERPROFILE)\MicroFrameworkSDK44.MSI /quiet /log $env:USERPROFILE\netmf44.log" -Wait
+    if (Test-Path -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework")
     {
-      Write-Output "Installing .NET MicroFramework 4.3 ..."
-      $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
-      (New-Object Net.WebClient).DownloadFile('https://github.com/Azure/amqpnetlite/releases/download/netmf4.3/MicroFrameworkSDK4.3.MSI', $msiPath)
-      & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
-      Write-Output "NETMF43 Installed"
-
-      Write-Output "Installing .NET MicroFramework 4.4 ..."
-      $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
-      (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
-      & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
-      Write-Output "NETMF44 Installed"
-
-      Write-Output "Copying NuGet.exe ..."
-      New-Item c:\projects\amqpnetlite\build\tools -type directory
-      copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
-
-      Write-Output "Expanding PATH ..."
-      $env:Path = "$($env:PATH);$($env:ProgramFiles)\dotnet;$($env:VS140COMNTOOLS)..\IDE"
-      [Environment]::SetEnvironmentVariable("PATH", $env:Path, "User")
+        Write-Output "Copying to VS MSBuild..."
+        Copy-Item -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework" -Destination "$msbuildPath\Microsoft" -Recurse
     }
-    Else
+    Write-Output "NETMF44 Installed"
+
+    Write-Output "Installing nanoFramework VS extension ..."
+    [System.Net.WebClient]$webClient = New-Object System.Net.WebClient
+    $webClient.Headers.Add("User-Agent", "request")
+    $webClient.Headers.Add("Accept", "application/vnd.github.v3+json")
+    $releaseList = $webClient.DownloadString('https://api.github.com/repos/nanoframework/nf-Visual-Studio-extension/releases?per_page=100')
+    if($releaseList -match '\"(?<VS2022_version>v2022\.\d+\.\d+\.\d+)\"')
     {
-      'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
-      [System.Net.WebClient]$webClient = New-Object System.Net.WebClient
-      $webClient.Headers.Add("User-Agent", "request")
-      $webClient.Headers.Add("Accept", "application/vnd.github.v3+json")
-      $releaseList = $webClient.DownloadString('https://api.github.com/repos/nanoframework/nf-Visual-Studio-extension/releases?per_page=100')
-      if($releaseList -match '\"(?<VS2022_version>v2022\.\d+\.\d+\.\d+)\"')
-      {
-          $vs2022Tag =  $Matches.VS2022_version
-      }
-      if($releaseList -match '\"(?<VS2019_version>v2019\.\d+\.\d+\.\d+)\"')
-      {
-          $vs2019Tag =  $Matches.VS2019_version
-      }
-
-      # Find which VS version is installed
-      $VsWherePath = "${env:PROGRAMFILES(X86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-      Write-Output "VsWherePath is: $VsWherePath"
-      $VsInstance = $(&$VSWherePath -latest -property displayName)
-      Write-Output "Latest VS is: $VsInstance"
-      # Get extension details according to VS version, starting from VS2022 down to VS2019
-      if($vsInstance.Contains('2022'))
-      {
-          $extensionUrl = "https://github.com/nanoframework/nf-Visual-Studio-extension/releases/download/$vs2022Tag/nanoFramework.Tools.VS2022.Extension.vsix"
-          $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2022.Extension.zip"
-          $extensionVersion = $vs2022Tag
-      }
-      elseif($vsInstance.Contains('2019'))
-      {
-          $extensionUrl = "https://github.com/nanoframework/nf-Visual-Studio-extension/releases/download/$vs2019Tag/nanoFramework.Tools.VS2019.Extension.vsix"
-          $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2019.Extension.zip"
-          $extensionVersion = $vs2019Tag
-      }
-
-      Write-Output "Downloading visx..." -NoNewline
-      # download VS extension
-      Write-Debug "Download VSIX file from $extensionUrl to $vsixPath"
-      $webClient.DownloadFile($extensionUrl, $vsixPath)
-      $outputPath = "$($env:USERPROFILE)\nf-extension"
-      # unzip extension
-      Write-Debug "Unzip extension content"
-      Expand-Archive $vsixPath -DestinationPath $outputPath
-      # copy build files to msbuild location
-      Write-Debug "Copy build files to msbuild location"
-      $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild"
-      Copy-Item -Path "$($env:USERPROFILE)\nf-extension\`$MSBuild\nanoFramework" -Destination $msbuildPath -Recurse
-
-      'OK' | Write-Host -ForegroundColor Green
-
-      Write-Output "Copying NuGet.exe ..."
-      New-Item c:\projects\amqpnetlite\build\tools -type directory
-      copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
-
-      Write-Output "Restoring projects ..."
-      nuget restore amqp-nanoFramework.sln
+        $vs2022Tag =  $Matches.VS2022_version
     }
+    if($releaseList -match '\"(?<VS2019_version>v2019\.\d+\.\d+\.\d+)\"')
+    {
+        $vs2019Tag =  $Matches.VS2019_version
+    }
+
+    $VsWherePath = "${env:PROGRAMFILES(X86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    Write-Output "VsWherePath is: $VsWherePath"
+    $VsInstance = $(&$VSWherePath -latest -property displayName)
+    Write-Output "Latest VS is: $VsInstance"
+    if($vsInstance.Contains('2022'))
+    {
+        $extensionUrl = "https://github.com/nanoframework/nf-Visual-Studio-extension/releases/download/$vs2022Tag/nanoFramework.Tools.VS2022.Extension.vsix"
+        $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2022.Extension.zip"
+        $extensionVersion = $vs2022Tag
+    }
+    elseif($vsInstance.Contains('2019'))
+    {
+        $extensionUrl = "https://github.com/nanoframework/nf-Visual-Studio-extension/releases/download/$vs2019Tag/nanoFramework.Tools.VS2019.Extension.vsix"
+        $vsixPath = Join-Path  $($env:USERPROFILE) "nanoFramework.Tools.VS2019.Extension.zip"
+        $extensionVersion = $vs2019Tag
+    }
+
+    Write-Output "Downloading visx..." -NoNewline
+    Write-Debug "Download VSIX file from $extensionUrl to $vsixPath"
+    $webClient.DownloadFile($extensionUrl, $vsixPath)
+    $outputPath = "$($env:USERPROFILE)\nf-extension"
+    Write-Debug "Unzip extension content"
+    Expand-Archive $vsixPath -DestinationPath $outputPath
+    Write-Debug "Copy build files to msbuild location"
+    Copy-Item -Path "$($env:USERPROFILE)\nf-extension\`$MSBuild\nanoFramework" -Destination $msbuildPath -Recurse
+
+    Write-Output "Copying NuGet.exe ..."
+    New-Item c:\projects\amqpnetlite\build\tools -type directory
+    Copy-Item -Path c:\tools\NuGet\NuGet.exe -Destination c:\projects\amqpnetlite\build\tools\NuGet.exe
+
+    'OK' | Write-Host -ForegroundColor Green
 
 build_script:
-- ps: >-
+- ps: |
 
-    If($env:FRAMEWORKS_TO_BUILD -eq "LEGACY_FRAMEWORKS")
-    {
-      Write-Output "Invoking build.cmd script ..."
-      & c:\projects\amqpnetlite\build.cmd --solution amqp-vs2015.sln | Write-Output
-      & c:\projects\amqpnetlite\build.cmd release --solution amqp-vs2015.sln | Write-Output
-    }
-    Else
-    {
-      Write-Output "Invoking build.cmd script for Debug..."
-      .\build.cmd --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
+    Write-Output "Invoking build.cmd script for Debug..."
+    .\build.cmd --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
 
-      Write-Output "Creating dummy files for NetCore to allow NuGet build ..."
-      mkdir .\bin\Release\Amqp.NetCore
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.dll
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.pdb
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.xml
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.pri
-
-      Write-Output "Invoking build.cmd script for Release..."
-      .\build.cmd release --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
-    }
+    Write-Output "Invoking build.cmd script for Release..."
+    .\build.cmd release --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
 
 test: off
 deploy: off

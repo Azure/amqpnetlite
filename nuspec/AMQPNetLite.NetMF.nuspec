@@ -23,26 +23,10 @@
       <frameworkAssembly assemblyName="System.Net.Security" targetFramework="netmf42" />
     </frameworkAssemblies>
     <dependencies>
-      <group targetFramework="netmf42" />
-      <group targetFramework="netmf43" />
       <group targetFramework="netmf44" />
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.dll" target="lib\netmf42" />
-    <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.pdb" target="lib\netmf42" />
-    <file src="bin\Release\Amqp.NetMF42\Amqp.NetMF.xml" target="lib\netmf42" />
-    <file src="bin\Release\Amqp.NetMF42\be\Amqp.NetMF.pe" target="lib\netmf42\be" />
-    <file src="bin\Release\Amqp.NetMF42\be\Amqp.NetMF.pdbx" target="lib\netmf42\be" />
-    <file src="bin\Release\Amqp.NetMF42\le\Amqp.NetMF.pe" target="lib\netmf42\le" />
-    <file src="bin\Release\Amqp.NetMF42\le\Amqp.NetMF.pdbx" target="lib\netmf42\le" />
-    <file src="bin\Release\Amqp.NetMF43\Amqp.NetMF.dll" target="lib\netmf43" />
-    <file src="bin\Release\Amqp.NetMF43\Amqp.NetMF.pdb" target="lib\netmf43" />
-    <file src="bin\Release\Amqp.NetMF43\Amqp.NetMF.xml" target="lib\netmf43" />
-    <file src="bin\Release\Amqp.NetMF43\be\Amqp.NetMF.pe" target="lib\netmf43\be" />
-    <file src="bin\Release\Amqp.NetMF43\be\Amqp.NetMF.pdbx" target="lib\netmf43\be" />
-    <file src="bin\Release\Amqp.NetMF43\le\Amqp.NetMF.pe" target="lib\netmf43\le" />
-    <file src="bin\Release\Amqp.NetMF43\le\Amqp.NetMF.pdbx" target="lib\netmf43\le" />
     <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.dll" target="lib\netmf44" />
     <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.pdb" target="lib\netmf44" />
     <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.xml" target="lib\netmf44" />

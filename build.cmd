@@ -81,7 +81,7 @@ GOTO :exit
 :args-done
 
 IF /I "%build-sln%" EQU "amqp-nanoFramework.sln" SET build-test=false
-IF /I "%build-sln%" EQU "amqp-vs2015.sln" SET build-test=false
+IF /I "%build-sln%" EQU "amqp-netmf.sln" SET build-test=false
 
 FOR /F "tokens=1-3* delims=() " %%A in (.\src\Properties\Version.cs) do (
   IF "%%B" == "AssemblyInformationalVersion" SET build-version=%%C
@@ -160,7 +160,7 @@ IF NOT ERRORLEVEL 1 (
   GOTO :run-test
 )
 
-SET TestBrokerPath=.\bin\%build-config%\TestAmqpBroker\TestAmqpBroker.exe
+SET TestBrokerPath=.\bin\%build-config%\TestAmqpBroker\net45\TestAmqpBroker.exe
 ECHO Starting the test AMQP broker
 ECHO %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
@@ -254,7 +254,7 @@ FOR %%G IN (AMQPNetLite.Core AMQPNetLite.Serialization AMQPNetLite.WebSockets) D
   )
 )
 :package-netmf
-IF NOT "%build-sln:amqp-vs2015.sln=%" == "%build-sln%" (
+IF NOT "%build-sln:amqp-netmf.sln=%" == "%build-sln%" (
   FOR %%G IN (AMQPNetLite.NetMF AMQPNetMicro) DO (
     "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
     IF ERRORLEVEL 1 (
@@ -265,7 +265,7 @@ IF NOT "%build-sln:amqp-vs2015.sln=%" == "%build-sln%" (
 )
 IF NOT "%build-sln:amqp-nanoFramework.sln=%" == "%build-sln%" (
   FOR %%G IN (AMQPNetLite.nanoFramework AMQPNetMicro.nanoFramework) DO (
-    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+    "%NuGetPath%" pack .\nuspec\%%G.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages" -Properties NoWarn=NU5101
     IF ERRORLEVEL 1 (
       SET return-code=1
       GOTO :exit
@@ -310,8 +310,8 @@ EXIT /b %return-code%
     "%MSBuildPath%" %2 /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity% /p:NoWarn=1591
     IF ERRORLEVEL 1 EXIT /b 1
   )
-  IF /I "%2" EQU "amqp-vs2015.sln" (
-    call build2015.cmd %1 %build-config% "%build-platform%" %build-verbosity%
+  IF /I "%2" EQU "amqp-netmf.sln" (
+    "%MSBuildPath%" %2 /t:%1 /nologo /p:Configuration=%build-config%;Platform="%build-platform%" /verbosity:%build-verbosity%
     IF ERRORLEVEL 1 EXIT /b 1
   )
 

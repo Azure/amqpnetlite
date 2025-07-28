@@ -68,16 +68,13 @@ namespace Listener.IContainer
                 this.listeners[i].AMQP.ContainerId = containerId;
                 this.listeners[i].AMQP.IdleTimeout = 4 * 60 * 1000;
                 this.listeners[i].AMQP.MaxFrameSize = 64 * 1024;
+                this.listeners[i].SASL.EnableAnonymousMechanism = true;
                 if (userInfo != null)
                 {
                     string[] a = userInfo.Split(':');
                     this.listeners[i].SASL.EnablePlainMechanism(
                         Uri.UnescapeDataString(a[0]),
                         a.Length == 1 ? string.Empty : Uri.UnescapeDataString(a[1]));
-                }
-                else
-                {
-                    this.listeners[i].SASL.EnableAnonymousMechanism = true;
                 }
             }
         }
