@@ -18,11 +18,11 @@ before_build:
       $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
       (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
       Start-Process -FilePath msiexec.exe -ArgumentList "/i $($env:USERPROFILE)\MicroFrameworkSDK44.MSI /quiet /log $env:USERPROFILE\netmf44.log" -Wait
-	  if (Test-Path -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework")
-	  {
+      if (Test-Path -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework")
+      {
         Write-Output "Copying to VS MSBuild..."
-	    Copy-Item -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework" -Destination "$msbuildPath\Microsoft" -Recurse
-	  }
+        Copy-Item -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework" -Destination "$msbuildPath\Microsoft" -Recurse
+      }
       Write-Output "NETMF44 Installed"
 
       Write-Output "Installing nanoFramework VS extension ..."
