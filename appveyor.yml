@@ -12,13 +12,20 @@ init:
 before_build:
 - ps: >-
 
+      $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild"
+
       Write-Output "Installing .NET MicroFramework 4.4 ..."
       $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
       (New-Object Net.WebClient).DownloadFile('https://github.com/NETMF/netmf-interpreter/releases/download/v4.4-RTW-20-Oct-2015/MicroFrameworkSDK.MSI', $msiPath)
-      msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
+      Start-Process -FilePath msiexec.exe -ArgumentList "/i $($env:USERPROFILE)\MicroFrameworkSDK44.MSI /quiet /log $env:USERPROFILE\netmf44.log" -Wait
+	  if (Test-Path -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework")
+	  {
+        Write-Output "Copying to VS MSBuild..."
+	    Copy-Item -Path "${env:PROGRAMFILES(X86)}\MSBuild\Microsoft\.NET Micro Framework" -Destination "$msbuildPath\Microsoft" -Recurse
+	  }
       Write-Output "NETMF44 Installed"
 
-      'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
+      Write-Output "Installing nanoFramework VS extension ..."
       [System.Net.WebClient]$webClient = New-Object System.Net.WebClient
       $webClient.Headers.Add("User-Agent", "request")
       $webClient.Headers.Add("Accept", "application/vnd.github.v3+json")
@@ -61,18 +68,13 @@ before_build:
       Expand-Archive $vsixPath -DestinationPath $outputPath
       # copy build files to msbuild location
       Write-Debug "Copy build files to msbuild location"
-      $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild"
       Copy-Item -Path "$($env:USERPROFILE)\nf-extension\`$MSBuild\nanoFramework" -Destination $msbuildPath -Recurse
-
-      'OK' | Write-Host -ForegroundColor Green
 
       Write-Output "Copying NuGet.exe ..."
       New-Item c:\projects\amqpnetlite\build\tools -type directory
-      copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
+      Copy-Item -Path c:\tools\NuGet\NuGet.exe -Destination c:\projects\amqpnetlite\build\tools\NuGet.exe
 
-      Write-Output "Restoring projects ..."
-      nuget restore amqp-nanoFramework.sln
-
+      'OK' | Write-Host -ForegroundColor Green
 build_script:
 - ps: >-
 
