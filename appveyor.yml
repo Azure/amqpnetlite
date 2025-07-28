@@ -10,7 +10,7 @@ init:
   - git config --global core.autocrlf true
 
 before_build:
-- ps: >-
+- ps: |
 
     $msbuildPath = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild"
 
@@ -72,7 +72,7 @@ before_build:
     'OK' | Write-Host -ForegroundColor Green
 
 build_script:
-- ps: >-
+- ps: |
 
     Write-Output "Invoking build.cmd script for Debug..."
     .\build.cmd --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
