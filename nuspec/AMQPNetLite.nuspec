@@ -26,7 +26,6 @@
       </group>
       <group targetFramework="net45" />
       <group targetFramework="net48" />
-      <group targetFramework="netcore451" />
       <group targetFramework="uap10.0" />
       <group targetFramework="netstandard1.3">
         <dependency id="AMQPNetLite.Core" version="$version$" />
@@ -55,10 +54,6 @@
     <file src="bin\Release\Amqp.NetFX35\Amqp.Net.dll" target="lib\net35" />
     <file src="bin\Release\Amqp.NetFX35\Amqp.Net.pdb" target="lib\net35" />
     <file src="bin\Release\Amqp.NetFX35\Amqp.Net.xml" target="lib\net35" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.dll" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pdb" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.pri" target="lib\netcore451" />
-    <file src="bin\Release\Amqp.NetCore\Amqp.Net.xml" target="lib\netcore451" />
     <file src="bin\Release\Amqp.Uwp\Amqp.Net.dll" target="lib\uap10.0" />
     <file src="bin\Release\Amqp.Uwp\Amqp.Net.pdb" target="lib\uap10.0" />
     <file src="bin\Release\Amqp.Uwp\Amqp.Net.pri" target="lib\uap10.0" />

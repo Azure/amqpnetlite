@@ -17,6 +17,7 @@ namespace Test.Amqp
             }
         }
 
+#if !NETMF
         public static void Wait(int waitMilliseconds, Func<bool> func, string message = null)
         {
             int milliseconds = 0;
@@ -33,6 +34,7 @@ namespace Test.Amqp
 
             throw new Exception(message ?? "Condition is not true after waiting.");
         }
+#endif
 
         public static void AreEqual(object expected, object actual, string message = null)
         {

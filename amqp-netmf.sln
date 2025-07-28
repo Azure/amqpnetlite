@@ -1,14 +1,7 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35425.106
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF44", "netmf\Amqp.NetMF44.csproj", "{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF42", "netmf\Amqp.NetMF42.csproj", "{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF43", "netmf\Amqp.NetMF43.csproj", "{5D8F78FC-0719-495F-9AD0-1EDD7EC9AA19}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.Micro.NetMF", "netmf\Amqp.Micro.NetMF.csproj", "{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.NetMF", "netmf\Test.Amqp.NetMF.csproj", "{2C4CBC7A-16BD-4F27-86BA-3CF38BE0F426}"
@@ -21,24 +14,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Device.Thermometer", "Examp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus.EventHub.NetMF", "Examples\ServiceBus\ServiceBus.EventHub.NetMF\ServiceBus.EventHub.NetMF.csproj", "{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{FF8DBBB3-FFEE-4BAA-8419-19FEC873B512}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amqp.NetMF", "netmf\Amqp.NetMF.csproj", "{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C80D0C64-C34A-4DF4-9E26-E1D2F4FFEFC8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D8F78FC-0719-495F-9AD0-1EDD7EC9AA19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D8F78FC-0719-495F-9AD0-1EDD7EC9AA19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D8F78FC-0719-495F-9AD0-1EDD7EC9AA19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D8F78FC-0719-495F-9AD0-1EDD7EC9AA19}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9111380-CFA2-4A3E-B0DF-87A1C1888F98}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -67,13 +52,21 @@ Global
 		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97A6D8B7-2F39-45AC-91D7-A59FABF38CEC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{2C4CBC7A-16BD-4F27-86BA-3CF38BE0F426} = {FF8DBBB3-FFEE-4BAA-8419-19FEC873B512}
 		{69E4A20C-EF50-49C6-8DAC-F76B9D565767} = {6B66B43D-F08A-42D0-BD08-4BEB7F1A59B1}
 		{43570F0D-DE6C-423E-A275-AC619A813B79} = {6B66B43D-F08A-42D0-BD08-4BEB7F1A59B1}
 		{F37DE470-865E-4F80-BC9C-FAC7BC11D3CF} = {6B66B43D-F08A-42D0-BD08-4BEB7F1A59B1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {61683B2C-5CDF-4D63-B318-D30EF0FEF4CD}
 	EndGlobalSection
 EndGlobal

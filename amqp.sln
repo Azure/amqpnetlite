@@ -15,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{679989B2
 		nuspec\AMQPNetMicro.nuspec = nuspec\AMQPNetMicro.nuspec
 		appveyor.yml = appveyor.yml
 		build.cmd = build.cmd
-		build2015.cmd = build2015.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3A334EFA-47FA-4CE2-9306-FDFF7CF47157}"
@@ -48,7 +47,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.NetFX35", "test\T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Amqp.NetFX40", "test\Test.Amqp.NetFX40\Test.Amqp.NetFX40.csproj", "{CD62609E-EA4E-48F4-B1FB-DF9BB98A132C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAmqpBroker", "test\TestAmqpBroker\TestAmqpBroker.csproj", "{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestAmqpBroker", "test\TestAmqpBroker\TestAmqpBroker.csproj", "{78A9C0DF-1999-4D97-AE22-50ADC44F9A7B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{C39C894B-5174-41A7-8638-BB7F765F10A1}"
 EndProject

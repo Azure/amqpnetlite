@@ -4,26 +4,13 @@ branches:
   - master
 skip_tags: true
 
+image: Visual Studio 2019
+
 init:
   - git config --global core.autocrlf true
 
-environment:
-  matrix:
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-      FRAMEWORKS_TO_BUILD: LEGACY_FRAMEWORKS
-    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-      FRAMEWORKS_TO_BUILD: MAIN_FRAMEWORKS
-
 before_build:
 - ps: >-
-
-    If($env:FRAMEWORKS_TO_BUILD -eq "LEGACY_FRAMEWORKS")
-    {
-      Write-Output "Installing .NET MicroFramework 4.3 ..."
-      $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK43.MSI"
-      (New-Object Net.WebClient).DownloadFile('https://github.com/Azure/amqpnetlite/releases/download/netmf4.3/MicroFrameworkSDK4.3.MSI', $msiPath)
-      & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf43.log | Write-Output
-      Write-Output "NETMF43 Installed"
 
       Write-Output "Installing .NET MicroFramework 4.4 ..."
       $msiPath = "$($env:USERPROFILE)\MicroFrameworkSDK44.MSI"
@@ -31,16 +18,6 @@ before_build:
       & msiexec.exe /i $msiPath /quiet /log $env:USERPROFILE\netmf44.log | Write-Output
       Write-Output "NETMF44 Installed"
 
-      Write-Output "Copying NuGet.exe ..."
-      New-Item c:\projects\amqpnetlite\build\tools -type directory
-      copy c:\tools\NuGet\NuGet.exe c:\projects\amqpnetlite\build\tools\NuGet.exe
-
-      Write-Output "Expanding PATH ..."
-      $env:Path = "$($env:PATH);$($env:ProgramFiles)\dotnet;$($env:VS140COMNTOOLS)..\IDE"
-      [Environment]::SetEnvironmentVariable("PATH", $env:Path, "User")
-    }
-    Else
-    {
       'Installing nanoFramework VS extension ...' | Write-Host -ForegroundColor White -NoNewline
       [System.Net.WebClient]$webClient = New-Object System.Net.WebClient
       $webClient.Headers.Add("User-Agent", "request")
@@ -95,32 +72,15 @@ before_build:
 
       Write-Output "Restoring projects ..."
       nuget restore amqp-nanoFramework.sln
-    }
 
 build_script:
 - ps: >-
 
-    If($env:FRAMEWORKS_TO_BUILD -eq "LEGACY_FRAMEWORKS")
-    {
-      Write-Output "Invoking build.cmd script ..."
-      & c:\projects\amqpnetlite\build.cmd --solution amqp-vs2015.sln | Write-Output
-      & c:\projects\amqpnetlite\build.cmd release --solution amqp-vs2015.sln | Write-Output
-    }
-    Else
-    {
       Write-Output "Invoking build.cmd script for Debug..."
-      .\build.cmd --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
-
-      Write-Output "Creating dummy files for NetCore to allow NuGet build ..."
-      mkdir .\bin\Release\Amqp.NetCore
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.dll
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.pdb
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.xml
-      echo "dummy" > .\bin\release\Amqp.NetCore\Amqp.Net.pri
+      .\build.cmd --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
 
       Write-Output "Invoking build.cmd script for Release..."
-      .\build.cmd release --solution "amqp.sln amqp-nanoFramework.sln" | Write-Output
-    }
+      .\build.cmd release --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
 
 test: off
 deploy: off
