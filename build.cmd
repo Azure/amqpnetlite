@@ -160,7 +160,7 @@ IF NOT ERRORLEVEL 1 (
   GOTO :run-test
 )
 
-SET TestBrokerPath=.\bin\%build-config%\TestAmqpBroker\TestAmqpBroker.exe
+SET TestBrokerPath=.\bin\%build-config%\TestAmqpBroker\net45\TestAmqpBroker.exe
 ECHO Starting the test AMQP broker
 ECHO %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
 START CMD.exe /C %TestBrokerPath% amqp://localhost:5672 amqps://localhost:5671 ws://localhost:18080 /creds:guest:guest /cert:localhost
