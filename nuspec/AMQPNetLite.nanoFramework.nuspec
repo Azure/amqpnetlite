@@ -13,7 +13,7 @@
       This is a lightweight AMQP library for .Net nanoFramework. A more compact version
       is available in the AMQPNetMicro.nanoFramework package.
     </description>
-    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <readme>docs\README.md</readme>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP net netmf nf nanoframework</tags>
     <dependencies>
@@ -27,6 +27,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="docs\" />
     <file src="nanoFramework\Amqp.nanoFramework\bin\Release\Amqp.nanoFramework.*" target="lib" />
   </files>
 </package>

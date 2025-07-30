@@ -240,7 +240,7 @@ ECHO Building NuGet package with version %build-version%
 IF NOT "%build-sln:amqp.sln=%" == "%build-sln%" GOTO :package-main
 GOTO :package-netmf
 :package-main
-"%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages"
+"%NuGetPath%" pack .\nuspec\AMQPNetLite.nuspec -Version %build-version% -BasePath .\ -OutputDirectory ".\Build\Packages" -Symbols -SymbolPackageFormat snupkg -Properties NoWarn=NU5128
 IF ERRORLEVEL 1 (
   SET return-code=1
   GOTO :exit

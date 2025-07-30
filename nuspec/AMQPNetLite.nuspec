@@ -15,7 +15,7 @@
       The library includes both a client and listener to enable peer to peer and
       broker based messaging.
     </description>
-    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <readme>docs\README.md</readme>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP net netstandard UWP mono</tags>
     <dependencies>
@@ -36,6 +36,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="docs\" />
     <file src="dotnet\" target="lib\netstandard2.0" />
     <file src="dotnet\" target="lib\netstandard1.3" />
     <file src="bin\Release\Amqp.Net\net5.0\Amqp.Net.dll" target="lib\net5.0" />

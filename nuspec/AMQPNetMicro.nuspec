@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/Azure/amqpnetlite" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is a compact version of AMQP.Net Lite for .Net Micro Framework on memory/space constrained devices.</description>
-    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <readme>docs\README.md</readme>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP netmf</tags>
     <frameworkAssemblies>
@@ -24,6 +24,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="docs\" />
     <file src="bin\Release\Amqp.Micro.NetMF44\*.*" target="lib\netmf44" />
     <file src="bin\Release\Amqp.Micro.NetMF44\le\*.p*" target="lib\netmf44\le" />
     <file src="bin\Release\Amqp.Micro.NetMF44\be\*.p*" target="lib\netmf44\be" />
