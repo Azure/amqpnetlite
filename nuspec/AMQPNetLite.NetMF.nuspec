@@ -13,7 +13,7 @@
       This is a lightweight AMQP 1.0 library for .Net Micro Framework (netmf). A more compact version
       for NETMF is available in the AmqpNetMicro package.
     </description>
-    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <readme>docs\README.md</readme>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP net netmf</tags>
     <frameworkAssemblies>
@@ -27,6 +27,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="docs\" />
     <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.dll" target="lib\netmf44" />
     <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.pdb" target="lib\netmf44" />
     <file src="bin\Release\Amqp.NetMF44\Amqp.NetMF.xml" target="lib\netmf44" />

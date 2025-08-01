@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/Azure/amqpnetlite" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is a compact version of AMQP.Net Lite for .Net nanoFramework on memory/space constrained devices.</description>
-    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <readme>docs\README.md</readme>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP netmf nf nanoframework</tags>
     <dependencies>
@@ -23,6 +23,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="docs\" />
     <file src="nanoFramework\Amqp.Micro.nanoFramework\bin\Release\Amqp.Micro.nanoFramework.*" target="lib" />
   </files>
 </package>

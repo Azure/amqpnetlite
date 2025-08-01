@@ -10,7 +10,7 @@
     <repository type="git" url="https://github.com/Azure/amqpnetlite" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This package provides the AMQP client and listener for netstandard.</description>
-    <releaseNotes>[PLACEHOLDER]</releaseNotes>
+    <readme>docs\README.md</readme>
     <copyright>Copyright 2014</copyright>
     <tags>AMQP coreclr netstandard</tags>
     <dependencies>
@@ -38,6 +38,7 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="README.md" target="docs\" />
     <file src="bin\Release\Amqp\netstandard1.3\Amqp.Net.dll" target="lib\netstandard1.3" />
     <file src="bin\Release\Amqp\netstandard1.3\Amqp.Net.pdb" target="lib\netstandard1.3" />
     <file src="bin\Release\Amqp\netstandard1.3\Amqp.Net.xml" target="lib\netstandard1.3" />
