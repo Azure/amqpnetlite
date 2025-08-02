@@ -396,31 +396,30 @@ namespace Listener.IContainer
 
             Consumer GetConsumerWithLock(Consumer exclude)
             {
-                Consumer consumer = null;
                 var node = this.waiters.First;
+
                 while (node != null)
                 {
-                    consumer = node.Value;
+                    var current = node;
+                    var consumer = current.Value;
+                    node = node.Next;
+
                     if (consumer.Credit == 0)
                     {
-                        this.waiters.RemoveFirst();
-                        consumer = null;
+                        this.waiters.Remove(current);
                     }
                     else if (consumer != exclude)
                     {
                         consumer.Credit--;
                         if (consumer.Credit == 0)
                         {
-                            this.waiters.RemoveFirst();
+                            this.waiters.Remove(current);
                         }
-
-                        break;
+                        return consumer;
                     }
-
-                    node = node.Next;
                 }
 
-                return consumer;
+                return null;
             }
 
             void Enqueue(BrokerMessage message)
