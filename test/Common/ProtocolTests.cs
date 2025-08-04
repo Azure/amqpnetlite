@@ -712,10 +712,11 @@ namespace Test.Amqp
         [TestMethod]
         public void SendWithSessionEndTest()
         {
+            string errorCode = "test:session-end";
             this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
             {
                 // end the session
-                TestListener.FRM(stream, 0x17UL, 0, channel);
+                TestListener.FRM(stream, 0x17UL, 0, channel, new Error(errorCode));
                 return TestOutcome.Stop;
             });
             this.testListener.RegisterTarget(TestPoint.End, (stream, channel, fields) =>
@@ -737,10 +738,10 @@ namespace Test.Amqp
                 }
                 catch (AmqpException exception)
                 {
-                    Assert.AreEqual(ErrorCode.MessageReleased, (string)exception.Error.Condition);
+                    Assert.AreEqual(errorCode, (string)exception.Error.Condition);
                 }
                 connection.Close();
-                Assert.AreEqual(ErrorCode.DetachForced, (string)sender.Error.Condition);
+                Assert.AreEqual(errorCode, (string)sender.Error.Condition);
             }
 
             Trace.WriteLine(TraceLevel.Information, "async test");
@@ -756,10 +757,10 @@ namespace Test.Amqp
                 }
                 catch (AmqpException exception)
                 {
-                    Assert.AreEqual(ErrorCode.MessageReleased, (string)exception.Error.Condition);
+                    Assert.AreEqual(errorCode, (string)exception.Error.Condition);
                 }
                 await connection.CloseAsync();
-                Assert.AreEqual(ErrorCode.DetachForced, (string)sender.Error.Condition);
+                Assert.AreEqual(errorCode, (string)sender.Error.Condition);
             }).Unwrap().GetAwaiter().GetResult();
         }
 
