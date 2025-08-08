@@ -667,7 +667,7 @@ namespace Amqp
                     if (delivery.DeliveryId >= first)
                     {
                         delivery.Settled = dispose.Settled;
-                        if (delivery.Settled && !this.writingDelivery)
+                        if (delivery.Settled && !delivery.InProgress)
                         {
                             linkedList.Remove(delivery);
                         }
