@@ -41,6 +41,8 @@ namespace Test.Amqp
         [ClassInitialize]
         public static void Initialize(TestContext context)
         {
+            //Trace.TraceLevel = TraceLevel.Frame | TraceLevel.Information;
+            //Trace.TraceListener = (l, f, a) => System.Diagnostics.Trace.WriteLine(System.DateTime.Now.ToString("[hh:mm:ss.fff]") + " " + string.Format(f, a));
         }
 
 #if !NETFX40
@@ -505,7 +507,44 @@ namespace Test.Amqp
                 }));
             var sendersFinished = Task.WhenAll(tasks);
             var timeoutTask = Task.Delay(TestTimeout);
-            Assert.AreEqual(sendersFinished, await Task.WhenAny(sendersFinished, timeoutTask),
+            var taskFinished = await Task.WhenAny(sendersFinished, timeoutTask);
+            Assert.AreEqual(sendersFinished, taskFinished,
+                "Probable deadlock detected: timeout while waiting for concurrent sender tasks to complete");
+
+            await connection.CloseAsync();
+        }
+
+        [TestMethod]
+        public async Task ConcurrentWritersMixedSettlement()
+        {
+            const int NbProducerTasks = 4;
+            var data = Enumerable.Range(0, 100 * 1024).Select(x => (byte)x).ToArray();
+
+            var connection = await Connection.Factory.CreateAsync(testTarget.Address);
+            var session = new Session(connection);
+
+            var tasks = Enumerable.Range(0, NbProducerTasks).Select(t =>
+                Task.Run(async () =>
+                {
+                    var senderLink = new SenderLink(session, "Sender " + t, "q1");
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var message = new Message() { BodySection = new Data() { Binary = data } };
+                        if (t % 2 == 0)
+                        {
+                            await senderLink.SendAsync(message, TimeSpan.FromSeconds(30));
+                        }
+                        else
+                        {
+                            senderLink.Send(message, callback: null, state: null);
+                            await Task.Yield();
+                        }
+                    }
+                }));
+            var sendersFinished = Task.WhenAll(tasks);
+            var timeoutTask = Task.Delay(TestTimeout);
+            var taskFinished = await Task.WhenAny(sendersFinished, timeoutTask);
+            Assert.AreEqual(sendersFinished, taskFinished,
                 "Probable deadlock detected: timeout while waiting for concurrent sender tasks to complete");
 
             await connection.CloseAsync();

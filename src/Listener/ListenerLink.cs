@@ -411,13 +411,17 @@ namespace Amqp.Listener
 
         internal override void OnDeliveryStateChanged(Delivery delivery)
         {
-            if (this.onDispose != null)
+            var message = delivery.Message;
+            if (message != null)
             {
-                this.onDispose(delivery.Message, delivery.State, delivery.Settled, this.state);
-            }
-            else if (this.linkEndpoint != null)
-            {
-                this.linkEndpoint.OnDisposition(new DispositionContext(this, delivery.Message, delivery.State, delivery.Settled));
+                if (this.onDispose != null)
+                {
+                    this.onDispose(message, delivery.State, delivery.Settled, this.state);
+                }
+                else if (this.linkEndpoint != null)
+                {
+                    this.linkEndpoint.OnDisposition(new DispositionContext(this, message, delivery.State, delivery.Settled));
+                }
             }
         }
 

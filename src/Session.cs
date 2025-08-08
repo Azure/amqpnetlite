@@ -77,12 +77,11 @@ namespace Amqp
         readonly Connection connection;
         readonly OnBegin onBegin;
         readonly ushort channel;
+        readonly object lockObject = new object();
         uint handleMax;
         Link[] localLinks;
         Link[] remoteLinks;
         SessionState state;
-        private readonly object lockObject = new object();
-
 
         // incoming flow control
         SequenceNumber incomingDeliveryId;
@@ -668,7 +667,7 @@ namespace Amqp
                     if (delivery.DeliveryId >= first)
                     {
                         delivery.Settled = dispose.Settled;
-                        if (delivery.Settled)
+                        if (delivery.Settled && !this.writingDelivery)
                         {
                             linkedList.Remove(delivery);
                         }
