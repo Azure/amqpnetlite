@@ -27,7 +27,7 @@ namespace Amqp.Listener
         internal MessageContext(ListenerLink link, Message message)
             : base(link, message)
         {
-            this.DeliveryState = message.Delivery.State;
+            this.DeliveryState = message.Delivery?.State;
         }
 
         /// <summary>

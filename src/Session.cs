@@ -77,12 +77,11 @@ namespace Amqp
         readonly Connection connection;
         readonly OnBegin onBegin;
         readonly ushort channel;
+        readonly object lockObject = new object();
         uint handleMax;
         Link[] localLinks;
         Link[] remoteLinks;
         SessionState state;
-        private readonly object lockObject = new object();
-
 
         // incoming flow control
         SequenceNumber incomingDeliveryId;
@@ -246,6 +245,7 @@ namespace Amqp
             lock (this.ThisLock)
             {
                 this.ThrowIfEnded("Send");
+                delivery.DeliveryId = this.outgoingDeliveryId++;
                 this.outgoingList.Add(delivery);
                 if (this.outgoingWindow == 0 || this.writingDelivery)
                 {
@@ -668,7 +668,7 @@ namespace Amqp
                     if (delivery.DeliveryId >= first)
                     {
                         delivery.Settled = dispose.Settled;
-                        if (delivery.Settled)
+                        if (delivery.Settled && !delivery.InProgress)
                         {
                             linkedList.Remove(delivery);
                         }
@@ -759,7 +759,6 @@ namespace Amqp
                 if (first)
                 {
                     // initialize properties for first transfer
-                    delivery.DeliveryId = this.outgoingDeliveryId++;
                     transfer.DeliveryTag = delivery.Tag;
                     transfer.DeliveryId = delivery.DeliveryId;
                     transfer.State = delivery.State;
@@ -804,11 +803,15 @@ namespace Amqp
                         this.writingDelivery = false;
                         more = false;
                     }
-                    else if (this.outgoingWindow == 0)
+                    else
                     {
-                        delivery.InProgress = false;
-                        this.writingDelivery = false;
-                        more = false;
+                        delivery.InProgress = true;
+                        if (this.outgoingWindow == 0)
+                        {
+                            delivery.InProgress = false;
+                            this.writingDelivery = false;
+                            more = false;
+                        }
                     }
                 }
 

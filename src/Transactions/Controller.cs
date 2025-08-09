@@ -56,15 +56,15 @@ namespace Amqp.Transactions
             var tcs = (TaskCompletionSource<byte[]>)state;
             if (outcome.Descriptor.Code == Codec.Declared.Code)
             {
-                tcs.SetResult(((Declared)outcome).TxnId);
+                tcs.TrySetResult(((Declared)outcome).TxnId);
             }
             else if (outcome.Descriptor.Code == Codec.Rejected.Code)
             {
-                tcs.SetException(new AmqpException(((Rejected)outcome).Error));
+                tcs.TrySetException(new AmqpException(((Rejected)outcome).Error));
             }
             else
             {
-                tcs.SetCanceled();
+                tcs.TrySetCanceled();
             }
         }
    }
