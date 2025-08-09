@@ -245,6 +245,7 @@ namespace Amqp
             lock (this.ThisLock)
             {
                 this.ThrowIfEnded("Send");
+                delivery.DeliveryId = this.outgoingDeliveryId++;
                 this.outgoingList.Add(delivery);
                 if (this.outgoingWindow == 0 || this.writingDelivery)
                 {
@@ -758,7 +759,6 @@ namespace Amqp
                 if (first)
                 {
                     // initialize properties for first transfer
-                    delivery.DeliveryId = this.outgoingDeliveryId++;
                     transfer.DeliveryTag = delivery.Tag;
                     transfer.DeliveryId = delivery.DeliveryId;
                     transfer.State = delivery.State;
@@ -803,11 +803,15 @@ namespace Amqp
                         this.writingDelivery = false;
                         more = false;
                     }
-                    else if (this.outgoingWindow == 0)
+                    else
                     {
-                        delivery.InProgress = false;
-                        this.writingDelivery = false;
-                        more = false;
+                        delivery.InProgress = true;
+                        if (this.outgoingWindow == 0)
+                        {
+                            delivery.InProgress = false;
+                            this.writingDelivery = false;
+                            more = false;
+                        }
                     }
                 }
 
