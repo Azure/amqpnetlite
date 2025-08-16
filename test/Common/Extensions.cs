@@ -39,6 +39,40 @@ namespace Test.Common
             return value;
         }
 
+        public static void SetProperty(this Connection connection, string name, object value)
+        {
+            if (connection is ListenerConnection listenerConnection)
+            {
+                lock (listenerConnection)
+                {
+                    listenerConnection.Properties[name] = value;
+                }
+            }
+        }
+
+        public static T GetOrAddProperty<T>(this Connection connection, string name, Func<T> ctor = null)
+        {
+            if (connection is ListenerConnection listenerConnection)
+            {
+                lock (listenerConnection)
+                {
+                    if (listenerConnection.Properties.TryGetValue(name, out object obj))
+                    {
+                        return (T)obj;
+                    }
+
+                    if (ctor != null)
+                    {
+                        T value = ctor();
+                        listenerConnection.Properties[name] = value;
+                        return value;
+                    }
+                }
+            }
+
+            return default(T);
+        }
+
         public static SenderSettleMode ToSenderSettleMode(this string mode)
         {
             ushort tuple = GetSettleModeMapping()[mode];

@@ -23,19 +23,29 @@ namespace Listener.IContainer
     using System.Threading;
     using global::Amqp;
     using global::Amqp.Framing;
+    using global::Amqp.Handler;
     using global::Amqp.Listener;
     using global::Amqp.Transactions;
     using global::Amqp.Types;
     using Test.Common;
 
-    public sealed class TestAmqpBroker : IContainer
+    public interface INode
+    {
+        string Name { get; }
+
+        bool AttachLink(ListenerConnection connection, ListenerSession session, ListenerLink link, Attach attach);
+    }
+
+    public sealed class TestAmqpBroker : IContainer, IHandler
     {
         public const uint BatchFormat = 0x80013700;
+        public const string RemoteOpenName = "$host.open";
         readonly X509Certificate2 certificate;
         readonly Dictionary<string, TransportProvider> customTransports;
         readonly Dictionary<string, TestQueue> queues;
         readonly ConnectionListener[] listeners;
         readonly TxnManager txnManager;
+        readonly List<INode> nodes;
         bool implicitQueue;
         int dynamidId;
 
@@ -43,6 +53,7 @@ namespace Listener.IContainer
         {
             this.customTransports = new Dictionary<string, TransportProvider>(StringComparer.OrdinalIgnoreCase);
             this.txnManager = new TxnManager();
+            this.nodes = new List<INode>();
             this.queues = new Dictionary<string, TestQueue>();
             if (queues != null)
             {
@@ -64,6 +75,7 @@ namespace Listener.IContainer
             {
                 this.listeners[i] = new ConnectionListener(endpoints[i], this);
                 this.listeners[i].ConfigureTest();
+                this.listeners[i].HandlerFactory = CreateHandler;
                 this.listeners[i].AMQP.MaxSessionsPerConnection = 1000;
                 this.listeners[i].AMQP.ContainerId = containerId;
                 this.listeners[i].AMQP.IdleTimeout = 4 * 60 * 1000;
@@ -82,6 +94,11 @@ namespace Listener.IContainer
         public IDictionary<string, TransportProvider> CustomTransports
         {
             get { return this.customTransports; }
+        }
+
+        public static Message Decode(Message message)
+        {
+            return Message.Decode(((BrokerMessage)message).Buffer);
         }
 
         public void Start()
@@ -107,6 +124,11 @@ namespace Listener.IContainer
             }
         }
 
+        public void AddNode(INode node)
+        {
+            this.nodes.Add(node);
+        }
+
         public void AddQueue(string queue)
         {
             lock (this.queues)
@@ -120,6 +142,23 @@ namespace Listener.IContainer
             lock (this.queues)
             {
                 this.queues.Remove(queue);
+            }
+        }
+
+        bool IHandler.CanHandle(EventId id)
+        {
+            return id == EventId.ConnectionRemoteOpen;
+        }
+
+        void IHandler.Handle(Event protocolEvent)
+        {
+            switch (protocolEvent.Id)
+            {
+                case EventId.ConnectionRemoteOpen:
+                    protocolEvent.Connection.SetProperty(RemoteOpenName, protocolEvent.Context);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -140,6 +179,14 @@ namespace Listener.IContainer
 
         bool IContainer.AttachLink(ListenerConnection connection, ListenerSession session, Link link, Attach attach)
         {
+            foreach (var node in this.nodes)
+            {
+                if (node.AttachLink(connection, session, (ListenerLink)link, attach))
+                {
+                    return true;
+                }
+            }
+
             Source source = attach.Source as Source;
             Target target = attach.Target as Target;
             bool dynamic = false;
@@ -205,6 +252,11 @@ namespace Listener.IContainer
             }
 
             return true;
+        }
+
+        IHandler CreateHandler(ConnectionListener listener)
+        {
+            return this;
         }
 
         sealed class BrokerMessage : Message
@@ -396,30 +448,31 @@ namespace Listener.IContainer
 
             Consumer GetConsumerWithLock(Consumer exclude)
             {
+                Consumer consumer = null;
                 var node = this.waiters.First;
-
                 while (node != null)
                 {
-                    var current = node;
-                    var consumer = current.Value;
-                    node = node.Next;
-
+                    consumer = node.Value;
                     if (consumer.Credit == 0)
                     {
-                        this.waiters.Remove(current);
+                        this.waiters.RemoveFirst();
+                        consumer = null;
                     }
                     else if (consumer != exclude)
                     {
                         consumer.Credit--;
                         if (consumer.Credit == 0)
                         {
-                            this.waiters.Remove(current);
+                            this.waiters.RemoveFirst();
                         }
-                        return consumer;
+
+                        break;
                     }
+
+                    node = node.Next;
                 }
 
-                return null;
+                return consumer;
             }
 
             void Enqueue(BrokerMessage message)

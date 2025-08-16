@@ -192,6 +192,7 @@ namespace Amqp.Listener
                     this.deliveryCount = attach.InitialDeliveryCount;
                 }
 
+                this.SettleOnSend = attach.SndSettleMode == SenderSettleMode.Settled;
                 this.SendAttach(attach.InitialDeliveryCount, attach);
             }
 
@@ -411,17 +412,13 @@ namespace Amqp.Listener
 
         internal override void OnDeliveryStateChanged(Delivery delivery)
         {
-            var message = delivery.Message;
-            if (message != null)
+            if (this.onDispose != null)
             {
-                if (this.onDispose != null)
-                {
-                    this.onDispose(message, delivery.State, delivery.Settled, this.state);
-                }
-                else if (this.linkEndpoint != null)
-                {
-                    this.linkEndpoint.OnDisposition(new DispositionContext(this, message, delivery.State, delivery.Settled));
-                }
+                this.onDispose(delivery.Message, delivery.State, delivery.Settled, this.state);
+            }
+            else if (this.linkEndpoint != null)
+            {
+                this.linkEndpoint.OnDisposition(new DispositionContext(this, delivery.Message, delivery.State, delivery.Settled));
             }
         }
 
