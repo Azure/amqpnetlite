@@ -917,6 +917,7 @@ namespace Test.Amqp
         public void SmallSessionWindowWithLinkCloseTest()
         {
             ManualResetEvent done = new ManualResetEvent(false);
+            ManualResetEvent sendDone = new ManualResetEvent(false);
 
             int window = 43;
             int total = 8000;
@@ -947,6 +948,7 @@ namespace Test.Amqp
                 }
                 if (received >= 3000 && received % 1000 == 0)
                 {
+                    sendDone.WaitOne();
                     TestListener.FRM(stream, 0x16UL, 0, channel, (uint)((received / 1000) - 3), true);
                 }
                 return TestOutcome.Stop;
@@ -972,6 +974,8 @@ namespace Test.Amqp
                     },
                     null);
             }
+
+            sendDone.Set();
 
             Assert.IsTrue(done.WaitOne(10000), $"total:{total} received:{received} success:{success} fail:{cancel}");
 
