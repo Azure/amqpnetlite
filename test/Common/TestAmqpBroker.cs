@@ -29,7 +29,7 @@ namespace Listener.IContainer
     using global::Amqp.Types;
     using Test.Common;
 
-    public interface INode
+    public interface INode : IHandler
     {
         string Name { get; }
 
@@ -147,11 +147,19 @@ namespace Listener.IContainer
 
         bool IHandler.CanHandle(EventId id)
         {
-            return id == EventId.ConnectionRemoteOpen;
+            return true;
         }
 
         void IHandler.Handle(Event protocolEvent)
         {
+            foreach (var node in this.nodes)
+            {
+                if (node.CanHandle(protocolEvent.Id))
+                {
+                    node.Handle(protocolEvent);
+                }
+            }
+
             switch (protocolEvent.Id)
             {
                 case EventId.ConnectionRemoteOpen:
