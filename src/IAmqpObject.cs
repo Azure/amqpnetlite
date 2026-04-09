@@ -1,4 +1,4 @@
-﻿//  ------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation
 //  All rights reserved. 
 //  
@@ -64,6 +64,17 @@ namespace Amqp
     /// <param name="receiver">The receiver link from which a message is received.</param>
     /// <param name="message">The received message.</param>
     public delegate void MessageCallback(IReceiverLink receiver, Message message);
+
+    /// <summary>
+    /// Invoked when the remote peer sends a flow performative that includes link-state properties
+    /// (the <c>properties</c> field).
+    /// </summary>
+    /// <param name="link">The link that received the flow.</param>
+    /// <param name="properties">The link-state properties map from the flow frame.</param>
+    /// <remarks>
+    /// The callback runs on the connection I/O thread. Lengthy work can reduce throughput; keep the handler minimal.
+    /// </remarks>
+    public delegate void OnLinkStateProperties(ILink link, Fields properties);
 
     /// <summary>
     /// Represents an AMQP object.
@@ -182,6 +193,11 @@ namespace Amqp
         /// or the link was closed instead of being detached.
         /// </remarks>
         void Detach(Error error);
+
+        /// <summary>
+        /// Optional callback when the peer includes link-state properties on a flow performative.
+        /// </summary>
+        OnLinkStateProperties OnLinkStateProperties { get; set; }
     }
 
     /// <summary>

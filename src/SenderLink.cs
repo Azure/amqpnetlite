@@ -1,4 +1,4 @@
-﻿//  ------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation
 //  All rights reserved. 
 //  
@@ -253,6 +253,7 @@ namespace Amqp
             }
 
             this.WriteDelivery(delivery);
+            MaybeFireOnLinkStateProperties(flow);
         }
 
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)
