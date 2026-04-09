@@ -1,4 +1,4 @@
-﻿//  ------------------------------------------------------------------------------------
+//  ------------------------------------------------------------------------------------
 //  Copyright (c) Microsoft Corporation
 //  All rights reserved. 
 //  
@@ -358,6 +358,7 @@ namespace Amqp
 
         internal override void OnFlow(Flow flow)
         {
+           
             lock (this.ThisLock)
             {
                 if (this.drain)
@@ -367,6 +368,9 @@ namespace Amqp
                     this.credit = Math.Min(0, (int)flow.LinkCredit);
                 }
             }
+
+            MaybeFireOnLinkStateProperties(flow);
+
         }
 
         internal override void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer)

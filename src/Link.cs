@@ -20,6 +20,7 @@ namespace Amqp
     using System;
     using Amqp.Framing;
     using Amqp.Handler;
+    using Amqp.Types;
 
     /// <summary>
     /// The state of a link.
@@ -223,7 +224,16 @@ namespace Amqp
         {
             get { return this.session; }
         }
-        
+
+        /// <summary>
+        /// Optional callback when the remote peer sends link-state properties in a flow performative.
+        /// </summary>
+        /// <remarks>
+        /// Invoked on the connection I/O thread when the flow's properties field is present and non-empty.
+        /// Avoid blocking or heavy work in the handler.
+        /// </remarks>
+        public OnLinkStateProperties OnLinkStateProperties { get; set; }
+
         /// <summary>
         /// Gets the link state.
         /// </summary>
@@ -391,6 +401,23 @@ namespace Amqp
 
                 this.SendDetach(error);
                 return this.state == LinkState.End;
+            }
+        }
+
+        /// <summary>
+        /// Fires the <see cref="OnLinkStateProperties"/> event if the flow contains link state properties.
+        /// </summary>
+        /// <param name="flow"></param>
+        protected void MaybeFireOnLinkStateProperties(Flow flow)
+        {
+            Fields linkStateProperties = null;
+            if (flow.Properties != null && flow.Properties.Count > 0)
+            {
+                linkStateProperties = flow.Properties;
+            }
+            if (linkStateProperties != null && this.OnLinkStateProperties != null)
+            {
+                this.OnLinkStateProperties(this, linkStateProperties);
             }
         }
 
