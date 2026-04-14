@@ -111,15 +111,19 @@ namespace Amqp
 
         void ITransport.Close()
         {
-            this.webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "close", CancellationToken.None)
-                .ContinueWith((t, o) =>
-                {
-                    if (t.IsFaulted)
+            try
+            {
+                this.webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "close", CancellationToken.None)
+                    .ContinueWith((t, o) =>
                     {
-                        var ignored = t.Exception; // prevent unobserved task exception
-                        ((WebSocket)o).Dispose();
-                    }
-                }, this.webSocket);
+                        if (t.IsFaulted)
+                        {
+                            var ignored = t.Exception; // prevent unobserved task exception
+                            ((WebSocket)o).Dispose();
+                        }
+                    }, this.webSocket);
+            }
+            catch (ObjectDisposedException) { }
         }
 
         void ITransport.Send(ByteBuffer buffer)
