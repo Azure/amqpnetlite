@@ -404,11 +404,7 @@ namespace Amqp
             }
         }
 
-        /// <summary>
-        /// Fires the <see cref="OnLinkStateProperties"/> event if the flow contains link state properties.
-        /// </summary>
-        /// <param name="flow"></param>
-        protected void MaybeFireOnLinkStateProperties(Flow flow)
+        internal void MaybeFireOnLinkStateProperties(Flow flow)
         {
             Fields linkStateProperties = null;
             if (flow.Properties != null && flow.Properties.Count > 0)
