@@ -50,5 +50,10 @@ namespace Amqp.Handler
         /// Gets or sets the Settled field.
         /// </summary>
         bool Settled { get; set; }
+        
+        /// <summary>
+        /// Get the Message
+        /// </summary>
+        Message Message { get; }
     }
 }

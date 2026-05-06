@@ -111,6 +111,10 @@ namespace Amqp.Handler
         /// </summary>
         ConnectionAccept,
 #endif
+        /// <summary>
+        /// DeliveryStateChanged represents the state changed for a delivery 
+        /// </summary>
+        DeliveryStateChanged
     }
 
     /// <summary>

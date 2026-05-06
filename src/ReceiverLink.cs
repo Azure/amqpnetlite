@@ -455,6 +455,12 @@ namespace Amqp
 
         internal override void OnDeliveryStateChanged(Delivery delivery)
         {
+            IHandler handler = this.Session.Connection.Handler;
+            if (handler != null && handler.CanHandle(EventId.DeliveryStateChanged))
+            {
+                handler.Handle(Event.Create(EventId.DeliveryStateChanged, 
+                    this.Session.Connection, this.Session, this, context: delivery));
+            }
         }
 
         /// <summary>
