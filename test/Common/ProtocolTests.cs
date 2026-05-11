@@ -2113,6 +2113,7 @@ namespace Test.Amqp
                 Assert.AreEqual(1, dict[EventId.ReceiveDelivery]);
                 Assert.AreEqual(1, dict[EventId.ConnectionLocalClose]);
                 Assert.AreEqual(1, dict[EventId.ConnectionRemoteClose]);
+                Assert.AreEqual(1, dict[EventId.DeliveryStateChanged]);
             };
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
