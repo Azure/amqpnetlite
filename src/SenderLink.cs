@@ -166,7 +166,8 @@ namespace Amqp
 #endif
         }
 
-        void SendInternal(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state, bool sync)
+        void SendInternal(Message message, DeliveryState deliveryState, OutcomeCallback callback, object state,
+            bool sync)
         {
             const int reservedBytes = 40;
 #if NETFX || NETFX40 || DOTNET
@@ -195,7 +196,8 @@ namespace Amqp
             IHandler handler = this.Session.Connection.Handler;
             if (handler != null && handler.CanHandle(EventId.SendDelivery))
             {
-                handler.Handle(Event.Create(EventId.SendDelivery, this.Session.Connection, this.Session, this, context: delivery));
+                handler.Handle(Event.Create(EventId.SendDelivery, this.Session.Connection, this.Session, this,
+                    context: delivery));
             }
 
             lock (this.ThisLock)
@@ -279,6 +281,13 @@ namespace Amqp
                 }
 #endif
                 delivery.OnOutcome(this, delivery.Message, outcome, delivery.UserToken);
+            }
+
+            IHandler handler = this.Session.Connection.Handler;
+            if (handler != null && handler.CanHandle(EventId.DeliveryStateChanged))
+            {
+                handler.Handle(Event.Create(EventId.DeliveryStateChanged, this.Session.Connection, this.Session, this,
+                    context: delivery));
             }
         }
 

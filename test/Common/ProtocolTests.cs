@@ -2099,7 +2099,7 @@ namespace Test.Amqp
 
             Action<Dictionary<EventId, int>> validator = dict =>
             {
-                Assert.AreEqual(11, dict.Count);
+                Assert.AreEqual(12, dict.Count);
                 Assert.AreEqual(1, dict[EventId.SocketConnect]);
                 Assert.AreEqual(1, dict[EventId.ConnectionLocalOpen]);
                 Assert.AreEqual(1, dict[EventId.ConnectionRemoteOpen]);
@@ -2113,6 +2113,7 @@ namespace Test.Amqp
                 Assert.AreEqual(1, dict[EventId.ReceiveDelivery]);
                 Assert.AreEqual(1, dict[EventId.ConnectionLocalClose]);
                 Assert.AreEqual(1, dict[EventId.ConnectionRemoteClose]);
+                Assert.AreEqual(1, dict[EventId.DeliveryStateChanged]);
             };
 
             Trace.WriteLine(TraceLevel.Information, "sync test");
