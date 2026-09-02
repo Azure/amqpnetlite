@@ -37,6 +37,14 @@ namespace Amqp.Listener
             this.listener = listener;
         }
 
+        // Defer the local Open until the client's protocol header is received. Pipelining
+        // the header and Open into one TCP segment breaks some clients (Node rhea), which
+        // intermittently fail to parse the coalesced bytes and hang until their open timeout.
+        internal override bool PipelineOpen
+        {
+            get { return false; }
+        }
+
         /// <summary>
         /// Gets a IPrincipal object for the connection. If the value is null,
         /// the connection is not authenticated.
