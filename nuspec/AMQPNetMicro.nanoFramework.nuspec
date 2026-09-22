@@ -18,7 +18,7 @@
       <dependency id="nanoFramework.Runtime.Events" version="1.11.39" />
       <dependency id="nanoFramework.System.Collections" version="1.5.75" />
       <dependency id="nanoFramework.System.Math" version="1.5.116" />
-      <dependency id="nanoFramework.System.Net" version="1.11.60" />
+      <dependency id="nanoFramework.System.Net" version="1.11.64" />
       <dependency id="nanoFramework.System.Text" version="1.3.42" />
     </dependencies>
   </metadata>
