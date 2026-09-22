@@ -121,6 +121,16 @@ namespace Amqp
         uint remoteMaxFrameSize;
         ITransport writer;
         HeartBeat heartBeat;
+        Open deferredOpen;
+
+        // When false, the local Open is not pipelined with the protocol header but is
+        // deferred until the peer's protocol header is received. Listener connections
+        // set this to avoid coalescing the header and Open into a single TCP segment,
+        // which some clients (e.g. the Node rhea library) fail to parse.
+        internal virtual bool PipelineOpen
+        {
+            get { return true; }
+        }
 
         Connection(Address address, ushort channelMax, uint maxFrameSize)
         {
@@ -280,8 +290,17 @@ namespace Amqp
             }
 
             this.SendHeader();
-            this.SendOpen(open);
-            this.state = ConnectionState.OpenPipe;
+            if (this.PipelineOpen)
+            {
+                this.SendOpen(open);
+                this.state = ConnectionState.OpenPipe;
+            }
+            else
+            {
+                // Defer the Open until the peer's protocol header arrives (see PipelineOpen).
+                this.deferredOpen = open;
+                this.state = ConnectionState.HeaderSent;
+            }
         }
 
         static ConnectionFactory connectionFactory;
@@ -515,6 +534,14 @@ namespace Amqp
                 ConnectionState newState = ConnectionState.Start;
                 if (this.state == ConnectionState.OpenPipe )
                 {
+                    newState = ConnectionState.OpenClosePipe;
+                }
+                else if (this.state == ConnectionState.HeaderSent)
+                {
+                    // Non-pipelined Open was deferred and never sent; send it now so the
+                    // peer sees a well-formed Open/Close sequence once its header arrives.
+                    this.SendOpen(this.deferredOpen);
+                    this.deferredOpen = null;
                     newState = ConnectionState.OpenClosePipe;
                 }
                 else if (state == ConnectionState.OpenSent)
@@ -762,6 +789,15 @@ namespace Amqp
             {
                 if (this.state == ConnectionState.OpenPipe)
                 {
+                    this.state = ConnectionState.OpenSent;
+                }
+                else if (this.state == ConnectionState.HeaderSent)
+                {
+                    // Deferred (non-pipelined) Open: now that the peer's header has
+                    // arrived, send our Open as a separate write so it is not coalesced
+                    // with the protocol header.
+                    this.SendOpen(this.deferredOpen);
+                    this.deferredOpen = null;
                     this.state = ConnectionState.OpenSent;
                 }
                 else if (this.state == ConnectionState.OpenClosePipe)
