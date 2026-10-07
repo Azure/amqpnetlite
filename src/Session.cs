@@ -1014,7 +1014,7 @@ namespace Amqp
         //    shared queue is only consulted once a delivery's chain ends or there is no delivery in
         //    progress, so a single producer sees no enqueue/dequeue overhead at all.
 #if NETMF
-        sealed class CmdQueue : System.Collections.Generic.Queue
+        sealed class CmdQueue : System.Collections.Queue
         {
             public new OutCmd Dequeue()
             {
