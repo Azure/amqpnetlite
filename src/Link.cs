@@ -330,6 +330,7 @@ namespace Amqp
 
             this.Error = remoteError;
 
+            bool sendDetach = false;
             lock (this.ThisLock)
             {
                 if (this.state == LinkState.DetachSent)
@@ -338,7 +339,7 @@ namespace Amqp
                 }
                 else if (this.state == LinkState.Attached)
                 {
-                    this.SendDetach(null);
+                    sendDetach = true;
                     this.state = LinkState.End;
                 }
                 else
@@ -347,9 +348,14 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnDetach", this.state));
                 }
 
-                this.OnClose(remoteError);
             }
 
+            if (sendDetach)
+            {
+                this.SendDetach(null);
+            }
+
+            this.OnClose(remoteError);
             this.session.RemoveLink(this, detach.Handle);
             this.NotifyClosed(remoteError);
 
@@ -361,6 +367,20 @@ namespace Amqp
         internal abstract void OnTransfer(Delivery delivery, Transfer transfer, ByteBuffer buffer);
 
         internal abstract void OnDeliveryStateChanged(Delivery delivery);
+
+        internal virtual bool Snapshot(Flow flow)
+        {
+            lock (this.ThisLock)
+            {
+                if (this.IsDetaching)
+                {
+                    return false;
+                }
+
+                flow.Handle = this.handle;
+                return true;
+            }
+        }
 
         /// <summary>
         /// Aborts the link.
@@ -375,6 +395,8 @@ namespace Amqp
         /// <returns></returns>
         protected override bool OnClose(Error error)
         {
+            bool sendDetach;
+            bool closed;
             lock (this.ThisLock)
             {
                 if (this.state == LinkState.End)
@@ -399,9 +421,16 @@ namespace Amqp
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
                 }
 
-                this.SendDetach(error);
-                return this.state == LinkState.End;
+                sendDetach = true;
+                closed = this.state == LinkState.End;
             }
+
+            if (sendDetach)
+            {
+                this.SendDetach(error);
+            }
+
+            return closed;
         }
 
         internal void MaybeFireOnLinkStateProperties(Flow flow)
@@ -419,18 +448,18 @@ namespace Amqp
 
         internal void SendFlow(uint deliveryCount, uint credit, bool drain)
         {
+            Flow flow = null;
             lock (this.ThisLock)
             {
                 if (!this.IsDetaching)
                 {
-                    Flow flow = new Flow() { Handle = this.handle, LinkCredit = credit, Drain = drain };
-                    if (this.state >= LinkState.AttachReceived)
-                    {
-                        flow.DeliveryCount = deliveryCount;
-                    }
-
-                    this.session.SendFlow(flow);
+                    flow = new Flow() { Drain = drain };
                 }
+            }
+
+            if (flow != null)
+            {
+                this.session.SendFlow(flow, this);
             }
         }
 

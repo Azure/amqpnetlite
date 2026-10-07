@@ -96,6 +96,10 @@ namespace Amqp
         uint outgoingWindow;
         bool writingDelivery;
 
+        // Outgoing commands queue with a single writer to maintain order and state consistency.
+        readonly CmdQueue outgoingCommands;
+        bool writingCommands;
+
         /// <summary>
         /// Initializes a session object.
         /// </summary>
@@ -124,6 +128,7 @@ namespace Amqp
             this.remoteLinks = new Link[1];
             this.incomingList = new LinkedList();
             this.outgoingList = new LinkedList();
+            this.outgoingCommands = new CmdQueue();
             this.channel = connection.AddSession(this);
 
             this.state = SessionState.BeginSent;
@@ -242,6 +247,8 @@ namespace Amqp
 
         internal void SendDelivery(Delivery delivery)
         {
+            bool write = false;
+            OutCmd command = new OutCmd(new Transfer(), null, delivery);
             lock (this.ThisLock)
             {
                 this.ThrowIfEnded("Send");
@@ -254,9 +261,21 @@ namespace Amqp
 
                 delivery.InProgress = true;
                 this.writingDelivery = true;
+
+                if (!this.writingCommands)
+                {
+                    write = this.writingCommands = true;
+                }
+                else
+                {
+                    this.outgoingCommands.Enqueue(command);
+                }
             }
 
-            this.WriteDelivery(delivery);
+            if (write)
+            {
+                this.WriteCommands(command);
+            }
         }
 
         internal void DisposeDelivery(bool role, Delivery delivery, DeliveryState state, bool settled)
@@ -288,29 +307,62 @@ namespace Amqp
             this.SendCommand(dispose);
         }
 
-        internal void SendFlow(Flow flow)
+        internal void SendFlow(Flow flow, Link link = null)
         {
-            lock (this.ThisLock)
-            {
-                this.incomingWindow = defaultWindowSize;
-                flow.NextOutgoingId = this.nextOutgoingId;
-                flow.OutgoingWindow = this.outgoingWindow;
-                flow.IncomingWindow = this.incomingWindow;
-                if (this.state >= SessionState.BeginReceived)
-                {
-                    flow.NextIncomingId = this.nextIncomingId;
-                }
-
-                this.SendCommand(flow);
-            }
+            this.EnqueueCommand(new OutCmd(flow, link, null));
         }
 
         internal void SendCommand(DescribedList command)
         {
-            if (command.Descriptor.Code == Codec.End.Code || this.state < SessionState.EndSent)
+            this.EnqueueCommand(new OutCmd(command, null, null));
+        }
+
+        // Admits a command into the outgoing queue, or rejects it once End has been sent. The End
+        // command itself is always admitted so the session can still close. Returns false if the
+        // command was rejected; callers that pass a Delivery are responsible for releasing it.
+        bool EnqueueCommand(OutCmd command)
+        {
+            bool accepted;
+            bool write = false;
+            lock (this.ThisLock)
             {
-                this.connection.SendCommand(this.channel, command);
+                accepted = command.Command.Descriptor.Code == Codec.End.Code ||
+                    this.state < SessionState.EndSent;
+                if (accepted)
+                {
+                    if (!this.writingCommands)
+                    {
+                        write = this.writingCommands = true;
+                    }
+                    else
+                    {
+                        this.outgoingCommands.Enqueue(command);
+                    }
+                }
             }
+
+            if (write)
+            {
+                this.WriteCommands(command);
+            }
+
+            return accepted;
+        }
+
+        // Undoes the in-progress state set up for a Transfer command that EnqueueCommand rejected,
+        // and releases the delivery back to its caller.
+        void ReleaseRejectedTransfer(Delivery delivery)
+        {
+            Error error;
+            lock (this.ThisLock)
+            {
+                delivery.InProgress = false;
+                this.writingDelivery = false;
+                this.outgoingList.Remove(delivery);
+                error = this.Error;
+            }
+
+            Delivery.ReleaseAll(delivery, error);
         }
 
         internal void OnBegin(ushort remoteChannel, Begin begin)
@@ -362,6 +414,7 @@ namespace Amqp
 
             this.Error = end.Error;
 
+            bool sendEnd = false;
             lock (this.ThisLock)
             {
                 if (this.state == SessionState.EndSent)
@@ -370,20 +423,24 @@ namespace Amqp
                 }
                 else if (this.state == SessionState.Opened)
                 {
-                    this.SendEnd();
                     this.state = SessionState.End;
+                    sendEnd = true;
                 }
                 else
                 {
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "OnEnd", this.state));
                 }
-
-                this.AbortLinks(end.Error);
-                this.NotifyClosed(end.Error);
-
-                return true;
             }
+
+            if (sendEnd)
+            {
+                this.SendEnd();
+            }
+
+            this.AbortLinks(end.Error);
+            this.NotifyClosed(end.Error);
+            return true;
         }
 
         internal void OnCommand(DescribedList command, ByteBuffer buffer)
@@ -426,6 +483,7 @@ namespace Amqp
         {
             this.CancelPendingDeliveries(error);
 
+            bool ended = false;
             lock (this.ThisLock)
             {
                 if (this.state == SessionState.End)
@@ -443,16 +501,17 @@ namespace Amqp
                 else if (this.state == SessionState.EndReceived)
                 {
                     this.state = SessionState.End;
+                    ended = true;
                 }
                 else
                 {
                     throw new AmqpException(ErrorCode.IllegalState,
                         Fx.Format(SRAmqp.AmqpIllegalOperationState, "Close", this.state));
                 }
-
-                this.SendEnd();
-                return this.state == SessionState.End;
             }
+
+            this.SendEnd();
+            return ended;
         }
 
         internal virtual void OnAttach(Attach attach)
@@ -595,9 +654,9 @@ namespace Amqp
                 }
             }
 
-            if (delivery != null)
+            if (delivery != null && !this.EnqueueCommand(new OutCmd(new Transfer(), null, delivery)))
             {
-                this.WriteDelivery(delivery);
+                this.ReleaseRejectedTransfer(delivery);
             }
 
             if (flow.HasHandle)
@@ -609,20 +668,23 @@ namespace Amqp
         void OnTransfer(Transfer transfer, ByteBuffer buffer)
         {
             bool newDelivery;
+            bool sendFlow;
             lock (this.ThisLock)
             {
                 this.nextIncomingId++;
                 this.incomingWindow--;
-                if (this.incomingWindow == 0)
-                {
-                    this.SendFlow(new Flow());
-                }
+                sendFlow = this.incomingWindow == 0;
 
                 newDelivery = transfer.HasDeliveryId && transfer.DeliveryId > this.incomingDeliveryId;
                 if (newDelivery)
                 {
                     this.incomingDeliveryId = transfer.DeliveryId;
                 }
+            }
+
+            if (sendFlow)
+            {
+                this.SendFlow(new Flow());
             }
 
             Link link = this.GetLink(transfer.Handle);
@@ -650,7 +712,7 @@ namespace Amqp
 
             link.OnTransfer(delivery, transfer, buffer);
         }
-        
+
         void OnDispose(Dispose dispose)
         {
             SequenceNumber first = dispose.First;
@@ -744,82 +806,225 @@ namespace Amqp
                 handler.Handle(Event.Create(EventId.SessionLocalClose, this.connection, this, context: end));
             }
 
-            this.connection.SendCommand(this.channel, end);
+            this.SendCommand(end);
         }
 
-        void WriteDelivery(Delivery delivery)
+        bool Snapshot(Flow flow)
         {
-            // Must be called single threaded. Delivery must be on list already
-            // Responsible for releasing the buffer when done transferring or with a closed link
-            bool more = true;
-            while (more)
+            lock (this.ThisLock)
             {
-                Transfer transfer = new Transfer() { Handle = delivery.Handle };
-                bool first = delivery.BytesTransfered == 0;
-                if (first)
+                this.incomingWindow = defaultWindowSize;
+                flow.NextOutgoingId = this.nextOutgoingId;
+                flow.OutgoingWindow = this.outgoingWindow;
+                flow.IncomingWindow = this.incomingWindow;
+                if (this.state >= SessionState.BeginReceived)
                 {
-                    // initialize properties for first transfer
-                    transfer.DeliveryTag = delivery.Tag;
-                    transfer.DeliveryId = delivery.DeliveryId;
-                    transfer.State = delivery.State;
-                    transfer.MessageFormat = delivery.Message.Format;
-                    transfer.Settled = delivery.Settled;
-                    transfer.Batchable = delivery.Batchable;
+                    flow.NextIncomingId = this.nextIncomingId;
                 }
 
-                int len = this.connection.SendCommand(this.channel, transfer, first,
-                    delivery.Buffer, delivery.ReservedBufferSize);
-                delivery.BytesTransfered += len;
-                delivery.Buffer.Complete(len);
+                return true;
+            }
+        }
 
-                Delivery release = null;
-                lock (this.ThisLock)
+        void WriteCommands(OutCmd command)
+        {
+            try
+            {
+                while (true)
                 {
-                    this.nextOutgoingId++;
-                    if (this.outgoingWindow > 0)
-                    {
-                        this.outgoingWindow--;
-                    }
+                    bool isTransfer = command.Command.Descriptor.Code == Codec.Transfer.Code;
+                    Delivery transferDelivery = command.Delivery;
 
-                    if (delivery.Buffer.Length == 0 || delivery.Link.IsClosed)
+                    if (isTransfer)
                     {
-                        delivery.InProgress = false;
-                        var next = (Delivery)delivery.Next;
-                        if (delivery.Link.IsClosed)
-                        {
-                            release = delivery;
-                            this.outgoingList.Remove(delivery);
-                        }
-                        else if (delivery.Settled)
-                        {
-                            this.outgoingList.Remove(delivery);
-                        }
-
-                        delivery = next;
-                    }
-
-                    if (delivery == null)
-                    {
-                        this.writingDelivery = false;
-                        more = false;
+                        this.WriteTransferBytes((Transfer)command.Command, transferDelivery);
                     }
                     else
                     {
-                        delivery.InProgress = true;
-                        if (this.outgoingWindow == 0)
+                        if (command.Command.Descriptor.Code == Codec.Flow.Code)
                         {
-                            delivery.InProgress = false;
-                            this.writingDelivery = false;
-                            more = false;
+                            Flow flow = (Flow)command.Command;
+                            if ((command.Link != null && !command.Link.Snapshot(flow)) ||
+                                !this.Snapshot(flow))
+                            {
+                                command = default(OutCmd);
+                            }
+                        }
+
+                        if (command.Command != null)
+                        {
+                            this.connection.SendCommand(this.channel, command.Command);
                         }
                     }
-                }
 
-                if (release != null)
-                {
-                    Delivery.ReleaseAll(release, release.Link.Error);
+                    Delivery release = null;
+                    Delivery rejected = null;
+                    bool hasNext = false;
+
+                    lock (this.ThisLock)
+                    {
+                        if (isTransfer)
+                        {
+                            this.nextOutgoingId++;
+                            if (this.outgoingWindow > 0)
+                            {
+                                this.outgoingWindow--;
+                            }
+
+                            Delivery next = transferDelivery;
+                            if (transferDelivery.Buffer.Length == 0 || transferDelivery.Link.IsClosed)
+                            {
+                                transferDelivery.InProgress = false;
+                                next = (Delivery)transferDelivery.Next;
+                                if (transferDelivery.Link.IsClosed)
+                                {
+                                    release = transferDelivery;
+                                    this.outgoingList.Remove(transferDelivery);
+                                }
+                                else if (transferDelivery.Settled)
+                                {
+                                    this.outgoingList.Remove(transferDelivery);
+                                }
+                            }
+
+                            if (next == null || this.outgoingWindow == 0)
+                            {
+                                if (next != null)
+                                {
+                                    next.InProgress = false;
+                                }
+
+                                this.writingDelivery = false;
+                            }
+                            else if (this.state < SessionState.EndSent)
+                            {
+                                next.InProgress = true;
+                                command = new OutCmd(new Transfer(), null, next);
+                                hasNext = true;
+                            }
+                            else
+                            {
+                                // Session is ending: don't keep chaining transfers. Undo the
+                                // in-progress state and hand the delivery back for release.
+                                next.InProgress = false;
+                                this.writingDelivery = false;
+                                this.outgoingList.Remove(next);
+                                rejected = next;
+                            }
+                        }
+
+                        if (!hasNext)
+                        {
+                            if (this.outgoingCommands.Count == 0)
+                            {
+                                this.writingCommands = false;
+                            }
+                            else
+                            {
+                                command = this.outgoingCommands.Dequeue();
+                                hasNext = true;
+                            }
+                        }
+                    }
+
+                    if (release != null)
+                    {
+                        Delivery.ReleaseAll(release, release.Link.Error);
+                    }
+
+                    if (rejected != null)
+                    {
+                        Delivery.ReleaseAll(rejected, this.Error);
+                    }
+
+                    if (!hasNext)
+                    {
+                        return;
+                    }
                 }
             }
+            catch (Exception exception)
+            {
+                AmqpException amqpException = exception as AmqpException;
+                Error error = amqpException != null ?
+                    amqpException.Error :
+                    new Error(ErrorCode.InternalError) { Description = exception.Message };
+
+                lock (this.ThisLock)
+                {
+                    this.outgoingCommands.Clear();
+                    this.writingDelivery = false;
+                    this.writingCommands = false;
+                }
+
+                this.Abort(error);
+                throw;
+            }
         }
+
+        void WriteTransferBytes(Transfer transfer, Delivery delivery)
+        {
+            transfer.Handle = delivery.Handle;
+            bool first = delivery.BytesTransfered == 0;
+            if (first)
+            {
+                transfer.DeliveryTag = delivery.Tag;
+                transfer.DeliveryId = delivery.DeliveryId;
+                transfer.State = delivery.State;
+                transfer.MessageFormat = delivery.Message.Format;
+                transfer.Settled = delivery.Settled;
+                transfer.Batchable = delivery.Batchable;
+            }
+
+            int len = this.connection.SendCommand(this.channel, transfer, first,
+                delivery.Buffer, delivery.ReservedBufferSize);
+            delivery.BytesTransfered += len;
+            delivery.Buffer.Complete(len);
+        }
+
+        struct OutCmd
+        {
+            public OutCmd(DescribedList command, Link link, Delivery delivery)
+            {
+                this.Command = command;
+                this.Link = link;
+                this.Delivery = delivery;
+            }
+
+            public DescribedList Command;
+            public Link Link;
+            public Delivery Delivery;
+        }
+
+        // CmdQueue backs the serialized outgoing-command path used by EnqueueCommand/WriteCommands
+        // to maintain strict ordering of commands with correct state: all Transfer/Flow/other
+        // performatives are written by a single "active writer" thread at a time, so a Flow can no
+        // longer snapshot nextOutgoingId while a Transfer write is in flight. A few optimizations
+        // are designed to reduce the lock contention and acquisition cost:
+        // 1. First-command fast path: EnqueueCommand/SendDelivery only enqueue into CmdQueue when
+        //    another thread is already writing (writingCommands == true). The thread that flips
+        //    writingCommands from false to true writes its own command directly, skipping the
+        //    Enqueue/Dequeue round trip entirely.
+        // 2. SendDelivery and WriteCommands fold the admission check and writer-flag flip into the
+        //    ThisLock block they already hold (for delivery bookkeeping / nextOutgoingId and
+        //    outgoingWindow updates), instead of re-entering ThisLock via a separate EnqueueCommand
+        //    call. This cuts the lock acquisitions per Transfer frame from three down to one.
+        // 3. Chained transfers for the same delivery (while the outgoing window stays open) loop
+        //    directly to the next OutCmd inside WriteCommands without ever touching CmdQueue; the
+        //    shared queue is only consulted once a delivery's chain ends or there is no delivery in
+        //    progress, so a single producer sees no enqueue/dequeue overhead at all.
+#if NETMF
+        sealed class CmdQueue : System.Collections.Queue
+        {
+            public new OutCmd Dequeue()
+            {
+                return (OutCmd)base.Dequeue();
+            }
+        }
+#else
+        sealed class CmdQueue : System.Collections.Generic.Queue<OutCmd>
+        {
+        }
+#endif
     }
 }

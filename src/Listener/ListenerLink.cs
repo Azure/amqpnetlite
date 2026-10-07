@@ -152,6 +152,7 @@ namespace Amqp.Listener
         /// <param name="settled">The settled flag on disposition.</param>
         public void DisposeMessage(Message message, DeliveryState deliveryState, bool settled)
         {
+            bool sendFlow = false;
             if (settled && this.autoRestore)
             {
                 lock (this.ThisLock)
@@ -159,9 +160,14 @@ namespace Amqp.Listener
                     if (this.restored++ >= this.credit / 2)
                     {
                         this.restored = 0;
-                        this.SendFlow(this.deliveryCount, this.credit, false);
+                        sendFlow = true;
                     }
                 }
+            }
+
+            if (sendFlow)
+            {
+                this.SendFlow(this.deliveryCount, this.credit, false);
             }
 
             Delivery delivery = message.Delivery;
@@ -239,10 +245,12 @@ namespace Amqp.Listener
             lock (this.ThisLock)
             {
                 this.credit = (uint)credit;
+                this.drain = drain;
                 this.autoRestore = autoRestore;
                 this.restored = 0;
-                this.SendFlow(this.deliveryCount, this.credit, drain);
             }
+
+            this.SendFlow(this.deliveryCount, this.credit, drain);
         }
 
         /// <summary>
@@ -254,6 +262,7 @@ namespace Amqp.Listener
         /// </remarks>
         public void CompleteDrain()
         {
+            bool sendFlow = false;
             lock (this.ThisLock)
             {
                 if (this.drain)
@@ -261,8 +270,13 @@ namespace Amqp.Listener
                     this.deliveryCount += (int)this.credit;
                     this.credit = 0;
                     this.drain = false;
-                    this.SendFlow(this.deliveryCount, this.credit, this.drain);
+                    sendFlow = true;
                 }
+            }
+
+            if (sendFlow)
+            {
+                this.SendFlow(this.deliveryCount, this.credit, this.drain);
             }
         }
 
@@ -423,6 +437,27 @@ namespace Amqp.Listener
                 {
                     this.linkEndpoint.OnDisposition(new DispositionContext(this, message, delivery.State, delivery.Settled));
                 }
+            }
+        }
+
+        internal override bool Snapshot(Flow flow)
+        {
+            lock (this.ThisLock)
+            {
+                if (this.IsDetaching)
+                {
+                    return false;
+                }
+
+                flow.Handle = this.Handle;
+                flow.LinkCredit = this.credit;
+                flow.Drain = this.drain;
+                if (this.LinkState >= LinkState.AttachReceived)
+                {
+                    flow.DeliveryCount = this.deliveryCount;
+                }
+
+                return true;
             }
         }
 

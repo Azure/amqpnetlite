@@ -147,6 +147,7 @@ namespace Amqp
         /// </remarks>
         public void SetCredit(int credit, CreditMode creditMode, int flowThreshold = -1)
         {
+            bool sendFlow = false;
             lock (this.ThisLock)
             {
                 if (this.IsDetaching)
@@ -159,7 +160,6 @@ namespace Amqp
                     this.totalCredit = 0;
                 }
 
-                var sendFlow = false;
                 if (creditMode == CreditMode.Drain)
                 {
                     if (!this.drain)
@@ -199,10 +199,11 @@ namespace Amqp
                 }
 
                 this.totalCredit = credit;
-                if (sendFlow)
-                {
-                    this.SendFlow(this.deliveryCount, (uint)this.credit, this.drain);
-                }
+            }
+
+            if (sendFlow)
+            {
+                this.SendFlow(this.deliveryCount, (uint)this.credit, this.drain);
             }
         }
 
@@ -463,6 +464,27 @@ namespace Amqp
             }
         }
 
+        internal override bool Snapshot(Flow flow)
+        {
+            lock (this.ThisLock)
+            {
+                if (this.IsDetaching)
+                {
+                    return false;
+                }
+
+                flow.Handle = this.Handle;
+                flow.LinkCredit = (uint)this.credit;
+                flow.Drain = this.drain;
+                if (this.LinkState >= LinkState.AttachReceived)
+                {
+                    flow.DeliveryCount = this.deliveryCount;
+                }
+
+                return true;
+            }
+        }
+
         /// <summary>
         /// Closes the receiver link.
         /// </summary>
@@ -572,6 +594,7 @@ namespace Amqp
                 this.Session.DisposeDelivery(true, delivery, state, settled);
             }
 
+            bool sendFlow = false;
             lock (this.ThisLock)
             {
                 this.restored++;
@@ -583,11 +606,16 @@ namespace Amqp
                     if (delta > 0)
                     {
                         this.credit += delta;
-                        this.SendFlow(this.deliveryCount, (uint)this.credit, false);
+                        sendFlow = true;
                     }
 
                     this.restored = 0;
                 }
+            }
+
+            if (sendFlow)
+            {
+                this.SendFlow(this.deliveryCount, (uint)this.credit, false);
             }
         }
 

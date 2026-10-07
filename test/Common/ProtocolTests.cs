@@ -909,6 +909,209 @@ namespace Test.Amqp
         }
 
         [TestMethod]
+        public void FlowAfterTransferUsesUpdatedSessionWindowTest()
+        {
+            ManualResetEvent senderAttached = new ManualResetEvent(false);
+            ManualResetEvent receiverAttached = new ManualResetEvent(false);
+            ManualResetEvent firstFlowReceived = new ManualResetEvent(false);
+            ManualResetEvent releaseListener = new ManualResetEvent(false);
+            ManualResetEvent secondFlowReceived = new ManualResetEvent(false);
+            int flowCount = 0;
+            int transferCount = 0;
+            uint initialNextOutgoingId = 0;
+            uint flowNextOutgoingId = uint.MaxValue;
+            int transfersBeforeFlow = -1;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                if (Interlocked.Increment(ref flowCount) == 1)
+                {
+                    initialNextOutgoingId = (uint)fields[2];
+                    firstFlowReceived.Set();
+                    releaseListener.WaitOne(5000);
+                }
+                else
+                {
+                    flowNextOutgoingId = (uint)fields[2];
+                    transfersBeforeFlow = transferCount;
+                    secondFlowReceived.Set();
+                }
+
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                Interlocked.Increment(ref transferCount);
+                return TestOutcome.Stop;
+            });
+
+            string testName = "FlowAfterTransferUsesUpdatedSessionWindowTest";
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            SenderLink sender = new SenderLink(
+                session,
+                "sender-" + testName,
+                new Target() { Address = testName },
+                (link, attach) => senderAttached.Set());
+            ReceiverLink receiver = new ReceiverLink(
+                session,
+                "receiver-" + testName,
+                new Source() { Address = testName },
+                (link, attach) => receiverAttached.Set());
+
+            Assert.IsTrue(senderAttached.WaitOne(5000), "Sender was not attached.");
+            Assert.IsTrue(receiverAttached.WaitOne(5000), "Receiver was not attached.");
+
+            receiver.SetCredit(1, CreditMode.Manual);
+            Assert.IsTrue(firstFlowReceived.WaitOne(5000), "The first flow was not received.");
+
+            Task sendTask = Task.Factory.StartNew(
+                () => sender.Send(new Message(new byte[16 * 1024 * 1024]), null, null));
+
+            Thread.Sleep(100);
+            receiver.SetCredit(1, CreditMode.Manual);
+            releaseListener.Set();
+
+            Assert.IsTrue(secondFlowReceived.WaitOne(10000), "The second flow was not received.");
+            Assert.IsTrue(transfersBeforeFlow > 0, "No transfer was received before the flow.");
+            Assert.AreEqual(unchecked(initialNextOutgoingId + (uint)transfersBeforeFlow), flowNextOutgoingId);
+            Assert.IsTrue(sendTask.Wait(10000), "The send did not complete.");
+
+            connection.Close();
+        }
+
+        [TestMethod]
+        public void ConcurrentSendAndReceiveDoesNotRegressNextOutgoingIdTest()
+        {
+            const int totalSends = 5000;
+            ManualResetEvent senderAttached = new ManualResetEvent(false);
+            ManualResetEvent receiverAttached = new ManualResetEvent(false);
+            ManualResetEvent senderDone = new ManualResetEvent(false);
+            ManualResetEvent violationDetected = new ManualResetEvent(false);
+            SemaphoreSlim slots = new SemaphoreSlim(100);
+            Exception senderException = null;
+            int transferCount = 0;
+            int flowCount = 0;
+            uint listenerDeliveryCount = 0;
+            uint initialNextOutgoingId = 0;
+            uint expectedNextOutgoingId = 0;
+            uint actualNextOutgoingId = 0;
+
+            this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
+            {
+                uint nextOutgoingId = (uint)fields[2];
+                int observedFlows = Interlocked.Increment(ref flowCount);
+                if (observedFlows == 1)
+                {
+                    initialNextOutgoingId = nextOutgoingId;
+                }
+                else
+                {
+                    uint expected = unchecked(initialNextOutgoingId + (uint)transferCount);
+                    if (nextOutgoingId != expected)
+                    {
+                        expectedNextOutgoingId = expected;
+                        actualNextOutgoingId = nextOutgoingId;
+                        violationDetected.Set();
+                    }
+                }
+
+                if (fields[4] != null)
+                {
+                    uint deliveryLimit = unchecked((uint)fields[5] + (uint)fields[6]);
+                    while (listenerDeliveryCount < deliveryLimit)
+                    {
+                        Message message = new Message("test message " + listenerDeliveryCount);
+                        ByteBuffer buffer = message.Encode();
+                        TestListener.FRM(
+                            stream,
+                            0x14UL,
+                            0,
+                            channel,
+                            new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
+                            fields[4],
+                            listenerDeliveryCount,
+                            Guid.NewGuid().ToByteArray(),
+                            0u,
+                            false,
+                            false);
+                        listenerDeliveryCount++;
+                    }
+                }
+
+                return TestOutcome.Stop;
+            });
+
+            this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
+            {
+                Interlocked.Increment(ref transferCount);
+                return TestOutcome.Continue;
+            });
+
+            string testName = "ConcurrentSendAndReceiveDoesNotRegressNextOutgoingIdTest";
+            Connection connection = new Connection(this.address);
+            Session session = new Session(connection);
+            ReceiverLink receiver = new ReceiverLink(
+                session,
+                "receiver-" + testName,
+                new Source() { Address = testName },
+                (link, attach) => receiverAttached.Set());
+            SenderLink sender = new SenderLink(
+                session,
+                "sender-" + testName,
+                new Target() { Address = testName },
+                (link, attach) => senderAttached.Set());
+
+            Assert.IsTrue(receiverAttached.WaitOne(5000), "Receiver was not attached.");
+            Assert.IsTrue(senderAttached.WaitOne(5000), "Sender was not attached.");
+
+            receiver.Start(5, (link, message) => link.Accept(message));
+
+            Thread senderThread = new Thread(() =>
+            {
+                try
+                {
+                    for (int i = 0; i < totalSends && !violationDetected.WaitOne(0); i++)
+                    {
+                        slots.Wait();
+                        sender.Send(
+                            new Message("payload " + i),
+                            (link, message, outcome, state) => slots.Release(),
+                            null);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    senderException = exception;
+                }
+                finally
+                {
+                    senderDone.Set();
+                }
+            });
+            senderThread.IsBackground = true;
+            senderThread.Start();
+
+            int signaled = WaitHandle.WaitAny(
+                new WaitHandle[] { violationDetected, senderDone },
+                30000);
+
+            connection.Close();
+
+            Assert.IsTrue(signaled != WaitHandle.WaitTimeout, "The sender did not complete in time.");
+            Assert.IsTrue(
+                !violationDetected.WaitOne(0),
+                string.Format(
+                    "A flow regressed next-outgoing-id after {0} transfers. Expected {1}, actual {2}.",
+                    transferCount,
+                    expectedNextOutgoingId,
+                    actualNextOutgoingId));
+            Assert.IsTrue(senderException == null, senderException == null ? null : senderException.ToString());
+            Assert.AreEqual(totalSends, transferCount, "The listener did not receive every transfer.");
+        }
+
+        [TestMethod]
         public void SmallSessionWindowTest()
         {
             ManualResetEvent done = new ManualResetEvent(false);
