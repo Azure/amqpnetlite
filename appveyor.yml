@@ -76,9 +76,11 @@ build_script:
 
     Write-Output "Invoking build.cmd script for Debug..."
     .\build.cmd --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
+    if ($LASTEXITCODE -ne 0) { throw "build.cmd (Debug) failed with exit code $LASTEXITCODE" }
 
     Write-Output "Invoking build.cmd script for Release..."
     .\build.cmd release --solution "amqp.sln amqp-netmf.sln amqp-nanoFramework.sln" | Write-Output
+    if ($LASTEXITCODE -ne 0) { throw "build.cmd (Release) failed with exit code $LASTEXITCODE" }
 
 test: off
 deploy: off
