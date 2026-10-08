@@ -465,7 +465,18 @@ namespace Amqp
 
         internal int SendCommand(ushort channel, Transfer transfer, bool first, ByteBuffer payload, int reservedBytes)
         {
-            this.ThrowIfClosed("Send");
+            if (this.state >= ConnectionState.CloseSent)
+            {
+                // A local Close() can race with a session/link still flushing its
+                // command queue (e.g. on the reader/pump thread flushing a transfer
+                // enqueued just before the close). Throwing here would otherwise
+                // propagate through that thread's exception handler and escalate
+                // into a connection-wide abort for what is really a benign race.
+                // Return -1 so the caller can fail the delivery instead of either
+                // throwing or silently pretending the payload was sent.
+                return -1;
+            }
+
             ByteBuffer buffer = this.AllocateBuffer(Frame.CmdBufferSize);
             Frame.Encode(buffer, FrameType.Amqp, channel, transfer);
             int payloadSize = payload.Length;

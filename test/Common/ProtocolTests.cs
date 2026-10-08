@@ -989,6 +989,7 @@ namespace Test.Amqp
             ManualResetEvent receiverAttached = new ManualResetEvent(false);
             ManualResetEvent senderDone = new ManualResetEvent(false);
             ManualResetEvent violationDetected = new ManualResetEvent(false);
+            ManualResetEvent allTransfersReceived = new ManualResetEvent(false);
             SemaphoreSlim slots = new SemaphoreSlim(100);
             Exception senderException = null;
             int transferCount = 0;
@@ -1045,7 +1046,11 @@ namespace Test.Amqp
 
             this.testListener.RegisterTarget(TestPoint.Transfer, (stream, channel, fields) =>
             {
-                Interlocked.Increment(ref transferCount);
+                if (Interlocked.Increment(ref transferCount) == totalSends)
+                {
+                    allTransfersReceived.Set();
+                }
+
                 return TestOutcome.Continue;
             });
 
@@ -1096,6 +1101,15 @@ namespace Test.Amqp
             int signaled = WaitHandle.WaitAny(
                 new WaitHandle[] { violationDetected, senderDone },
                 30000);
+
+            // Closing the session cancels any delivery not yet handed to the
+            // write loop, so it is not enough to know the sender finished
+            // issuing Send() calls: wait for the listener to confirm every
+            // transfer actually reached the wire before closing.
+            if (signaled != WaitHandle.WaitTimeout && !violationDetected.WaitOne(0) && senderException == null)
+            {
+                Assert.IsTrue(allTransfersReceived.WaitOne(10000), "The listener did not receive every transfer in time.");
+            }
 
             connection.Close();
 
