@@ -18,6 +18,7 @@
 namespace Amqp
 {
     using System;
+    using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
     using Amqp.Framing;
@@ -338,6 +339,20 @@ namespace Amqp
     public static class TaskExtensions
     {
         internal static readonly Task CompletedTask;
+
+#if NETFX40
+        internal static Task Yield()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            ThreadPool.QueueUserWorkItem(o => ((TaskCompletionSource<bool>)o).TrySetResult(true), tcs);
+            return tcs.Task;
+        }
+#else
+        internal static YieldAwaitable Yield()
+        {
+            return Task.Yield();
+        }
+#endif
 
         static TaskExtensions()
         {

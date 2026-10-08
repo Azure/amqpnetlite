@@ -227,6 +227,16 @@ namespace Amqp.Listener
                     Trace.WriteLine(TraceLevel.Error, exception.ToString());
                 }
             }
+
+            // Links are now detached, so it is safe to dispose the registered
+            // message sources (if they implement IDisposable).
+            lock (this.messageSources)
+            {
+                foreach (var messageSource in this.messageSources.Values)
+                {
+                    messageSource.Dispose();
+                }
+            }
         }
 
         /// <summary>
@@ -536,7 +546,7 @@ namespace Amqp.Listener
             }
         }
 
-        class MessageSource : Collection<SourceLinkEndpoint>
+        class MessageSource : Collection<SourceLinkEndpoint>, IDisposable
         {
             readonly IMessageSource messageSource;
 
@@ -551,6 +561,11 @@ namespace Amqp.Listener
                 SourceLinkEndpoint endpoint = new SourceLinkEndpoint(this.messageSource, link);
                 link.InitializeLinkEndpoint(endpoint, 0);
                 this.Add(link, endpoint);
+            }
+
+            public void Dispose()
+            {
+                (this.messageSource as IDisposable)?.Dispose();
             }
         }
         

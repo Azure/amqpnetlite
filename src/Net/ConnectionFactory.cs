@@ -212,9 +212,9 @@ namespace Amqp
 
             var tcs = new ConnectTaskCompletionSource(this, address, open, onOpened, handler, transport, cancellationToken);
             var connection = await tcs.Task.ConfigureAwait(false);
-#if NETX40 || NETFX45
+#if NETFX40 || NETFX45
             // Same effect as RunContinuationsAsynchronously to avoid user code blocking the IO thread.
-            await Task.Yield();
+            await Amqp.TaskExtensions.Yield();
 #endif
             return connection;
         }

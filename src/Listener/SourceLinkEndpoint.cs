@@ -114,6 +114,13 @@ namespace Amqp.Listener
                     this.link.CompleteDrain();
                     break;
                 }
+                else
+                {
+                    // No message available yet but credit remains and we're not draining.
+                    // Yield instead of busy-spinning on this ThreadPool thread so the pool
+                    // isn't monopolized/starved while waiting for the next message.
+                    await Amqp.TaskExtensions.Yield();
+                }
             }
         }
     }
