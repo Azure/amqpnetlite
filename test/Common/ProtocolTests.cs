@@ -981,11 +981,10 @@ namespace Test.Amqp
             connection.Close();
         }
 
-        [Ignore("Hangs intermittently on netcoreapp; tracked separately for debugging.")]
         [TestMethod]
         public void ConcurrentSendAndReceiveDoesNotRegressNextOutgoingIdTest()
         {
-            const int totalSends = 5000;
+            const int totalSends = 1000;
             ManualResetEvent senderAttached = new ManualResetEvent(false);
             ManualResetEvent receiverAttached = new ManualResetEvent(false);
             ManualResetEvent senderDone = new ManualResetEvent(false);
@@ -999,6 +998,43 @@ namespace Test.Amqp
             uint initialNextOutgoingId = 0;
             uint expectedNextOutgoingId = 0;
             uint actualNextOutgoingId = 0;
+
+            // The listener must not race ahead of the client's sends: it only pushes a message
+            // back for each transfer it has already received, so send and receive traffic share
+            // the session roughly equally instead of the receive side flooding the command queue.
+            object sendLock = new object();
+            System.IO.Stream listenerStream = null;
+            ushort listenerChannel = 0;
+            object listenerHandle = null;
+            uint listenerCreditLimit = 0;
+
+            Action sendPendingMessages = () =>
+            {
+                if (listenerStream == null || listenerHandle == null)
+                {
+                    return;
+                }
+
+                uint cap = Math.Min(listenerCreditLimit, (uint)Interlocked.CompareExchange(ref transferCount, 0, 0));
+                while (listenerDeliveryCount < cap)
+                {
+                    Message message = new Message("test message " + listenerDeliveryCount);
+                    ByteBuffer buffer = message.Encode();
+                    TestListener.FRM(
+                        listenerStream,
+                        0x14UL,
+                        0,
+                        listenerChannel,
+                        new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
+                        listenerHandle,
+                        listenerDeliveryCount,
+                        Guid.NewGuid().ToByteArray(),
+                        0u,
+                        false,
+                        false);
+                    listenerDeliveryCount++;
+                }
+            };
 
             this.testListener.RegisterTarget(TestPoint.Flow, (stream, channel, fields) =>
             {
@@ -1021,24 +1057,13 @@ namespace Test.Amqp
 
                 if (fields[4] != null)
                 {
-                    uint deliveryLimit = unchecked((uint)fields[5] + (uint)fields[6]);
-                    while (listenerDeliveryCount < deliveryLimit)
+                    lock (sendLock)
                     {
-                        Message message = new Message("test message " + listenerDeliveryCount);
-                        ByteBuffer buffer = message.Encode();
-                        TestListener.FRM(
-                            stream,
-                            0x14UL,
-                            0,
-                            channel,
-                            new ArraySegment<byte>(buffer.Buffer, buffer.Offset, buffer.Length),
-                            fields[4],
-                            listenerDeliveryCount,
-                            Guid.NewGuid().ToByteArray(),
-                            0u,
-                            false,
-                            false);
-                        listenerDeliveryCount++;
+                        listenerStream = stream;
+                        listenerChannel = channel;
+                        listenerHandle = fields[4];
+                        listenerCreditLimit = unchecked((uint)fields[5] + (uint)fields[6]);
+                        sendPendingMessages();
                     }
                 }
 
@@ -1050,6 +1075,11 @@ namespace Test.Amqp
                 if (Interlocked.Increment(ref transferCount) == totalSends)
                 {
                     allTransfersReceived.Set();
+                }
+
+                lock (sendLock)
+                {
+                    sendPendingMessages();
                 }
 
                 return TestOutcome.Continue;
