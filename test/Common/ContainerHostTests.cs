@@ -1650,15 +1650,18 @@ namespace Test.Amqp
         }
     }
 
-    class TestMessageSource : IMessageSource
+    class TestMessageSource : IMessageSource, IDisposable
     {
         readonly Queue<Message> messages;
         readonly List<Message> deadletterMessage;
+        readonly LinkedList<TaskCompletionSource<ReceiveContext>> waiters;
+        bool disposed;
 
         public TestMessageSource(Queue<Message> messages)
         {
             this.messages = messages;
             this.deadletterMessage = new List<Message>();
+            this.waiters = new LinkedList<TaskCompletionSource<ReceiveContext>>();
         }
 
         public int Count
@@ -1691,18 +1694,35 @@ namespace Test.Amqp
 
         public Task<ReceiveContext> GetMessageAsync(ListenerLink link)
         {
+            var tcs = new TaskCompletionSource<ReceiveContext>();
+            Message message = null;
+            bool completeNull = false;
             lock (this.messages)
             {
-                ReceiveContext context = null;
                 if (this.messages.Count > 0)
                 {
-                    context = new ReceiveContext(link, this.messages.Dequeue());
+                    message = this.messages.Dequeue();
                 }
-
-                var tcs = new TaskCompletionSource<ReceiveContext>();
-                tcs.SetResult(context);
-                return tcs.Task;
+                else if (link.IsDraining || this.disposed)
+                {
+                    completeNull = true;
+                }
+                else
+                {
+                    this.waiters.AddLast(tcs);
+                }
             }
+
+            if (message != null)
+            {
+                tcs.SetResult(new ReceiveContext(link, message));
+            }
+            else if (completeNull)
+            {
+                tcs.SetResult(null);
+            }
+
+            return tcs.Task;
         }
 
         public void DisposeMessage(ReceiveContext receiveContext, DispositionContext dispositionContext)
@@ -1716,13 +1736,46 @@ namespace Test.Amqp
             }
             else if (dispositionContext.DeliveryState is Released)
             {
+                TaskCompletionSource<ReceiveContext> tcs = null;
                 lock (this.messages)
                 {
-                    this.messages.Enqueue(receiveContext.Message);
+                    if (this.waiters.Count > 0)
+                    {
+                        tcs = this.waiters.First.Value;
+                        this.waiters.RemoveFirst();
+                    }
+                    else
+                    {
+                        this.messages.Enqueue(receiveContext.Message);
+                    }
+                }
+
+                if (tcs != null)
+                {
+                    tcs.SetResult(new ReceiveContext(receiveContext.Link, receiveContext.Message));
                 }
             }
 
             dispositionContext.Complete();
+        }
+
+        // Called by ContainerHost.Close() after all links attached to this source
+        // have been closed, so it is safe to complete any still-pending waiters
+        // with null rather than leaving them hanging forever.
+        public void Dispose()
+        {
+            List<TaskCompletionSource<ReceiveContext>> pending;
+            lock (this.messages)
+            {
+                this.disposed = true;
+                pending = new List<TaskCompletionSource<ReceiveContext>>(this.waiters);
+                this.waiters.Clear();
+            }
+
+            foreach (var tcs in pending)
+            {
+                tcs.SetResult(null);
+            }
         }
     }
 
