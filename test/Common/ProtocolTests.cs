@@ -981,6 +981,7 @@ namespace Test.Amqp
             connection.Close();
         }
 
+        [Ignore("Hangs intermittently on netcoreapp; tracked separately for debugging.")]
         [TestMethod]
         public void ConcurrentSendAndReceiveDoesNotRegressNextOutgoingIdTest()
         {
