@@ -102,7 +102,13 @@ namespace Amqp
             {
                 if (delivery.OnOutcome != null)
                 {
-                    delivery.OnOutcome(delivery.Link, delivery.Message, outcome, delivery.UserToken);
+                    // Message can change. Do a best effort check for message ownership.
+                    // The source is responsible for the correct message lifetime management.
+                    Message message = delivery.Message;
+                    if (message != null && message.Delivery == delivery)
+                    {
+                        delivery.OnOutcome(delivery.Link, delivery.Message, outcome, delivery.UserToken);
+                    }
                 }
 
                 delivery.Buffer.ReleaseReference();
