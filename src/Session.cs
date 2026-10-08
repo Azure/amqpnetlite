@@ -834,10 +834,11 @@ namespace Amqp
                 {
                     bool isTransfer = command.Command.Descriptor.Code == Codec.Transfer.Code;
                     Delivery transferDelivery = command.Delivery;
+                    bool sent = true;
 
                     if (isTransfer)
                     {
-                        this.WriteTransferBytes((Transfer)command.Command, transferDelivery);
+                        sent = this.WriteTransferBytes((Transfer)command.Command, transferDelivery);
                     }
                     else
                     {
@@ -858,6 +859,7 @@ namespace Amqp
                     }
 
                     Delivery release = null;
+                    Error releaseError = null;
                     Delivery rejected = null;
                     bool hasNext = false;
 
@@ -865,25 +867,41 @@ namespace Amqp
                     {
                         if (isTransfer)
                         {
-                            this.nextOutgoingId++;
-                            if (this.outgoingWindow > 0)
-                            {
-                                this.outgoingWindow--;
-                            }
-
                             Delivery next = transferDelivery;
-                            if (transferDelivery.Buffer.Length == 0 || transferDelivery.Link.IsClosed)
+                            if (!sent)
                             {
+                                // The connection is closing locally and raced ahead of this
+                                // already-admitted transfer. Release it (and any chained
+                                // deliveries for the same link, below) instead of advancing
+                                // session accounting as if it had actually gone out.
                                 transferDelivery.InProgress = false;
                                 next = (Delivery)transferDelivery.Next;
-                                if (transferDelivery.Link.IsClosed)
+                                release = transferDelivery;
+                                releaseError = this.connection.Error ??
+                                    new Error(ErrorCode.IllegalState) { Description = "The connection is closing." };
+                                this.outgoingList.Remove(transferDelivery);
+                            }
+                            else
+                            {
+                                this.nextOutgoingId++;
+                                if (this.outgoingWindow > 0)
                                 {
-                                    release = transferDelivery;
-                                    this.outgoingList.Remove(transferDelivery);
+                                    this.outgoingWindow--;
                                 }
-                                else if (transferDelivery.Settled)
+
+                                if (transferDelivery.Buffer.Length == 0 || transferDelivery.Link.IsClosed)
                                 {
-                                    this.outgoingList.Remove(transferDelivery);
+                                    transferDelivery.InProgress = false;
+                                    next = (Delivery)transferDelivery.Next;
+                                    if (transferDelivery.Link.IsClosed)
+                                    {
+                                        release = transferDelivery;
+                                        this.outgoingList.Remove(transferDelivery);
+                                    }
+                                    else if (transferDelivery.Settled)
+                                    {
+                                        this.outgoingList.Remove(transferDelivery);
+                                    }
                                 }
                             }
 
@@ -929,7 +947,7 @@ namespace Amqp
 
                     if (release != null)
                     {
-                        Delivery.ReleaseAll(release, release.Link.Error);
+                        Delivery.ReleaseAll(release, releaseError ?? release.Link.Error);
                     }
 
                     if (rejected != null)
@@ -962,7 +980,10 @@ namespace Amqp
             }
         }
 
-        void WriteTransferBytes(Transfer transfer, Delivery delivery)
+        // Returns false if the connection is already closing locally and the transfer
+        // could not be sent; the caller must then release the delivery rather than
+        // treat it as (partially) transmitted.
+        bool WriteTransferBytes(Transfer transfer, Delivery delivery)
         {
             transfer.Handle = delivery.Handle;
             bool first = delivery.BytesTransfered == 0;
@@ -978,8 +999,14 @@ namespace Amqp
 
             int len = this.connection.SendCommand(this.channel, transfer, first,
                 delivery.Buffer, delivery.ReservedBufferSize);
+            if (len < 0)
+            {
+                return false;
+            }
+
             delivery.BytesTransfered += len;
             delivery.Buffer.Complete(len);
+            return true;
         }
 
         struct OutCmd
