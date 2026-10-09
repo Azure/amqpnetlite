@@ -1111,14 +1111,10 @@ namespace Test.Amqp
         }
 #endif
 
-        /// <summary>
-        /// This test proves that issue #14 is fixed.
-        /// https://github.com/Azure/amqpnetlite/issues/14
-        /// </summary>
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET
         [TestMethod]
 #endif
-        public void TestMethod_SendEmptyMessage()
+        public void TestMethod_SendEmptyMessageSucceeds()
         {
             string testName = "SendEmptyMessage";
 
@@ -1126,14 +1122,9 @@ namespace Test.Amqp
             Session session = new Session(connection);
             SenderLink sender = new SenderLink(session, "sender-" + testName, testTarget.Path);
 
-            bool threwArgEx = false;
             try
             {
                 sender.Send(new Message());
-            }
-            catch (ArgumentException)
-            {
-                threwArgEx = true;
             }
             finally
             {
@@ -1141,8 +1132,6 @@ namespace Test.Amqp
                 session.Close();
                 connection.Close();
             }
-
-            Assert.IsTrue(threwArgEx, "Should throw an argument exception when sending an empty message.");
         }
 
 #if NETFX || NETFX35 || NETFX_CORE || DOTNET

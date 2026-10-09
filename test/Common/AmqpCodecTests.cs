@@ -190,6 +190,34 @@ namespace Test.Amqp
         }
 
         [TestMethod()]
+        public void MessageWithoutBodyEncodesAmqpValueNullTest()
+        {
+            ByteBuffer buffer = new Message().Encode();
+
+            Assert.AreEqual(4, buffer.Length);
+            Assert.AreEqual((byte)0x00, buffer.Buffer[buffer.Offset]);
+            Assert.AreEqual((byte)0x53, buffer.Buffer[buffer.Offset + 1]);
+            Assert.AreEqual((byte)0x77, buffer.Buffer[buffer.Offset + 2]);
+            Assert.AreEqual((byte)0x40, buffer.Buffer[buffer.Offset + 3]);
+
+            Message decoded = Message.Decode(buffer);
+
+            Assert.IsTrue(decoded.BodySection is AmqpValue);
+            Assert.IsTrue(((AmqpValue)decoded.BodySection).Value == null);
+        }
+
+        [TestMethod()]
+        public void MessageWithoutBodyDecodePreservesMissingSectionTest()
+        {
+            byte[] propertiesOnly = new byte[] { 0x00, 0x53, 0x73, 0x45 };
+            Message decoded = Message.Decode(
+                new ByteBuffer(propertiesOnly, 0, propertiesOnly.Length, propertiesOnly.Length));
+
+            Assert.IsTrue(decoded.BodySection == null);
+            Assert.IsTrue(decoded.Body == null);
+        }
+
+        [TestMethod()]
         public void AmqpCodecListTest()
         {
             byte[] workBuffer = new byte[4096];
