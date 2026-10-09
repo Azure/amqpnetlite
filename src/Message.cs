@@ -26,6 +26,14 @@ namespace Amqp
     /// </summary>
     public class Message : IDisposable
     {
+        static readonly byte[] nullBody = new byte[]
+        {
+            FormatCode.Described,
+            FormatCode.SmallULong,
+            0x77,
+            FormatCode.Null
+        };
+
         /// <summary>
         /// The header section.
         /// </summary>
@@ -57,6 +65,8 @@ namespace Amqp
         /// * <see cref="AmqpSequence"/>
         /// * <see cref="Data"/>
         /// * <see cref="DataList"/>
+        /// If unset, the message is sent with an <see cref="AmqpValue"/> body section
+        /// containing a null value.
         /// </summary>
         public RestrictedDescribed BodySection;
 
@@ -284,7 +294,14 @@ namespace Amqp
             EncodeIfNotNull(this.MessageAnnotations, buffer);
             EncodeIfNotNull(this.Properties, buffer);
             EncodeIfNotNull(this.ApplicationProperties, buffer);
-            EncodeIfNotNull(this.BodySection, buffer);
+            if (this.BodySection == null)
+            {
+                AmqpBitConverter.WriteBytes(buffer, nullBody, 0, nullBody.Length);
+            }
+            else
+            {
+                this.BodySection.Encode(buffer);
+            }
             EncodeIfNotNull(this.Footer, buffer);
         }
 
@@ -361,7 +378,7 @@ namespace Amqp
             if (this.MessageAnnotations != null) size += 64;
             if (this.Properties != null) size += 64;
             if (this.ApplicationProperties != null) size += 64;
-            if (this.BodySection != null) size += GetEstimatedBodySize(this.BodySection) + 8;
+            size += this.BodySection == null ? nullBody.Length : GetEstimatedBodySize(this.BodySection) + 8;
             if (this.Footer != null) size += 64;
             return size;
         }

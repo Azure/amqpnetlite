@@ -24,6 +24,14 @@ namespace Amqp
     /// </summary>
     public class Message
     {
+        static readonly byte[] nullBody = new byte[]
+        {
+            FormatCode.Described,
+            FormatCode.SmallULong,
+            0x77,
+            FormatCode.Null
+        };
+
         // List of the fields defined in Properties
         // Most commonly used properties have getter/setter
         // To access others, user can access the Properties list
@@ -134,6 +142,10 @@ namespace Amqp
                 {
                     Encoder.WriteObject(buffer, new DescribedValue(0x77ul, this.Body));
                 }
+            }
+            else
+            {
+                AmqpBitConverter.WriteBytes(buffer, nullBody, 0, nullBody.Length);
             }
         }
 
